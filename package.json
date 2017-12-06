@@ -1,0 +1,19 @@
+{
+  "name": "Calendario",
+  "version": "0.1dev",
+  "description": "An editorial calendar for professional bloggers",
+  "main": "Gruntfile.js",
+  "repository": "git@github.com:gaswirth/rhdwp-calendario.git",
+  "author": "Nick Gaswirth <nick@roundhouse-designs.com>",
+  "license": "GPL3",
+  "private": true,
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-stylus": "^1.2.0",
+    "grunt-contrib-watch": "^1.0.0"
+  },
+  "dependencies": {
+    "fullcalendar": "^3.7.0"
+  }
+}
