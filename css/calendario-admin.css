@@ -1,0 +1,40 @@
+/***
+* RHD Dev: Compiled at 2:27:13 PM on 06-12-2017
+***/
+
+/*
+ * Main Stylesheet
+ * 
+ * Calendario
+ * by Nick Gaswirth
+ * https://roundhouse-designs.com
+*/
+/* ==========================================================================
+	Includes
+   ========================================================================== */
+#calendario {
+  margin-right: 1em;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+  position: relative;
+}
+#calendario .plugin-title {
+  font-size: 2em;
+  font-family: 'Josefin Slab', serif;
+  font-weight: 600;
+}
+#calendario-workspace {
+  width: 100%;
+  position: relative;
+}
+#calendario-workspace .rhd-editorial-calendar {
+  width: 80%;
+  float: left;
+}
+#calendario-workspace .rhd-drafts-area {
+  width: 18%;
+  float: right;
+  border-radius: 3px;
+  border: 1px solid #000;
+  height: 800px;
+}

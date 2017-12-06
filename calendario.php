@@ -68,12 +68,13 @@ if ( ! class_exists( 'RHD_Calendario' ) ) {
 		}
 		
 		public function assets() {
-			wp_register_style( 'rhd-cal-styles', plugin_dir_url( __FILE__ ) . 'css/rhd-cal-styles.css' );
+			wp_register_style( 'google-fonts', '//fonts.googleapis.com/css?family=Josefin+Slab:600|Oswald:400,600' );
 			wp_register_style( 'fullcalendar', plugin_dir_url( __FILE__ ) . 'node_modules/fullcalendar/dist/fullcalendar.css' );
+			wp_register_style( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'css/calendario-admin.css', array( 'google-fonts' ) );
 			
 			wp_register_script( 'moment', plugin_dir_url( __FILE__ ) . 'node_modules/moment/moment.js', array(), '2.19.3' );
 			wp_register_script( 'fullcalendar', plugin_dir_url( __FILE__ ) . 'node_modules/fullcalendar/dist/fullcalendar.js', array( 'jquery', 'moment' ), '3.7.0' );
-			wp_register_script( 'rhd-cal-admin', plugin_dir_url( __FILE__ ) . 'js/rhd-cal-admin.js', array( 'jquery', 'fullcalendar' ), '0.1dev' );
+			wp_register_script( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'js/calendario-admin.js', array( 'jquery', 'fullcalendar' ), '0.1dev' );
 		}
 		
 		public function create_plugin_page() {
@@ -82,15 +83,21 @@ if ( ! class_exists( 'RHD_Calendario' ) ) {
 		
 		public function calendario_page() {
 			$this->plugin_meta = get_plugin_data( __FILE__, true, false );
-			wp_enqueue_script( 'rhd-cal-admin' );
+			wp_enqueue_style( 'fullcalendar' );
+			wp_enqueue_style( 'calendario-admin' );
+			wp_enqueue_script( 'calendario-admin' );
 			
-			// Reset and override possible existing output (necessary?)
-			$this->output = "<h1>{$this->plugin_meta['Name']}</h1>";
-			
-			$this->output .= "
-				{$temp_meta}
-				<div id='calendario-wrapper'>
-					<div id='calendar'></div>
+			// (Start $output from scratch)
+			$this->output = "
+				<div id='calendario'>
+					<header class='plugin-header'>
+						<h2 class='plugin-title'>{$this->plugin_meta['Name']}</h2>
+					</header>
+					
+					<div id='calendario-workspace'>
+						<div id='editorial-calendar' class='rhd-editorial-calendar'></div>
+						<div id='drafts' class='rhd-drafts-area'></div>
+					</div>
 				</div>
 				";
 			

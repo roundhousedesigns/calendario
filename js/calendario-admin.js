@@ -7,7 +7,7 @@
 (function($){
 	$(document).ready(function(){
 		
-		$("#calendar").fullCalendar();
+		$("#editorial-calendar").fullCalendar();
 		
 	});
 })(jQuery);
