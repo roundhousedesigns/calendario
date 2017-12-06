@@ -96,7 +96,7 @@ if ( ! class_exists( 'RHD_Calendario' ) ) {
 					
 					<div id='calendario-workspace'>
 						<div id='editorial-calendar' class='rhd-editorial-calendar'></div>
-						<div id='drafts' class='rhd-drafts-area'></div>
+						<div id='drafts' class='rhd-drafts-area'>Les Drafts</div>
 					</div>
 				</div>
 				";
