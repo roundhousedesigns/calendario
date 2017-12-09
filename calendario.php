@@ -64,10 +64,14 @@ if( !interface_exists( 'RHD_Calendario' ) ) {
 		const RHD_DATE_FORMAT = 'Y-m-d H:i:s';
 		
 		public static function format_post_date( string $date );
+		
 		public function assets();
 		public function create_plugin_page();
+		
 		public function calendario_page();
+		
 		public function calendario_update_post( array $props );
+		
 		public function change_future_date( int $post_id, string $new_date );
 		public function convert_draft_to_future( int $post_id, string $new_date = null );
 		public function convert_future_to_draft( int $post_id );
