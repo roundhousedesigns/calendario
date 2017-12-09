@@ -4,6 +4,8 @@ Plugin Name: Calendario
 Plugin URI: https://roundhouse-designs.com/calendario
 Description: The professional blogger's editorial calendar for WordPress.
 Version: 0.1dev
+Requires PHP: 5.6
+Requires at least: 4.7
 Text Domain: rhd
 Author: Roundhouse Designs
 Author URI: https://roundhouse-designs.com
@@ -56,26 +58,42 @@ if ( !function_exists( 'rhd_cal_plugin_deactivation' ) ) {
 	Core
    ========================================================================== */
 
-if ( !class_exists( 'RHD_Calendario' ) ) {
+if( !interface_exists( 'RHD_Calendario' ) ) {
+	interface RHD_Calendario
+	{
+		const RHD_DATE_FORMAT = 'Y-m-d H:i:s';
+		
+		public static function format_post_date( string $date );
+		public function assets();
+		public function create_plugin_page();
+		public function calendario_page();
+		public function calendario_update_post( array $props );
+		public function change_future_date( int $post_id, string $new_date );
+		public function convert_draft_to_future( int $post_id, string $new_date = null );
+		public function convert_future_to_draft( int $post_id );
+	}
+}
+
+if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 
 	/**
-	 * RHD_Calendario class.
+	 * RHD_Calendario_Workspace class.
 	 */
 
-	class RHD_Calendario
+	class RHD_Calendario_Workspace implements RHD_Calendario
 	{
 		protected $output;
 		protected $plugin_meta;
-		public const RHD_DATE_FORMAT = 'Y-m-d H:i:s';
-		
 		
 		/**
-		 * __construct function. Fires on class creation.
+		 * __construct function. Fires on class instantiation.
 		 * 
 		 * @access public
 		 * @return void
 		 */
 		public function __construct() {
+			include_once( 'includes/rhd-calendario-api.php' );
+			
 			add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 			add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
 		}
@@ -88,8 +106,8 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @param mixed $result
 		 * @return void
 		 */
-		public function log_error_message( $result ) {
-			$error_string = "Calendario: ";
+		private function log_error_message( $result ) {
+			$error_string = 'Calendario ' . RHD_CALENDARIO_VERSION . ':  ';
 			
 			if ( is_wp_error( $result ) ) {
 				$error_string .= $result->get_error_message();
@@ -110,10 +128,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 *	returns an array: [0] => formatted time, [1] => formatted time (GMT)
 		 * 
 		 * @access public
+		 * @static
 		 * @param string $date
 		 * @return array
 		 */
-		public function format_post_date( string $date ) {
+		public static function format_post_date( string $date ) {
 			$time = new DateTime( $date );
 			$time_gmt = new DateTime( $date );
 			$time_gmt->setTimezone( new DateTimeZone('GMT') );
@@ -128,7 +147,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * assets function. Registers external stylesheets and scripts.
+		 * assets function. Registers external stylesheets and scripts!
 		 * 
 		 * @access public
 		 * @return void
@@ -141,6 +160,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_register_script( 'moment', plugin_dir_url( __FILE__ ) . 'node_modules/moment/moment.js', array(), '2.19.3' );
 			wp_register_script( 'fullcalendar', plugin_dir_url( __FILE__ ) . 'node_modules/fullcalendar/dist/fullcalendar.js', array( 'jquery', 'moment' ), '3.7.0' );
 			wp_register_script( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'js/calendario-admin.js', array( 'jquery', 'fullcalendar' ), '0.1dev' );
+			
+			wp_localize_script( 'calendario-admin', 'wpApiSettings', array(
+				'root' => esc_url_raw( rest_url() ),
+				'nonce' => wp_create_nonce( 'wp_rest' )
+			) );
 		}
 		
 				
@@ -167,16 +191,49 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_enqueue_style( 'calendario-admin' );
 			wp_enqueue_script( 'calendario-admin' );
 			
+			// Set up drafts query
+			//	TODO: Maybe allow for more post types in the future?
+			$drafts_args = array(
+				'post_type'			=> 'post',
+				'posts_per_page'	=> -1,
+				'post_status'		=> 'draft'
+			);
+			
+			// Retrieve drafts and format
+			$drafts = get_posts( $drafts_args );
+			$drafts_html = '';
+			
+			if ( $drafts ) {
+				$drafts_html .= '<ul id="calendario-unscheduled-posts" class="rhd-calendario-posts-list">';
+				
+				foreach ( $drafts as $draft ) {
+					$drafts_html .= '
+									<li class="rhd-calendario-draft">
+										<h3 class="rhd-draft-title">' . get_the_title( $draft ) . '</h3>
+									</li>
+									';
+				}
+				
+				$drafts_html .= '</ul><!-- #calendario-unscheduled-posts -->';
+					
+			}
+			
 			$this->output = "
 				<div id='calendario'>
+					
 					{$debug}
+					
 					<header class='plugin-header'>
 						<h2 class='plugin-title'>{$this->plugin_meta['Name']}</h2>
 					</header>
 					
 					<div id='calendario-workspace'>
 						<div id='editorial-calendar' class='rhd-editorial-calendar'></div>
-						<div id='drafts' class='rhd-drafts-area'><h4>Les Drafts</h4></div>
+						<div id='drafts' class='rhd-drafts-area'>
+							<h4>Unscheduled Drafts</h4>
+							
+							<ul class='rhd-drafts-list'></ul>
+						</div>
 					</div>
 				</div>
 				";
@@ -295,4 +352,4 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 	}
 }
 
-$main = new RHD_Calendario();
+$main = new RHD_Calendario_Workspace();

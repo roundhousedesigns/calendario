@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 12:30:18 PM on 07-12-2017
+* RHD Dev: Compiled at 3:58:10 PM on 08-12-2017
 ***/
 
 /*
@@ -37,4 +37,5 @@
   border-radius: 3px;
   border: 1px solid #000;
   height: 800px;
+  padding: 0.5em;
 }
