@@ -31,27 +31,8 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 */
 
 
-/* ==========================================================================
-	Setup
-   ========================================================================== */
-
 // Version control
 define ( 'RHD_CALENDARIO_VERSION', '0.1dev' );
-
-register_activation_hook(__FILE__, 'rhd_cal_plugin_activation');
-if ( !function_exists( 'rhd_cal_plugin_activation' ) ) {
-	function rhd_cal_plugin_activation() {
-		// Set up 
-	}
-
-}
-
-register_deactivation_hook(__FILE__, 'rhd_cal_plugin_deactivation');
-if ( !function_exists( 'rhd_cal_plugin_deactivation' ) ) {
-	function rhd_cal_plugin_deactivation() {
-		// Welp, I've been deactivated - are there some things I should clean up?
-	}
-}
 
 
 /* ==========================================================================
@@ -83,11 +64,30 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 	/**
 	 * RHD_Calendario_Workspace class.
 	 */
-
 	class RHD_Calendario_Workspace implements RHD_Calendario
 	{
+		private static $instance = null;
+		
 		protected $output;
 		protected $plugin_meta;
+		
+		
+		/**
+		 * get_instance function. This either instantiates the class or retrieves the object.
+		 *  This class exists as a single object and cannot be re-instantiated.
+		 * 
+		 * @access public
+		 * @static
+		 * @return void
+		 */
+		static function get_instance() {
+			if ( self::$instance == null ) {
+				self::$instance = new self;
+			}
+			
+			return self::$instance;
+		}
+		
 		
 		/**
 		 * __construct function. Fires on class instantiation.
@@ -95,11 +95,21 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 		 * @access public
 		 * @return void
 		 */
-		public function __construct() {
-			include_once( 'includes/rhd-calendario-api.php' );
+		private function __construct() {
+			include_once( 'includes/calendario-api.php' );
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 			add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
+		}
+		
+		
+		static function plugin_activation() {
+			// On activate
+		}
+		
+		
+		static function plugin_deactivation() {
+			// On deactivate
 		}
 		
 		
@@ -336,7 +346,6 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 		 * @return void
 		 */
 		public function convert_future_to_draft( int $post_id ) {
-			$this->log_error_message( 'hi' );
 			$status = get_post_status( $post_id );
 			
 			// Exit with error for any posts not future in the future
@@ -356,4 +365,12 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 	}
 }
 
-$main = new RHD_Calendario_Workspace();
+
+/* ==========================================================================
+	Fire it up...
+   ========================================================================== */
+
+register_activation_hook( __FILE__, array( 'RHD_Calendario_Workspace', 'plugin_activation' ) );
+register_deactivation_hook( __FILE__, array( 'RHD_Calendario_Workspace', 'plugin_deactivation' ) );
+
+RHD_Calendario_Workspace::get_instance();
