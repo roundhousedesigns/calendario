@@ -8,18 +8,19 @@
  
 (function($) {
 	$(document).ready( function() {
-		
 		$("#editorial-calendar").fullCalendar({
-			
 			events: {
 				url: wpApiSettings.root + 'rhd/v1/cal/future',
 				type: 'GET',
 				cache: false,
 				beforeSend: function( xhr ) {
 					xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+				},
+				error: function( jqXHR ){
+					// DEBUG ONLY
+					console.log( jqXHR.responseJSON.message );
 				}
 			}
-			
 		});
 		
 		// Get all drafts

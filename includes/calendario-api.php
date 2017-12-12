@@ -7,7 +7,6 @@
  * @requires 
  **/
 
-
 if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 	class RHD_Calendario_Server extends WP_REST_Controller {
 		
@@ -30,7 +29,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 				array(
 					'methods'	=> WP_REST_Server::ALLMETHODS,
 					'callback'	=> array( $this, 'load_future_posts' ),
-					//'permission_callback' => array( $this, 'check_user_permissions' )
+					'permission_callback' => array( $this, 'check_user_permissions' )
 				)
 			));
 		}
@@ -116,21 +115,30 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			);
 			$posts = get_posts( $args );
 			
-			$postdata = array();
-			$i = 0;
-			foreach ( $posts as $post ) {
-				$date = new DateTime( $post->post_date );
+			if ( $posts ) {
+				$postdata = array();
+				$i = 0;
+				foreach ( $posts as $post ) {
+					$date = new DateTime( $post->post_date );
+					
+					$postdata[$i] = array(
+						'title'		=> apply_filters( 'the_title', $post->post_title ),
+						'start'		=> $date->format( DateTime::ISO8601 ), // Format date to ISO8601
+					);
+					
+					++$i;
+				}
+				wp_reset_postdata();
 				
-				$postdata[$i] = array(
-					'title'		=> apply_filters( 'the_title', $post->post_title ),
-					'start'		=> $date->format( 'c' ), // Format date to ISO8601
-				);
+				// Set up REST Response
+				$response = new WP_REST_Response( $postdata );
+				$response->header( 'Content-type', 'application/json');
+				$response->set_status( 200 );
 				
-				++$i;
+				return $response;
+			} else {
+				return new WP_Error( 'no_events', __( 'No events to display.', 'rhd' ) );
 			}
-			wp_reset_postdata();
-			
-			return wp_json_encode( $postdata );
 		}
 	}
 }
