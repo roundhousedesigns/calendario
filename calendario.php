@@ -189,7 +189,7 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 		 * @return void
 		 */
 		public function create_plugin_page() {
-			add_submenu_page( 'edit.php', 'Calendario', 'Calendario', 'manage_options', 'rhd-calendario-page', array( $this, 'calendario_page' ) );
+			add_submenu_page( 'edit.php', 'Calendario', 'Calendario', 'manage_options', 'calendario', array( $this, 'calendario_page' ) );
 		}
 		
 		
