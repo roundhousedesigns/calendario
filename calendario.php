@@ -39,35 +39,17 @@ define ( 'RHD_CALENDARIO_VERSION', '0.1dev' );
 	Core
    ========================================================================== */
 
-if( !interface_exists( 'RHD_Calendario' ) ) {
-	interface RHD_Calendario
-	{
-		const RHD_DATE_FORMAT = 'Y-m-d H:i:s';
-		
-		public static function format_post_date( string $date );
-		
-		public function assets();
-		public function create_plugin_page();
-		
-		public function calendario_page();
-		
-		public function calendario_update_post( array $props );
-		
-		public function change_future_date( int $post_id, string $new_date );
-		public function convert_draft_to_future( int $post_id, string $new_date = null );
-		public function convert_future_to_draft( int $post_id );
-	}
-}
-
-if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
+if ( !class_exists( 'RHD_Calendario' ) ) {
 
 	/**
-	 * RHD_Calendario_Workspace class.
+	 * RHD_Calendario class.
 	 */
-	class RHD_Calendario_Workspace implements RHD_Calendario
+	class RHD_Calendario // implements RHD_Calendario
 	{
+		const RHD_DATE_FORMAT = 'Y-m-d H:i:s';
+
 		private static $instance = null;
-		
+
 		protected $output;
 		protected $plugin_meta;
 		
@@ -142,11 +124,10 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 		 *	returns an array: [0] => formatted time, [1] => formatted time (GMT)
 		 * 
 		 * @access public
-		 * @static
 		 * @param string $date
 		 * @return array
 		 */
-		public static function format_post_date( string $date ) {
+		public function format_post_date( string $date ) {
 			$time = new DateTime( $date );
 			$time_gmt = new DateTime( $date );
 			$time_gmt->setTimezone( new DateTimeZone('GMT') );
@@ -173,7 +154,7 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 			
 			wp_register_script( 'moment', plugin_dir_url( __FILE__ ) . 'node_modules/moment/moment.js', array(), '2.19.3' );
 			wp_register_script( 'fullcalendar', plugin_dir_url( __FILE__ ) . 'node_modules/fullcalendar/dist/fullcalendar.js', array( 'jquery', 'moment' ), '3.7.0' );
-			wp_register_script( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'js/calendario-admin.js', array( 'jquery', 'fullcalendar' ), '0.1dev' );
+			wp_register_script( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'js/calendario-admin.js', array( 'jquery', 'jquery-ui-draggable', 'fullcalendar' ), '0.1dev' );
 			
 			wp_localize_script( 'calendario-admin', 'wpApiSettings', array(
 				'root' => esc_url_raw( rest_url() ),
@@ -278,26 +259,24 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 		
 		
 		/**
-		 * change_future_date function.
+		 * change_post_date function.
 		 * 
 		 * @access public
 		 * @param int $post_id
 		 * @param string $new_date
+		 * @param string $post_status
 		 * @return void
 		 */
-		public function change_future_date( int $post_id, string $new_date ) {
-			$status = get_post_status( $post_id );
-			$new_date = $this->format_post_date( $new_date );
+		public function change_post_date( int $post_id, string $new_date, string $post_status ) {
+			// Format the date
+			$new_date = self::format_post_date( $new_date );
 			
-			// Exit if not a future post
-			if ( $status != 'future' )
-				return false;
-			
-			$this->calendario_update_post(
+			self::calendario_update_post(
 				array(
-					'ID'		=> $post_id,
+					'ID'	=> absint( $post_id ),
 					'post_date'	=> $new_date[0],
-					'post_date_gmt' => $new_date[1]
+					'post_date_gmt'	=> $new_date[1],
+					'post_status'	=>  $post_status
 				)
 			);
 		}
@@ -370,7 +349,7 @@ if ( !class_exists( 'RHD_Calendario_Workspace' ) ) {
 	Fire it up...
    ========================================================================== */
 
-register_activation_hook( __FILE__, array( 'RHD_Calendario_Workspace', 'plugin_activation' ) );
-register_deactivation_hook( __FILE__, array( 'RHD_Calendario_Workspace', 'plugin_deactivation' ) );
+register_activation_hook( __FILE__, array( 'RHD_Calendario', 'plugin_activation' ) );
+register_deactivation_hook( __FILE__, array( 'RHD_Calendario', 'plugin_deactivation' ) );
 
-RHD_Calendario_Workspace::get_instance();
+RHD_Calendario::get_instance();

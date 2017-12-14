@@ -17,21 +17,32 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		public function register_routes() {
 			$namespace = $this->my_namespace . $this->my_version;
 			
+			// Drafts - GET
 			register_rest_route( $namespace, '/cal/drafts', array(
 				array(
-					'methods'	=> WP_REST_Server::ALLMETHODS,
+					'methods'	=> WP_REST_Server::READABLE,
 					'callback'	=> array( $this, 'load_draft_list' ),
-					'permission_callback' => array( $this, 'check_user_permissions' )
+					'permission_callback'	=> array( $this, 'check_user_permissions' )
 				)
-			));
+			) );
 			
+			// Future - GET
 			register_rest_route( $namespace, '/cal/future', array(
 				array(
-					'methods'	=> WP_REST_Server::ALLMETHODS,
+					'methods'	=> WP_REST_Server::READABLE,
 					'callback'	=> array( $this, 'load_future_posts' ),
-					'permission_callback' => array( $this, 'check_user_permissions' )
+					'permission_callback'	=> array( $this, 'check_user_permissions' )
 				)
-			));
+			) );
+			
+			// Future - POST
+			register_rest_route( $namespace, '/cal/future', array(
+				array(
+					'methods'	=> WP_REST_Server::EDITABLE,
+					'callback'	=> array( $this, 'update_post_date' ),
+					'permission_callback'	=> array( $this, 'check_user_permissions' )
+				)
+			) );
 		}
 		
 		/**
@@ -71,9 +82,9 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		 */
 		public function load_draft_list( WP_REST_Request $request ) {		
 			$args = array(
-				'post_type' 		=> 'post',
-				'posts_per_page' 	=> -1,
-				'post_status'		=> 'draft'
+				'post_type' 	=> 'post',
+				'posts_per_page'	=> -1,
+				'post_status'	=> 'draft'
 			);
 			
 			$posts = get_posts( $args );
@@ -102,15 +113,15 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			$end = $request->get_param( 'end' );
 			
 			$args = array(
-				'post_type' 		=> 'post',
+				'post_type' 	=> 'post',
 				'posts_per_page' 	=> -1,
-				'post_status'		=> 'future',
-				'date_query'		=> array(
-										array(
-											'after'		=> $start,
-											'before'	=> $end
-										),
-										'inclusive'	=> true
+				'post_status'	=> 'future',
+				'date_query'	=> array(
+									array(
+										'after'		=> $start,
+										'before'	=> $end
+									),
+									'inclusive'	=> true
 				)
 			);
 			$posts = get_posts( $args );
@@ -124,11 +135,12 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					$postdata[$i] = array(
 						'title'		=> apply_filters( 'the_title', $post->post_title ),
 						'start'		=> $date->format( DateTime::ISO8601 ), // Format date to ISO8601
+						'post_id'	=> $post->ID,
+						'post_status'	=> $post->post_status
 					);
 					
 					++$i;
 				}
-				wp_reset_postdata();
 				
 				// Set up REST Response
 				$response = new WP_REST_Response( $postdata );
@@ -139,6 +151,15 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			} else {
 				return new WP_Error( 'no_events', __( 'No events to display.', 'rhd' ) );
 			}
+		 }
+		 
+		 
+		public function update_post_date( WP_REST_Request $request ) {
+			$post_id = $request->get_param( 'postID' );
+			$new_date = $request->get_param( 'newDate' );
+			$post_status = $request->get_param( 'postStatus' );
+			
+			RHD_Calendario::change_post_date( $post_id, $new_date, $post_status );
 		}
 	}
 }

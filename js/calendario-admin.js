@@ -15,11 +15,36 @@
 				cache: false,
 				beforeSend: function( xhr ) {
 					xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-				},
-				error: function( jqXHR ){
-					// DEBUG ONLY
-					console.log( jqXHR.responseJSON.message );
 				}
+			},
+			editable: true,
+			eventDrop: function( event, delta, revertFunc ) {
+				$.ajax( {
+					url: wpApiSettings.root + 'rhd/v1/cal/future',
+					type: 'POST',
+					data : {
+						postID : event.post_id,
+						newDate : event.start.format(),
+						postStatus : event.post_status
+					},
+					beforeSend: function( xhr ) {
+						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+					},
+					success: function() {
+						console.log('success');
+					},
+					error: function(a,b,c) {
+						console.log(a);
+						console.log(b);
+						console.log(c);
+					}
+				} );
+				
+				/*
+				if ( ! confirm( "Are you sure about this change?") ) {
+					revertFunc();
+				}
+				*/
 			}
 		});
 		
