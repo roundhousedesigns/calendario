@@ -60,7 +60,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * 
 		 * @access public
 		 * @static
-		 * @return void
+		 * @return RHD_Calendario
 		 */
 		static function get_instance() {
 			if ( self::$instance == null ) {
@@ -82,6 +82,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 			add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
+			
+			// Post Meta Boxes
+			// TODO: Add support for other post types
+			add_action( 'add_meta_boxes_post', array( $this, 'add_calendario_meta_boxes' ) );
+			add_action( 'save_post', array( $this, 'save_calendario_meta_boxes_data' ) );
 		}
 		
 		
@@ -120,12 +125,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * format_post_date function. Formats a time string into RHD_DATE_FORMAT, and
-		 *	returns an array: [0] => formatted time, [1] => formatted time (GMT)
+		 * format_post_date function. Formats a time string into RHD_DATE_FORMAT.
 		 * 
 		 * @access public
 		 * @param string $date
-		 * @return array
+		 * @return array [0] => formatted time, [1] => formatted time (GMT)
 		 */
 		public function format_post_date( string $date ) {
 			$time = new DateTime( $date );
@@ -175,7 +179,72 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * calendario_page function. The main workspace. Tasty!
+		 * add_calendario_meta_boxes function. Adds meta boxes, man.
+		 * 
+		 * @access public
+		 * @return void
+		 */
+		public function add_calendario_meta_boxes() {
+			add_meta_box( 'calendario_schedule_draft', __( 'Scheduled Drafts', 'rhd' ), array( $this, 'build_schedule_draft_meta_box' ), 'post', 'side', 'high' );
+		}
+		
+		
+		/**
+		 * build_schedule_draft_meta_box function.
+		 * 
+		 * @access public
+		 * @param post $post The post object
+		 * @return void
+		 */
+		public function build_schedule_draft_meta_box( $post ) {
+			wp_nonce_field( basename( __FILE__ ), 'calendario_scheduled_draft_nonce' );
+			
+			$is_scheduled_draft = get_post_meta( $post->ID, '_is_cal_scheduled_draft', true );
+			
+			$output = "
+					<p>Show this post on the Editorial Calendar even if it&apos;s a draft</p>
+					<p>
+						<input type='checkbox' name='calendario-scheduled-draft' value='yes' " . checked( $is_scheduled_draft, 'yes', false ) . " />Schedule Draft<br />
+					</p>
+					";
+			
+			echo $output;
+		}
+		
+		
+		/**
+		 * save_calendario_meta_boxes_data function. Saves or deletes data in Calendario meta boxes.
+		 * 
+		 * @access public
+		 * @param mixed $post_id The post ID
+		 * @return void
+		 */
+		public function save_calendario_meta_boxes_data( $post_id ) {
+			// Verify meta box nonce
+			if ( ! isset( $_POST['calendario_scheduled_draft_nonce'] ) || ! wp_verify_nonce( $_POST['calendario_scheduled_draft_nonce'], basename( __FILE__ ) ) ) {
+				return;
+			}
+			
+			// Check the user's permissions
+			if ( ! current_user_can( 'edit_post', $post_id ) ){
+				return;
+			}
+			
+			if ( isset( $_POST['calendario-scheduled-draft'] ) ){
+				// Sanitize string (because why not)
+				$data = esc_attr( $_POST['calendario-scheduled-draft'] );
+				
+				// Save data
+				update_post_meta( $post_id, '_is_cal_scheduled_draft', $data );
+			} else {
+				// delete data
+				delete_post_meta( $post_id, '_is_cal_scheduled_draft' );
+			}
+		}
+		
+		
+		/**
+		 * calendario_page function. Prints the main workspace. Tasty!
 		 * 
 		 * @access public
 		 * @return void
@@ -226,7 +295,6 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 						<div id='editorial-calendar' class='rhd-editorial-calendar'></div>
 						<div id='drafts' class='rhd-drafts-area'>
 							<h4>Unscheduled Drafts</h4>
-							
 							<ul class='rhd-drafts-list'></ul>
 						</div>
 					</div>
@@ -243,7 +311,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * 
 		 * @access public
 		 * @param array $params
-		 * @return boolean
+		 * @return boolean The true/false result of updating the post.
 		 */
 		public function calendario_update_post( array $props ) {
 			// Update the post
@@ -259,7 +327,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * change_post_date function.
+		 * update_post_date function. Changes a post's post_date and post_date_gmt meta.
 		 * 
 		 * @access public
 		 * @param int $post_id
@@ -267,7 +335,18 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @param string $post_status
 		 * @return void
 		 */
-		public function change_post_date( int $post_id, string $new_date, string $post_status ) {
+		public function update_post_date( int $post_id, string $new_date, string $post_status ) {
+			$post_type = get_post_type( $post_id );
+			
+			// Exit if this post is a draft but isn't marked as a "scheduled draft."
+			if ( $post_type == 'draft' ) {
+				$is_scheduled_draft = get_post_meta( $post_id, '_is_cal_scheduled_draft', true );
+			}
+			
+			// Exit if this is a published post
+			if ( $post_type == 'publish' || $post_type == 'trash' )
+				return;
+				
 			// Format the date
 			$new_date = self::format_post_date( $new_date );
 			
@@ -289,6 +368,8 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @param int $post
 		 * @param string $new_date (default: null)
 		 * @return void
+		 *
+		 * TODO: Deprecate?
 		 */
 		public function convert_draft_to_future( int $post_id, string $new_date = null ) {
 			$status = get_post_status( $post_id );

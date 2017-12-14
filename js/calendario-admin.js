@@ -9,18 +9,30 @@
 (function($) {
 	$(document).ready( function() {
 		$("#editorial-calendar").fullCalendar({
-			events: {
-				url: wpApiSettings.root + 'rhd/v1/cal/future',
-				type: 'GET',
-				cache: false,
-				beforeSend: function( xhr ) {
-					xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-				}
-			},
+			eventSources: [
+				{
+					url: wpApiSettings.root + 'rhd/v1/cal/future',
+					type: 'GET',
+					cache: false,
+					beforeSend: function( xhr ) {
+						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+					},
+					color: 'blue'
+				},
+				{
+					url: wpApiSettings.root + 'rhd/v1/cal/scheduled',
+					type: 'GET',
+					cache: false,
+					beforeSend: function( xhr ) {
+						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+					},
+					color: 'gray'
+				},
+			],
 			editable: true,
 			eventDrop: function( event, delta, revertFunc ) {
 				$.ajax( {
-					url: wpApiSettings.root + 'rhd/v1/cal/future',
+					url: wpApiSettings.root + 'rhd/v1/cal/update',
 					type: 'POST',
 					data : {
 						postID : event.post_id,
@@ -50,14 +62,14 @@
 		
 		// Get all drafts
 		$.ajax( {
-			url: wpApiSettings.root + 'rhd/v1/cal/drafts',
+			url: wpApiSettings.root + 'rhd/v1/cal/unscheduled',
 			method: 'GET',
 			beforeSend: function( xhr ) {
 				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 			},
 			success: function( data ) {
-				var draftsList = $.parseHTML( data );
-				$(".rhd-drafts-list").append( draftsList );
+				var postList = $.parseHTML( data );
+				$(".rhd-drafts-list").append( postList );
 			}
 		} );
 	} );
