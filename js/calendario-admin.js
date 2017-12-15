@@ -17,6 +17,8 @@ var futureColor = 'blue';
 (function($) {
 	$(document).ready( function() {
 		$("#editorial-calendar").fullCalendar({
+			editable: true,
+			droppable: true,
 			eventSources: [
 				{
 					url: wpApiSettings.root + 'rhd/v1/cal/future',
@@ -25,7 +27,7 @@ var futureColor = 'blue';
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 					},
-					color: futureColor
+					color: futureColor,
 				},
 				{
 					url: wpApiSettings.root + 'rhd/v1/cal/drafts',
@@ -34,11 +36,9 @@ var futureColor = 'blue';
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 					},
-					color: draftColor
+					color: draftColor,
 				},
 			],
-			editable: true,
-			droppable: true,
 			eventDrop: function( event, delta, revertFunc ) {
 				$.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
@@ -47,7 +47,7 @@ var futureColor = 'blue';
 						postID: event.post_id,
 						newDate: event.start.format(),
 						postStatus: event.post_status,
-						unscheduled: false
+						makeUnscheduled: false
 					},
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
@@ -73,15 +73,44 @@ var futureColor = 'blue';
 						postID: $this.attr('data-ID'),
 						newDate: date.format(),
 						postStatus: 'draft',
-						unscheduled: true
+						makeUnscheduled: false
 					},
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 						
 						// Remove this from the side list
 						$this.remove();
-					},
+					}
 				});
+			},
+			eventDragStop: function( event, jsEvent, ui, view ) {
+				// If event is dragged off to the Unscheduled Drafts area
+				if( isEventOverDiv( jsEvent.clientX, jsEvent.clientY ) ) {
+					$('#editorial-calendar').fullCalendar( 'removeEvents', event._id );
+					var el = $( "<li class='rhd-draft ui-draggable' data-ID='" + event.post_id + "'>" ).appendTo( '.rhd-drafts-list' ).text( event.title );
+					
+					el.draggable({
+						zIndex: 999,
+						revert: false, 
+						revertDuration: 0 
+					});
+					
+					el.data( 'event', { title: event.title } );
+					
+					// Update the post in the database
+					$.ajax( {
+						url: wpApiSettings.root + 'rhd/v1/cal/update',
+						type: 'POST',
+						data: {
+							postID: event.post_id,
+							postStatus: 'draft',
+							makeUnscheduled: true
+						},
+						beforeSend: function( xhr ) {
+							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+						}
+					} );
+				}
 			}
 		});
 		
@@ -97,7 +126,9 @@ var futureColor = 'blue';
 				$(".rhd-drafts-list").append( postList );
 				
 				// Set up draggable objects
-				$(".rhd-drafts-list .ui-draggable").draggable();
+				$(".rhd-drafts-list .ui-draggable").draggable({
+					// revert: true, // draggable animation
+				});
 				
 				$(".rhd-drafts-list li").each(function(){
 					$(this).data('event',
@@ -109,4 +140,20 @@ var futureColor = 'blue';
 			}
 		} );
 	} );
+	
+	var isEventOverDiv = function(x, y) {
+
+		var external_events = $( '#drafts' );
+		var offset = external_events.offset();
+		offset.right = external_events.width() + offset.left;
+		offset.bottom = external_events.height() + offset.top;
+		
+		// Compare
+		if (x >= offset.left
+			&& y >= offset.top
+			&& x <= offset.right
+			&& y <= offset .bottom) { return true; }
+		return false;	
+	};
+	
 })(jQuery);

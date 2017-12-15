@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 3:58:10 PM on 08-12-2017
+* RHD Dev: Compiled at 12:33:24 PM on 15-12-2017
 ***/
 
 /*
@@ -38,4 +38,8 @@
   border: 1px solid #000;
   height: 800px;
   padding: 0.5em;
+}
+.ui-draggable {
+  cursor: pointer;
+  z-index: 999;
 }

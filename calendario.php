@@ -128,20 +128,24 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * format_post_date function. Formats a time string into RHD_DATE_FORMAT.
 		 * 
 		 * @access public
-		 * @param string $date
-		 * @return array [0] => formatted time, [1] => formatted time (GMT)
+		 * @param string|null $date
+		 * @return array [0] => formatted time, [1] => formatted time (GMT), or array() on null
 		 */
-		public function format_post_date( string $date ) {
-			$time = new DateTime( $date );
-			$time_gmt = new DateTime( $date );
-			$time_gmt->setTimezone( new DateTimeZone('GMT') );
-			
-			$time_formatted = array();
-			
-			$time_formatted[0] = $time->format( self::RHD_DATE_FORMAT );
-			$time_formatted[1] = $time_gmt->format( self::RHD_DATE_FORMAT );
-			
-			return $time_formatted;
+		public function format_post_date( $date ) {
+			if ( $date ) {
+				$time = new DateTime( $date );
+				$time_gmt = new DateTime( $date );
+				$time_gmt->setTimezone( new DateTimeZone('GMT') );
+				
+				$time_formatted = array();
+				
+				$time_formatted[0] = $time->format( self::RHD_DATE_FORMAT );
+				$time_formatted[1] = $time_gmt->format( self::RHD_DATE_FORMAT );
+				
+				return $time_formatted;
+			} else {
+				return array();
+			}
 		}
 		
 		
@@ -284,10 +288,10 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * 
 		 * @access public
 		 * @param array $post The one-to-one post data to update
+		 * @param bool $make_unscheduled True to convert to Unscheduled, false otherwise
 		 * @return bool The result of updating the post
-		 * @param bool $unscheduled True if an Unscheduled Draft, false otherwise
 		 */
-		public function calendario_update_post( array $post, bool $unscheduled ) {
+		public function calendario_update_post( array $post, bool $make_unscheduled ) {
 			// Update the post
 			$result = wp_update_post( $post, true );
 			
@@ -295,9 +299,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				$this->log_error_message( $result );
 				return false;
 			} else {
-				// If this was an 'unscheduled draft' , convert to a 'scheduled draft'
-				if ( $unscheduled ) {
-					$result = delete_post_meta( $result, '_unscheduled', 'yes' );
+				// If we're converting or not...
+				if ( $make_unscheduled === true ) {
+					$result = update_post_meta( $result, '_unscheduled', 'yes' );
+				} else {
+					delete_post_meta( $result, '_unscheduled' );
 				}
 				
 				return true;
@@ -310,20 +316,16 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * 
 		 * @access public
 		 * @param int $post_id The post ID
-		 * @param string $new_date The new post date
+		 * @param string|null $new_date The new post date
 		 * @param string $post_status Current post status
-		 * @param bool $unscheduled (default: false) True if an Unscheduled Draft, false otherwise
+		 * @param mixed $make_unscheduled True to convert to Unscheduled, false otherwise
 		 * @return void
 		 */
-		public function update_post_date( int $post_id, string $new_date, string $post_status, bool $unscheduled = false ) {
+		public function update_post_date( int $post_id, $new_date, string $post_status, bool $make_unscheduled ) {
 			$post_type = get_post_type( $post_id );
+			//$make_unscheduled = ( $make_unscheduled ) ? true : false;
 			
-			// Exit if this post is a draft but isn't marked as a "scheduled draft."
-			if ( $post_type == 'draft' ) {
-				$is_scheduled_draft = get_post_meta( $post_id, '_unscheduled', true );
-			}
-			
-			// Exit if this is a published post
+			// Exit if this is a published or trashed post
 			if ( $post_type == 'publish' || $post_type == 'trash' )
 				return;
 				
@@ -331,13 +333,13 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			$new_date = self::format_post_date( $new_date );
 			
 			$post = array(
-						'ID'			=> absint( $post_id ),
+						'ID'			=> $post_id,
 						'post_date'		=> $new_date[0],
 						'post_date_gmt'	=> $new_date[1],
-						'post_status'	=>  $post_status
+						'post_status'	=> $post_status
 					);
 			
-			self::calendario_update_post( $post, $unscheduled );
+			self::calendario_update_post( $post, $make_unscheduled );
 		}
 		
 		
@@ -348,8 +350,6 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @param int $post
 		 * @param string $new_date (default: null)
 		 * @return void
-		 *
-		 * TODO: Deprecate?
 		 */
 		public function convert_draft_to_future( int $post_id, string $new_date = null ) {
 			$status = get_post_status( $post_id );
@@ -373,7 +373,8 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 					'post_status'	=> 'future',
 					'post_date'		=> $new_date[0],
 					'post_date_gmt'	=> $new_date[1]
-				)
+				),
+				false
 			);
 		}
 		
@@ -401,6 +402,26 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			
 			// Save the old publish date to a meta field
 			update_post_meta( $post_id, '_rhd_cal_future_date', get_the_date( self::RHD_DATE_FORMAT, $post_id ) );
+		}
+		
+		
+		/**
+		 * convert_to_unscheduled_draft function. Converts posts to "Unscheduled Drafts"
+		 * 
+		 * @access public
+		 * @param int $post
+		 * @return void
+		 */
+		public function convert_to_unscheduled_draft( int $post_id ) {
+			$status = get_post_status( $post_id );
+			
+			$this->calendario_update_post(
+				array(
+					'ID'			=> $post_id,
+					'post_status'	=> 'draft',
+					'unscheduled'	=> true		
+				)
+			);
 		}
 	}
 }

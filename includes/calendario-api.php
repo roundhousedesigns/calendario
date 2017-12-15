@@ -253,12 +253,16 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		 */
 		public function update_post_date( WP_REST_Request $request ) {
 			$post_id = $request->get_param( 'postID' );
-			$new_date = $request->get_param( 'newDate' );
+			$new_date = ( $request->get_param( 'newDate' ) ) ? $request->get_param( 'newDate' ) : '';
 			$post_status = $request->get_param( 'postStatus' );
 			
-			$unscheduled = get_post_meta( $post_id, '_unscheduled', true );
+			$make_unscheduled = $request->get_param( 'makeUnscheduled' );
+			$make_unscheduled = ($make_unscheduled === 'true');
 			
-			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status, $unscheduled );
+			if ( $make_unscheduled === true )
+				$post_status = 'draft';
+			
+			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status, $make_unscheduled );
 		}
 	}
 }
