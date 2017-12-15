@@ -77,8 +77,6 @@ var futureColor = 'blue';
 					},
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-					},
-					success: function(){
 						$this.remove();
 					},
 				});
