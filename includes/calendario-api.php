@@ -35,7 +35,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			) );
 			
 			// Populate Calendar - Scheduled Drafts
-			register_rest_route( $namespace, '/cal/scheduled', array(
+			register_rest_route( $namespace, '/cal/drafts', array(
 				array(
 					'methods'	=> WP_REST_Server::READABLE,
 					'callback'	=> array( $this, 'populate_calendar_scheduled_drafts' ),
@@ -96,9 +96,8 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 				'post_status'	=> 'draft',
 				'meta_query'	=> array(
 									array(
-										'key'	=> '_is_cal_scheduled_draft',
+										'key'	=> '_unscheduled',
 										'value'	=> 'yes',
-										'compare'	=> 'NOT'
 									)
 								)
 			);
@@ -107,8 +106,12 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			$output = '';
 			if ( $posts ) {
 				foreach( $posts as $post ) {
-					$output .= '<li class="rhd-draft">' . apply_filters( 'the_title', $post->post_title ) . '</li>';
-				}				
+					$title	= get_the_title( $post );
+					$start	= get_the_date( 'c', $post );
+					$post_id = absint( $post->ID );
+					
+					$output .= "<li class='rhd-draft ui-draggable' data-ID='{$post_id}'>{$title}</li>";
+				}
 			}
 			return $output;
 		}
@@ -150,7 +153,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					
 					$postdata[$i] = array(
 						'title'		=> apply_filters( 'the_title', $post->post_title ),
-						'start'		=> $date->format( DateTime::ISO8601 ), // Format date to ISO8601
+						'start'		=> $date->format( 'c' ), // Format date to ISO8601
 						'post_id'	=> $post->ID,
 						'post_status'	=> $post->post_status
 					);
@@ -197,10 +200,15 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 				
 								),
 				'meta_query'	=> array(
+									'relation'	=> 'OR',
 									array(
-										'key'	=> '_is_cal_scheduled_draft',
+										'key'	=> '_unscheduled',
 										'value'	=> 'yes',
-										'compare'	=> '='
+										'compare'	=> '!='
+									),
+									array(
+										'key'	=> '_unscheduled',
+										'compare'	=> 'NOT EXISTS'
 									)
 								)
 			);
@@ -214,7 +222,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					
 					$postdata[$i] = array(
 						'title'		=> apply_filters( 'the_title', $post->post_title ),
-						'start'		=> $date->format( DateTime::ISO8601 ), // Format date to ISO8601
+						'start'		=> $date->format( 'c' ), // Format date to ISO8601
 						'post_id'	=> $post->ID,
 						'post_status'	=> $post->post_status
 					);
@@ -248,7 +256,9 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			$new_date = $request->get_param( 'newDate' );
 			$post_status = $request->get_param( 'postStatus' );
 			
-			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status );
+			$unscheduled = get_post_meta( $post_id, '_unscheduled', true );
+			
+			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status, $unscheduled );
 		}
 	}
 }
