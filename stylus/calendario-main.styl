@@ -1,0 +1,70 @@
+/*
+ * Main Stylesheet
+ * 
+ * Calendario
+ * by Nick Gaswirth
+ * https://roundhouse-designs.com
+*/
+
+/* ==========================================================================
+	Includes
+   ========================================================================== */
+
+@require "partials/_global.styl"
+
+#calendario
+	margin-right $spacer
+	-ff-body()
+	position relative
+	
+	.plugin-title
+		font-size 2em
+		-ff-headline()
+	
+
+#calendario-workspace
+	width 100%
+	position relative
+	
+	.rhd-editorial-calendar
+		width 80%
+		float left
+		
+		.fc-header-toolbar
+			.fc-center
+				font-size 2em
+		
+		.fc-time
+			display none
+	
+	.rhd-drafts-area
+		width 18%
+		float right
+		border-radius 3px
+		border 1px solid black
+		height 800px
+		padding $halfspacer
+	
+	.fc-event
+		color white
+		border 3px
+		border-radius 3px
+		font-size 1em
+		padding 0.15em
+	
+	.rest-pending
+		background red
+	
+	.status-draft
+		background gray
+	
+	.status-publish
+		background black
+	
+	.status-future
+		background blue
+		
+
+.ui-draggable
+	cursor pointer
+	z-index 999
