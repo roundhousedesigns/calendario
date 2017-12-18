@@ -12,13 +12,26 @@
 
 var draftColor = 'gray';
 var futureColor = 'blue';
+var publishedColor = 'black';
 
 
 (function($) {
 	$(document).ready( function() {
 		$("#editorial-calendar").fullCalendar({
+			header: {
+				'left': 'today',
+				'center': 'title',
+				'right': 'prev,next'
+			},
+			customButtons: {
+				newPostButton: 'New Post',
+				click: function() {
+					alert('this will create a new post. but not today, son.');
+				}
+			},
 			editable: true,
 			droppable: true,
+			dragRevertDuration: 0,
 			eventSources: [
 				{
 					url: wpApiSettings.root + 'rhd/v1/cal/future',
@@ -30,6 +43,16 @@ var futureColor = 'blue';
 					color: futureColor,
 				},
 				{
+					url: wpApiSettings.root + 'rhd/v1/cal/published',
+					type: 'GET',
+					cache: false,
+					beforeSend: function( xhr ) {
+						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+					},
+					color: publishedColor,
+					startEditable: false
+				},
+				{
 					url: wpApiSettings.root + 'rhd/v1/cal/drafts',
 					type: 'GET',
 					cache: false,
@@ -39,15 +62,15 @@ var futureColor = 'blue';
 					color: draftColor,
 				},
 			],
+			// Moving events around the calendar
 			eventDrop: function( event, delta, revertFunc ) {
 				$.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
 					type: 'POST',
 					data: {
-						postID: event.post_id,
-						newDate: event.start.format(),
-						postStatus: event.post_status,
-						makeUnscheduled: false
+						post_id: event.post_id,
+						new_date: event.start.format(),
+						post_status: event.post_status
 					},
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
@@ -60,7 +83,8 @@ var futureColor = 'blue';
 				}
 				*/
 			},
-			drop: function( date ) { // Dropped from an external source (in this case, Unscheduled Drafts)
+			// Dropped from an external source (in this case, Unscheduled Drafts)
+			drop: function( date ) {
 				// Set the date to wherever the dragged post was dropped
 				var $this = $(this);
 				$this.data('start', date.format());
@@ -70,53 +94,64 @@ var futureColor = 'blue';
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
 					type: 'POST',
 					data: {
-						postID: $this.attr('data-ID'),
-						newDate: date.format(),
-						postStatus: 'draft',
-						makeUnscheduled: false
+						post_id: parseInt( $this.attr('data-id') ),
+						new_date: date.format(),
+						post_status: 'draft',
 					},
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+						
+						console.log(parseInt($this.attr('data-id')));
 						
 						// Remove this from the side list
 						$this.remove();
 					}
 				});
 			},
+			// Used for moving events OFF the calendar
 			eventDragStop: function( event, jsEvent, ui, view ) {
 				// If event is dragged off to the Unscheduled Drafts area
 				if( isEventOverDiv( jsEvent.clientX, jsEvent.clientY ) ) {
+					console.log(event.post_id);
+					
 					$('#editorial-calendar').fullCalendar( 'removeEvents', event._id );
-					var el = $( "<li class='rhd-draft ui-draggable' data-ID='" + event.post_id + "'>" ).appendTo( '.rhd-drafts-list' ).text( event.title );
+					var el = $( "<li class='rhd-draft status-draft fc-event' data-id='" + event.post_id + "'>" ).appendTo( '.rhd-drafts-list' ).text( event.title );
 					
 					el.draggable({
-						zIndex: 999,
-						revert: false, 
-						revertDuration: 0 
+						revert: true,
+						revertDuration: 0
 					});
 					
-					el.data( 'event', { title: event.title } );
+					el.data( 'event', {
+						title: event.title,
+						post_id: event.post_id
+					} );
 					
 					// Update the post in the database
 					$.ajax( {
-						url: wpApiSettings.root + 'rhd/v1/cal/update',
+						url: wpApiSettings.root + 'rhd/v1/cal/unschedule',
 						type: 'POST',
 						data: {
-							postID: event.post_id,
-							postStatus: 'draft',
-							makeUnscheduled: true
+							post_id: event.post_id,
+							new_date: event.start.format() // Send the existing date to stop the date reverting to 'right exactly now'
 						},
 						beforeSend: function( xhr ) {
 							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 						}
 					} );
 				}
+			},
+			eventRender: function( event, element ) {
+				// If this post doesn't have a `status-*` class, it's a draft, and we should by default add the `status-draft` class.
+				if( event.className ){
+					element.addClass( event.className );
+				}
 			}
 		});
 		
 		// Get all drafts
 		$.ajax( {
-			url: wpApiSettings.root + 'rhd/v1/cal/unscheduled',
+			url: wpApiSettings.root + 'rhd/v1/cal/all-unscheduled',
 			method: 'GET',
 			beforeSend: function( xhr ) {
 				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
@@ -126,15 +161,17 @@ var futureColor = 'blue';
 				$(".rhd-drafts-list").append( postList );
 				
 				// Set up draggable objects
-				$(".rhd-drafts-list .ui-draggable").draggable({
-					// revert: true, // draggable animation
+				$(".fc-event").draggable({
+					revert: true,
+					revertDuration: 0
 				});
 				
 				$(".rhd-drafts-list li").each(function(){
 					$(this).data('event',
 						{
 							title: $(this).text(),
-							color: draftColor
+							color: draftColor,
+							className: 'status-draft'
 						});
 				});
 			}

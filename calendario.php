@@ -49,9 +49,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		const RHD_DATE_FORMAT = 'Y-m-d H:i:s';
 
 		private static $instance = null;
-
-		protected $output;
-		protected $plugin_meta;
+		private $plugin_meta;
 		
 		
 		/**
@@ -139,13 +137,35 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				
 				$time_formatted = array();
 				
-				$time_formatted[0] = $time->format( self::RHD_DATE_FORMAT );
-				$time_formatted[1] = $time_gmt->format( self::RHD_DATE_FORMAT );
-				
-				return $time_formatted;
+				return array(
+					$time->format( self::RHD_DATE_FORMAT ),
+					$time_gmt->format( self::RHD_DATE_FORMAT )
+				);
 			} else {
 				return array();
 			}
+		}
+		
+		
+		/**
+		 * get_draft_post_date function. Gets the actual post_date value directly from the database to circumvent
+		 *	WP default behavior, which sometimes shows today's date instead of draft's associated post_date.
+		 * 
+		 * @access public
+		 * @param WP_Post $post The post object
+		 * @return string The post_date value
+		 */
+		public function get_draft_post_date( WP_Post $post ) {			
+			// Exit if we're not dealing with a draft.
+			if ( get_post_status( $post ) != 'draft' )
+				return;
+			
+			global $wpdb;
+			
+			$post_id = $post->ID;
+			$date_array = $wpdb->get_results( 'SELECT post_date FROM ' . $wpdb->prefix . 'posts WHERE ID = ' . $post_id );
+			
+			return $date_array[0]->post_date;
 		}
 		
 		
@@ -205,13 +225,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			
 			$is_scheduled_draft = get_post_meta( $post->ID, '_unscheduled', true );
 			
-			$output = "
-					<p>
-						<input type='checkbox' name='calendario-scheduled-draft' value='yes' " . checked( $is_scheduled_draft, 'yes', false ) . " /><label for='calendario-scheduled-draft'>Keep this post off the calendar.</label><br />
-					</p>
-					";
-			
-			echo $output;
+			echo "
+				<p>
+					<input type='checkbox' name='calendario-scheduled-draft' value='yes' " . checked( $is_scheduled_draft, 'yes', false ) . " /><label for='calendario-scheduled-draft'>Keep this post off the calendar.</label><br />
+				</p>
+				";
 		}
 		
 		
@@ -258,11 +276,8 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_enqueue_style( 'calendario-admin' );
 			wp_enqueue_script( 'calendario-admin' );
 			
-			$this->output = "
+				echo "
 				<div id='calendario'>
-					
-					{$debug}
-					
 					<header class='plugin-header'>
 						<h2 class='plugin-title'>{$this->plugin_meta['Name']}</h2>
 					</header>
@@ -276,9 +291,6 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 					</div>
 				</div>
 				";
-			
-			// Print the page!
-			echo $this->output;
 		}
 		
 		
@@ -288,15 +300,15 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * 
 		 * @access public
 		 * @param array $post The one-to-one post data to update
-		 * @param bool $make_unscheduled True to convert to Unscheduled, false otherwise
-		 * @return bool The result of updating the post
+		 * @param bool $make_unscheduled (default: null) True to convert to Unscheduled, false otherwise
+		 * @return bool|string The post_status of the post, or false on error.
 		 */
-		public function calendario_update_post( array $post, bool $make_unscheduled ) {
+		public function calendario_update_post( array $post, bool $make_unscheduled = null ) {
 			// Update the post
 			$result = wp_update_post( $post, true );
 			
 			if ( is_wp_error( $result ) ) {
-				$this->log_error_message( $result );
+				self::log_error_message( $result );
 				return false;
 			} else {
 				// If we're converting or not...
@@ -306,7 +318,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 					delete_post_meta( $result, '_unscheduled' );
 				}
 				
-				return true;
+				return ( $post['post_status'] ) ? $post['post_status'] : get_post_status( $post['ID'] );
 			}
 		}
 		
@@ -316,14 +328,12 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * 
 		 * @access public
 		 * @param int $post_id The post ID
-		 * @param string|null $new_date The new post date
+		 * @param string $new_date The new post date
 		 * @param string $post_status Current post status
-		 * @param mixed $make_unscheduled True to convert to Unscheduled, false otherwise
 		 * @return void
 		 */
-		public function update_post_date( int $post_id, $new_date, string $post_status, bool $make_unscheduled ) {
+		public function update_post_date( int $post_id, string $new_date, string $post_status ) {
 			$post_type = get_post_type( $post_id );
-			//$make_unscheduled = ( $make_unscheduled ) ? true : false;
 			
 			// Exit if this is a published or trashed post
 			if ( $post_type == 'publish' || $post_type == 'trash' )
@@ -339,7 +349,29 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 						'post_status'	=> $post_status
 					);
 			
-			self::calendario_update_post( $post, $make_unscheduled );
+			self::calendario_update_post( $post, false );
+		}
+		
+		
+		/**
+		 * unschedule_draft function.
+		 * 
+		 * @access public
+		 * @param int $post_id
+		 * @param string $date The post_date value
+		 * @return void
+		 */
+		public function unschedule_draft( int $post_id, string $date ) {
+			$date_formatted = self::format_post_date( $date );
+			
+			$post = array(
+				'ID'			=> $post_id,
+				'post_date'		=> $date_formatted[0],
+				'post_date_gmt'	=> $date_formatted[1],
+				'post_status'	=> 'draft'
+			);
+			
+			self::calendario_update_post( $post, true );
 		}
 		
 		
@@ -350,6 +382,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @param int $post
 		 * @param string $new_date (default: null)
 		 * @return void
+		 * TODO: Deprecate
 		 */
 		public function convert_draft_to_future( int $post_id, string $new_date = null ) {
 			$status = get_post_status( $post_id );
@@ -385,6 +418,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @access public
 		 * @param int $post
 		 * @return void
+		 * TODO: Deprecate
 		 */
 		public function convert_future_to_draft( int $post_id ) {
 			$status = get_post_status( $post_id );
@@ -411,6 +445,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @access public
 		 * @param int $post
 		 * @return void
+		 * TODO: Deprecate
 		 */
 		public function convert_to_unscheduled_draft( int $post_id ) {
 			$status = get_post_status( $post_id );
@@ -418,8 +453,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			$this->calendario_update_post(
 				array(
 					'ID'			=> $post_id,
-					'post_status'	=> 'draft',
-					'unscheduled'	=> true		
+					'post_status'	=> 'draft'
 				)
 			);
 		}

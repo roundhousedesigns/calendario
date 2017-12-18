@@ -1,4 +1,4 @@
-<?php
+ <?php
 /**
  * Calendario REST Endpoints
  *
@@ -17,7 +17,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			$namespace = $this->my_namespace . $this->my_version;
 			
 			// Get All Unscheduled Drafts
-			register_rest_route( $namespace, '/cal/unscheduled', array(
+			register_rest_route( $namespace, '/cal/all-unscheduled', array(
 				array(
 					'methods'	=> WP_REST_Server::READABLE,
 					'callback'	=> array( $this, 'get_unscheduled_draft_list' ),
@@ -43,11 +43,29 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 				)
 			) );
 			
+			// Populate Calendar - Published
+			register_rest_route( $namespace, '/cal/published', array(
+				array(
+					'methods'	=> WP_REST_Server::READABLE,
+					'callback'	=> array( $this, 'populate_calendar_published' ),
+					'permission_callback'	=> array( $this, 'check_user_permissions' )
+				)
+			) );
+			
 			// Update Post
 			register_rest_route( $namespace, '/cal/update', array(
 				array(
 					'methods'	=> WP_REST_Server::EDITABLE,
 					'callback'	=> array( $this, 'update_post_date' ),
+					'permission_callback'	=> array( $this, 'check_user_permissions' )
+				)
+			) );
+			
+			// Make "Unscheduled Draft"
+			register_rest_route( $namespace, '/cal/unschedule', array(
+				array(
+					'methods'	=> WP_REST_Server::EDITABLE,
+					'callback'	=> array( $this, 'unschedule_draft' ),
 					'permission_callback'	=> array( $this, 'check_user_permissions' )
 				)
 			) );
@@ -110,7 +128,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					$start	= get_the_date( 'c', $post );
 					$post_id = absint( $post->ID );
 					
-					$output .= "<li class='rhd-draft ui-draggable' data-ID='{$post_id}'>{$title}</li>";
+					$output .= "<li class='rhd-draft status-draft fc-event ui-draggable' data-id='{$post_id}'>{$title}</li>";
 				}
 			}
 			return $output;
@@ -134,7 +152,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			$args = array(
 				'post_type' 	=> 'post',
 				'posts_per_page' 	=> -1,
-				'post_status'	=> array( 'future' ),
+				'post_status'	=> 'future',
 				'date_query'	=> array(
 									array(
 										'after'		=> $start,
@@ -155,7 +173,8 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 						'title'		=> apply_filters( 'the_title', $post->post_title ),
 						'start'		=> $date->format( 'c' ), // Format date to ISO8601
 						'post_id'	=> $post->ID,
-						'post_status'	=> $post->post_status
+						'post_status'	=> $post->post_status,
+						'className'	=> "status-{$post->post_status}"
 					);
 					
 					++$i;
@@ -174,7 +193,64 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		 
 		 
 		 /**
-		 * populate_calendar_scheduled_drafts function. Loads "scheduled drafts" and returns JSON data for a Fullcalendar event feed.
+		 * populate_calendar_published function. Loads published posts and returns JSON data for a Fullcalendar event feed.
+		 * 
+		 * @access public
+		 * @param WP_REST_Request $request
+		 * @return WP_REST_Response
+		 *
+		 * TODO: Maybe allow for more post types in the future?
+		 */
+		public function populate_calendar_published( WP_REST_Request $request ) {			
+			// Get params
+			$start = $request->get_param( 'start' );
+			$end = $request->get_param( 'end' );
+			
+			$args = array(
+				'post_type' 	=> 'post',
+				'posts_per_page' 	=> -1,
+				'post_status'	=> 'publish',
+				'date_query'	=> array(
+									array(
+										'after'		=> $start,
+										'before'	=> $end
+									),
+									'inclusive'	=> true,
+				)
+			);
+			$posts = get_posts( $args );
+			
+			if ( $posts ) {
+				$postdata = array();
+				$i = 0;
+				foreach ( $posts as $post ) {
+					$date = new DateTime( $post->post_date );
+					
+					$postdata[$i] = array(
+						'title'		=> apply_filters( 'the_title', $post->post_title ),
+						'start'		=> $date->format( 'c' ), // Format date to ISO8601
+						'post_id'	=> $post->ID,
+						'post_status'	=> $post->post_status,
+						'className'	=> "status-{$post->post_status}"
+					);
+					
+					++$i;
+				}
+				
+				// Set up REST Response
+				$response = new WP_REST_Response( $postdata );
+				$response->header( 'Content-type', 'application/json');
+				$response->set_status( 200 );
+				
+				return $response;
+			} else {
+				return new WP_Error( 'no_events', __( 'No events to display.', 'rhd' ) );
+			}
+		 }
+		 
+		 
+		 /**
+		 * populate_calendar_scheduled_drafts function. Endpoint for loading "scheduled drafts" and returns JSON data for a Fullcalendar event feed.
 		 * 
 		 * @access public
 		 * @param WP_REST_Request $request
@@ -190,7 +266,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			$args = array(
 				'post_type' 	=> 'post',
 				'posts_per_page' 	=> -1,
-				'post_status'	=> array( 'draft' ),
+				'post_status'	=> 'draft',
 				'date_query'	=> array(
 									array(
 										'after'		=> $start,
@@ -218,13 +294,17 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 				$postdata = array();
 				$i = 0;
 				foreach ( $posts as $post ) {
-					$date = new DateTime( $post->post_date );
+					
+					// Normal $post->post_date won't work with drafts! Must query db.
+					$date = new DateTime( $post->post_date ); // <---- (Sadness)
+					//$otherdate = RHD_Calendario::get_draft_post_date( $post );
 					
 					$postdata[$i] = array(
 						'title'		=> apply_filters( 'the_title', $post->post_title ),
 						'start'		=> $date->format( 'c' ), // Format date to ISO8601
 						'post_id'	=> $post->ID,
-						'post_status'	=> $post->post_status
+						'post_status'	=> $post->post_status,
+						'className'	=> "status-{$post->post_status}"
 					);
 					
 					++$i;
@@ -243,7 +323,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		 
 		 
 		/**
-		 * update_post_date function. 
+		 * update_post_date function. Endpoint for updating post dates.
 		 * 
 		 * @access public
 		 * @param WP_REST_Request $request
@@ -252,17 +332,26 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		 * TODO: Make sure not trying to change date to today's or prior date (i.e. already published)
 		 */
 		public function update_post_date( WP_REST_Request $request ) {
-			$post_id = $request->get_param( 'postID' );
-			$new_date = ( $request->get_param( 'newDate' ) ) ? $request->get_param( 'newDate' ) : '';
-			$post_status = $request->get_param( 'postStatus' );
+			$post_id = $request->get_param( 'post_id' );
+			$new_date = ( $request->get_param( 'new_date' ) ) ? $request->get_param( 'new_date' ) : '';
+			$post_status = ( $request->get_param( 'post_status' ) ) ? $request->get_param( 'post_status' ) : '';
 			
-			$make_unscheduled = $request->get_param( 'makeUnscheduled' );
-			$make_unscheduled = ($make_unscheduled === 'true');
-			
-			if ( $make_unscheduled === true )
-				$post_status = 'draft';
-			
-			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status, $make_unscheduled );
+			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status );
+		}
+		
+		
+		/**
+		 * unschedule_draft function. Endpoint for marking a post as an 'Unscheduled Draft.'
+		 * 
+		 * @access public
+		 * @param WP_Rest_Request $request
+		 * @return void
+		 */
+		public function unschedule_draft( WP_Rest_Request $request ) {
+			$post_id = $request->get_param( 'post_id' );
+			$date = ( $request->get_param( 'new_date' ) ) ? $request->get_param( 'new_date' ) : '';
+						
+			RHD_Calendario::unschedule_draft( $post_id, $date );
 		}
 	}
 }

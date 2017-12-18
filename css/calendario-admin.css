@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 12:33:24 PM on 15-12-2017
+* RHD Dev: Compiled at 5:19:24 PM on 18-12-2017
 ***/
 
 /*
@@ -31,6 +31,12 @@
   width: 80%;
   float: left;
 }
+#calendario-workspace .rhd-editorial-calendar .fc-header-toolbar .fc-center {
+  font-size: 2em;
+}
+#calendario-workspace .rhd-editorial-calendar .fc-time {
+  display: none;
+}
 #calendario-workspace .rhd-drafts-area {
   width: 18%;
   float: right;
@@ -38,6 +44,22 @@
   border: 1px solid #000;
   height: 800px;
   padding: 0.5em;
+}
+#calendario-workspace .fc-event {
+  color: #fff;
+  border: 3px;
+  border-radius: 3px;
+  font-size: 1em;
+  padding: 0.15em;
+}
+#calendario-workspace .status-draft {
+  background: #808080;
+}
+#calendario-workspace .status-publish {
+  background: #000;
+}
+#calendario-workspace .status-future {
+  background: #00f;
 }
 .ui-draggable {
   cursor: pointer;
