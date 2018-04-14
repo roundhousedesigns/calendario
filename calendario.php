@@ -76,7 +76,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @return void
 		 */
 		private function __construct() {
-			include_once( 'includes/calendario-api.php' );
+			include_once( 'lib/calendario-api.php' );
 			
 			add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 			add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
@@ -135,12 +135,15 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				$time_gmt = new DateTime( $date );
 				$time_gmt->setTimezone( new DateTimeZone('GMT') );
 				
-				$time_formatted = array();
-				
-				return array(
+				$time_formatted = array(
 					$time->format( self::RHD_DATE_FORMAT ),
 					$time_gmt->format( self::RHD_DATE_FORMAT )
 				);
+				
+				// DEBUG
+				self::log_error_message( $time_formatted );
+				
+				return $time_formatted;
 			} else {
 				return array();
 			}
@@ -165,6 +168,9 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			$post_id = $post->ID;
 			$date_array = $wpdb->get_results( 'SELECT post_date FROM ' . $wpdb->prefix . 'posts WHERE ID = ' . $post_id );
 			
+			// DEBUG
+			self::log_error_message( "\$date_array: {$date_array}" );
+			
 			return $date_array[0]->post_date;
 		}
 		
@@ -182,7 +188,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			
 			wp_register_script( 'moment', plugin_dir_url( __FILE__ ) . 'node_modules/moment/moment.js', array(), '2.19.3' );
 			wp_register_script( 'fullcalendar', plugin_dir_url( __FILE__ ) . 'node_modules/fullcalendar/dist/fullcalendar.js', array( 'jquery', 'moment' ), '3.7.0' );
-			wp_register_script( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'js/calendario-admin.js', array( 'jquery', 'jquery-ui-draggable', 'fullcalendar' ), '0.1dev' );
+			wp_register_script( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'js/calendario-main.js', array( 'jquery', 'jquery-ui-draggable', 'fullcalendar' ), '0.1dev' );
 			
 			wp_localize_script( 'calendario-admin', 'wpApiSettings', array(
 				'root' => esc_url_raw( rest_url() ),
@@ -303,23 +309,53 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @param bool $make_unscheduled (default: null) True to convert to Unscheduled, false otherwise
 		 * @return bool|string The post_status of the post, or false on error.
 		 */
-		public function calendario_update_post( array $post, bool $make_unscheduled = null ) {
+		public function calendario_update_post( array $post ) {
 			// Update the post
 			$result = wp_update_post( $post, true );
 			
 			if ( is_wp_error( $result ) ) {
 				self::log_error_message( $result );
 				return false;
-			} else {
-				// If we're converting or not...
-				if ( $make_unscheduled === true ) {
-					$result = update_post_meta( $result, '_unscheduled', 'yes' );
-				} else {
-					delete_post_meta( $result, '_unscheduled' );
-				}
-				
+			} else {				
+				//DEBUG
+				self::log_error_message( $result );
+
 				return ( $post['post_status'] ) ? $post['post_status'] : get_post_status( $post['ID'] );
 			}
+		}
+		
+		
+		/**
+		 * calendario_make_unscheduled function. Adds the '_unscheduled' meta_key to the post.
+		 * 
+		 * @access public
+		 * @param int $post_id The post ID
+		 * @return void
+		 */
+		public function calendario_make_unscheduled( int $post_id ) {
+			$result = update_post_meta( $post_id, '_unscheduled', 'yes' );
+			
+			// DEBUG
+			self::log_error_message( "Unscheduled: $result" );
+			
+			return $result;
+		}
+		
+		
+		/**
+		 * calendario_make_scheduled function. Deletes the '_unscheduled' meta_key from the post.
+		 * 
+		 * @access public
+		 * @param int $post_id The post ID
+		 * @return void
+		 */
+		public function calendario_make_scheduled( int $post_id ) {
+			$result = delete_post_meta( $post_id, '_unscheduled' );
+			
+			// DEBUG
+			self::log_error_message( "Scheduled: $result" );
+			
+			return $result;
 		}
 		
 		
@@ -343,13 +379,16 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			$new_date = self::format_post_date( $new_date );
 			
 			$post = array(
-						'ID'			=> $post_id,
-						'post_date'		=> $new_date[0],
-						'post_date_gmt'	=> $new_date[1],
-						'post_status'	=> $post_status
-					);
+				'ID'			=> $post_id,
+				'post_date'		=> $new_date[0],
+				'post_date_gmt'	=> $new_date[1],
+				'post_status'	=> $post_status
+			);
 			
-			self::calendario_update_post( $post, false );
+			self::calendario_update_post( $post );
+			
+			// Make sure this isn't an "unscheduled" draft... (?)
+			self::calendario_make_scheduled( $post['ID'] );
 		}
 		
 		
@@ -371,91 +410,8 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				'post_status'	=> 'draft'
 			);
 			
-			self::calendario_update_post( $post, true );
-		}
-		
-		
-		/**
-		 * convert_draft_to_future function. Converts drafts to future posts, and adds post date.
-		 * 
-		 * @access public
-		 * @param int $post
-		 * @param string $new_date (default: null)
-		 * @return void
-		 * TODO: Deprecate
-		 */
-		public function convert_draft_to_future( int $post_id, string $new_date = null ) {
-			$status = get_post_status( $post_id );
-			$saved_date = get_post_meta( $post_id, '_rhd_cal_future_date', true );
-			
-			if ( $new_date ) {
-				$new_date = $this->format_post_date( $new_date );
-			} elseif ( $saved_date ) {
-				$new_date = $this->format_post_date( $saved_date );
-			} else {
-				$new_date = array( null, null );
-			}
-			
-			// Exit if not a draft
-			if ( $status != 'draft' )
-				return false;
-			
-			$this->calendario_update_post(
-				array(
-					'ID'			=> $post_id,
-					'post_status'	=> 'future',
-					'post_date'		=> $new_date[0],
-					'post_date_gmt'	=> $new_date[1]
-				),
-				false
-			);
-		}
-		
-		
-		/**
-		 * convert_future_to_draft function. Converts future posts to drafts
-		 * 
-		 * @access public
-		 * @param int $post
-		 * @return void
-		 * TODO: Deprecate
-		 */
-		public function convert_future_to_draft( int $post_id ) {
-			$status = get_post_status( $post_id );
-			
-			// Exit with error for any posts not future in the future
-			if ( $status != 'future' )
-				return false;
-			
-			$this->calendario_update_post(
-				array(
-					'ID'			=> $post_id,
-					'post_status'	=> 'draft',
-				)
-			);
-			
-			// Save the old publish date to a meta field
-			update_post_meta( $post_id, '_rhd_cal_future_date', get_the_date( self::RHD_DATE_FORMAT, $post_id ) );
-		}
-		
-		
-		/**
-		 * convert_to_unscheduled_draft function. Converts posts to "Unscheduled Drafts"
-		 * 
-		 * @access public
-		 * @param int $post
-		 * @return void
-		 * TODO: Deprecate
-		 */
-		public function convert_to_unscheduled_draft( int $post_id ) {
-			$status = get_post_status( $post_id );
-			
-			$this->calendario_update_post(
-				array(
-					'ID'			=> $post_id,
-					'post_status'	=> 'draft'
-				)
-			);
+			self::calendario_update_post( $post );
+			self::calendario_make_unscheduled( $post['ID'] );
 		}
 	}
 }

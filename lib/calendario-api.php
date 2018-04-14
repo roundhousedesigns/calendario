@@ -1,4 +1,4 @@
- <?php
+<?php
 /**
  * Calendario REST Endpoints
  *
@@ -337,6 +337,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			$post_status = ( $request->get_param( 'post_status' ) ) ? $request->get_param( 'post_status' ) : '';
 			
 			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status );
+			error_log("\$post_id: {$post_id}");
 		}
 		
 		
