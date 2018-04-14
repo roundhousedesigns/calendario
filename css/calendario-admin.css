@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 5:19:24 PM on 18-12-2017
+* RHD Dev: Compiled at 5:17:05 PM on 14-04-2018
 ***/
 
 /*
@@ -44,6 +44,15 @@
   border: 1px solid #000;
   height: 800px;
   padding: 0.5em;
+  -webkit-opacity: 0.5;
+  -moz-opacity: 0.5;
+  opacity: 0.5;
+  transition: all 0.25s ease;
+}
+#calendario-workspace .rhd-drafts-area.events-load-complete {
+  -webkit-opacity: 1;
+  -moz-opacity: 1;
+  opacity: 1;
 }
 #calendario-workspace .fc-event {
   color: #fff;

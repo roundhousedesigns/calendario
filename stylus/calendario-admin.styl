@@ -44,6 +44,11 @@
 		border 1px solid black
 		height 800px
 		padding $halfspacer
+		-opacity(0.5)
+		transition all 0.25s ease
+		
+		&.events-load-complete
+			-opacity(1)
 	
 	.fc-event
 		color white

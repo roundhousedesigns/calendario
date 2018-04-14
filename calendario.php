@@ -141,7 +141,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				);
 				
 				// DEBUG
-				self::log_error_message( $time_formatted );
+				// self::log_error_message( $time_formatted );
 				
 				return $time_formatted;
 			} else {
@@ -169,7 +169,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			$date_array = $wpdb->get_results( 'SELECT post_date FROM ' . $wpdb->prefix . 'posts WHERE ID = ' . $post_id );
 			
 			// DEBUG
-			self::log_error_message( "\$date_array: {$date_array}" );
+			// self::log_error_message( "\$date_array: {$date_array}" );
 			
 			return $date_array[0]->post_date;
 		}
@@ -182,13 +182,20 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @return void
 		 */
 		public function assets() {
-			wp_register_style( 'google-fonts', '//fonts.googleapis.com/css?family=Josefin+Slab:600|Oswald:400,600' );
-			wp_register_style( 'fullcalendar', plugin_dir_url( __FILE__ ) . 'node_modules/fullcalendar/dist/fullcalendar.css' );
-			wp_register_style( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'css/calendario-admin.css', array( 'google-fonts' ) );
+			// CSS
+			wp_enqueue_style( 'google-fonts', '//fonts.googleapis.com/css?family=Josefin+Slab:600|Oswald:400,600' );
+			wp_enqueue_style( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.css', __FILE__ ) );
+			wp_enqueue_style( 'calendario-admin', plugins_url( 'css/calendario-admin.css', __FILE__ ) );
 			
-			wp_register_script( 'moment', plugin_dir_url( __FILE__ ) . 'node_modules/moment/moment.js', array(), '2.19.3' );
-			wp_register_script( 'fullcalendar', plugin_dir_url( __FILE__ ) . 'node_modules/fullcalendar/dist/fullcalendar.js', array( 'jquery', 'moment' ), '3.7.0' );
-			wp_register_script( 'calendario-admin', plugin_dir_url( __FILE__ ) . 'js/calendario-main.js', array( 'jquery', 'jquery-ui-draggable', 'fullcalendar' ), '0.1dev' );
+			// JS
+			wp_register_script( 'jquery-rhd', plugins_url( 'node_modules/jquery/dist/jquery.min.js', __FILE__ ), array(), '3.3.1', true );
+			wp_register_script( 'moment', plugins_url( 'node_modules/moment/moment.js', __FILE__ ), array(), '2.19.3', true );
+			wp_register_script( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.js', __FILE__ ), array( 'jquery-rhd', 'moment' ), '3.7.0', true );
+			
+			wp_enqueue_script( 'calendario-admin', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable', 'moment', 'fullcalendar' ), '0.1dev', true );
+			
+			// noConflict mode for custom jQuery
+			wp_add_inline_script( 'jquery-rhd', 'var jQueryRHD = jQuery.noConflict(true);', 'after' );
 			
 			wp_localize_script( 'calendario-admin', 'wpApiSettings', array(
 				'root' => esc_url_raw( rest_url() ),
@@ -277,26 +284,23 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @return void
 		 */
 		public function calendario_page() {
-			$this->plugin_meta = get_plugin_data( __FILE__, true, false );
-			wp_enqueue_style( 'fullcalendar' );
-			wp_enqueue_style( 'calendario-admin' );
-			wp_enqueue_script( 'calendario-admin' );
+			$this->plugin_meta = get_plugin_data( __FILE__, true, true );
 			
-				echo "
-				<div id='calendario'>
-					<header class='plugin-header'>
-						<h2 class='plugin-title'>{$this->plugin_meta['Name']}</h2>
-					</header>
-					
-					<div id='calendario-workspace'>
-						<div id='editorial-calendar' class='rhd-editorial-calendar'></div>
-						<div id='drafts' class='rhd-drafts-area'>
-							<h4>Unscheduled Drafts</h4>
-							<ul class='rhd-drafts-list'></ul>
-						</div>
+			echo "
+			<div id='calendario'>
+				<header class='plugin-header'>
+					<h2 class='plugin-title'>{$this->plugin_meta['Name']}</h2>
+				</header>
+				
+				<div id='calendario-workspace'>
+					<div id='editorial-calendar' class='rhd-editorial-calendar'></div>
+					<div id='drafts' class='rhd-drafts-area'>
+						<h4>Unscheduled Drafts</h4>
+						<ul class='rhd-drafts-list'></ul>
 					</div>
 				</div>
-				";
+			</div>
+			";
 		}
 		
 		
@@ -315,10 +319,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			
 			if ( is_wp_error( $result ) ) {
 				self::log_error_message( $result );
+				
 				return false;
 			} else {				
-				//DEBUG
-				self::log_error_message( $result );
+				// DEBUG
+				// self::log_error_message( $result );
 
 				return ( $post['post_status'] ) ? $post['post_status'] : get_post_status( $post['ID'] );
 			}
@@ -336,7 +341,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			$result = update_post_meta( $post_id, '_unscheduled', 'yes' );
 			
 			// DEBUG
-			self::log_error_message( "Unscheduled: $result" );
+			// self::log_error_message( "Unscheduled: $result" );
 			
 			return $result;
 		}
@@ -353,7 +358,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			$result = delete_post_meta( $post_id, '_unscheduled' );
 			
 			// DEBUG
-			self::log_error_message( "Scheduled: $result" );
+			// self::log_error_message( "Scheduled: $result" );
 			
 			return $result;
 		}
