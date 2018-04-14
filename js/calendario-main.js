@@ -83,43 +83,42 @@ var publishedColor = 'black';
 					},
 				} );
 			},
-			drop: function( date ) { // Dropped from an external source (in this case, Unscheduled Drafts)
-				// Set the date to wherever the dragged post was dropped
-				var $this = $(this);
-				$this.data( 'start', date.format() );
+			drop: function(){ // External event dropped ONTO calendar
+				$(this).remove(); // Remove the event from the external area
+			},
+			eventReceive: function( event ) { // Used for moving events ONTO the calendar from an external source (in this case, Unscheduled Drafts)
+				console.log('hilooo');
 				
 				// Update the post in the database
 				$.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
 					type: 'POST',
 					data: {
-						post_id: parseInt( $this.attr('data-ID') ),
-						new_date: date.format(),
-						post_status: 'draft'
+						post_id: event.post_id,
+						new_date: event.start.format(),
+						post_status: event.post_status
 					},
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 					},
-					success: function( data ) {
-						// Remove this from the side list
-						$this.remove();	
-					}
 				} );
 			},
-			eventDragStop: function( event, jsEvent, ui, view ) { // Used for moving events OFF the calendar
-				// If event is dragged off to the Unscheduled Drafts area
+			eventDragStop: function( event, jsEvent, ui, view ) { // Used for moving events OFF of the calendar
+				// If event is dragged to the Unscheduled Drafts area
 				if( isEventOverDiv( jsEvent.clientX, jsEvent.clientY ) ) {
+					var $el = $( "<li class='rhd-draft status-draft fc-event'>" ).appendTo( '.rhd-drafts-list' ).text( event.title );
+
 					$('#editorial-calendar').fullCalendar( 'removeEvents', event._id );
-					var el = $( "<li class='rhd-draft status-draft fc-event' data-ID='" + event.post_id + "'>" ).appendTo( '.rhd-drafts-list' ).text( event.title );
 					
-					el.draggable( {
+					$el.draggable( {
 						revert: true,
 						revertDuration: 0
 					} );
 					
-					el.data( 'event', {
+					$el.data( 'event', {
 						title: event.title,
-						post_id: event.post_id
+						post_id: event.post_id,
+						start: event.start.format()
 					} );
 					
 					// Update the post in the database
@@ -130,10 +129,13 @@ var publishedColor = 'black';
 							post_id: event.post_id,
 							new_date: event.start.format() // Send the existing date to stop the date reverting to 'right exactly now'
 						},
-						beforeSend: function( xhr ) {
+						beforeSend: function( xhr ) {							
 							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+						},
+						complete: function() {
+							
 						}
-					} ).done( setUpUnscheduledEvents );
+					} ).done( setupExternalEvents );
 				}
 			},
 		} );
@@ -169,25 +171,31 @@ var publishedColor = 'black';
 				var postList = $.parseHTML( data );
 				$(".rhd-drafts-list").append( postList );
 				
-				setUpUnscheduledEvents();
+				setupExternalEvents();
 			}
 		} );
 	}
 	
-	function setUpUnscheduledEvents() {
+	function setupExternalEvents() {
 		$(".rhd-drafts-list li")
-			.draggable( {
-				revert: true,
-				revertDuration: 0
-			} )
 			.each(function() {
-				$(this).data('event',
-					{
-						title: $(this).text(),
-						color: draftColor,
-						className: 'status-draft'
-					}
-				);
+				$(this)
+					.draggable( {
+						revert: true,
+						revertDuration: 0
+					} );
+				
+				var eventData = $(this).data('event');
+				
+				var newEventData = {
+					title: $(this).text(),
+					color: draftColor,
+					className: 'status-draft'
+				};
+				
+				$.extend(true, eventData, newEventData);
+				
+				$(this).data('event', eventData);
 			}
 		);
 	}

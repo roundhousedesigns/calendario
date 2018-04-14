@@ -128,7 +128,15 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					$start	= get_the_date( 'c', $post );
 					$post_id = absint( $post->ID );
 					
-					$output .= "<li class='rhd-draft status-draft fc-event ui-draggable' data-id='{$post_id}'>{$title}</li>";
+					$event_data = array(
+						'title'	=> $title,
+						'start'	=> $start,
+						'post_id'	=> $post_id
+					);
+					
+					$event_data_json = json_encode( $event_data );
+					
+					$output .= "<li class='rhd-draft status-draft fc-event ui-draggable' data-event='{$event_data_json}'>{$title}</li>";
 				}
 			}
 			return $output;
@@ -337,7 +345,6 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			$post_status = ( $request->get_param( 'post_status' ) ) ? $request->get_param( 'post_status' ) : '';
 			
 			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status );
-			error_log("\$post_id: {$post_id}");
 		}
 		
 		
