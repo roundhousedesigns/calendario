@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 2:25:49 AM on 15-04-2018
+* RHD Dev: Compiled at 2:23:46 PM on 15-04-2018
 ***/
 
 /*
@@ -35,17 +35,17 @@
   font-size: 1em;
   padding: 0.5em 0.35em;
 }
-#calendario-workspace .rhd-editorial-calendar {
+#calendario-workspace .editorial-calendar {
   width: 80%;
   float: left;
 }
-#calendario-workspace .rhd-editorial-calendar .fc-header-toolbar .fc-center {
+#calendario-workspace .editorial-calendar .fc-header-toolbar .fc-center {
   font-size: 2em;
 }
-#calendario-workspace .rhd-editorial-calendar .fc-time {
+#calendario-workspace .editorial-calendar .fc-time {
   display: none;
 }
-#calendario-workspace .rhd-editorial-calendar .fc-event.filter-hidden {
+#calendario-workspace .editorial-calendar .fc-event.filter-hidden {
   display: none;
 }
 #calendario-workspace .status-draft {

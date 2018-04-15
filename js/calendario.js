@@ -86,38 +86,38 @@ var $calendario = jQuery("#editorial-calendar");
 				}
 			},
 			eventClick: function( event, jsEvent ) { // Toggle draft/future status
-					var newPostStatus, newColor;
-					
-					// Toggle status and event color
-					if ( event.post_status == 'draft' ) {
-						newPostStatus = 'future';
-						newColor = futureColor;
-					} else if ( event.post_status == 'future' || event.post_status === undefined ) { // set post_status to "draft" by default
-						newPostStatus = 'draft';
-						newColor = draftColor;
+				var newPostStatus, newColor;
+				
+				// Toggle status and event color
+				if ( event.post_status == 'draft' ) {
+					newPostStatus = 'future';
+					newColor = futureColor;
+				} else if ( event.post_status == 'future' ) {
+					newPostStatus = 'draft';
+					newColor = draftColor;
+				}
+				
+				jQuery.ajax( {
+					url: wpApiSettings.root + 'rhd/v1/cal/update',
+					type: 'POST',
+					data: {
+						post_id: event.post_id,
+						post_status: newPostStatus,
+						start: event.start.format(),
+						color: newColor
+					},
+					beforeSend: function( xhr ) {
+						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+					},
+					success: function() {
+						event.post_status = newPostStatus;
+						event.color = newColor;
+						
+						// Update event
+						$calendario.fullCalendar( 'updateEvent', event );
 					}
-					
-					jQuery.ajax( {
-						url: wpApiSettings.root + 'rhd/v1/cal/update',
-						type: 'POST',
-						data: {
-							post_id: event.post_id,
-							post_status: newPostStatus,
-							start: event.start.format(),
-							color: newColor
-						},
-						beforeSend: function( xhr ) {
-							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-						},
-						success: function() {
-							event.post_status = newPostStatus;
-							event.color = newColor;
-							
-							// Update event
-							$calendario.fullCalendar( 'updateEvent', event );
-						}
-					} );
-				},
+				} );
+			},
 			eventDrop: function( event ) { // Moving events around the calendar
 				jQuery.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
@@ -160,7 +160,7 @@ var $calendario = jQuery("#editorial-calendar");
 						post_status: "draft" // All posts moving to external area become drafts
 					};
 					
-					var $el = jQuery( "<li class='rhd-draft status-draft fc-event'>" ).appendTo( '.unscheduled-drafts-list' ).text( elData.title );
+					var $el = jQuery( "<li class='cal-draft status-draft fc-event'>" ).appendTo( '.unscheduled-drafts-list' ).text( elData.title );
 	
 					jQuery('#editorial-calendar').fullCalendar( 'removeEvents', event._id );
 					
@@ -168,7 +168,8 @@ var $calendario = jQuery("#editorial-calendar");
 						.draggable( {
 							revert: true,
 							revertDuration: 0
-						} ).data( 'event', elData );
+						} )
+						.data( 'event', elData );
 
 					// Update the post in the database
 					jQuery.ajax( {
@@ -190,6 +191,8 @@ var $calendario = jQuery("#editorial-calendar");
 				}
 			},
 		} );
+		
+		// Populate that bizznazz
 		$calendario.fullCalendar('addEventSource', futurePosts);
 		$calendario.fullCalendar('addEventSource', publishedPosts);
 		$calendario.fullCalendar('addEventSource', datedDraftPosts);

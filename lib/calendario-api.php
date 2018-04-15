@@ -137,7 +137,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					
 					$event_data_json = json_encode( $event_data );
 					
-					$output .= "<li class='rhd-draft status-draft fc-event ui-draggable' data-event='{$event_data_json}'>{$title}</li>";
+					$output .= "<li class='cal-draft status-draft fc-event ui-draggable' data-event='{$event_data_json}'>{$title}</li>";
 				}
 			}
 			return $output;
@@ -179,11 +179,11 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					$date = new DateTime( $post->post_date );
 					
 					$postdata[$i] = array(
-						'title'		=> apply_filters( 'the_title', $post->post_title ),
+						'title'		=> RHD_Calendario::format_post_title_display( $post->post_title ),
 						'start'		=> $date->format( 'c' ), // Format date to ISO8601
 						'post_id'	=> $post->ID,
 						'post_status'	=> $post->post_status,
-						'className'	=> "status-{$post->post_status}"
+						'className'	=> "status-future"
 					);
 					
 					++$i;
@@ -236,11 +236,11 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					$date = new DateTime( $post->post_date );
 					
 					$postdata[$i] = array(
-						'title'		=> apply_filters( 'the_title', $post->post_title ),
+						'title'		=> RHD_Calendario::format_post_title_display( $post->post_title ),
 						'start'		=> $date->format( 'c' ), // Format date to ISO8601
 						'post_id'	=> $post->ID,
 						'post_status'	=> $post->post_status,
-						'className'	=> "status-{$post->post_status}"
+						'className'	=> "status-publish"
 					);
 					
 					++$i;
@@ -305,15 +305,14 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 				foreach ( $posts as $post ) {
 					
 					// Normal $post->post_date won't work with drafts! Must query db.
-					$date = new DateTime( $post->post_date ); // <---- (Sadness)
-					//$otherdate = RHD_Calendario::get_draft_post_date( $post );
+					$date = new DateTime( $post->post_date ); // <---- (Sadness. ....also, why did I mark this as sadness? it seems to work...)
 					
 					$postdata[$i] = array(
-						'title'		=> apply_filters( 'the_title', $post->post_title ),
-						'start'		=> $date->format( 'c' ), // Format date to ISO8601
-						'post_id'	=> $post->ID,
+						'title'			=> RHD_Calendario::format_post_title_display( $post->post_title ),
+						'start'			=> $date->format( 'c' ), // Format date to ISO8601
+						'post_id'		=> $post->ID,
 						'post_status'	=> $post->post_status,
-						'className'	=> "status-{$post->post_status}"
+						'className'		=> "status-draft"
 					);
 					
 					++$i;

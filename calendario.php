@@ -9,25 +9,7 @@ Requires at least: 4.7
 Text Domain: rhd
 Author: Roundhouse Designs
 Author URI: https://roundhouse-designs.com
-License: GPL3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-*/
-
-/* Copyright 2017 Roundhouse Designs (https://roundhouse-designs.com)
-  Author - Nick Gaswirth (Roundhouse Designs)
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
 
@@ -89,12 +71,12 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		static function plugin_activation() {
-			// On activate
+			// On plugin activate
 		}
 		
 		
 		static function plugin_deactivation() {
-			// On deactivate
+			// On plugin deactivate
 		}
 		
 		
@@ -118,7 +100,20 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				$error_string .= ob_get_clean();
 			}
 			
+			// Print to log
 			error_log( $error_string );
+		}
+		
+		
+		/**
+		 * format_post_title_display function. Decodes and formats post titles for display.
+		 * 
+		 * @access public
+		 * @param string $title The post title
+		 * @return string The prepared post title
+		 */
+		public function format_post_title_display( string $title ) {
+			return html_entity_decode( $title, ENT_QUOTES );
 		}
 		
 		
@@ -130,23 +125,22 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @return array [0] => formatted time, [1] => formatted time (GMT), or array() on null
 		 */
 		public function format_post_date( $date ) {
-			if ( $date ) {
-				$time = new DateTime( $date );
-				$time_gmt = new DateTime( $date );
-				$time_gmt->setTimezone( new DateTimeZone('GMT') );
+			if ( ! $date )
+				return;
 				
-				$time_formatted = array(
-					$time->format( self::RHD_DATE_FORMAT ),
-					$time_gmt->format( self::RHD_DATE_FORMAT )
-				);
-				
-				// DEBUG
-				// self::log_error_message( $time_formatted );
-				
-				return $time_formatted;
-			} else {
-				return array();
-			}
+			$time = new DateTime( $date );
+			$time_gmt = new DateTime( $date );
+			$time_gmt->setTimezone( new DateTimeZone('GMT') );
+			
+			$time_formatted = array(
+				$time->format( self::RHD_DATE_FORMAT ),
+				$time_gmt->format( self::RHD_DATE_FORMAT )
+			);
+			
+			// DEBUG
+			// self::log_error_message( $time_formatted );
+			
+			return $time_formatted;
 		}
 		
 		
@@ -293,7 +287,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				</header>
 				
 				<div id='calendario-workspace'>
-					<div id='editorial-calendar' class='rhd-editorial-calendar'></div>
+					<div id='editorial-calendar' class='editorial-calendar'></div>
 					<div id='calendario-sidebar' class='calendario-sidebar'>
 						<div id='event-toggles' class='calendario-sidebar-container'>
 							<h4 class='calendario-sidebar-box-title'>Post Status</h4>
