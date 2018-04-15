@@ -23,8 +23,15 @@
 	
 
 #calendario-workspace
-	width 100%
+	width 99%
 	position relative
+	
+	.fc-event
+		color white
+		border 3px
+		border-radius 3px
+		font-size 1em
+		padding 0.5em 0.35em
 	
 	.rhd-editorial-calendar
 		width 80%
@@ -36,26 +43,10 @@
 		
 		.fc-time
 			display none
-	
-	.rhd-drafts-area
-		width 18%
-		float right
-		border-radius 3px
-		border 1px solid black
-		height 800px
-		padding $halfspacer
-		-opacity(0.5)
-		transition all 0.25s ease
 		
-		&.events-load-complete
-			-opacity(1)
-	
-	.fc-event
-		color white
-		border 3px
-		border-radius 3px
-		font-size 1em
-		padding 0.15em
+		.fc-event
+			&.filter-hidden
+				display none
 	
 	.status-draft
 		background gray
@@ -65,7 +56,56 @@
 	
 	.status-future
 		background blue
+	
+	.calendario-sidebar
+		width 18%
+		position absolute
+		right 0
+		top 0
 		
+		.calendario-sidebar-container
+			z-index 999
+			position relative
+		
+		.calendario-sidebar-box-title
+			margin-bottom $halfspacer
+			font-size 1.2em
+		
+		.calendario-sidebar-box
+			width 100%
+			height auto
+			border-radius 3px
+			border 2px solid black
+			position relative
+		
+		.calendario-event-toggles
+			margin-bottom $spacer
+			
+			.toggles
+				display flex
+				align-content space-around
+				
+				.event-toggle
+					width 50%
+					display inline-block
+					font-size 1.1em
+					text-align center
+					margin 0 $quarterspacer
+					cursor pointer
+					transition all 0.15s ease
+					@extends #calendario-workspace .fc-event
+					
+					&.filter-hidden
+						-opacity(0.4)		
+			
+		.calendario-unscheduled-drafts-list
+			min-height 300px
+			-opacity(0.5)
+			transition all 0.25s ease
+			
+			&.events-load-complete
+				-opacity(1)
+
 
 .ui-draggable
 	cursor pointer

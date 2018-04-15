@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 5:17:05 PM on 14-04-2018
+* RHD Dev: Compiled at 2:25:49 AM on 15-04-2018
 ***/
 
 /*
@@ -24,8 +24,16 @@
   font-weight: 600;
 }
 #calendario-workspace {
-  width: 100%;
+  width: 99%;
   position: relative;
+}
+#calendario-workspace .fc-event,
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle {
+  color: #fff;
+  border: 3px;
+  border-radius: 3px;
+  font-size: 1em;
+  padding: 0.5em 0.35em;
 }
 #calendario-workspace .rhd-editorial-calendar {
   width: 80%;
@@ -37,29 +45,8 @@
 #calendario-workspace .rhd-editorial-calendar .fc-time {
   display: none;
 }
-#calendario-workspace .rhd-drafts-area {
-  width: 18%;
-  float: right;
-  border-radius: 3px;
-  border: 1px solid #000;
-  height: 800px;
-  padding: 0.5em;
-  -webkit-opacity: 0.5;
-  -moz-opacity: 0.5;
-  opacity: 0.5;
-  transition: all 0.25s ease;
-}
-#calendario-workspace .rhd-drafts-area.events-load-complete {
-  -webkit-opacity: 1;
-  -moz-opacity: 1;
-  opacity: 1;
-}
-#calendario-workspace .fc-event {
-  color: #fff;
-  border: 3px;
-  border-radius: 3px;
-  font-size: 1em;
-  padding: 0.15em;
+#calendario-workspace .rhd-editorial-calendar .fc-event.filter-hidden {
+  display: none;
 }
 #calendario-workspace .status-draft {
   background: #808080;
@@ -69,6 +56,60 @@
 }
 #calendario-workspace .status-future {
   background: #00f;
+}
+#calendario-workspace .calendario-sidebar {
+  width: 18%;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+#calendario-workspace .calendario-sidebar .calendario-sidebar-container {
+  z-index: 999;
+  position: relative;
+}
+#calendario-workspace .calendario-sidebar .calendario-sidebar-box-title {
+  margin-bottom: 0.5em;
+  font-size: 1.2em;
+}
+#calendario-workspace .calendario-sidebar .calendario-sidebar-box {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  border: 2px solid #000;
+  position: relative;
+}
+#calendario-workspace .calendario-sidebar .calendario-event-toggles {
+  margin-bottom: 1em;
+}
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles {
+  display: flex;
+  align-content: space-around;
+}
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle {
+  width: 50%;
+  display: inline-block;
+  font-size: 1.1em;
+  text-align: center;
+  margin: 0 0.25em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.filter-hidden {
+  -webkit-opacity: 0.4;
+  -moz-opacity: 0.4;
+  opacity: 0.4;
+}
+#calendario-workspace .calendario-sidebar .calendario-unscheduled-drafts-list {
+  min-height: 300px;
+  -webkit-opacity: 0.5;
+  -moz-opacity: 0.5;
+  opacity: 0.5;
+  transition: all 0.25s ease;
+}
+#calendario-workspace .calendario-sidebar .calendario-unscheduled-drafts-list.events-load-complete {
+  -webkit-opacity: 1;
+  -moz-opacity: 1;
+  opacity: 1;
 }
 .ui-draggable {
   cursor: pointer;

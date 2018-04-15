@@ -294,39 +294,32 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				
 				<div id='calendario-workspace'>
 					<div id='editorial-calendar' class='rhd-editorial-calendar'></div>
-					<div id='drafts' class='rhd-drafts-area'>
-						<h4>Unscheduled Drafts</h4>
-						<ul class='rhd-drafts-list'></ul>
-					</div>
+					<div id='calendario-sidebar' class='calendario-sidebar'>
+						<div id='event-toggles' class='calendario-sidebar-container'>
+							<h4 class='calendario-sidebar-box-title'>Post Status</h4>
+							<div class='calendario-event-toggles calendario-sidebar-box'>
+								<ul class='toggles'>
+									<li class='event-toggle status-publish' data-status='publish'>
+										Published
+									</li>
+									<li class='event-toggle status-draft' data-status='draft'>
+										Drafts
+									</li>
+									<li class='event-toggle status-future' data-status='future'>
+										Future
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div id='calendario-drafts' class='calendario-sidebar-container'>
+							<h4 class='calendario-sidebar-box-title'>Unscheduled Drafts</h4>
+							<div id='calendario-unscheduled-drafts-list' class='calendario-unscheduled-drafts-list calendario-sidebar-box'>
+								<ul class='unscheduled-drafts-list'></ul>
+							</div>
+						</div>
 				</div>
 			</div>
 			";
-		}
-		
-		
-		/**
-		 * calendario_update_post function. Performs the requested post update.
-		 * 	Returns true on success, false on failure. Fail prints errors to the log.
-		 * 
-		 * @access public
-		 * @param array $post The one-to-one post data to update
-		 * @param bool $make_unscheduled (default: null) True to convert to Unscheduled, false otherwise
-		 * @return bool|string The post_status of the post, or false on error.
-		 */
-		public function calendario_update_post( array $post ) {
-			// Update the post
-			$result = wp_update_post( $post, true );
-			
-			if ( is_wp_error( $result ) ) {
-				self::log_error_message( $result );
-				
-				return false;
-			} else {				
-				// DEBUG
-				// self::log_error_message( $result );
-
-				return ( $post['post_status'] ) ? $post['post_status'] : get_post_status( $post['ID'] );
-			}
 		}
 		
 		
@@ -348,13 +341,13 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * calendario_make_scheduled function. Deletes the '_unscheduled' meta_key from the post.
+		 * calendario_remove_unscheduled function. Deletes the '_unscheduled' meta_key from the post.
 		 * 
 		 * @access public
 		 * @param int $post_id The post ID
 		 * @return void
 		 */
-		public function calendario_make_scheduled( int $post_id ) {
+		public function calendario_remove_unscheduled( int $post_id ) {
 			$result = delete_post_meta( $post_id, '_unscheduled' );
 			
 			// DEBUG
@@ -365,40 +358,50 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * update_post_date function. Changes a post's post_date and post_date_gmt meta.
+		 * update_post function. Changes a post's post_date and post_date_gmt meta.
 		 * 
 		 * @access public
 		 * @param int $post_id The post ID
-		 * @param string $new_date The new post date
+		 * @param string $new_date The string containing the new post date
 		 * @param string $post_status Current post status
 		 * @return void
 		 */
-		public function update_post_date( int $post_id, string $new_date, string $post_status ) {
+		public function update_post( int $post_id, string $new_date, string $post_status ) {
 			$post_type = get_post_type( $post_id );
 			
 			// Exit if this is a published or trashed post
 			if ( $post_type == 'publish' || $post_type == 'trash' )
 				return;
-				
-			// Format the date
-			$new_date = self::format_post_date( $new_date );
 			
 			$post = array(
 				'ID'			=> $post_id,
-				'post_date'		=> $new_date[0],
-				'post_date_gmt'	=> $new_date[1],
 				'post_status'	=> $post_status
 			);
+				
+			// Format the date
+			if ( $new_date ) {
+				$date_formatted = self::format_post_date( $new_date );
+				
+				$post['post_date'] = $date_formatted[0];
+				$post['post_date_gmt'] = $date_formatted[1];
+			}
 			
-			self::calendario_update_post( $post );
+			// Update the post
+			$result = wp_update_post( $post, true );
 			
-			// Make sure this isn't an "unscheduled" draft... (?)
-			self::calendario_make_scheduled( $post['ID'] );
+			if ( is_wp_error( $result ) ) {
+				self::log_error_message( $result );	
+			}
+			
+			// Make sure this isn't an "unscheduled" draft
+			if ( get_post_meta( $post_id, '_unscheduled', true ) ) {
+				self::calendario_remove_unscheduled( $post['ID'] );
+			}
 		}
 		
 		
 		/**
-		 * unschedule_draft function.
+		 * unschedule_draft function. Adds post meta to set this post as an "Unscheduled Draft."
 		 * 
 		 * @access public
 		 * @param int $post_id
@@ -415,7 +418,14 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				'post_status'	=> 'draft'
 			);
 			
-			self::calendario_update_post( $post );
+			// Update the post
+			$result = wp_update_post( $post, true );
+			
+			if ( is_wp_error( $result ) ) {
+				self::log_error_message( $result );	
+				return false;
+			}
+			
 			self::calendario_make_unscheduled( $post['ID'] );
 		}
 	}

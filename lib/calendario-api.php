@@ -56,7 +56,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 			register_rest_route( $namespace, '/cal/update', array(
 				array(
 					'methods'	=> WP_REST_Server::EDITABLE,
-					'callback'	=> array( $this, 'update_post_date' ),
+					'callback'	=> array( $this, 'update_post' ),
 					'permission_callback'	=> array( $this, 'check_user_permissions' )
 				)
 			) );
@@ -131,7 +131,8 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					$event_data = array(
 						'title'	=> $title,
 						'start'	=> $start,
-						'post_id'	=> $post_id
+						'post_id'	=> $post_id,
+						'post_status'	=> 'draft'
 					);
 					
 					$event_data_json = json_encode( $event_data );
@@ -331,7 +332,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		 
 		 
 		/**
-		 * update_post_date function. Endpoint for updating post dates.
+		 * update_post function. Endpoint for updating post dates.
 		 * 
 		 * @access public
 		 * @param WP_REST_Request $request
@@ -339,12 +340,12 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		 *
 		 * TODO: Make sure not trying to change date to today's or prior date (i.e. already published)
 		 */
-		public function update_post_date( WP_REST_Request $request ) {
-			$post_id = $request->get_param( 'post_id' );
+		public function update_post( WP_REST_Request $request ) {
+			$post_id = (int)$request->get_param( 'post_id' );
 			$new_date = ( $request->get_param( 'new_date' ) ) ? $request->get_param( 'new_date' ) : '';
 			$post_status = ( $request->get_param( 'post_status' ) ) ? $request->get_param( 'post_status' ) : '';
 			
-			RHD_Calendario::update_post_date( $post_id, $new_date, $post_status );
+			RHD_Calendario::update_post( $post_id, $new_date, $post_status );
 		}
 		
 		
