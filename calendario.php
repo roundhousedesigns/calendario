@@ -280,6 +280,10 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		public function calendario_page() {
 			$this->plugin_meta = get_plugin_data( __FILE__, true, true );
 			
+			$valid_date = new DateTime( current_time( 'Y-m-d' ) );
+			$valid_date->add( new DateInterval( 'P1D' ) );
+			$tomorrow = $valid_date->format( 'c' );
+			
 			echo "
 			<div id='calendario'>
 				<header class='plugin-header'>
@@ -287,7 +291,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				</header>
 				
 				<div id='calendario-workspace'>
-					<div id='editorial-calendar' class='editorial-calendar'></div>
+					<div id='editorial-calendar' class='editorial-calendar' data-event-valid-start='{$tomorrow}'></div>
 					<div id='calendario-sidebar' class='calendario-sidebar'>
 						<div id='event-toggles' class='calendario-sidebar-container'>
 							<h4 class='calendario-sidebar-box-title'>Post Status</h4>

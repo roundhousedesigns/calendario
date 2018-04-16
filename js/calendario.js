@@ -10,17 +10,35 @@
 
 // Localized: wpApiSettings { root, nonce }
 
-var postColors = {
-	'draft':	'gray',
-	'future':	'blue',
-	'publish':	'black'
-};
-
-var $calendario = jQuery('#editorial-calendar');
-var $draftsList = jQuery('.unscheduled-drafts-list');
+function getServerDate() {
+	// Ask for the date
+	jQuery.ajax( {
+		url: wpApiSettings.root + 'rhd/v1/cal/today',
+		type: 'GET',
+		cache: false,
+		beforeSend: function( xhr ) {
+			xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+		},
+		success: function( data ) {
+			return data;
+		},
+		error: function( x, y, z ) {
+			console.log( x, y, z );
+		}
+	} );
+}
 
 
 (function() {
+	var postColors = {
+		'draft':	'gray',
+		'future':	'blue',
+		'publish':	'black'
+	};
+	
+	var $calendario = jQuery('#editorial-calendar');
+	var $draftsList = jQuery('.unscheduled-drafts-list');
+	
 	function initCalendar() {
 		// Event sources
 		var futurePosts = {
@@ -31,7 +49,7 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 			},
 			color: postColors.future,
-		};	
+		};
 		var publishedPosts = {
 			url: wpApiSettings.root + 'rhd/v1/cal/published',
 			type: 'GET',
@@ -74,7 +92,11 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 			},
 			editable: true,
 			droppable: true,
+			dropAccept: '.unscheduled-draft',
 			dragRevertDuration: 0,
+			validRange: {
+				start: $calendario.data('event-valid-start')
+			},
 			eventRender: function( event, eventElement ) {
 				// Refresh status-xxx classes
 				eventElement
@@ -86,9 +108,9 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 				var newColor;
 				var eventData;
 				
-				// Only toggle status if the date is after rightNow
-				if ( event.start.format() < rightNow() ) {
-					return;	
+				// Prohibit interaction with dates before "today" (server time)
+				if ( moment(getServerDate()).isAfter(event.start) ) {
+					return;
 				}
 				
 				// Toggle status and event color
@@ -123,27 +145,16 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 					}
 				} );
 			},
-			eventDrop: function( event ) { // Moving events around the calendar
-				// If moving to a date before today, make sure "future" posts are converted to "draft" to prevent the post from publishing
+			eventDrop: function( event ) { // Moving events around the calendar				
 				var newPostStatus;
 				var newColor;
 				var eventData;
 				
-				console.info("before: ", event.start.format());
-				
-				if ( event.post_status == "future" && event.start.format() <= rightNow() ) {
-					newPostStatus = "draft";
-					newColor = postColors.draft;
-				} else {
-					newPostStatus = event.post_status;
-					newColor = postColors[event.post_status];
-				}
-				
 				eventData = {
 					post_id: event.post_id,
 					new_date: event.start.format(),
-					post_status: newPostStatus,
-					color: newColor
+					post_status: event.post_status,
+					color: postColors[event.post_status]
 				};
 				
 				console.log('COMEON: ', eventData.new_date);
@@ -282,12 +293,7 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 			jQuery("#editorial-calendar .status-" + $this.data('status')).toggleClass('filter-hidden');
 		});
 	}
-	
-	
-	function rightNow() {
-		var d = new Date();
-		return d.toISOString();
-	}
+		
 	
 	// DOM Ready
 	jQuery(document).ready( function() {

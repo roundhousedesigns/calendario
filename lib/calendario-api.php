@@ -16,6 +16,15 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		public function register_routes() {
 			$namespace = $this->my_namespace . $this->my_version;
 			
+			// Get WordPress local time
+			register_rest_route( $namespace, '/cal/today', array(
+				array(
+					'methods'	=> WP_REST_Server::READABLE,
+					'callback'	=> array( $this, 'get_current_date' ),
+					'permission_callback'	=> array( $this, 'check_user_permissions' )
+				)
+			) );
+			
 			// Get All Unscheduled Drafts
 			register_rest_route( $namespace, '/cal/all-unscheduled', array(
 				array(
@@ -99,11 +108,24 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 		
 		
 		/**
+		 * get_current_date function. Retrieves the current date using the set time zone in WordPress.
+		 * 
+		 * @access public
+		 * @param WP_REST_Request $request
+		 * @return string The current date
+		 */
+		public function get_current_date( WP_REST_Request $request ) {
+			$today = new DateTime( current_time( 'Y-m-d' ) );
+			return $today->format( 'c' );
+		}
+		
+		
+		/**
 		 * get_unscheduled_draft_list function. Loads 'draft' posts and creats basic list item HTML.
 		 * 
 		 * @access public
 		 * @param WP_REST_Request $request
-		 * @return string HTML Output
+		 * @return string $output HTML Output
 		 *
 		 * TODO: Maybe allow for more post types in the future?
 		 */
