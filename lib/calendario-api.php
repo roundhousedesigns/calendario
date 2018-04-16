@@ -137,7 +137,7 @@ if ( !class_exists( 'RHD_Calendario_Server' ) ) {
 					
 					$event_data_json = json_encode( $event_data );
 					
-					$output .= "<li class='cal-draft status-draft fc-event ui-draggable' data-event='{$event_data_json}'>{$title}</li>";
+					$output .= "<li class='unscheduled-draft status-draft fc-event ui-draggable' data-event='{$event_data_json}'>{$title}</li>";
 				}
 			}
 			return $output;

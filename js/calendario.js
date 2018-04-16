@@ -14,7 +14,8 @@ var draftColor = 'gray';
 var futureColor = 'blue';
 var publishedColor = 'black';
 
-var $calendario = jQuery("#editorial-calendar");
+var $calendario = jQuery('#editorial-calendar');
+var $draftsList = jQuery('.unscheduled-drafts-list');
 
 
 (function() {
@@ -152,7 +153,7 @@ var $calendario = jQuery("#editorial-calendar");
 			},
 			eventDragStop: function( event, jsEvent ) { // Used for moving events OFF of the calendar
 				// If event is dragged to the Unscheduled Drafts area
-				if( jsEvent.target.id == "calendario-unscheduled-drafts-list" ) {
+				if( jsEvent.target.id == "calendario-unscheduled-drafts" ) {
 					var elData = {
 						title: event.title,
 						post_id: event.post_id,
@@ -160,7 +161,7 @@ var $calendario = jQuery("#editorial-calendar");
 						post_status: "draft" // All posts moving to external area become drafts
 					};
 					
-					var $el = jQuery( "<li class='cal-draft status-draft fc-event'>" ).appendTo( '.unscheduled-drafts-list' ).text( elData.title );
+					var $el = jQuery( "<li class='unscheduled-draft status-draft fc-event'>" ).appendTo( '.unscheduled-drafts-list' ).text( elData.title );
 	
 					jQuery('#editorial-calendar').fullCalendar( 'removeEvents', event._id );
 					
@@ -185,7 +186,7 @@ var $calendario = jQuery("#editorial-calendar");
 							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 						},
 						complete: function() {
-							
+							jQuery('.unscheduled-drafts-list li').addClass('load-complete');
 						}
 					} ).done( setupExternalEvents );
 				}
@@ -208,8 +209,9 @@ var $calendario = jQuery("#editorial-calendar");
 			},
 			success: function( data ) {
 				var postList = jQuery.parseHTML( data );
-				jQuery(".unscheduled-drafts-list").append( postList );
-				jQuery(".unscheduled-drafts-list").addClass('events-load-complete');
+				$draftsList.append( postList );
+				
+				jQuery('.unscheduled-drafts-list li').addClass('load-complete');
 				
 				setupExternalEvents();
 			}
@@ -218,7 +220,7 @@ var $calendario = jQuery("#editorial-calendar");
 	
 	
 	function setupExternalEvents() {
-		jQuery(".unscheduled-drafts-list li")
+		jQuery('.unscheduled-drafts-list li')
 			.each(function() {
 				jQuery(this)
 					.draggable( {

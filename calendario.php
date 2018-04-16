@@ -186,7 +186,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_register_script( 'moment', plugins_url( 'node_modules/moment/moment.js', __FILE__ ), array(), '2.19.3', true );
 			wp_register_script( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.js', __FILE__ ), array( 'jquery-rhd', 'moment' ), '3.7.0', true );
 			
-			wp_enqueue_script( 'calendario-admin', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable', 'moment', 'fullcalendar' ), '0.1dev', true );
+			wp_enqueue_script( 'calendario-admin', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable', 'jquery-ui-droppable', 'moment', 'fullcalendar' ), '0.1dev', true );
 			
 			// noConflict mode for custom jQuery
 			wp_add_inline_script( 'jquery-rhd', 'var jQueryRHD = jQuery.noConflict(true);', 'after' );
@@ -307,7 +307,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 						</div>
 						<div id='calendario-drafts' class='calendario-sidebar-container'>
 							<h4 class='calendario-sidebar-box-title'>Unscheduled Drafts</h4>
-							<div id='calendario-unscheduled-drafts-list' class='calendario-unscheduled-drafts-list calendario-sidebar-box'>
+							<div id='calendario-unscheduled-drafts' class='calendario-unscheduled-drafts calendario-sidebar-box'>
 								<ul class='unscheduled-drafts-list'></ul>
 							</div>
 						</div>

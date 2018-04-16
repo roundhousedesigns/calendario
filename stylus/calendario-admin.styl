@@ -11,6 +11,7 @@
    ========================================================================== */
 
 @require "partials/_global.styl"
+@require "partials/_plugins.styl"
 
 #calendario
 	margin-right $spacer
@@ -49,13 +50,13 @@
 				display none
 	
 	.status-draft
-		background gray
+		background-color gray
 	
 	.status-publish
-		background black
+		background-color black
 	
 	.status-future
-		background blue
+		background-color blue
 	
 	.calendario-sidebar
 		width 18%
@@ -75,8 +76,13 @@
 			width 100%
 			height auto
 			border-radius 3px
-			border 2px solid black
+			border 3px solid black
+			padding 0 $quarterspacer
 			position relative
+			
+			.fc-event
+			.event-toggle
+				margin $quarterspacer
 		
 		.calendario-event-toggles
 			margin-bottom $spacer
@@ -84,27 +90,49 @@
 			.toggles
 				display flex
 				align-content space-around
+				margin $quarterspacer $halfspacer
 				
 				.event-toggle
 					width 50%
 					display inline-block
-					font-size 1.1em
 					text-align center
-					margin 0 $quarterspacer
 					cursor pointer
-					transition all 0.15s ease
+					font-size 1.1em
+					-unselectable()
 					@extends #calendario-workspace .fc-event
+					border-width 2px
+					border-style solid
+					transition all 0.15s ease
+					
+					&.status-publish
+						background-color black
+						border-color @background-color
+					
+					&.status-draft
+						background-color gray
+						border-color @background-color
+					
+					&.status-future
+						background-color blue
+						border-color @background-color
 					
 					&.filter-hidden
-						-opacity(0.4)		
+						background-color transparent
+						color black
 			
-		.calendario-unscheduled-drafts-list
+		.calendario-unscheduled-drafts
 			min-height 300px
-			-opacity(0.5)
 			transition all 0.25s ease
 			
-			&.events-load-complete
-				-opacity(1)
+			.unscheduled-drafts-list
+				padding 0
+				margin $halfspacer
+				
+				.fc-event
+					-opacity(0.5)
+					
+					&.load-complete
+						-opacity(1)
 
 
 .ui-draggable
