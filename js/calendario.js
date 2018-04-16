@@ -82,7 +82,9 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 					.addClass("status-" + event.post_status);
 			},
 			eventClick: function( event, jsEvent ) { // Toggle draft/future status
-				var newPostStatus, newColor;
+				var newPostStatus;
+				var newColor;
+				var eventData;
 				
 				// Only toggle status if the date is after rightNow
 				if ( event.start.format() < rightNow() ) {
@@ -98,15 +100,17 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 					newColor = postColors.draft;
 				}
 				
+				eventData = {
+					post_id: event.post_id,
+					post_status: newPostStatus,
+					start: event.start.format(),
+					color: newColor
+				};
+				
 				jQuery.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
 					type: 'POST',
-					data: {
-						post_id: event.post_id,
-						post_status: newPostStatus,
-						start: event.start.format(),
-						color: newColor
-					},
+					data: eventData,
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 					},
@@ -125,6 +129,8 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 				var newColor;
 				var eventData;
 				
+				console.info("before: ", event.start.format());
+				
 				if ( event.post_status == "future" && event.start.format() <= rightNow() ) {
 					newPostStatus = "draft";
 					newColor = postColors.draft;
@@ -138,7 +144,9 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 					new_date: event.start.format(),
 					post_status: newPostStatus,
 					color: newColor
-				};			
+				};
+				
+				console.log('COMEON: ', eventData.new_date);
 				
 				jQuery.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
@@ -151,7 +159,10 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 						// Update event to new values
 						event.post_status = newPostStatus;
 						event.color = newColor;
+						event.start = eventData.new_date;
 						$calendario.fullCalendar( 'updateEvent', event );
+						
+						console.info("after: ", eventData.new_date);
 					}
 				} );
 			},
@@ -159,59 +170,58 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 				jQuery(this).remove();
 			},
 			eventReceive: function( event ) { // Fired after fullCalendar.drop(). Dropping an event ONTO the calendar from an external source.
+				var eventData = {
+					post_id: event.post_id,
+					new_date: event.start.format(),
+					post_status: "draft"
+				};
+				
 				// Update the post in the database
 				jQuery.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
 					type: 'POST',
-					data: {
-						post_id: event.post_id,
-						new_date: event.start.format(),
-						post_status: "draft"
-					},
+					data: eventData,
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 					},
 				} );
 			},
 			eventDragStop: function( event, jsEvent ) { // Used for moving events OFF of the calendar
-				// If event is dragged to the Unscheduled Drafts area
-				if( jsEvent.target.id == "calendario-unscheduled-drafts" ) {
-					var elData = {
-						title: event.title,
-						post_id: event.post_id,
-						start: event.start.format(),
-						post_status: "draft" // All posts moving to external area become drafts
-					};
+				// Exit if not dropping onto the Unscheduled Drafts area
+				if( jsEvent.target.id != "calendario-unscheduled-drafts" )
+					return;
 					
-					var $el = jQuery( "<li class='unscheduled-draft status-draft fc-event'>" ).appendTo( '.unscheduled-drafts-list' ).text( elData.title );
-	
-					jQuery('#editorial-calendar').fullCalendar( 'removeEvents', event._id );
-					
-					$el
-						.draggable( {
-							revert: true,
-							revertDuration: 0
-						} )
-						.data( 'event', elData );
+				var eventData = {
+					title: event.title,
+					post_id: event.post_id,
+					start: event.start.format(),
+					post_status: "draft" // All posts moving to external area become drafts
+				};
+				
+				var $el = jQuery( "<li class='unscheduled-draft status-draft fc-event'>" ).appendTo( '.unscheduled-drafts-list' ).text( eventData.title );
+				
+				$el
+					.draggable( {
+						revert: true,
+						revertDuration: 0
+					} )
+					.data( 'event', eventData );
 
-					// Update the post in the database
-					jQuery.ajax( {
-						url: wpApiSettings.root + 'rhd/v1/cal/unschedule',
-						type: 'POST',
-						data: {
-							title: elData.title,
-							post_id: elData.post_id,
-							new_date: elData.start, // Send the existing date to stop the date reverting to 'right exactly now'
-							post_status: elData.post_status
-						},
-						beforeSend: function( xhr ) {							
-							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-						},
-						complete: function() {
-							jQuery('.unscheduled-drafts-list li').addClass('load-complete');
-						}
-					} ).done( setupExternalEvents );
-				}
+				// Update the post in the database
+				jQuery.ajax( {
+					url: wpApiSettings.root + 'rhd/v1/cal/unschedule',
+					type: 'POST',
+					data: eventData,
+					beforeSend: function( xhr ) {							
+						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+						
+						// Remove the event from the calendar
+						jQuery('#editorial-calendar').fullCalendar( 'removeEvents', event._id );
+					},
+					complete: function() {
+						jQuery('.unscheduled-drafts-list li').addClass('load-complete');
+					}
+				} ).done( setupExternalEvents );
 			},
 		} );
 		
