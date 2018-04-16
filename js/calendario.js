@@ -10,9 +10,11 @@
 
 // Localized: wpApiSettings { root, nonce }
 
-var draftColor = 'gray';
-var futureColor = 'blue';
-var publishedColor = 'black';
+var postColors = {
+	'draft':	'gray',
+	'future':	'blue',
+	'publish':	'black'
+};
 
 var $calendario = jQuery('#editorial-calendar');
 var $draftsList = jQuery('.unscheduled-drafts-list');
@@ -28,7 +30,7 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 			beforeSend: function( xhr ) {
 				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 			},
-			color: futureColor,
+			color: postColors.future,
 		};	
 		var publishedPosts = {
 			url: wpApiSettings.root + 'rhd/v1/cal/published',
@@ -37,7 +39,7 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 			beforeSend: function( xhr ) {
 				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 			},
-			color: publishedColor,
+			color: postColors.publish,
 			startEditable: false
 		};
 		var datedDraftPosts = {
@@ -47,7 +49,7 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 			beforeSend: function( xhr ) {
 				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 			},
-			color: draftColor,
+			color: postColors.draft,
 			success: function() {
 				jQuery('.unscheduled-drafts-list li').each(function(){
 					jQuery(this).data( 'event', {
@@ -74,28 +76,26 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 			droppable: true,
 			dragRevertDuration: 0,
 			eventRender: function( event, eventElement ) {
-				// Remove any existing status classes
-				eventElement.removeClass( 'status-future status-publish status-draft');
-				
-				// Apply status-specific classes to events for simple filtering
-				if ( event.post_status == 'future' ) {
-					eventElement.addClass("status-future");
-				} else if ( event.post_status == 'publish' ) {
-					eventElement.addClass("status-publish");
-				} else if ( event.post_status == 'draft' ) {
-					eventElement.addClass("status-draft");
-				}
+				// Refresh status-xxx classes
+				eventElement
+					.removeClass( 'status-future status-publish status-draft')
+					.addClass("status-" + event.post_status);
 			},
 			eventClick: function( event, jsEvent ) { // Toggle draft/future status
 				var newPostStatus, newColor;
 				
+				// Only toggle status if the date is after rightNow
+				if ( event.start.format() < rightNow() ) {
+					return;	
+				}
+				
 				// Toggle status and event color
 				if ( event.post_status == 'draft' ) {
 					newPostStatus = 'future';
-					newColor = futureColor;
+					newColor = postColors.future;
 				} else if ( event.post_status == 'future' ) {
 					newPostStatus = 'draft';
-					newColor = draftColor;
+					newColor = postColors.draft;
 				}
 				
 				jQuery.ajax( {
@@ -120,17 +120,39 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 				} );
 			},
 			eventDrop: function( event ) { // Moving events around the calendar
+				// If moving to a date before today, make sure "future" posts are converted to "draft" to prevent the post from publishing
+				var newPostStatus;
+				var newColor;
+				var eventData;
+				
+				if ( event.post_status == "future" && event.start.format() <= rightNow() ) {
+					newPostStatus = "draft";
+					newColor = postColors.draft;
+				} else {
+					newPostStatus = event.post_status;
+					newColor = postColors[event.post_status];
+				}
+				
+				eventData = {
+					post_id: event.post_id,
+					new_date: event.start.format(),
+					post_status: newPostStatus,
+					color: newColor
+				};			
+				
 				jQuery.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
 					type: 'POST',
-					data: {
-						post_id: event.post_id,
-						new_date: event.start.format(),
-						post_status: event.post_status
-					},
+					data: eventData,
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 					},
+					success: function() {
+						// Update event to new values
+						event.post_status = newPostStatus;
+						event.color = newColor;
+						$calendario.fullCalendar( 'updateEvent', event );
+					}
 				} );
 			},
 			drop: function(){ // External event dropped ONTO calendar
@@ -231,7 +253,7 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 				var eventData = jQuery(this).data('event');
 				
 				var newEventData = {
-					color: draftColor,
+					color: postColors.draft,
 					className: 'status-draft'
 				};
 				
@@ -249,6 +271,12 @@ var $draftsList = jQuery('.unscheduled-drafts-list');
 			$this.toggleClass("filter-hidden");
 			jQuery("#editorial-calendar .status-" + $this.data('status')).toggleClass('filter-hidden');
 		});
+	}
+	
+	
+	function rightNow() {
+		var d = new Date();
+		return d.toISOString();
 	}
 	
 	// DOM Ready
