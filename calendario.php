@@ -360,10 +360,8 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @return void
 		 */
 		public function update_post( int $post_id, string $new_date, string $post_status ) {
-			$post_type = get_post_type( $post_id );
-			
 			// Exit if this is a published or trashed post
-			if ( $post_type == 'publish' || $post_type == 'trash' )
+			if ( $post_status == 'publish' || $post_status == 'trash' )
 				return;
 			
 			$post = array(
@@ -379,10 +377,15 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				$post['post_date_gmt'] = $date_formatted[1];
 			}
 			
+			// Set edit_date if this is a draft
+			if ( $post_status == 'draft' ) {
+				$post['edit_date'] = true;
+			}
+			
 			// Update the post
 			$result = wp_update_post( $post, true );
 			
-			// Make sure this isn't an "unscheduled" draft <--- necessary?
+			// Make sure this isn't an "unscheduled" draft
 			if ( get_post_meta( $post_id, '_unscheduled', true ) ) {
 				self::calendario_remove_unscheduled( $post['ID'] );
 			}

@@ -39,6 +39,8 @@ function getServerDate() {
 	var $calendario = jQuery('#editorial-calendar');
 	var $draftsList = jQuery('.unscheduled-drafts-list');
 	
+	var $tempEvent; // Unscheduled Draft restore when dragging external event fails
+	
 	function initCalendar() {
 		// Event sources
 		var futurePosts = {
@@ -186,7 +188,7 @@ function getServerDate() {
 				} );
 			},
 			drop: function( date ){ // External event dropped ONTO calendar
-				jQuery(this).remove();
+				$tempEvent = jQuery(this).detach();
 			},
 			eventReceive: function( event ) { // Fired after fullCalendar.drop(). Dropping an event ONTO the calendar from an external source.
 				var eventData = {
@@ -201,13 +203,18 @@ function getServerDate() {
 					type: 'POST',
 					data: eventData,
 					beforeSend: function( xhr ) {
-						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+						if ( event.post_id ) {
+							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+							
+							// Clear temp variable
+							$tempEvent = '';
+						} else {
+							xhr.abort();
+							$tempEvent.appendTo($draftsList);
+						}
 					},
 					success: function( data ) {
-						console.info( event.post_id );
-					},
-					error: function( x, y, z ) {
-						console.info(x, y, z );
+						// console.info( event.post_id );
 					}
 				} );
 			},
