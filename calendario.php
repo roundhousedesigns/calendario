@@ -9,7 +9,6 @@ Requires at least: 4.7
 Text Domain: rhd
 Author: Roundhouse Designs
 Author URI: https://roundhouse-designs.com
-License URI: https://www.gnu.org/licenses/gpl-3.0.html
 */
 
 
@@ -383,13 +382,13 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			// Update the post
 			$result = wp_update_post( $post, true );
 			
-			if ( is_wp_error( $result ) ) {
-				self::log_error_message( $result );	
-			}
-			
-			// Make sure this isn't an "unscheduled" draft
+			// Make sure this isn't an "unscheduled" draft <--- necessary?
 			if ( get_post_meta( $post_id, '_unscheduled', true ) ) {
 				self::calendario_remove_unscheduled( $post['ID'] );
+			}
+			
+			if ( is_wp_error( $result ) ) {
+				self::log_error_message( $result );
 			}
 		}
 		

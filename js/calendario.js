@@ -97,6 +97,14 @@ function getServerDate() {
 			validRange: {
 				start: $calendario.data('event-valid-start')
 			},
+			eventAllow: function(dropLocation, draggedEvent) {
+				// Prohibit interaction with dates before and including "today" (server time),
+				if ( moment( dropLocation.start ).isBefore( getServerDate() ) ) {
+					return false;
+				} else { // 
+					return true;
+				}
+			},
 			eventRender: function( event, eventElement ) {
 				// Refresh status-xxx classes
 				eventElement
@@ -129,11 +137,11 @@ function getServerDate() {
 					type: 'POST',
 					data: eventData,
 					beforeSend: function( xhr ) {
-						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-						
 						// Prohibit interaction with dates before "today" (server time)
-						if ( moment(getServerDate()).isAfter(event.start) ) {
-							return;
+						if ( moment(event.start).isBefore(getServerDate()) ) {
+							xhr.abort();
+						} else {  
+							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 						}
 					},
 					success: function() {
@@ -163,26 +171,21 @@ function getServerDate() {
 					data: eventData,
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-						
-						// Prohibit interaction with dates before "today" (server time)
-						if ( moment(event.start).isBefore(getServerDate()) ) {
-							xhr.abort();
-							revertFunc();
+					},
+					success: function( result ) {
+						if ( result === true ) {
+							// Update event to new values
+							event.post_status = newPostStatus;
+							event.color = newColor;
+							event.start = eventData.new_date;
+							$calendario.fullCalendar( 'updateEvent', event );
+						} else {
+							// console.log( "Moving posts to today or earlier is prohibited" );
 						}
-					},
-					success: function() {
-						// Update event to new values
-						event.post_status = newPostStatus;
-						event.color = newColor;
-						event.start = eventData.new_date;
-						$calendario.fullCalendar( 'updateEvent', event );
-					},
-					error: function( x, y, z ) {
-						revertFunc();
 					}
 				} );
 			},
-			drop: function(){ // External event dropped ONTO calendar
+			drop: function( date ){ // External event dropped ONTO calendar
 				jQuery(this).remove();
 			},
 			eventReceive: function( event ) { // Fired after fullCalendar.drop(). Dropping an event ONTO the calendar from an external source.
@@ -200,6 +203,12 @@ function getServerDate() {
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 					},
+					success: function( data ) {
+						console.info( event.post_id );
+					},
+					error: function( x, y, z ) {
+						console.info(x, y, z );
+					}
 				} );
 			},
 			eventDragStop: function( event, jsEvent ) { // Used for moving events OFF of the calendar

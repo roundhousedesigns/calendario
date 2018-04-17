@@ -20,7 +20,7 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 		register_rest_route( $namespace, '/cal/today', array(
 			array(
 				'methods'	=> WP_REST_Server::READABLE,
-				'callback'	=> array( $this, 'get_current_date' ),
+				'callback'	=> array( $this, 'get_server_date' ),
 				'permission_callback'	=> array( $this, 'check_user_permissions' )
 			)
 		) );
@@ -108,13 +108,13 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 	
 	
 	/**
-	 * get_current_date function. Retrieves the current date using the set time zone in WordPress.
+	 * get_server_date function. Retrieves the current date using the set time zone in WordPress.
 	 * 
 	 * @access public
 	 * @param WP_REST_Request $request
 	 * @return string The current date
 	 */
-	public function get_current_date( WP_REST_Request $request ) {
+	public function get_server_date( WP_REST_Request $request ) {
 		$today = new DateTime( current_time( 'Y-m-d' ) );
 		return $today->format( 'c' );
 	}
@@ -151,9 +151,9 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 				$post_id = absint( $post->ID );
 				
 				$event_data = array(
+					'post_id'	=> $post_id,
 					'title'	=> $title,
 					'start'	=> $start,
-					'post_id'	=> $post_id,
 					'post_status'	=> 'draft'
 				);
 				
@@ -162,6 +162,7 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 				$output .= "<li class='unscheduled-draft status-draft fc-event ui-draggable' data-event='{$event_data_json}'>{$title}</li>";
 			}
 		}
+	
 		return $output;
 	}
 	
@@ -207,6 +208,14 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 					'post_status'	=> $post->post_status,
 					'className'	=> "status-future"
 				);
+				
+				$today = new DateTime( current_time( 'Y-m-d' ) );
+				$today = $today->format( 'Y-m-d' );
+				$event_date = $date->format( 'Y-m-d' );
+
+				if ( $today == $event_date ) {
+					$postdata[$i]['editable'] = false;
+				}
 				
 				++$i;
 			}
@@ -337,6 +346,14 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 					'className'		=> "status-draft"
 				);
 				
+				$today = new DateTime( current_time( 'Y-m-d' ) );
+				$today = $today->format( 'Y-m-d' );
+				$event_date = $date->format( 'Y-m-d' );
+
+				if ( $today == $event_date ) {
+					$postdata[$i]['editable'] = false;
+				}
+				
 				++$i;
 			}
 			
@@ -357,7 +374,7 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 	 * 
 	 * @access public
 	 * @param WP_REST_Request $request
-	 * @return void
+	 * @return bool Success/failure
 	 *
 	 * TODO: Make sure not trying to change date to today's or prior date (i.e. already published)
 	 */
@@ -366,7 +383,15 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 		$new_date = ( $request->get_param( 'new_date' ) ) ? $request->get_param( 'new_date' ) : '';
 		$post_status = ( $request->get_param( 'post_status' ) ) ? $request->get_param( 'post_status' ) : '';
 		
-		RHD_Calendario::update_post( $post_id, $new_date, $post_status );
+		$target_date = new DateTime( $new_date );
+		$today = new DateTime( current_time( 'Y-m-d' ) );
+		
+		if ( $today < $target_date ) {
+			RHD_Calendario::update_post( $post_id, $new_date, $post_status );
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	
