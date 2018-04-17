@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 8:22:10 PM on 15-04-2018
+* RHD Dev: Compiled at 3:03:12 AM on 17-04-2018
 ***/
 
 /*
@@ -89,7 +89,7 @@
 #calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles {
   display: flex;
   align-content: space-around;
-  margin: 0.25em 0.5em;
+  margin: 0.25em 0;
 }
 #calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle {
   width: 50%;
