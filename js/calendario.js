@@ -86,7 +86,7 @@ function getServerDate() {
 			},
 			customButtons: {
 				newPostButton: {
-					text: 'New Post',
+					text: 'New Draft',
 					click: function( event ) {
 						openNewPostModal( event );
 					}
@@ -330,12 +330,13 @@ function getServerDate() {
 		vex.dialog.open({
 			afterOpen: function() {
 				/*
+				// Fallback?
 				jQuery("#modal_post_date").datepicker({
 					dateFormat: "mm-dd-yy"
 				});
 				*/
 			},
-			message: 'New Post, kid!',
+			message: 'New Draft Post',
 			input: [
 				'<input name="post_title" type="text" placeholder="Post Title" required />',
 				'<textarea name="post_content" placeholder="Post Content"></textarea>',

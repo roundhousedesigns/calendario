@@ -180,7 +180,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_enqueue_style( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.css', __FILE__ ) );
 			wp_enqueue_style( 'vex', plugins_url( 'node_modules/vex-js/dist/css/vex.css', __FILE__ ) );
 			wp_enqueue_style( 'vex-theme', plugins_url( 'node_modules/vex-js/dist/css/vex-theme-flat-attack.css', __FILE__ ) );
-			wp_enqueue_style( 'calendario-admin', plugins_url( 'css/calendario-admin.css', __FILE__ ) );
+			wp_enqueue_style( 'calendario', plugins_url( 'css/main.css', __FILE__ ) );
 			
 			// JS
 			wp_register_script( 'jquery-rhd', plugins_url( 'node_modules/jquery/dist/jquery.min.js', __FILE__ ), array(), '3.3.1', true );
@@ -188,7 +188,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_register_script( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.js', __FILE__ ), array( 'jquery-rhd', 'moment' ), '3.7.0', true );
 			wp_register_script( 'vex', plugins_url( 'node_modules/vex-js/dist/js/vex.combined.min.js', __FILE__ ), array(), '4.0.1', true );
 			
-			wp_enqueue_script( 'calendario-admin', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-datepicker','moment', 'fullcalendar', 'vex' ), RHD_CALENDARIO_VERSION, true );
+			wp_enqueue_script( 'calendario', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-datepicker','moment', 'fullcalendar', 'vex' ), RHD_CALENDARIO_VERSION, true );
 			
 			// noConflict mode for custom jQuery
 			wp_add_inline_script( 'jquery-rhd', 'var jQueryRHD = jQuery.noConflict(true);', 'after' );
@@ -196,7 +196,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			// Vex theme
 			wp_add_inline_script( 'vex', "vex.defaultOptions.className = 'vex-theme-flat-attack';", 'after' );
 			
-			wp_localize_script( 'calendario-admin', 'wpApiSettings', array(
+			wp_localize_script( 'calendario', 'wpApiSettings', array(
 				'root' => esc_url_raw( rest_url() ),
 				'nonce' => wp_create_nonce( 'wp_rest' )
 			) );
@@ -295,7 +295,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 					<div id="editorial-calendar" class="editorial-calendar"></div>
 					<div id="calendario-sidebar" class="calendario-sidebar">
 						<div id="event-toggles" class="calendario-sidebar-container">
-							<h4 class="calendario-sidebar-box-title">Post Status</h4>
+							<h4 class="calendario-sidebar-box-title">Filter by Status</h4>
 							<div class="calendario-event-toggles calendario-sidebar-box">
 								<ul class="toggles">
 									<li class="event-toggle status-publish" data-status="publish">
