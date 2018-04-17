@@ -5,7 +5,6 @@
   "main": "Gruntfile.js",
   "repository": "git@github.com:gaswirth/rhdwp-calendario.git",
   "author": "Nick Gaswirth <nick@roundhouse-designs.com>",
-  "license": "GPL3",
   "private": true,
   "devDependencies": {
     "grunt": "^1.0.1",
@@ -15,6 +14,8 @@
   },
   "dependencies": {
     "fullcalendar": "^3.7.0",
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1",
+    "vex-js": "HubSpot/vex#master"
   }
 }

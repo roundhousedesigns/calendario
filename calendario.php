@@ -120,13 +120,13 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * format_post_date function. Formats a time string into RHD_DATE_FORMAT.
 		 * 
 		 * @access public
-		 * @param string|null $date
+		 * @param string $date
 		 * @return array [0] => formatted time, [1] => formatted time (GMT), or array() on null
 		 */
 		public function format_post_date( $date ) {
 			if ( ! $date )
 				return;
-				
+			
 			$time = new DateTime( $date );
 			$time_gmt = new DateTime( $date );
 			$time_gmt->setTimezone( new DateTimeZone('GMT') );
@@ -178,17 +178,23 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			// CSS
 			wp_enqueue_style( 'google-fonts', '//fonts.googleapis.com/css?family=Josefin+Slab:600|Oswald:400,600' );
 			wp_enqueue_style( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.css', __FILE__ ) );
+			wp_enqueue_style( 'vex', plugins_url( 'node_modules/vex-js/dist/css/vex.css', __FILE__ ) );
+			wp_enqueue_style( 'vex-theme', plugins_url( 'node_modules/vex-js/dist/css/vex-theme-flat-attack.css', __FILE__ ) );
 			wp_enqueue_style( 'calendario-admin', plugins_url( 'css/calendario-admin.css', __FILE__ ) );
 			
 			// JS
 			wp_register_script( 'jquery-rhd', plugins_url( 'node_modules/jquery/dist/jquery.min.js', __FILE__ ), array(), '3.3.1', true );
 			wp_register_script( 'moment', plugins_url( 'node_modules/moment/moment.js', __FILE__ ), array(), '2.19.3', true );
 			wp_register_script( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.js', __FILE__ ), array( 'jquery-rhd', 'moment' ), '3.7.0', true );
+			wp_register_script( 'vex', plugins_url( 'node_modules/vex-js/dist/js/vex.combined.min.js', __FILE__ ), array(), '4.0.1', true );
 			
-			wp_enqueue_script( 'calendario-admin', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable', 'jquery-ui-droppable', 'moment', 'fullcalendar' ), '0.1dev', true );
+			wp_enqueue_script( 'calendario-admin', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-datepicker','moment', 'fullcalendar', 'vex' ), RHD_CALENDARIO_VERSION, true );
 			
 			// noConflict mode for custom jQuery
 			wp_add_inline_script( 'jquery-rhd', 'var jQueryRHD = jQuery.noConflict(true);', 'after' );
+			
+			// Vex theme
+			wp_add_inline_script( 'vex', "vex.defaultOptions.className = 'vex-theme-flat-attack';", 'after' );
 			
 			wp_localize_script( 'calendario-admin', 'wpApiSettings', array(
 				'root' => esc_url_raw( rest_url() ),
@@ -278,52 +284,54 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 */
 		public function calendario_page() {
 			$this->plugin_meta = get_plugin_data( __FILE__, true, true );
+			?>
 			
-			echo "
-			<div id='calendario'>
-				<header class='plugin-header'>
-					<h2 class='plugin-title'>{$this->plugin_meta['Name']}</h2>
+			<div id="calendario">
+				<header class="plugin-header">
+					<h2 class="plugin-title"><?php echo $this->plugin_meta["Name"]; ?></h2>
 				</header>
 				
-				<div id='calendario-workspace'>
-					<div id='editorial-calendar' class='editorial-calendar'></div>
-					<div id='calendario-sidebar' class='calendario-sidebar'>
-						<div id='event-toggles' class='calendario-sidebar-container'>
-							<h4 class='calendario-sidebar-box-title'>Post Status</h4>
-							<div class='calendario-event-toggles calendario-sidebar-box'>
-								<ul class='toggles'>
-									<li class='event-toggle status-publish' data-status='publish'>
+				<div id="calendario-workspace">
+					<div id="editorial-calendar" class="editorial-calendar"></div>
+					<div id="calendario-sidebar" class="calendario-sidebar">
+						<div id="event-toggles" class="calendario-sidebar-container">
+							<h4 class="calendario-sidebar-box-title">Post Status</h4>
+							<div class="calendario-event-toggles calendario-sidebar-box">
+								<ul class="toggles">
+									<li class="event-toggle status-publish" data-status="publish">
 										Published
 									</li>
-									<li class='event-toggle status-draft' data-status='draft'>
+									<li class="event-toggle status-draft" data-status="draft">
 										Drafts
 									</li>
-									<li class='event-toggle status-future' data-status='future'>
+									<li class="event-toggle status-future" data-status="future">
 										Future
 									</li>
 								</ul>
 							</div>
 						</div>
-						<div id='calendario-drafts' class='calendario-sidebar-container'>
-							<h4 class='calendario-sidebar-box-title'>Unscheduled Drafts</h4>
-							<div id='calendario-unscheduled-drafts' class='calendario-unscheduled-drafts calendario-sidebar-box'>
-								<ul class='unscheduled-drafts-list'></ul>
+						<div id="calendario-drafts" class="calendario-sidebar-container">
+							<h4 class="calendario-sidebar-box-title">Unscheduled Drafts</h4>
+							<div id="calendario-unscheduled-drafts" class="calendario-unscheduled-drafts calendario-sidebar-box">
+								<ul class="unscheduled-drafts-list"></ul>
 							</div>
 						</div>
+					</div>
 				</div>
 			</div>
-			";
+			
+			<?php
 		}
-		
+				
 		
 		/**
-		 * calendario_make_unscheduled function. Adds the '_unscheduled' meta_key to the post.
+		 * calendario_make_unscheduled_draft function. Adds the '_unscheduled' meta_key to the post to classify it as an Unscheduled Draft.
 		 * 
 		 * @access public
 		 * @param int $post_id The post ID
 		 * @return void
 		 */
-		public function calendario_make_unscheduled( int $post_id ) {
+		public function calendario_make_unscheduled_draft( int $post_id ) {
 			$result = update_post_meta( $post_id, '_unscheduled', 'yes' );
 			
 			// DEBUG
@@ -364,34 +372,91 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			if ( $post_status == 'publish' || $post_status == 'trash' )
 				return;
 			
-			$post = array(
+			$postdata = array(
 				'ID'			=> $post_id,
 				'post_status'	=> $post_status
 			);
-				
+			
 			// Format the date
 			if ( $new_date ) {
 				$date_formatted = self::format_post_date( $new_date );
 				
-				$post['post_date'] = $date_formatted[0];
-				$post['post_date_gmt'] = $date_formatted[1];
+				$postdata['post_date'] = $date_formatted[0];
+				$postdata['post_date_gmt'] = $date_formatted[1];
 			}
 			
 			// Set edit_date if this is a draft
 			if ( $post_status == 'draft' ) {
-				$post['edit_date'] = true;
+				$postdata['edit_date'] = true;
 			}
 			
 			// Update the post
-			$result = wp_update_post( $post, true );
+			$result = wp_update_post( $postdata, true );
 			
 			// Make sure this isn't an "unscheduled" draft
 			if ( get_post_meta( $post_id, '_unscheduled', true ) ) {
-				self::calendario_remove_unscheduled( $post['ID'] );
+				self::calendario_remove_unscheduled( $postdata['ID'] );
 			}
 			
 			if ( is_wp_error( $result ) ) {
 				self::log_error_message( $result );
+			}
+		}
+		
+		
+		/**
+		 * add_new_draft_post function. Adds a new draft post from the New Post modal dialog.
+		 * 
+		 * @access public
+		 * @param string $post_title The post title
+		 * @param string $post_date The post date
+		 * @param string $post_status The post status
+		 * @param string $post_content The post contnet
+		 * @return string|WP_Error The post data array, WP_Error on fail
+		 */
+		public function add_new_draft_post( string $post_title, string $post_date, string $post_status, string $post_content ) {
+			// Check for "unscheduled draft" status
+			if ( $post_status == 'unsched' ) {
+				$post_status = 'draft';
+				$unsched = true;
+				$post_date = '';
+			} else {
+				$unsched = false;
+			}
+			
+			$date_formatted = self::format_post_date( $post_date );
+			
+			$postdata = array(
+				'post_title'	=> $post_title,
+				'post_date'		=> $date_formatted[0],
+				'post_date_gmt'	=> $date_formatted[1],
+				'post_status'	=> $post_status,
+				'post_content'	=> $post_content,
+				'edit_date'		=> true
+			);
+			
+			// Sanitize
+			$post_clean = sanitize_post( $postdata, 'edit' );
+			
+			// Add Post
+			$result = wp_insert_post( $postdata, true );
+			
+			if ( ! is_wp_error( $result ) ) {
+				// Add _unscheduled meta if requested
+				if ( $unsched === true ) {
+					self::calendario_make_unscheduled_draft( $result );
+				}
+				
+				return array( 
+					'post_id'		=> $result,
+					'post_title'	=> self::format_post_title_display( $post_clean['post_title'] ),
+					'post_date'		=> $date_formatted[0],
+					'post_status'	=> $post_clean['post_status'],
+					'_unsched'		=> $unsched
+				);
+			} else {
+				self::log_error_message( $result );
+				return false;
 			}
 		}
 		
@@ -405,24 +470,20 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * @return void
 		 */
 		public function unschedule_draft( int $post_id, string $date ) {
-			$date_formatted = self::format_post_date( $date );
-			
-			$post = array(
+			$postdata = array(
 				'ID'			=> $post_id,
-				'post_date'		=> $date_formatted[0],
-				'post_date_gmt'	=> $date_formatted[1],
 				'post_status'	=> 'draft'
 			);
 			
 			// Update the post
-			$result = wp_update_post( $post, true );
+			$result = wp_update_post( $postdata, true );
 			
 			if ( is_wp_error( $result ) ) {
 				self::log_error_message( $result );	
 				return false;
 			}
 			
-			self::calendario_make_unscheduled( $post['ID'] );
+			self::calendario_make_unscheduled_draft( $postdata['ID'] );
 		}
 	}
 }

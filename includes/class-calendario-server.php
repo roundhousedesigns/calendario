@@ -70,6 +70,15 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 			)
 		) );
 		
+		// Add New Post
+		register_rest_route( $namespace, '/cal/add', array(
+			array(
+				'methods'	=> WP_REST_Server::EDITABLE,
+				'callback'	=> array( $this, 'add_new_draft_post' ),
+				'permission_callback'	=> array( $this, 'check_user_permissions' )
+			)
+		) );
+		
 		// Make "Unscheduled Draft"
 		register_rest_route( $namespace, '/cal/unschedule', array(
 			array(
@@ -389,6 +398,36 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 		if ( $today < $target_date ) {
 			RHD_Calendario::update_post( $post_id, $new_date, $post_status );
 			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * add_new_draft_post function. Endpoint for adding new posts.
+	 * 
+	 * @access public
+	 * @param WP_REST_Request $request
+	 * @return WP_REST_Response|bool Valid REST response on success, false on fail
+	 *
+	 * TODO: Make sure not trying to change date to today's or prior date (i.e. already published)
+	 */
+	public function add_new_draft_post( WP_REST_Request $request ) {
+		$post_title = ( $request->get_param( 'post_title' ) ) ? $request->get_param( 'post_title' ) : '';
+		$post_date = ( $request->get_param( 'post_date' ) ) ? $request->get_param( 'post_date' ) : ''; // Default: Right Now
+		$post_status = ( $request->get_param( 'post_status' ) ) ? $request->get_param( 'post_status' ) : 'draft'; // Default: 'draft'
+		$post_content = ( $request->get_param( 'post_content' ) ) ? $request->get_param( 'post_content' ) : '';
+		
+		$postdata = RHD_Calendario::add_new_draft_post( $post_title, $post_date, $post_status, $post_content );
+		
+		if ( $postdata ) {
+			// Set up REST Response
+			$response = new WP_REST_Response( $postdata );
+			$response->header( 'Content-type', 'application/json');
+			$response->set_status( 200 );
+			
+			return $response;
 		} else {
 			return false;
 		}

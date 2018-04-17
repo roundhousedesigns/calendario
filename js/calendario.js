@@ -21,9 +21,6 @@ function getServerDate() {
 		},
 		success: function( data ) {
 			return data;
-		},
-		error: function( x, y, z ) {
-			console.log( x, y, z );
 		}
 	} );
 }
@@ -39,7 +36,8 @@ function getServerDate() {
 	var $calendario = jQuery('#editorial-calendar');
 	var $draftsList = jQuery('.unscheduled-drafts-list');
 	
-	var $tempEvent; // Unscheduled Draft restore when dragging external event fails
+	// Unscheduled Draft restore when dragging external event fails
+	var $tempEvent;
 	
 	function initCalendar() {
 		// Event sources
@@ -84,12 +82,14 @@ function getServerDate() {
 			header: {
 				'left': 'today',
 				'center': 'title',
-				'right': 'prev,next'
+				'right': 'newPostButton prev,next'
 			},
 			customButtons: {
-				newPostButton: 'New Post',
-				click: function() {
-					alert('this will create a new post. but not today, son.');
+				newPostButton: {
+					text: 'New Post',
+					click: function( event ) {
+						openNewPostModal( event );
+					}
 				}
 			},
 			editable: true,
@@ -222,7 +222,7 @@ function getServerDate() {
 				// Exit if not dropping onto the Unscheduled Drafts area
 				if( jsEvent.target.id != "calendario-unscheduled-drafts" )
 					return;
-					
+				
 				var eventData = {
 					title: event.title,
 					post_id: event.post_id,
@@ -230,15 +230,8 @@ function getServerDate() {
 					post_status: "draft" // All posts moving to external area become drafts
 				};
 				
-				var $el = jQuery( "<li class='unscheduled-draft status-draft fc-event'>" ).appendTo( '.unscheduled-drafts-list' ).text( eventData.title );
-				
-				$el
-					.draggable( {
-						revert: true,
-						revertDuration: 0
-					} )
-					.data( 'event', eventData );
-
+				var $el; // New external event placeholder
+					
 				// Update the post in the database
 				jQuery.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/unschedule',
@@ -247,11 +240,12 @@ function getServerDate() {
 					beforeSend: function( xhr ) {							
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 						
-						// Remove the event from the calendar
+						// Create the external list item, and then remove the event from the calendar
+						$el = buildUnscheduledPost( eventData );
 						jQuery('#editorial-calendar').fullCalendar( 'removeEvents', event._id );
 					},
-					complete: function() {
-						jQuery('.unscheduled-drafts-list li').addClass('load-complete');
+					success: function() {
+						$el.addClass('load-complete');
 					}
 				} ).done( setupExternalEvents );
 			},
@@ -280,6 +274,20 @@ function getServerDate() {
 				setupExternalEvents();
 			}
 		} );
+	}
+	
+	
+	function buildUnscheduledPost( eventData ) {
+		var $el = jQuery( "<li class='unscheduled-draft status-draft fc-event'>" ).appendTo( '.unscheduled-drafts-list' ).text( eventData.title );
+		
+		$el
+			.draggable( {
+				revert: true,
+				revertDuration: 0
+			} )
+			.data( 'event', eventData );
+	
+		return $el;
 	}
 	
 	
@@ -314,12 +322,78 @@ function getServerDate() {
 			jQuery("#editorial-calendar .status-" + $this.data('status')).toggleClass('filter-hidden');
 		});
 	}
+	
+	
+	function openNewPostModal( event ) {
+		var $el; // New external event placeholder
+		
+		vex.dialog.open({
+			afterOpen: function() {
+				/*
+				jQuery("#modal_post_date").datepicker({
+					dateFormat: "mm-dd-yy"
+				});
+				*/
+			},
+			message: 'New Post, kid!',
+			input: [
+				'<input name="post_title" type="text" placeholder="Post Title" required />',
+				'<textarea name="post_content" placeholder="Post Content"></textarea>',
+				'<input type="date" name="post_date" id="modal_post_date" />',
+				'<select name="post_status" required /><option value="draft">Draft</option><option value="unsched">Unscheduled Draft</option></select>',
+			].join(''),
+			buttons: [
+				jQuery.extend({}, vex.dialog.buttons.YES, { text: 'Update' }),
+				jQuery.extend({}, vex.dialog.buttons.NO, { text: 'Cancel' })
+			],
+			callback: function( data ) {
+				if (!data) {
+					console.log('Cancelled');
+				} else {
+					jQuery.ajax({
+						url: wpApiSettings.root + 'rhd/v1/cal/add',
+						type: 'POST',
+						data: {
+							post_title: data.post_title,
+							post_date: moment(data.post_date).toISOString(),
+							post_status: data.post_status,
+							post_content: data.post_content
+						},
+						beforeSend: function( xhr ) {
+							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+						},
+						success: function( data ) {
+							if ( data ) {
+								var eventData = {
+									title: data.post_title,
+									start: moment(data.post_date).toISOString(),
+									post_id: data.post_id,
+									post_status: data.post_status,
+									color: postColors[data.post_status]
+								};
+								
+								if ( data._unsched === true ) {
+									$el = buildUnscheduledPost( eventData );
+									$el.addClass('load-complete');
+								} else {
+									$calendario.fullCalendar( 'renderEvent', eventData );
+								}
+							} else {
+								console.log( 'Something went wrong.' );
+							}
+						}
+					} );
+				}
+			}
+		});
+	}
 		
 	
 	// DOM Ready
 	jQuery(document).ready( function() {
 		initCalendar();
 		initStatusToggles();
+		
 		getUnscheduledDrafts();
 	} );
 	
