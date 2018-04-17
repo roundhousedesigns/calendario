@@ -108,11 +108,6 @@ function getServerDate() {
 				var newColor;
 				var eventData;
 				
-				// Prohibit interaction with dates before "today" (server time)
-				if ( moment(getServerDate()).isAfter(event.start) ) {
-					return;
-				}
-				
 				// Toggle status and event color
 				if ( event.post_status == 'draft' ) {
 					newPostStatus = 'future';
@@ -135,6 +130,11 @@ function getServerDate() {
 					data: eventData,
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+						
+						// Prohibit interaction with dates before "today" (server time)
+						if ( moment(getServerDate()).isAfter(event.start) ) {
+							return;
+						}
 					},
 					success: function() {
 						event.post_status = newPostStatus;
@@ -145,7 +145,7 @@ function getServerDate() {
 					}
 				} );
 			},
-			eventDrop: function( event ) { // Moving events around the calendar				
+			eventDrop: function( event, delta, revertFunc, jsEvent, ui, view ) { // Moving events around the calendar				
 				var newPostStatus;
 				var newColor;
 				var eventData;
@@ -157,14 +157,18 @@ function getServerDate() {
 					color: postColors[event.post_status]
 				};
 				
-				console.log('COMEON: ', eventData.new_date);
-				
 				jQuery.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
 					type: 'POST',
 					data: eventData,
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+						
+						// Prohibit interaction with dates before "today" (server time)
+						if ( moment(event.start).isBefore(getServerDate()) ) {
+							xhr.abort();
+							revertFunc();
+						}
 					},
 					success: function() {
 						// Update event to new values
@@ -172,8 +176,9 @@ function getServerDate() {
 						event.color = newColor;
 						event.start = eventData.new_date;
 						$calendario.fullCalendar( 'updateEvent', event );
-						
-						console.info("after: ", eventData.new_date);
+					},
+					error: function( x, y, z ) {
+						revertFunc();
 					}
 				} );
 			},
