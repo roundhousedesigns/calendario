@@ -44,7 +44,7 @@ function getServerDate() {
 
 function getUnscheduledDrafts() {
 	jQuery.ajax( {
-		url: wpApiSettings.root + 'rhd/v1/cal/all-unscheduled',
+		url: wpApiSettings.root + 'rhd/v1/cal/unscheduled',
 		method: 'GET',
 		beforeSend: function( xhr ) {
 			xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
@@ -116,50 +116,6 @@ function initStatusToggles() {
 		$this.toggleClass("filter-hidden");
 		$calendario.find(".status-" + $this.data('status')).toggleClass('filter-hidden');
 	});
-}
-
-
-function togglePostStatus( event ) {
-	var newPostStatus;
-	var newColor;
-	var eventData;
-	
-	// Toggle status and event color
-	if ( event.post_status == 'draft' ) {
-		newPostStatus = 'future';
-		newColor = postColors.future;
-	} else if ( event.post_status == 'future' ) {
-		newPostStatus = 'draft';
-		newColor = postColors.draft;
-	}
-	
-	eventData = {
-		post_id: event.post_id,
-		post_status: newPostStatus,
-		start: event.start.format(),
-		color: newColor
-	};
-	
-	jQuery.ajax( {
-		url: wpApiSettings.root + 'rhd/v1/cal/update',
-		type: 'POST',
-		data: eventData,
-		beforeSend: function( xhr ) {
-			// Prohibit interaction with dates before "today" (server time)
-			if ( moment(event.start).isBefore(getServerDate()) ) {
-				xhr.abort();
-			} else {  
-				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-			}
-		},
-		success: function() {
-			event.post_status = newPostStatus;
-			event.color = newColor;
-			
-			// Update event
-			$calendario.fullCalendar( 'updateEvent', event );
-		}
-	} );
 }
 
 	

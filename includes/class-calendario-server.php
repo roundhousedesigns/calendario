@@ -26,7 +26,7 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 		) );
 		
 		// Get All Unscheduled Drafts
-		register_rest_route( $namespace, '/cal/all-unscheduled', array(
+		register_rest_route( $namespace, '/cal/unscheduled', array(
 			array(
 				'methods'	=> WP_REST_Server::READABLE,
 				'callback'	=> array( $this, 'get_unscheduled_draft_list' ),
@@ -243,7 +243,7 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 			foreach( $posts as $post ) {
 				$event_data[] = array(
 					'post_id'	=> $post->ID,
-					'title'		=> get_the_title( $post ),
+					'title'		=> RHD_Calendario::format_post_title_display( get_the_title( $post ) ),
 					'start'		=> get_the_date( 'c', $post ),
 					'post_status'	=> 'draft'
 				);

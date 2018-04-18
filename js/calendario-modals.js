@@ -4,10 +4,12 @@
  * @package RHD_Calendario
  */
  
+var currentVex; // A vex instance
+ 
 function openNewPostModal( event ) {
 	var $el; // New external event placeholder
 	
-	vex.dialog.open({
+	currentVex = vex.dialog.open({
 		afterOpen: function() {
 			/*
 			// Fallback?
@@ -108,7 +110,7 @@ function openQuickEditModal( event, unsched ) {
 	}
 	
 	// Open the dialog
-	vex.dialog.open({
+	currentVex = vex.dialog.open({
 		afterOpen: function() {
 			/*
 			// Fallback?
@@ -119,10 +121,13 @@ function openQuickEditModal( event, unsched ) {
 		},
 		message: 'Quick Edit' + publishText,
 		input: [
-			'<div class="calendario-modal">',
+			'<div class="calendario-modal" data-post-id="' + event.post_id + '" data-event-id="' + event._id + '">',
 				'<input name="post_title" type="text" value="' + event.title + '" required ' + disabled + '/>',
 				statusSelectHTML,
-				'<a class="post-edit-link" href="' + wpApiSettings.homeUrl + 'wp-admin/post.php?post=' + event.post_id + '&action=edit">Edit Post</a>',
+				'<div class="post-links">',
+					'<a class="post-edit-link" href="' + wpApiSettings.homeUrl + 'wp-admin/post.php?post=' + event.post_id + '&action=edit">Edit Post</a>',
+					'<a class="post-trash-link" href="' + wpApiSettings.homeUrl + 'wp-admin/post.php?post=' + event.post_id + '&action=edit">Trash Post</a>',
+				'</div>',
 			'</div>',
 			hideYesButtonStyle
 		].join(''),
@@ -184,5 +189,33 @@ function openQuickEditModal( event, unsched ) {
 				} );
 			}
 		}
+	});
+	
+	jQuery(document).ready(function(){
+		// Trash Post link handler
+		jQuery(".post-trash-link").click(function(e){
+			e.preventDefault();
+			
+			$modal = jQuery(this).parents(".calendario-modal");
+			
+			console.log(wpApiSettings.root + 'wp/v2/posts/');
+			
+			jQuery.ajax({
+				url: wpApiSettings.root + 'wp/v2/posts/' + $modal.data('post-id'),
+				type: 'DELETE',
+				cache: false,
+				beforeSend: function( xhr ) {
+					xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+				},
+				success: function() {
+					$calendario.fullCalendar( 'removeEvents', $modal.data('event-id') );
+					currentVex.close();
+					console.log('yes');
+				},
+				error: function(x,y,z) {
+					console.log("x", x,"y", y,"z", z);
+				}
+			});
+		});
 	});
 }

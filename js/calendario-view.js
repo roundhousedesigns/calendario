@@ -72,6 +72,13 @@ function initPage() {
 	
 	// fullCalendar setup
 	$calendario.fullCalendar({
+		defaultView: 'week',
+		views: {
+			week: {
+				type: 'basic',
+				duration: { weeks: 10 }
+			}
+		},
 		header: {
 			'left': 'today',
 			'center': 'title',

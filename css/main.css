@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 12:07:38 PM on 18-04-2018
+* RHD Dev: Compiled at 3:23:38 PM on 18-04-2018
 ***/
 
 /*
@@ -12,9 +12,21 @@
 /* ==========================================================================
 	Includes
    ========================================================================== */
-.calendario-modal .post-edit-link {
-  font-size: 1rem;
+.calendario-modal .post-links {
   float: right;
+  margin-bottom: 0.5em;
+}
+.calendario-modal .post-links a {
+  display: block;
+  text-align: right;
+  line-height: 1.2;
+}
+.calendario-modal .post-links .post-edit-link {
+  font-size: 1rem;
+}
+.calendario-modal .post-links .post-trash-link {
+  font-size: 0.9rem;
+  color: #f00;
 }
 #calendario {
   margin-right: 1em;
@@ -58,6 +70,12 @@
 #calendario-workspace .editorial-calendar .fc-time {
   display: none;
 }
+#calendario-workspace .editorial-calendar .fc-event .fc-content {
+  white-space: normal;
+}
+#calendario-workspace .editorial-calendar .fc-event .fc-title {
+  display: block;
+}
 #calendario-workspace .editorial-calendar .fc-event.filter-hidden {
   display: none;
 }
@@ -89,8 +107,7 @@
   height: auto;
   position: relative;
 }
-#calendario-workspace .calendario-sidebar .calendario-sidebar-box .fc-event,
-#calendario-workspace .calendario-sidebar .calendario-sidebar-box .event-toggle {
+#calendario-workspace .calendario-sidebar .calendario-sidebar-box .fc-event {
   margin: 0.25em;
 }
 #calendario-workspace .calendario-sidebar .calendario-event-toggles {
@@ -98,11 +115,12 @@
 }
 #calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles {
   display: flex;
-  align-content: space-around;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
   margin: 0.25em 0;
 }
 #calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle {
-  width: 50%;
+  width: 45%;
   display: inline-block;
   text-align: center;
   cursor: pointer;
@@ -114,12 +132,7 @@
   border-width: 2px;
   border-style: solid;
   transition: all 0.15s ease;
-}
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle:first-of-type {
-  margin-left: 0;
-}
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle:last-of-type {
-  margin-right: 0;
+  margin: 0;
 }
 #calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.status-publish {
   background-color: #000;
@@ -132,6 +145,10 @@
 #calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.status-future {
   background-color: #00f;
   border-color: #00f;
+}
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.status-pending {
+  background-color: #008000;
+  border-color: #008000;
 }
 #calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.filter-hidden {
   background-color: transparent;

@@ -52,6 +52,12 @@
 			display none
 		
 		.fc-event
+			.fc-content
+				white-space normal
+			
+			.fc-title
+				display block
+					
 			&.filter-hidden
 				display none
 	
@@ -84,7 +90,6 @@
 			position relative
 			
 			.fc-event
-			.event-toggle
 				margin $quarterspacer
 		
 		.calendario-event-toggles
@@ -92,11 +97,12 @@
 			
 			.toggles
 				display flex
-				align-content space-around
+				justify-content space-evenly
+				flex-wrap wrap
 				margin $quarterspacer 0
 				
 				.event-toggle
-					width 50%
+					width 45%
 					display inline-block
 					text-align center
 					cursor pointer
@@ -106,12 +112,7 @@
 					border-width 2px
 					border-style solid
 					transition all 0.15s ease
-					
-					&:first-of-type
-						margin-left 0
-					
-					&:last-of-type
-						margin-right 0
+					margin 0
 					
 					&.status-publish
 						background-color black
@@ -123,6 +124,10 @@
 					
 					&.status-future
 						background-color blue
+						border-color @background-color
+					
+					&.status-pending
+						background-color green
 						border-color @background-color
 					
 					&.filter-hidden
