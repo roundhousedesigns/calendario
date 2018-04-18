@@ -180,6 +180,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_enqueue_style( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.css', __FILE__ ) );
 			wp_enqueue_style( 'vex', plugins_url( 'node_modules/vex-js/dist/css/vex.css', __FILE__ ) );
 			wp_enqueue_style( 'vex-theme', plugins_url( 'node_modules/vex-js/dist/css/vex-theme-flat-attack.css', __FILE__ ) );
+			wp_enqueue_style( 'fullcalendar', plugins_url( 'css/fullcalendar/fullcalendar.css', __FILE__ ) );
 			wp_enqueue_style( 'calendario', plugins_url( 'css/main.css', __FILE__ ) );
 			
 			// JS
@@ -188,7 +189,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_register_script( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.js', __FILE__ ), array( 'jquery-rhd', 'moment' ), '3.7.0', true );
 			wp_register_script( 'vex', plugins_url( 'node_modules/vex-js/dist/js/vex.combined.min.js', __FILE__ ), array(), '4.0.1', true );
 			
-			wp_enqueue_script( 'calendario', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-datepicker','moment', 'fullcalendar', 'vex' ), RHD_CALENDARIO_VERSION, true );
+			wp_enqueue_script( 'calendario', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable','moment', 'fullcalendar', 'vex' ), RHD_CALENDARIO_VERSION, true );
 			
 			// noConflict mode for custom jQuery
 			wp_add_inline_script( 'jquery-rhd', 'var jQueryRHD = jQuery.noConflict(true);', 'after' );
@@ -197,6 +198,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_add_inline_script( 'vex', "vex.defaultOptions.className = 'vex-theme-flat-attack';", 'after' );
 			
 			wp_localize_script( 'calendario', 'wpApiSettings', array(
+				'homeUrl'	=> home_url( '/' ),
 				'root' => esc_url_raw( rest_url() ),
 				'nonce' => wp_create_nonce( 'wp_rest' )
 			) );
@@ -312,9 +314,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 						</div>
 						<div id="calendario-drafts" class="calendario-sidebar-container">
 							<h4 class="calendario-sidebar-box-title">Unscheduled Drafts</h4>
-							<div id="calendario-unscheduled-drafts" class="calendario-unscheduled-drafts calendario-sidebar-box">
-								<ul class="unscheduled-drafts-list"></ul>
-							</div>
+							<ul id="calendario-unscheduled-drafts" class="unscheduled-drafts-list calendario-sidebar-box"></ul>
 						</div>
 					</div>
 				</div>
@@ -359,17 +359,18 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * update_post function. Changes a post's post_date and post_date_gmt meta.
+		 * update_post function. Updates post data requested by the Calendario page.
 		 * 
 		 * @access public
 		 * @param int $post_id The post ID
 		 * @param string $new_date The string containing the new post date
-		 * @param string $post_status Current post status
+		 * @param string $post_status The post status
+		 * @param string $post_title The 
 		 * @return void
 		 */
-		public function update_post( int $post_id, string $new_date, string $post_status ) {
-			// Exit if this is a published or trashed post
-			if ( $post_status == 'publish' || $post_status == 'trash' )
+		public function update_post( int $post_id, string $new_date, string $post_status, string $post_title = null ) {
+			// Exit if this is a trashed post
+			if ( $post_status == 'trash' )
 				return;
 			
 			$postdata = array(
@@ -377,7 +378,12 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 				'post_status'	=> $post_status
 			);
 			
-			// Format the date
+			if ( $post_title ) {
+				$postdata['post_title'] = $post_title;
+				error_log($post_title);
+			}
+			
+			// Format the date, if supplied, otherwise skip setting the date.
 			if ( $new_date ) {
 				$date_formatted = self::format_post_date( $new_date );
 				
@@ -388,7 +394,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			// Set edit_date if this is a draft
 			if ( $post_status == 'draft' ) {
 				$postdata['edit_date'] = true;
+			} else {
+				$postdata['edit_date'] = false;
 			}
+			
+			$post_clean = sanitize_post( $postdata, 'edit' );
 			
 			// Update the post
 			$result = wp_update_post( $postdata, true );

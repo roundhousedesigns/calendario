@@ -12,6 +12,7 @@
 
 @require "partials/_global.styl"
 @require "partials/_plugins.styl"
+@require "partials/_modals.styl"
 
 #calendario
 	margin-right $spacer
@@ -37,6 +38,11 @@
 	.editorial-calendar
 		width 80%
 		float left
+		-opacity(0.25)
+		transition all 2.5s ease
+		
+		&.load-complete
+			-opacity(1)
 		
 		.fc-header-toolbar
 			.fc-center
@@ -75,9 +81,6 @@
 		.calendario-sidebar-box
 			width 100%
 			height auto
-			border-radius 3px
-			border 3px solid black
-			padding 0 $quarterspacer
 			position relative
 			
 			.fc-event
@@ -104,6 +107,12 @@
 					border-style solid
 					transition all 0.15s ease
 					
+					&:first-of-type
+						margin-left 0
+					
+					&:last-of-type
+						margin-right 0
+					
 					&.status-publish
 						background-color black
 						border-color @background-color
@@ -120,20 +129,28 @@
 						background-color transparent
 						color black
 			
-		.calendario-unscheduled-drafts
+		.unscheduled-drafts-list
+			width 100%
 			min-height 300px
 			transition all 0.25s ease
-			
-			.unscheduled-drafts-list
-				padding 0
-				margin $halfspacer
+			border-radius 2px
+			border 3px solid black
+			z-index 999
+			padding $quarterspacer
+			margin $halfspacer 0
 				
-				.fc-event
-					-opacity(0.5)
+			&.drop-hover
+				background blue
+			
+			&.drop-active
+				background green
+			
+			.fc-event
+				-opacity(0.5)
+				
+				&.load-complete
+					-opacity(1)
 					
-					&.load-complete
-						-opacity(1)
-
 
 .ui-draggable
 	cursor pointer

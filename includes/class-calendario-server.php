@@ -152,27 +152,26 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 		);
 		$posts = get_posts( $args );
 		
-		$output = '';
 		if ( $posts ) {
+			$event_data = array();
 			foreach( $posts as $post ) {
-				$title	= get_the_title( $post );
-				$start	= get_the_date( 'c', $post );
-				$post_id = absint( $post->ID );
-				
-				$event_data = array(
-					'post_id'	=> $post_id,
-					'title'	=> $title,
-					'start'	=> $start,
+				$event_data[] = array(
+					'post_id'	=> $post_id = $post->ID,
+					'title'	=> get_the_title( $post ),
+					'start'	=> get_the_date( 'c', $post ),
 					'post_status'	=> 'draft'
 				);
-				
-				$event_data_json = json_encode( $event_data );
-				
-				$output .= "<li class='unscheduled-draft status-draft fc-event ui-draggable' data-event='{$event_data_json}'>{$title}</li>";
 			}
+		} else {
+			$event_data = false;
 		}
-	
-		return $output;
+				
+		// Set up REST Response
+		$response = new WP_REST_Response( json_encode( $event_data ) );
+		$response->header( 'Content-type', 'application/json');
+		$response->set_status( 200 );
+		
+		return $response;
 	}
 	
 	
@@ -388,19 +387,12 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 	 * TODO: Make sure not trying to change date to today's or prior date (i.e. already published)
 	 */
 	public function update_post( WP_REST_Request $request ) {
-		$post_id = (int)$request->get_param( 'post_id' );
+		$post_id = $request->get_param( 'post_id' );
 		$new_date = ( $request->get_param( 'new_date' ) ) ? $request->get_param( 'new_date' ) : '';
 		$post_status = ( $request->get_param( 'post_status' ) ) ? $request->get_param( 'post_status' ) : '';
+		$post_title = ( $request->get_param( 'post_title' ) ) ? $request->get_param( 'post_title' ) : '';
 		
-		$target_date = new DateTime( $new_date );
-		$today = new DateTime( current_time( 'Y-m-d' ) );
-		
-		if ( $today < $target_date ) {
-			RHD_Calendario::update_post( $post_id, $new_date, $post_status );
-			return true;
-		} else {
-			return false;
-		}
+		RHD_Calendario::update_post( $post_id, $new_date, $post_status, $post_title );
 	}
 	
 	
@@ -424,7 +416,7 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 		if ( $postdata ) {
 			// Set up REST Response
 			$response = new WP_REST_Response( $postdata );
-			$response->header( 'Content-type', 'application/json');
+			$response->header( 'Content-type', 'application/json' );
 			$response->set_status( 200 );
 			
 			return $response;
@@ -446,7 +438,7 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 		$date = ( $request->get_param( 'new_date' ) ) ? $request->get_param( 'new_date' ) : '';
 					
 		RHD_Calendario::unschedule_draft( $post_id, $date );
-	}
+	}	
 }
 
 $RHD_Calendario_Server = new RHD_Calendario_Server();
