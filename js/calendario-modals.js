@@ -31,7 +31,7 @@ function openNewPostModal( event ) {
 		],
 		callback: function( data ) {
 			if (!data) {
-				console.log('Cancelled');
+				//console.log('Cancelled');
 			} else {
 				jQuery.ajax({
 					url: wpApiSettings.root + 'rhd/v1/cal/add',
@@ -137,7 +137,7 @@ function openQuickEditModal( event, unsched ) {
 		],
 		callback: function( data ) {
 			if (!data) {
-				console.log('Cancelled');
+				//console.log('Cancelled');
 			} else if ( data.post_status == 'unsched' ) { // Make the post an Unscheduled Draft
 				jQuery.ajax( {
 					url: wpApiSettings.root + 'rhd/v1/cal/unschedule',
@@ -210,10 +210,6 @@ function openQuickEditModal( event, unsched ) {
 				success: function() {
 					$calendario.fullCalendar( 'removeEvents', $modal.data('event-id') );
 					currentVex.close();
-					console.log('yes');
-				},
-				error: function(x,y,z) {
-					console.log("x", x,"y", y,"z", z);
 				}
 			});
 		});
