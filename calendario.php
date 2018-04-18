@@ -283,9 +283,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 									<li class="event-toggle status-draft" data-status="draft">
 										Drafts
 									</li>
+<!--
 									<li class="event-toggle status-pending" data-status="pending">
 										Pending
 									</li>
+-->
 									<li class="event-toggle status-future" data-status="future">
 										Future
 									</li>
