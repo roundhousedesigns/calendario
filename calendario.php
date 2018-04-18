@@ -144,31 +144,6 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * get_draft_post_date function. Gets the actual post_date value directly from the database to circumvent
-		 *	WP default behavior, which sometimes shows today's date instead of draft's associated post_date.
-		 * 
-		 * @access public
-		 * @param WP_Post $post The post object
-		 * @return string The post_date value
-		 */
-		public function get_draft_post_date( WP_Post $post ) {			
-			// Exit if we're not dealing with a draft.
-			if ( get_post_status( $post ) != 'draft' )
-				return;
-			
-			global $wpdb;
-			
-			$post_id = $post->ID;
-			$date_array = $wpdb->get_results( 'SELECT post_date FROM ' . $wpdb->prefix . 'posts WHERE ID = ' . $post_id );
-			
-			// DEBUG
-			// self::log_error_message( "\$date_array: {$date_array}" );
-			
-			return $date_array[0]->post_date;
-		}
-		
-		
-		/**
 		 * assets function. Registers external stylesheets and scripts!
 		 * 
 		 * @access public
@@ -184,15 +159,17 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			wp_enqueue_style( 'calendario', plugins_url( 'css/main.css', __FILE__ ) );
 			
 			// JS
-			wp_register_script( 'jquery-rhd', plugins_url( 'node_modules/jquery/dist/jquery.min.js', __FILE__ ), array(), '3.3.1', true );
+			//wp_register_script( 'jquery-rhd', plugins_url( 'node_modules/jquery/dist/jquery.min.js', __FILE__ ), array(), '3.3.1', true );
 			wp_register_script( 'moment', plugins_url( 'node_modules/moment/moment.js', __FILE__ ), array(), '2.19.3', true );
-			wp_register_script( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.js', __FILE__ ), array( 'jquery-rhd', 'moment' ), '3.7.0', true );
+			wp_register_script( 'fullcalendar', plugins_url( 'node_modules/fullcalendar/dist/fullcalendar.js', __FILE__ ), array( 'jquery', 'moment' ), '3.7.0', true );
 			wp_register_script( 'vex', plugins_url( 'node_modules/vex-js/dist/js/vex.combined.min.js', __FILE__ ), array(), '4.0.1', true );
 			
-			wp_enqueue_script( 'calendario', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery-rhd', 'jquery-ui-draggable','moment', 'fullcalendar', 'vex' ), RHD_CALENDARIO_VERSION, true );
+			wp_enqueue_script( 'calendario', plugins_url( 'js/calendario.js', __FILE__ ), array( 'jquery', 'jquery-ui-draggable','moment', 'fullcalendar', 'vex' ), RHD_CALENDARIO_VERSION, true );
+			wp_enqueue_script( 'calendario-modals', plugins_url( 'js/calendario-modals.js', __FILE__ ), array( 'jquery', 'jquery-ui-draggable', 'moment', 'fullcalendar', 'calendario' ), null, true );
+			wp_enqueue_script( 'calendario-view', plugins_url( 'js/calendario-view.js', __FILE__ ), array( 'jquery', 'jquery-ui-draggable', 'moment', 'fullcalendar', 'calendario', 'calendario-modals' ), null, true );
 			
 			// noConflict mode for custom jQuery
-			wp_add_inline_script( 'jquery-rhd', 'var jQueryRHD = jQuery.noConflict(true);', 'after' );
+			//wp_add_inline_script( 'jquery-rhd', 'var jQueryRHD = jQuery.noConflict(true);', 'after' );
 			
 			// Vex theme
 			wp_add_inline_script( 'vex', "vex.defaultOptions.className = 'vex-theme-flat-attack';", 'after' );
@@ -306,6 +283,9 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 									<li class="event-toggle status-draft" data-status="draft">
 										Drafts
 									</li>
+									<li class="event-toggle status-pending" data-status="pending">
+										Pending
+									</li>
 									<li class="event-toggle status-future" data-status="future">
 										Future
 									</li>
@@ -380,7 +360,6 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			
 			if ( $post_title ) {
 				$postdata['post_title'] = $post_title;
-				error_log($post_title);
 			}
 			
 			// Format the date, if supplied, otherwise skip setting the date.
