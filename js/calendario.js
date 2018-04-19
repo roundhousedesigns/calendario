@@ -9,6 +9,8 @@
    ========================================================================== */
 
 // Localized: wpApiSettings { homeUrl, root, nonce }
+var serverDate;
+
 var postColors = {
 	'draft':	'gray',
 	'future':	'blue',
@@ -28,22 +30,32 @@ var $draftsList = jQuery('#calendario-unscheduled-drafts');
  */
 function getServerDate() {
 	// Ask for the date
-	jQuery.ajax( {
+	jQuery.get( {
 		url: wpApiSettings.root + 'rhd/v1/cal/today',
-		type: 'GET',
 		cache: false,
 		beforeSend: function( xhr ) {
 			xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-		},
-		success: function( data ) {
-			return data;
 		}
+	} ).done( function(data) {
+		returnServerDate(data);
 	} );
 }
 
 
+/**
+ * returnServerDate function. Callback function for getServerDate() to store the returned value to global scope.
+ * 
+ * @access public
+ * @param mixed date
+ * @return void
+ */
+function returnServerDate(date) {
+	serverDate = date;
+}
+
+
 function getUnscheduledDrafts() {
-	jQuery.ajax( {
+	jQuery.get( {
 		url: wpApiSettings.root + 'rhd/v1/cal/unscheduled',
 		method: 'GET',
 		beforeSend: function( xhr ) {
@@ -123,4 +135,7 @@ function initStatusToggles() {
 jQuery(document).ready( function() {
 	initPage();
 	initStatusToggles();
+	
+	// Get the current server date
+	getServerDate();
 } );

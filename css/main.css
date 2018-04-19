@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 3:23:38 PM on 18-04-2018
+* RHD Dev: Compiled at 9:33:35 PM on 18-04-2018
 ***/
 
 /*
@@ -77,7 +77,8 @@
   display: block;
 }
 #calendario-workspace .editorial-calendar .fc-event.filter-hidden {
-  display: none;
+  visibility: hidden;
+  z-index: -1;
 }
 #calendario-workspace .status-draft {
   background-color: #808080;

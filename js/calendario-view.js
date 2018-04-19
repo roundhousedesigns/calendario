@@ -80,7 +80,7 @@ function initPage() {
 			}
 		},
 		header: {
-			'left': 'today',
+			'left': 'today latestPostDate',
 			'center': 'title',
 			'right': 'newPostButton prev,next'
 		},
@@ -89,6 +89,36 @@ function initPage() {
 				text: 'New Draft',
 				click: function( event ) {
 					openNewPostModal( event );
+				}
+			},
+			latestPostDate: {
+				text: 'Latest Post',
+				click: function( event ) {
+					var post_type, last;
+					
+					if ( ! post_type ) {
+						post_type = 'post';
+					} else {
+						post_type = event.post_type;
+					}
+					
+					jQuery.get({
+						url: wpApiSettings.root + 'rhd/v1/cal/lastpostdate',
+						beforeSend: function( xhr ) {
+							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );	
+						},
+						cache: true,
+						data: {
+							post_type: post_type,
+						},
+						success: function( data ) {
+							console.log(data);
+							
+							// Refresh cached $calendario selector
+							$calendario = jQuery("#editorial-calendar");
+							$calendario.fullCalendar( 'gotoDate', moment( data ) );
+						}
+					});
 				}
 			}
 		},
@@ -100,10 +130,10 @@ function initPage() {
 			start: $calendario.data('event-valid-start')
 		},
 		eventAllow: function(dropLocation, draggedEvent) {
-			// Prohibit interaction with dates before and including "today" (server time),
-			if ( moment( dropLocation.start ).isBefore( getServerDate() ) ) {
+			// Prohibit interaction with dates before and including "today" (server time),			
+			if ( moment( dropLocation.start ).isBefore( serverDate, 'day' ) ) {
 				return false;
-			} else { // 
+			} else {
 				return true;
 			}
 		},

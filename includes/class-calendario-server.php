@@ -96,6 +96,15 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 				'permission_callback'	=> array( $this, 'check_user_permissions' )
 			)
 		) );
+		
+		// Get latest post date
+		register_rest_route( $namespace, '/cal/lastpostdate', array(
+			array(
+				'methods'	=> WP_REST_Server::READABLE,
+				'callback'	=> array( $this, 'get_last_post_date' ),
+				'permission_callback'	=> array( $this, 'check_user_permissions' )
+			)
+		) );
 	}
 	
 	
@@ -135,6 +144,46 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 	public function get_server_date( WP_REST_Request $request ) {
 		$today = new DateTime( current_time( 'Y-m-d' ) );
 		return $today->format( 'c' );
+	}
+	
+	
+	/**
+	 * get_last_post_date function. Retrieves the latest post date.
+	 * 
+	 * @access public
+	 * @param WP_Rest_Request $request
+	 * @return string $last_date The last post date retrieved
+	 */
+	public function get_last_post_date( WP_Rest_Request $request ) {
+		$post_type = ( $request->get_param( 'post_type' ) ) ? $request->get_param( 'post_type' ) : false; // Don't allow unspecified post types
+		
+		if ( ! $post_type )
+			return;
+		
+		$args = array(
+			'post_type'	=> $post_type,
+			'post_status'	=> array( 'publish', 'draft', 'pending', 'future' ),
+			'posts_per_page'	=> -1,
+			'meta_query'	=> array(
+								'relation'	=> 'OR',
+								array(
+									'key'	=> '_unscheduled',
+									'value'	=> 'yes',
+									'compare'	=> '!='
+								),
+								array(
+									'key'	=> '_unscheduled',
+									'compare'	=> 'NOT EXISTS'
+								)
+							)
+		);
+		$posts = get_posts( $args );
+		
+		if ( $posts ) {
+			$last_date = $posts[0]->post_date;
+		}
+		
+		return $last_date;
 	}
 	
 	

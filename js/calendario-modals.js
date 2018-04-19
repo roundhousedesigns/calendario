@@ -93,7 +93,7 @@ function openQuickEditModal( event, unsched ) {
 	**  - If post is in the future, show 'draft', 'future', and 'unscheduled'
 	*/
 	var statusSelectHTML = '<select name="post_status" required ' + disabled + '/>';
-	if( moment(event.start).isAfter( getServerDate() ) ) {
+	if( moment(event.start).isAfter( serverDate ) ) {
 		statusSelectHTML += '<option value="draft">Draft</option><option value="future">Future</option><option value="unsched">Unscheduled</option>';
 	} else {
 		statusSelectHTML += '<option value="publish">Published</option><option value="draft">Draft</option>';

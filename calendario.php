@@ -64,8 +64,11 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			
 			// Post Meta Boxes
 			// TODO: Add support for other post types
-			add_action( 'add_meta_boxes_post', array( $this, 'add_calendario_meta_boxes' ) );
-			add_action( 'save_post', array( $this, 'save_calendario_meta_boxes_data' ) );
+			add_action( 'add_meta_boxes_post', array( $this, 'calendario_add_meta_boxes' ) );
+			add_action( 'save_post', array( $this, 'calendario_save_meta_boxes_data' ) );
+			
+			// Label Taxonomy
+			add_action( 'init', array( $this, 'calendario_register_labels_taxonomy' ) );
 		}
 		
 		
@@ -194,13 +197,65 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * add_calendario_meta_boxes function. Adds meta boxes, man.
+		 * calendario_add_meta_boxes function. Adds meta boxes, man.
 		 * 
 		 * @access public
 		 * @return void
 		 */
-		public function add_calendario_meta_boxes() {
+		public function calendario_add_meta_boxes() {
 			add_meta_box( 'calendario_schedule_draft', __( 'Unscheduled Draft', 'rhd' ), array( $this, 'build_schedule_draft_meta_box' ), 'post', 'side', 'high' );
+		}
+		
+		
+		function calendario_register_labels_taxonomy() {
+			// TODO: Get selected post types from settings page for post_types array
+			$post_types = array( 'post' );
+			
+			register_taxonomy( 'calendario_label', $post_types, array(
+				'hierarchical'      => false,
+				'public'            => true,
+				'show_in_nav_menus' => false,
+				'show_ui'           => false,
+				'show_admin_column' => true,
+				'query_var'         => true,
+				'rewrite'           => true,
+				'capabilities'      => array(
+					'manage_terms'  => 'edit_posts',
+					'edit_terms'    => 'edit_posts',
+					'delete_terms'  => 'edit_posts',
+					'assign_terms'  => 'edit_posts'
+				),
+				'labels'            => array(
+					'name'                       => __( 'Calendario Label', 'rhd' ),
+					'singular_name'              => _x( 'Calendario Labels', 'taxonomy general name', 'rhd' ),
+					'search_items'               => __( 'Search Calendario Labels', 'rhd' ),
+					'popular_items'              => __( 'Popular Calendario Labels', 'rhd' ),
+					'all_items'                  => __( 'All Calendario Labels', 'rhd' ),
+					'parent_item'                => __( 'Parent Calendario Labels', 'rhd' ),
+					'parent_item_colon'          => __( 'Parent Calendario Labels:', 'rhd' ),
+					'edit_item'                  => __( 'Edit Calendario Labels', 'rhd' ),
+					'update_item'                => __( 'Update Calendario Labels', 'rhd' ),
+					'add_new_item'               => __( 'New Calendario Label', 'rhd' ),
+					'new_item_name'              => __( 'New Calendario Label', 'rhd' ),
+					'separate_items_with_commas' => __( 'Separate Calendario Labels with commas', 'rhd' ),
+					'add_or_remove_items'        => __( 'Add or remove Calendario Labels', 'rhd' ),
+					'choose_from_most_used'      => __( 'Choose from the most used Calendario Labels', 'rhd' ),
+					'not_found'                  => __( 'No Calendario Labels found.', 'rhd' ),
+					'menu_name'                  => __( 'Calendario Labels', 'rhd' ),
+				),
+				'show_in_rest'      => true,
+				'rest_base'         => 'calendario_label',
+				'rest_controller_class' => 'WP_REST_Terms_Controller',
+			) );
+			
+			// Built-in labels
+			// TODO: Add/remove as many as a user wants? Maybe overkill?
+			wp_insert_term( 'one', 'calendario_label' );
+			wp_insert_term( 'two', 'calendario_label' );
+			wp_insert_term( 'three', 'calendario_label' );
+			wp_insert_term( 'four', 'calendario_label' );
+			wp_insert_term( 'five', 'calendario_label' );
+			wp_insert_term( 'six', 'calendario_label' );
 		}
 		
 		
@@ -225,13 +280,13 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		
 		
 		/**
-		 * save_calendario_meta_boxes_data function. Saves or deletes data in Calendario meta boxes.
+		 * calendario_save_meta_boxes_data function. Saves or deletes data in Calendario meta boxes.
 		 * 
 		 * @access public
 		 * @param mixed $post_id The post ID
 		 * @return void
 		 */
-		public function save_calendario_meta_boxes_data( $post_id ) {
+		public function calendario_save_meta_boxes_data( $post_id ) {
 			// Verify meta box nonce
 			if ( ! isset( $_POST['calendario_scheduled_draft_nonce'] ) || ! wp_verify_nonce( $_POST['calendario_scheduled_draft_nonce'], basename( __FILE__ ) ) ) {
 				return;
@@ -275,7 +330,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 					<div id="calendario-sidebar" class="calendario-sidebar">
 						<div id="event-toggles" class="calendario-sidebar-container">
 							<h4 class="calendario-sidebar-box-title">Filter by Status</h4>
-							<div class="calendario-event-toggles calendario-sidebar-box">
+							<div id="calendario-event-toggles" class="calendario-event-toggles calendario-sidebar-box">
 								<ul class="toggles">
 									<li class="event-toggle status-publish" data-status="publish">
 										Published
