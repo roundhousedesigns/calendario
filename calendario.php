@@ -320,7 +320,7 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			$this->plugin_meta = get_plugin_data( __FILE__, true, true );
 			?>
 			
-			<div id="calendario">
+			<div id="calendario" data-server-gmt-offset="<?php echo get_option('gmt_offset'); ?>">
 				<header class="plugin-header">
 					<h2 class="plugin-title"><?php echo $this->plugin_meta["Name"]; ?></h2>
 				</header>

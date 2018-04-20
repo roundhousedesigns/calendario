@@ -9,8 +9,6 @@
    ========================================================================== */
 
 // Localized: wpApiSettings { homeUrl, root, nonce }
-var serverDate;
-
 var postColors = {
 	'draft':	'gray',
 	'future':	'blue',
@@ -18,41 +16,13 @@ var postColors = {
 	'pending':	'green'
 };
 
+var $calendarioWrap = jQuery('#calendario');
 var $calendario = jQuery('#editorial-calendar');
 var $draftsList = jQuery('#calendario-unscheduled-drafts');
 
-var totalWeeks = 3; // # of weeks to display on the calendar.
 
-
-/**
- * getServerDate function. Retrieves the local server time.
- * 
- * @access public
- * @return void
- */
-function getServerDate() {
-	// Ask for the date
-	jQuery.get( {
-		url: wpApiSettings.root + 'rhd/v1/cal/today',
-		cache: false,
-		beforeSend: function( xhr ) {
-			xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-		}
-	} ).done( function(data) {
-		returnServerDate(data);
-	} );
-}
-
-
-/**
- * returnServerDate function. Callback function for getServerDate() to store the returned value to global scope.
- * 
- * @access public
- * @param mixed date
- * @return void
- */
-function returnServerDate(date) {
-	serverDate = date;
+function getServerTime() {
+	return moment().utcOffset($calendarioWrap.data('server-gmt-offset'));
 }
 
 
@@ -62,23 +32,20 @@ function getUnscheduledDrafts() {
 		method: 'GET',
 		beforeSend: function( xhr ) {
 			xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-		},
-		success: function( data ) {
-			if ( data ) {
-				var events = JSON.parse(data);
-				var len = events.length;
+		}
+	} ).done(function( data ){
+		if ( data ) {
+			var events = JSON.parse(data);
+			var len = events.length;
 
-				for ( var i = 0; i < len; i++ ) {
-					var $el = buildUnscheduledPost( events[i] );
-					
-					$draftsList.append( $el );
-					$el.addClass('load-complete');
-				}	
+			for ( var i = 0; i < len; i++ ) {
+				var $el = buildUnscheduledPost( events[i] );
+				
+				$draftsList.append( $el );
+				$el.setupExternalEvent().addClass('load-complete');
 			}
 		}
-	} );
-	
-	setupExternalEvents();
+	});
 }
 
 
@@ -96,33 +63,6 @@ function buildUnscheduledPost( eventData ) {
 }
 
 
-function setupExternalEvents() {
-	jQuery('#calendario-unscheduled-drafts li')
-		.each(function() {
-			var $this = jQuery(this);
-			
-			$this.draggable( {
-				revert: true,
-				revertDuration: 0
-			} );
-			
-			var eventData = $this.data('event');
-			
-			var newEventData = {
-				color: postColors.draft,
-				className: 'status-draft'
-			};
-			jQuery.extend(true, eventData, newEventData);
-			
-			$this.data('event', eventData);
-			
-			jQuery('#calendario-unscheduled-drafts li').click(function(){
-				openQuickEditModal( eventData, true );
-			});
-		}
-	);
-}
-
 function initStatusToggles() {
 	jQuery(".event-toggle").on("click", function(){
 		var $this = jQuery(this);
@@ -133,17 +73,73 @@ function initStatusToggles() {
 }
 
 
-
-
+jQuery.fn.setupExternalEvent = function() {
+	var $this = jQuery(this);
 	
+	var eventData = $this.data('event');
+	
+	var newEventData = {
+		color: postColors.draft,
+		className: 'status-draft'
+	};
+	jQuery.extend(true, eventData, newEventData);
+	
+	$this
+		.data('event', eventData)
+		.draggable( {
+			revert: true,
+			revertDuration: 0
+		} )
+		.click(function(){
+			openQuickEditModal( eventData, true );
+		} );
+	
+	return $this;
+};
+
+
+function quickEditTrashPostHandler() {
+	// Trash Post link handler
+	jQuery(".post-trash-link").click(function(e){
+		e.preventDefault();
+		
+		var $modal = jQuery(this).parents(".calendario-modal");
+		
+		jQuery.ajax({
+			url: wpApiSettings.root + 'wp/v2/posts/' + $modal.data('post-id'),
+			type: 'DELETE',
+			cache: false,
+			beforeSend: function( xhr ) {
+				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+			}
+		} ).done( function() {
+			$calendario.fullCalendar( 'removeEvents', $modal.data('event-id') );
+			currentVex.close();
+		} );
+	});
+}
+
+
 // DOM Ready
 jQuery(document).ready( function() {
-	var $fc = initPage();
-	
+	initPage();
 	initStatusToggles();
+	getUnscheduledDrafts();
 	
-	// Get the current server date
-	getServerDate();
-
+	// View change listeners (TESTING)
+	jQuery("#add-week-before").click(function(e){
+		e.preventDefault();
+		$calendario.fullCalendar('option', 'visibleRange', {
+			start: startDate.subtract(1, 'weeks'),
+			end: endDate
+		});
+	});
 	
+	jQuery("#add-week-after").click(function(e){
+		e.preventDefault();
+		$calendario.fullCalendar('option', 'visibleRange', {
+			start: startDate,
+			end: endDate.add(1, 'weeks')
+		});
+	});
 } );

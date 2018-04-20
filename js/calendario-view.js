@@ -5,7 +5,6 @@
  */
 
 /*  AVAILABLE GLOBALS:
- *	serverDate - The server's current local date
  *  postColors = {
 		'draft':	'gray',
 		'future':	'blue',
@@ -17,9 +16,7 @@
  */
 
 var startDate, endDate;
-
-var totalWeeks = 4; // # of weeks to display on the calendar.
-var weeksBefore, weeksAfter;
+var totalWeeksShown = 6; // # of weeks to display on the calendar.
 
 var $tempEvent; // Unscheduled Draft restore when dragging external event fails
 
@@ -60,16 +57,7 @@ function initPage() {
 		beforeSend: function( xhr ) {
 			xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 		},
-		color: postColors.draft,
-		success: function() {
-			/* WHAT IS THIS WHYYY??
-			jQuery('#calendario-unscheduled-drafts li').each(function(){
-				jQuery(this).data( 'event', {
-					post_id: parseInt( jQuery(this).attr('data-ID' ) )
-				});
-			});
-			*/
-		}
+		color: postColors.draft
 	};
 	var pendingPosts = {
 		url: wpApiSettings.root + 'rhd/v1/cal/pending',
@@ -92,11 +80,10 @@ function initPage() {
 			week: {
 				type: 'basic',
 				visibleRange: function(currentDate) {
-					weeksBefore = 2; // TODO maybe an option to set this?
-					weeksAfter = totalWeeks - (weeksBefore - 1);
+					var startOfMonth = getServerTime().clone().date(1);
 					
-					startDate = currentDate.clone().subtract(weeksBefore, 'weeks');
-					endDate = currentDate.clone().add(weeksAfter, 'weeks'); // Exclusive range, so no need to decrement totalWeeks
+					startDate = startOfMonth.subtract(startOfMonth.day(), 'days'); // Find the most recent past Sunday
+					endDate = startDate.clone().add(totalWeeksShown, 'weeks');
 					
 					return {
 						start: startDate,
@@ -137,12 +124,11 @@ function initPage() {
 						data: {
 							post_type: post_type,
 						},
-						success: function( data ) {
+					} ).done( function( data ) {
 							// Refresh cached $calendario selector
 							$calendario = jQuery("#editorial-calendar");
 							$calendario.fullCalendar( 'gotoDate', moment( data ) );
-						}
-					});
+					} );
 				}
 			}
 		},
@@ -155,10 +141,10 @@ function initPage() {
 		},
 		eventAllow: function(dropLocation, draggedEvent) {
 			// Prohibit interaction with dates before and including "today" (server time),			
-			if ( moment( dropLocation.start ).isBefore( serverDate, 'day' ) ) {
-				return false;
-			} else {
+			if ( moment(dropLocation.start).isAfter( getServerTime(), 'day' ) ) {
 				return true;
+			} else {
+				return false;
 			}
 		},
 		eventRender: function( event, eventElement ) {
@@ -189,7 +175,7 @@ function initPage() {
 				beforeSend: function( xhr ) {
 					xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 				},
-				success: function( result ) {
+			} ).done( function( result ) {
 					if ( result === true ) {
 						// Update event to new values
 						event.post_status = newPostStatus;
@@ -199,7 +185,6 @@ function initPage() {
 					} else {
 						// console.log( "Moving posts to today or earlier is prohibited" );
 					}
-				}
 			} );
 		},
 		drop: function( date ){ // External event dropped ONTO calendar
@@ -228,10 +213,9 @@ function initPage() {
 						$tempEvent.appendTo($draftsList);
 						console.log('no post id');
 					}
-				},
-				success: function() {
-					//console.info( event.post_id );
 				}
+			} ).done( function(data) {
+				// console.log(data.post_id);
 			} );
 		},
 		eventDragStop: function( event, jsEvent ) { // Used for moving events OFF of the calendar
@@ -262,11 +246,10 @@ function initPage() {
 					// Refresh cached $calendario selector
 					$calendario = jQuery('#editorial-calendar');
 					$calendario.fullCalendar( 'removeEvents', event._id );
-				},
-				success: function() {
-					$el.addClass('load-complete');
 				}
-			} ).done( setupExternalEvents );
+			} ).done( function(data) {
+				$el.setupExternalEvent().addClass('load-complete');
+			} );
 		},
 		eventAfterAllRender: function() {
 			$calendario.addClass('load-complete');
@@ -278,27 +261,4 @@ function initPage() {
 	$calendario.fullCalendar('addEventSource', publishedPosts);
 	$calendario.fullCalendar('addEventSource', draftPosts);
 	$calendario.fullCalendar('addEventSource', pendingPosts);
-	
-	getUnscheduledDrafts();
-	
-	// TEST
-	jQuery("#add-week-before").click(function(e){
-		e.preventDefault();
-		
-		console.log(endDate.format());
-		$calendario.fullCalendar('option', 'visibleRange', {
-			start: startDate.subtract(1, 'weeks'),
-			end: endDate
-		});
-	});
-	
-	jQuery("#add-week-after").click(function(e){
-		e.preventDefault();
-		
-		console.log(endDate.format());
-		$calendario.fullCalendar('option', 'visibleRange', {
-			start: startDate,
-			end: endDate.add(1, 'weeks')
-		});
-	});
 }

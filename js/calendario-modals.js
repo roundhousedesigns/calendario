@@ -44,26 +44,25 @@ function openNewPostModal( event ) {
 					},
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-					},
-					success: function( data ) {
-						if ( data ) {
-							var eventData = {
-								title: data.post_title,
-								start: moment(data.post_date).toISOString(),
-								post_id: data.post_id,
-								post_status: data.post_status,
-								color: postColors[data.post_status]
-							};
-							
-							if ( data._unsched === true ) {
-								$el = buildUnscheduledPost( eventData );
-								$el.addClass('load-complete');
-							} else {
-								$calendario.fullCalendar( 'renderEvent', eventData );
-							}
+					}
+				} ).done( function( data ) {
+					if ( data ) {
+						var eventData = {
+							title: data.post_title,
+							start: moment(data.post_date).toISOString(),
+							post_id: data.post_id,
+							post_status: data.post_status,
+							color: postColors[data.post_status]
+						};
+						
+						if ( data._unsched === true ) {
+							$el = buildUnscheduledPost( eventData );
+							$el.addClass('load-complete');
 						} else {
-							console.log( 'Something went wrong.' );
+							$calendario.fullCalendar( 'renderEvent', eventData );
 						}
+					} else {
+						console.log( 'Something went wrong.' );
 					}
 				} );
 			}
@@ -93,7 +92,7 @@ function openQuickEditModal( event, unsched ) {
 	**  - If post is in the future, show 'draft', 'future', and 'unscheduled'
 	*/
 	var statusSelectHTML = '<select name="post_status" required ' + disabled + '/>';
-	if( moment(event.start).isAfter( serverDate ) ) {
+	if( moment(event.start).isAfter( getServerTime() ) ) {
 		statusSelectHTML += '<option value="draft">Draft</option><option value="future">Future</option><option value="unsched">Unscheduled</option>';
 	} else {
 		statusSelectHTML += '<option value="publish">Published</option><option value="draft">Draft</option>';
@@ -112,6 +111,8 @@ function openQuickEditModal( event, unsched ) {
 	// Open the dialog
 	currentVex = vex.dialog.open({
 		afterOpen: function() {
+			quickEditTrashPostHandler();
+			
 			/*
 			// Fallback?
 			jQuery("#modal_post_date").datepicker({
@@ -126,7 +127,7 @@ function openQuickEditModal( event, unsched ) {
 				statusSelectHTML,
 				'<div class="post-links">',
 					'<a class="post-edit-link" href="' + wpApiSettings.homeUrl + 'wp-admin/post.php?post=' + event.post_id + '&action=edit">Edit Post</a>',
-					'<a class="post-trash-link" href="' + wpApiSettings.homeUrl + 'wp-admin/post.php?post=' + event.post_id + '&action=edit">Trash Post</a>',
+					'<a class="post-trash-link" href="' + wpApiSettings.homeUrl + 'wp-admin/post.php?post=' + event.post_id + '&action=trash">Trash Post</a>',
 				'</div>',
 			'</div>',
 			hideYesButtonStyle
@@ -160,11 +161,10 @@ function openQuickEditModal( event, unsched ) {
 						// Refresh cached $calendario selector
 						$calendario = jQuery('#editorial-calendar');
 						$calendario.fullCalendar( 'removeEvents', event._id );
-					},
-					success: function() {
-						$el.addClass('load-complete');
 					}
-				} ).done( setupExternalEvents );
+				} ).done( function(data) {
+					$el.setupExternalEvent().addClass('load-complete');
+				} );
 			} else { // Update the post normally
 				jQuery.ajax({
 					url: wpApiSettings.root + 'rhd/v1/cal/update',
@@ -177,41 +177,16 @@ function openQuickEditModal( event, unsched ) {
 					},
 					beforeSend: function( xhr ) {
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-					},
-					success: function() {						
-						//event.start = moment(data.post_date).toISOString();
-						event.post_status = data.post-status;
-						event.color = postColors[data.post_status];
-						event.title = data.post_title;
-						
-						$calendario.fullCalendar( 'updateEvent', event );
 					}
+				} ).done( function() {						
+					//event.start = moment(data.post_date).toISOString();
+					event.post_status = data.post-status;
+					event.color = postColors[data.post_status];
+					event.title = data.post_title;
+					
+					$calendario.fullCalendar( 'updateEvent', event );
 				} );
 			}
 		}
-	});
-	
-	jQuery(document).ready(function(){
-		// Trash Post link handler
-		jQuery(".post-trash-link").click(function(e){
-			e.preventDefault();
-			
-			$modal = jQuery(this).parents(".calendario-modal");
-			
-			console.log(wpApiSettings.root + 'wp/v2/posts/');
-			
-			jQuery.ajax({
-				url: wpApiSettings.root + 'wp/v2/posts/' + $modal.data('post-id'),
-				type: 'DELETE',
-				cache: false,
-				beforeSend: function( xhr ) {
-					xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-				},
-				success: function() {
-					$calendario.fullCalendar( 'removeEvents', $modal.data('event-id') );
-					currentVex.close();
-				}
-			});
-		});
 	});
 }
