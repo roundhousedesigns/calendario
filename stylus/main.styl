@@ -102,38 +102,40 @@
 				flex-wrap wrap
 				margin $quarterspacer 0
 				
-				.event-toggle
-					width 45%
+				.event-toggle-item
+					width 40%
 					display inline-block
-					text-align center
-					cursor pointer
-					font-size 1.1em
-					-unselectable()
-					@extends #calendario-workspace .fc-event
-					border-width 2px
-					border-style solid
-					transition all 0.15s ease
-					margin 0
 					
-					&.status-publish
-						background-color black
-						border-color @background-color
-					
-					&.status-draft
-						background-color gray
-						border-color @background-color
-					
-					&.status-future
-						background-color blue
-						border-color @background-color
-					
-					&.status-pending
-						background-color green
-						border-color @background-color
-					
-					&.filter-hidden
-						background-color transparent
-						color black
+					button
+						width 100%
+						text-align center
+						cursor pointer
+						font-size 1.1em
+						@extends #calendario-workspace .fc-event
+						border-width 2px
+						border-style solid
+						transition all 0.15s ease
+						margin 0
+						
+						&.status-publish
+							background-color black
+							border-color @background-color
+						
+						&.status-draft
+							background-color gray
+							border-color @background-color
+						
+						&.status-future
+							background-color blue
+							border-color @background-color
+						
+						&.status-pending
+							background-color green
+							border-color @background-color
+						
+						&.filter-hidden
+							background-color transparent
+							color black
 			
 		.unscheduled-drafts-list
 			width 100%

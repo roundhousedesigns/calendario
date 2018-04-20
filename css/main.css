@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 9:33:35 PM on 18-04-2018
+* RHD Dev: Compiled at 5:54:29 PM on 20-04-2018
 ***/
 
 /*
@@ -44,7 +44,7 @@
   position: relative;
 }
 #calendario-workspace .fc-event,
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle {
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle-item button {
   color: #fff;
   border: 3px;
   border-radius: 3px;
@@ -120,38 +120,37 @@
   flex-wrap: wrap;
   margin: 0.25em 0;
 }
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle {
-  width: 45%;
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle-item {
+  width: 40%;
   display: inline-block;
+}
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle-item button {
+  width: 100%;
   text-align: center;
   cursor: pointer;
   font-size: 1.1em;
-  -webkit-user-select: none /* Chrome all / Safari all */;
-  -moz-user-select: none /* Firefox all */;
-  -ms-user-select: none /* IE 10+ */;
-  user-select: none /* Likely future */;
   border-width: 2px;
   border-style: solid;
   transition: all 0.15s ease;
   margin: 0;
 }
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.status-publish {
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle-item button.status-publish {
   background-color: #000;
   border-color: #000;
 }
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.status-draft {
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle-item button.status-draft {
   background-color: #808080;
   border-color: #808080;
 }
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.status-future {
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle-item button.status-future {
   background-color: #00f;
   border-color: #00f;
 }
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.status-pending {
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle-item button.status-pending {
   background-color: #008000;
   border-color: #008000;
 }
-#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle.filter-hidden {
+#calendario-workspace .calendario-sidebar .calendario-event-toggles .toggles .event-toggle-item button.filter-hidden {
   background-color: transparent;
   color: #000;
 }

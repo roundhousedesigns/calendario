@@ -332,18 +332,19 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 							<h4 class="calendario-sidebar-box-title">Filter by Status</h4>
 							<div id="calendario-event-toggles" class="calendario-event-toggles calendario-sidebar-box">
 								<ul class="toggles">
-									<li class="event-toggle status-publish" data-status="publish">
-										Published
-									</li>
-									<li class="event-toggle status-draft" data-status="draft">
-										Drafts
-									</li>
-									<li class="event-toggle status-pending" data-status="pending">
-										Pending
-									</li>
-									<li class="event-toggle status-future" data-status="future">
-										Scheduled
-									</li>
+									<?php
+									$statuses = array(
+										'publish'	=> 'Published',
+										'draft'		=> 'Draft',
+										'pending'	=> 'Pending',
+										'future'	=> 'Scheduled'
+									);
+									?>
+									<?php foreach( $statuses as $status => $label ) : ?>	
+										<li class="event-toggle-item">
+											<button class="event-toggle status-<?php echo $status; ?>" data-filter="<?php echo $status; ?>"><?php echo $label; ?></button>
+										</li>
+									<?php endforeach; ?>
 								</ul>
 								<p><a id="add-week-before" href="#">ADD WEEK BEFORE</a></p>
 								<p><a id="add-week-after" href="#">ADD WEEK AFTER</a></p>

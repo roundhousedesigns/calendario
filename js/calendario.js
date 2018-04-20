@@ -46,6 +46,10 @@ function getUnscheduledDrafts() {
 			}
 		}
 	});
+	
+	$draftsList.on('click', 'li', function(e) {
+		openQuickEditModal( jQuery(this).data('event'), true );
+	});
 }
 
 
@@ -64,18 +68,18 @@ function buildUnscheduledPost( eventData ) {
 
 
 function initStatusToggles() {
-	jQuery(".event-toggle").on("click", function(){
+	jQuery("#calendario-event-toggles").on("click", ".event-toggle", function(){
 		var $this = jQuery(this);
 		
 		$this.toggleClass("filter-hidden");
-		$calendario.find(".status-" + $this.data('status')).toggleClass('filter-hidden');
+		$calendario.find(".status-" + $this.data('filter')).toggleClass('filter-hidden');
 	});
 }
 
 
 function quickEditTrashPostHandler() {
 	// Trash Post link handler
-	jQuery(".post-trash-link").click(function(e){
+	jQuery(".post-trash-link").on("click", function(e){
 		e.preventDefault();
 		
 		var $modal = jQuery(this).parents(".calendario-modal");
@@ -115,9 +119,6 @@ jQuery.fn.setupExternalEvent = function() {
 		.draggable( {
 			revert: true,
 			revertDuration: 0
-		} )
-		.click(function(){
-			openQuickEditModal( eventData, true );
 		} );
 	
 	return $this;
