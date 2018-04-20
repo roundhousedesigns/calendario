@@ -3,10 +3,25 @@
  *
  * @package RHD_Calendario
  */
- 
-	
-// Unscheduled Draft restore when dragging external event fails
-var $tempEvent;
+
+/*  AVAILABLE GLOBALS:
+ *	serverDate - The server's current local date
+ *  postColors = {
+		'draft':	'gray',
+		'future':	'blue',
+		'publish':	'black',
+		'pending':	'green'
+	}
+ *  $calendario - The initialized fullCalendar instance
+ *  $draftsList - The Unscheduled Drafts <ul> element
+ */
+
+var startDate, endDate;
+
+var totalWeeks = 4; // # of weeks to display on the calendar.
+var weeksBefore, weeksAfter;
+
+var $tempEvent; // Unscheduled Draft restore when dragging external event fails
 
 function initPage() {
 	// Event sources
@@ -76,7 +91,18 @@ function initPage() {
 		views: {
 			week: {
 				type: 'basic',
-				duration: { weeks: 10 }
+				visibleRange: function(currentDate) {
+					weeksBefore = 2; // TODO maybe an option to set this?
+					weeksAfter = totalWeeks - (weeksBefore - 1);
+					
+					startDate = currentDate.clone().subtract(weeksBefore, 'weeks');
+					endDate = currentDate.clone().add(weeksAfter, 'weeks'); // Exclusive range, so no need to decrement totalWeeks
+					
+					return {
+						start: startDate,
+						end: endDate
+					};
+				}
 			}
 		},
 		header: {
@@ -112,8 +138,6 @@ function initPage() {
 							post_type: post_type,
 						},
 						success: function( data ) {
-							console.log(data);
-							
 							// Refresh cached $calendario selector
 							$calendario = jQuery("#editorial-calendar");
 							$calendario.fullCalendar( 'gotoDate', moment( data ) );
@@ -256,4 +280,25 @@ function initPage() {
 	$calendario.fullCalendar('addEventSource', pendingPosts);
 	
 	getUnscheduledDrafts();
+	
+	// TEST
+	jQuery("#add-week-before").click(function(e){
+		e.preventDefault();
+		
+		console.log(endDate.format());
+		$calendario.fullCalendar('option', 'visibleRange', {
+			start: startDate.subtract(1, 'weeks'),
+			end: endDate
+		});
+	});
+	
+	jQuery("#add-week-after").click(function(e){
+		e.preventDefault();
+		
+		console.log(endDate.format());
+		$calendario.fullCalendar('option', 'visibleRange', {
+			start: startDate,
+			end: endDate.add(1, 'weeks')
+		});
+	});
 }

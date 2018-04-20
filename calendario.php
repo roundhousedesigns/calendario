@@ -345,6 +345,8 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 										Scheduled
 									</li>
 								</ul>
+								<p><a id="add-week-before" href="#">ADD WEEK BEFORE</a></p>
+								<p><a id="add-week-after" href="#">ADD WEEK AFTER</a></p>
 							</div>
 						</div>
 						<div id="calendario-drafts" class="calendario-sidebar-container">

@@ -21,6 +21,8 @@ var postColors = {
 var $calendario = jQuery('#editorial-calendar');
 var $draftsList = jQuery('#calendario-unscheduled-drafts');
 
+var totalWeeks = 3; // # of weeks to display on the calendar.
+
 
 /**
  * getServerDate function. Retrieves the local server time.
@@ -130,12 +132,18 @@ function initStatusToggles() {
 	});
 }
 
+
+
+
 	
 // DOM Ready
 jQuery(document).ready( function() {
-	initPage();
+	var $fc = initPage();
+	
 	initStatusToggles();
 	
 	// Get the current server date
 	getServerDate();
+
+	
 } );
