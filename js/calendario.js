@@ -73,6 +73,32 @@ function initStatusToggles() {
 }
 
 
+function quickEditTrashPostHandler() {
+	// Trash Post link handler
+	jQuery(".post-trash-link").click(function(e){
+		e.preventDefault();
+		
+		var $modal = jQuery(this).parents(".calendario-modal");
+		
+		jQuery.ajax({
+			url: wpApiSettings.root + 'wp/v2/posts/' + $modal.data('post-id'),
+			type: 'DELETE',
+			cache: false,
+			beforeSend: function( xhr ) {
+				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+			}
+		} ).done( function() {
+			$calendario.fullCalendar( 'removeEvents', $modal.data('event-id') );
+			currentVex.close();
+		} );
+	});
+}
+
+
+/* ==========================================================================
+	jQuery plugin functions
+   ========================================================================== */
+
 jQuery.fn.setupExternalEvent = function() {
 	var $this = jQuery(this);
 	
@@ -98,29 +124,10 @@ jQuery.fn.setupExternalEvent = function() {
 };
 
 
-function quickEditTrashPostHandler() {
-	// Trash Post link handler
-	jQuery(".post-trash-link").click(function(e){
-		e.preventDefault();
-		
-		var $modal = jQuery(this).parents(".calendario-modal");
-		
-		jQuery.ajax({
-			url: wpApiSettings.root + 'wp/v2/posts/' + $modal.data('post-id'),
-			type: 'DELETE',
-			cache: false,
-			beforeSend: function( xhr ) {
-				xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-			}
-		} ).done( function() {
-			$calendario.fullCalendar( 'removeEvents', $modal.data('event-id') );
-			currentVex.close();
-		} );
-	});
-}
+/* ==========================================================================
+	DOM READY
+   ========================================================================== */
 
-
-// DOM Ready
 jQuery(document).ready( function() {
 	initPage();
 	initStatusToggles();

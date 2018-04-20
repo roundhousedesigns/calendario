@@ -73,7 +73,7 @@ function initPage() {
 		startEditable: false
 	};
 	
-	// fullCalendar setup
+	// fullCalendar initialization
 	$calendario.fullCalendar({
 		defaultView: 'week',
 		views: {
