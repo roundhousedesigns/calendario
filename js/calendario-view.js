@@ -16,7 +16,7 @@
  */
 
 var startDate, endDate;
-var totalWeeksShown = 6; // # of weeks to display on the calendar.
+var totalWeeksShown = 60; // # of weeks to display on the calendar.
 
 var $tempEvent; // Unscheduled Draft restore when dragging external event fails
 
@@ -81,8 +81,9 @@ function initPage() {
 				type: 'basic',
 				visibleRange: function(currentDate) {
 					var startOfMonth = getServerTime().clone().date(1);
+					var coupleMonthsAgo = startOfMonth.clone().subtract(2, 'months');
 					
-					startDate = startOfMonth.subtract(startOfMonth.day(), 'days'); // Find the most recent past Sunday
+					startDate = coupleMonthsAgo.subtract(coupleMonthsAgo.day(), 'days'); // Find the most recent past Sunday
 					endDate = startDate.clone().add(totalWeeksShown, 'weeks');
 					
 					return {
@@ -127,7 +128,7 @@ function initPage() {
 					} ).done( function( data ) {
 							// Refresh cached $calendario selector
 							$calendario = jQuery("#editorial-calendar");
-							$calendario.fullCalendar( 'gotoDate', moment( data ) );
+							$calendario.fullCalendar( 'gotoDate', data );
 					} );
 				}
 			}
@@ -189,6 +190,9 @@ function initPage() {
 		},
 		drop: function( date ){ // External event dropped ONTO calendar
 			$tempEvent = jQuery(this).detach();
+		},
+		eventDestroy: function( event, element, view ) {
+			console.info("event:", event, "element:", element, "view:", view);
 		},
 		eventReceive: function( event ) { // Fired after fullCalendar.drop(). Dropping an event ONTO the calendar from an external source.
 			var eventData = {
@@ -253,6 +257,7 @@ function initPage() {
 		},
 		eventAfterAllRender: function() {
 			$calendario.addClass('load-complete');
+			console.info('eventAfterAllRender');
 		}
 	} );
 	
