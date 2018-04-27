@@ -20,7 +20,8 @@ let startDate;
 let endDate;
 const totalWeeksShown = 60; // # of weeks to display on the calendar.
 
-let $tempEvent; // Unscheduled Draft restore when dragging external event fails
+let monthsLookBack = 12; // Months in the past to retrieve on load.
+let $tempEvent; // Unscheduled Draft restore when dragging external event fails.
 
 /**
  * initPage function. The big bad initialization function for the whole Calendar admin page.
@@ -88,7 +89,7 @@ function initPage() {
 				type: 'basic',
 				visibleRange: function(currentDate) {
 					let startOfMonth = getServerTime().clone().date(1);
-					let coupleMonthsAgo = startOfMonth.clone().subtract(2, 'months');
+					let coupleMonthsAgo = startOfMonth.clone().subtract(monthsLookBack, 'months');
 					
 					startDate = coupleMonthsAgo.subtract(coupleMonthsAgo.day(), 'days'); // Find the most recent past Sunday
 					endDate = startDate.clone().add(totalWeeksShown, 'weeks');
