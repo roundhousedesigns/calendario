@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = grunt => {
 
 	var npmDependencies = require('./package.json').devDependencies;
 	var hasStylus = npmDependencies['grunt-contrib-stylus'] !== undefined;

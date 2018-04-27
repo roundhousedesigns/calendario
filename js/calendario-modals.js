@@ -4,10 +4,15 @@
  * @package RHD_Calendario
  */
  
-var currentVex; // A vex instance
+let currentVex; // A vex instance
  
-function openNewPostModal( event ) {
-	var $el; // New external event placeholder
+/**
+ * openNewPostModal function. Opens the "New Post" Vex modal
+ * 
+ * @return {void}
+ */
+function openNewPostModal() {
+	let $el; // New external event placeholder
 	
 	currentVex = vex.dialog.open({
 		afterOpen: function() {
@@ -47,7 +52,7 @@ function openNewPostModal( event ) {
 					}
 				} ).done( function( data ) {
 					if ( data ) {
-						var eventData = {
+						let eventData = {
 							title: data.post_title,
 							start: moment(data.post_date).toISOString(),
 							post_id: data.post_id,
@@ -71,14 +76,21 @@ function openNewPostModal( event ) {
 }
 
 
+/**
+ * openQuickEditModal function. Opens the custom "Quick Edit" Vex modal
+ * 
+ * @param {object} event The clicked JavaScript event.
+ * @param {boolean} unsched Whether or not the post is an "unscheduled draft."
+ * @return {void}
+ */
 function openQuickEditModal( event, unsched ) {
-	var $el; // New external event placeholder
-	var prettyDate = '';
-	var disabled = ( event.post_status == 'publish' ) ? 'disabled' : false;
-	var publishText = '';
-	var buttonYesText = 'Update';
-	var buttonNoText = 'Cancel';
-	var hideYesButtonStyle = '';
+	let $el; // New external event placeholder
+	let prettyDate = '';
+	let disabled = ( event.post_status == 'publish' ) ? 'disabled' : false;
+	let publishText = '';
+	let buttonYesText = 'Update';
+	let buttonNoText = 'Cancel';
+	let hideYesButtonStyle = '';
 	
 	if ( disabled ) {
 		publishText = ' (Published)';
@@ -91,7 +103,7 @@ function openQuickEditModal( event, unsched ) {
 	**  - If post is in the past and is a draft, show 'publish' and 'draft'
 	**  - If post is in the future, show 'draft', 'future', and 'unscheduled'
 	*/
-	var statusSelectHTML = '<select name="post_status" required ' + disabled + '/>';
+	let statusSelectHTML = '<select name="post_status" required ' + disabled + '/>';
 	if( moment(event.start).isAfter( getServerTime() ) ) {
 		statusSelectHTML += '<option value="draft">Draft</option><option value="future">Future</option><option value="unsched">Unscheduled</option>';
 	} else {
@@ -102,8 +114,8 @@ function openQuickEditModal( event, unsched ) {
 	if ( unsched === true ) {
 		statusSelectHTML = statusSelectHTML.replace(/value=\"unsched\"/i, 'value="unsched" selected');
 	} else {
-		var findRegEx = new RegExp('value="' + event.post_status + '"');
-		var replaceSelect = 'value="' + event.post_status + '" selected';
+		let findRegEx = new RegExp('value="' + event.post_status + '"');
+		let replaceSelect = 'value="' + event.post_status + '" selected';
 		
 		statusSelectHTML = statusSelectHTML.replace(findRegEx, replaceSelect);
 	}
@@ -149,7 +161,7 @@ function openQuickEditModal( event, unsched ) {
 					beforeSend: function( xhr ) {							
 						xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
 						
-						var eventData = {
+						let eventData = {
 							post_id: event.post_id,
 							title: data.post_title,
 							post_status: "draft" // All posts moving to external area become drafts

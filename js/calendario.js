@@ -9,7 +9,7 @@
    ========================================================================== */
 
 // Localized: wpApiSettings { homeUrl, root, nonce }
-var postColors = {
+const postColors = {
 	'draft':	'gray',
 	'future':	'blue',
 	'publish':	'black',
@@ -21,11 +21,21 @@ var $calendario = jQuery('#editorial-calendar');
 var $draftsList = jQuery('#calendario-unscheduled-drafts');
 
 
+/**
+ * getServerTime function. Retrieves the current time from the server.
+ * 
+ * @return {object} The Moment object containing the current server time.
+ */
 function getServerTime() {
 	return moment().utcOffset($calendarioWrap.data('server-gmt-offset'));
 }
 
 
+/**
+ * getUnscheduledDrafts function. Retrieves Unscheduled Draft posts from the server via AJAX.
+ * 
+ * @return {void}
+ */
 function getUnscheduledDrafts() {
 	jQuery.get( {
 		url: wpApiSettings.root + 'rhd/v1/cal/unscheduled',
@@ -35,11 +45,11 @@ function getUnscheduledDrafts() {
 		}
 	} ).done(function( data ){
 		if ( data ) {
-			var events = JSON.parse(data);
-			var len = events.length;
+			let events = JSON.parse(data);
+			let len = events.length;
 
-			for ( var i = 0; i < len; i++ ) {
-				var $el = buildUnscheduledPost( events[i] );
+			for ( let i = 0; i < len; i++ ) {
+				let $el = buildUnscheduledPost( events[i] );
 				
 				$draftsList.append( $el );
 				$el.setupExternalEvent().addClass('load-complete');
@@ -53,8 +63,14 @@ function getUnscheduledDrafts() {
 }
 
 
+/**
+ * buildUnscheduledPost function.
+ * 
+ * @param {object} eventData The object containing the event data needed to build an Unscheduled Post list item.
+ * @return {object} $el The new jQuery list item element.
+ */
 function buildUnscheduledPost( eventData ) {
-	var $el = jQuery( "<li class='unscheduled-draft status-draft fc-event'>" ).appendTo( '#calendario-unscheduled-drafts' ).text( eventData.title );
+	let $el = jQuery( "<li class='unscheduled-draft status-draft fc-event'>" ).appendTo( '#calendario-unscheduled-drafts' ).text( eventData.title );
 	
 	$el
 		.data( 'event', eventData )
@@ -67,9 +83,14 @@ function buildUnscheduledPost( eventData ) {
 }
 
 
+/**
+ * initStatusToggles function. The status toggle event handler.
+ * 
+ * @return {void}
+ */
 function initStatusToggles() {
 	jQuery("#calendario-event-toggles").on("click", ".event-toggle", function(){
-		var $this = jQuery(this);
+		let $this = jQuery(this);
 		
 		$this.toggleClass("filter-hidden");
 		$calendario.find(".status-" + $this.data('filter')).toggleClass('filter-hidden');
@@ -77,12 +98,17 @@ function initStatusToggles() {
 }
 
 
+/**
+ * quickEditTrashPostHandler function. Sets up the ability to trash a post from the Quick Edit modal.
+ * 
+ * @return {void}
+ */
 function quickEditTrashPostHandler() {
 	// Trash Post link handler
 	jQuery(".post-trash-link").on("click", function(e){
 		e.preventDefault();
 		
-		var $modal = jQuery(this).parents(".calendario-modal");
+		let $modal = jQuery(this).parents(".calendario-modal");
 		
 		jQuery.ajax({
 			url: wpApiSettings.root + 'wp/v2/posts/' + $modal.data('post-id'),
@@ -104,11 +130,11 @@ function quickEditTrashPostHandler() {
    ========================================================================== */
 
 jQuery.fn.setupExternalEvent = function() {
-	var $this = jQuery(this);
+	let $this = jQuery(this);
 	
-	var eventData = $this.data('event');
+	let eventData = $this.data('event');
 	
-	var newEventData = {
+	let newEventData = {
 		color: postColors.draft,
 		className: 'status-draft'
 	};

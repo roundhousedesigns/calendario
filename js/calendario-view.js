@@ -5,24 +5,31 @@
  */
 
 /*  AVAILABLE GLOBALS:
- *  postColors = {
+ * 	postColors = {
 		'draft':	'gray',
 		'future':	'blue',
 		'publish':	'black',
 		'pending':	'green'
 	}
- *  $calendario - The initialized fullCalendar instance
- *  $draftsList - The Unscheduled Drafts <ul> element
+ *	$calendario - The initialized fullCalendar instance
+ *	$calendarioWrap - The element wrapper containing $calendario
+ *	$draftsList - The Unscheduled Drafts <ul> element
  */
 
-var startDate, endDate;
-var totalWeeksShown = 60; // # of weeks to display on the calendar.
+let startDate;
+let endDate;
+const totalWeeksShown = 60; // # of weeks to display on the calendar.
 
-var $tempEvent; // Unscheduled Draft restore when dragging external event fails
+let $tempEvent; // Unscheduled Draft restore when dragging external event fails
 
+/**
+ * initPage function. The big bad initialization function for the whole Calendar admin page.
+ * 
+ * @returns {void}
+ */
 function initPage() {
 	// Event sources
-	var futurePosts = {
+	let futurePosts = {
 		url: wpApiSettings.root + 'rhd/v1/cal/future',
 		type: 'GET',
 		data: {
@@ -34,7 +41,7 @@ function initPage() {
 		},
 		color: postColors.future,
 	};
-	var publishedPosts = {
+	let publishedPosts = {
 		url: wpApiSettings.root + 'rhd/v1/cal/published',
 		type: 'GET',
 		data: {
@@ -47,7 +54,7 @@ function initPage() {
 		color: postColors.publish,
 		startEditable: false
 	};
-	var draftPosts = {
+	let draftPosts = {
 		url: wpApiSettings.root + 'rhd/v1/cal/drafts',
 		type: 'GET',
 		data: {
@@ -59,7 +66,7 @@ function initPage() {
 		},
 		color: postColors.draft
 	};
-	var pendingPosts = {
+	let pendingPosts = {
 		url: wpApiSettings.root + 'rhd/v1/cal/pending',
 		type: 'GET',
 		data: {
@@ -80,8 +87,8 @@ function initPage() {
 			week: {
 				type: 'basic',
 				visibleRange: function(currentDate) {
-					var startOfMonth = getServerTime().clone().date(1);
-					var coupleMonthsAgo = startOfMonth.clone().subtract(2, 'months');
+					let startOfMonth = getServerTime().clone().date(1);
+					let coupleMonthsAgo = startOfMonth.clone().subtract(2, 'months');
 					
 					startDate = coupleMonthsAgo.subtract(coupleMonthsAgo.day(), 'days'); // Find the most recent past Sunday
 					endDate = startDate.clone().add(totalWeeksShown, 'weeks');
@@ -108,7 +115,8 @@ function initPage() {
 			latestPostDate: {
 				text: 'Latest Post',
 				click: function( event ) {
-					var post_type, last;
+					let post_type;
+					let last;
 					
 					if ( ! post_type ) {
 						post_type = 'post';
@@ -158,9 +166,9 @@ function initPage() {
 			openQuickEditModal( event, false );
 		},
 		eventDrop: function( event, delta, revertFunc, jsEvent, ui, view ) { // Moving events around the calendar				
-			var newPostStatus;
-			var newColor;
-			var eventData;
+			let newPostStatus;
+			let newColor;
+			let eventData;
 			
 			eventData = {
 				post_id: event.post_id,
@@ -192,10 +200,10 @@ function initPage() {
 			$tempEvent = jQuery(this).detach();
 		},
 		eventDestroy: function( event, element, view ) {
-			console.info("event:", event, "element:", element, "view:", view);
+			// console.info("event:", event, "element:", element, "view:", view);
 		},
 		eventReceive: function( event ) { // Fired after fullCalendar.drop(). Dropping an event ONTO the calendar from an external source.
-			var eventData = {
+			let eventData = {
 				post_id: parseInt(event.post_id),
 				new_date: event.start.format(),
 				post_status: "draft"
@@ -224,12 +232,13 @@ function initPage() {
 		},
 		eventDragStop: function( event, jsEvent ) { // Used for moving events OFF of the calendar
 			// Exit if not dropping onto the Unscheduled Drafts area
-			if( jsEvent.target.id != "calendario-unscheduled-drafts" )
+			if( jsEvent.target.id != "calendario-unscheduled-drafts" ) {
 				return;
+			}
 			
-			var $el; // New external event placeholder
+			let $el; // New external event placeholder
 			
-			var eventData = {
+			let eventData = {
 				title: event.title,
 				post_id: event.post_id,
 				start: event.start.format(),
@@ -257,7 +266,7 @@ function initPage() {
 		},
 		eventAfterAllRender: function() {
 			$calendario.addClass('load-complete');
-			console.info('eventAfterAllRender');
+			//console.info('eventAfterAllRender');
 		}
 	} );
 	
