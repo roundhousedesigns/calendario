@@ -26,6 +26,7 @@
 
 #calendario-workspace
 	width 99%
+	height 100vh
 	position relative
 	
 	.fc-event
@@ -37,6 +38,7 @@
 	
 	.editorial-calendar
 		width 80%
+		height 100%
 		float left
 		-opacity(0.25)
 		transition all 2.5s ease
@@ -50,11 +52,11 @@
 		
 		.fc-day
 			&.first-of-month
-				.month-name
+				.first-of-month-label
 					line-height 1.7
 					padding-right 0.85em
-					text-transform uppercase
 					float right
+					text-transform uppercase
 					color red
 		
 		.fc-day-top

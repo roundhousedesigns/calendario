@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 12:56:22 PM on 09-05-2018
+* RHD Dev: Compiled at 5:46:58 PM on 09-05-2018
 ***/
 
 /*
@@ -41,6 +41,7 @@
 }
 #calendario-workspace {
   width: 99%;
+  height: 100vh;
   position: relative;
 }
 #calendario-workspace .fc-event,
@@ -53,6 +54,7 @@
 }
 #calendario-workspace .editorial-calendar {
   width: 80%;
+  height: 100%;
   float: left;
   -webkit-opacity: 0.25;
   -moz-opacity: 0.25;
@@ -67,11 +69,11 @@
 #calendario-workspace .editorial-calendar .fc-header-toolbar .fc-center {
   font-size: 2em;
 }
-#calendario-workspace .editorial-calendar .fc-day.first-of-month .month-name {
+#calendario-workspace .editorial-calendar .fc-day.first-of-month .first-of-month-label {
   line-height: 1.7;
   padding-right: 0.85em;
-  text-transform: uppercase;
   float: right;
+  text-transform: uppercase;
   color: #f00;
 }
 #calendario-workspace .editorial-calendar .fc-day-top[data-date$="01"] {

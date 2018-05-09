@@ -89,15 +89,15 @@ function initPage() {
 					let firstPostDate = moment( $calendario.data("oldest") );
 					let latestPostDate = moment( $calendario.data("latest") );
 					
-					let startDate = firstPostDate.clone().subtract(firstPostDate.day(), 'days').subtract(1,'weeks'); // Find the most recent past Sunday
-					let overshootDate = startDate.clone();
+					let startDate = firstPostDate.date(1).subtract(firstPostDate.day(), 'days'); // Find the closest past Sunday to the start of the month
+					
 					let i = 1;
+					let overshootDate = startDate.clone();
 					while ( overshootDate.isBefore(latestPostDate) ) {
 						overshootDate.add(1, 'months');
 						i++;
 					}
-					
-					let endDate = overshootDate.clone().add(3, 'months').day(7); // Line it up so we still get a month view!
+					let endDate = overshootDate.clone().add(6, 'weeks').day(7); // Line it up so we still get a month view!
 					
 					return {
 						start: startDate,
@@ -106,11 +106,13 @@ function initPage() {
 				},
 			}
 		},
+		height: 'parent',
 		header: {
 			'left': 'scrollToToday scrollToLatest',
 			'center': 'title',
 			'right': 'newPostButton'
 		},
+		titleFormat: '[Editorial Calendar]',
 		customButtons: {
 			scrollToToday: {
 				text: 'Today',
@@ -134,9 +136,10 @@ function initPage() {
 		dayRender: function( date, cell ) {
 			// Set a class on the first of every month and add the Month Name
 			if ( date.date() == 1 ) {
-				let monthName = '<span class="month-name">' + date.format('MMMM') + '</span>';
+				let fomLabel = '<span class="first-of-month-label month-name">' + date.format('YYYY') + ' &bull; ' + date.format('MMMM') + '</span>';
+				
 				cell.addClass('first-of-month');
-				cell.html( monthName + cell.html() );
+				cell.html( fomLabel + cell.html() );
 			}
 		},
 		editable: true,

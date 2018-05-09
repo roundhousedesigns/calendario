@@ -31,6 +31,14 @@ function getServerTime() {
 }
 
 
+function setWorkspaceHeight() {
+	let percentFromTop = 100 - ( ( jQuery("#calendario-workspace").offset().top / jQuery(window).height() ) * 100 );
+	jQuery("#calendario-workspace").css('height', percentFromTop + 'vh' );
+	
+	console.log($calendario.offset().top);
+}
+
+
 /**
  * scrolltoDate function. Scrolls to a date in the calendar.
  * 
@@ -180,6 +188,7 @@ jQuery.fn.setupExternalEvent = function() {
    ========================================================================== */
 
 jQuery(document).ready( function() {
+	setWorkspaceHeight();
 	initPage();
 	initStatusToggles();
 	getUnscheduledDrafts();
