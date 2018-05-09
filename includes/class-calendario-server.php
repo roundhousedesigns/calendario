@@ -321,11 +321,11 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 	 */
 	public function update_post( WP_REST_Request $request ) {
 		$post_id = $request->get_param( 'post_id' );
-		$new_date = ( $request->get_param( 'new_date' ) ) ? $request->get_param( 'new_date' ) : '';
+		$post_date = ( $request->get_param( 'post_date' ) ) ? $request->get_param( 'post_date' ) : '';
 		$post_status = ( $request->get_param( 'post_status' ) ) ? $request->get_param( 'post_status' ) : '';
 		$post_title = ( $request->get_param( 'post_title' ) ) ? $request->get_param( 'post_title' ) : '';
 		
-		RHD_Calendario::update_post( $post_id, $new_date, $post_status, $post_title );
+		RHD_Calendario::update_post( $post_id, $post_date, $post_status, $post_title );
 	}
 	
 	
@@ -368,7 +368,7 @@ class RHD_Calendario_Server extends WP_REST_Controller {
 	 */
 	public function unschedule_draft( WP_Rest_Request $request ) {
 		$post_id = $request->get_param( 'post_id' );
-		$date = ( $request->get_param( 'new_date' ) ) ? $request->get_param( 'new_date' ) : '';
+		$date = ( $request->get_param( 'post_date' ) ) ? $request->get_param( 'post_date' ) : '';
 					
 		RHD_Calendario::unschedule_draft( $post_id, $date );
 	}	

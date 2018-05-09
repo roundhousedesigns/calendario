@@ -403,12 +403,12 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 * 
 		 * @access public
 		 * @param int $post_id The post ID
-		 * @param string $new_date The string containing the new post date
+		 * @param string $post_date The string containing the new post date
 		 * @param string $post_status The post status
 		 * @param string $post_title The 
 		 * @return void
 		 */
-		public function update_post( int $post_id, string $new_date, string $post_status, string $post_title = null ) {
+		public function update_post( int $post_id, string $post_date, string $post_status, string $post_title = null ) {
 			// Exit if this is a trashed post
 			if ( $post_status == 'trash' )
 				return;
@@ -423,8 +423,8 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			}
 			
 			// Format the date, if supplied, otherwise skip setting the date.
-			if ( $new_date ) {
-				$date_formatted = self::format_post_date( $new_date );
+			if ( $post_date ) {
+				$date_formatted = self::format_post_date( $post_date );
 				
 				$postdata['post_date'] = $date_formatted[0];
 				$postdata['post_date_gmt'] = $date_formatted[1];

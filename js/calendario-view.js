@@ -170,7 +170,7 @@ function initPage() {
 			
 			eventData = {
 				post_id: event.post_id,
-				new_date: event.start.format(),
+				post_date: event.start.format(),
 				post_status: event.post_status,
 				color: postColors[event.post_status]
 			};
@@ -187,7 +187,7 @@ function initPage() {
 						// Update event to new values
 						event.post_status = newPostStatus;
 						event.color = newColor;
-						event.start = eventData.new_date;
+						event.start = eventData.post_date;
 						$calendario.fullCalendar( 'updateEvent', event );
 					} else {
 						// console.log( "Moving posts to today or earlier is prohibited" );
@@ -203,7 +203,7 @@ function initPage() {
 		eventReceive: function( event ) { // Fired after fullCalendar.drop(). Dropping an event ONTO the calendar from an external source.
 			let eventData = {
 				post_id: parseInt(event.post_id),
-				new_date: event.start.format(),
+				post_date: event.start.format(),
 				post_status: "draft"
 			};
 			

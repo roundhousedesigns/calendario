@@ -98,12 +98,13 @@ function openQuickEditModal( event, unsched ) {
 		hideYesButtonStyle = '<style>.vex-dialog-buttons button[type="submit"] { display: none; }</style>';
 	}
 	
-	/* Selective status display
-	**  - If post is published, lock inputs.
-	**  - If post is in the past and is a draft, show 'publish' and 'draft'
-	**  - If post is in the future, show 'draft', 'future', and 'unscheduled'
-	*/
-	let statusSelectHTML = '<select name="post_status" required ' + disabled + '/>';
+	/* 
+	 * Selective status display
+	 *  - If post is published, lock inputs.
+	 *  - If post is in the past and is a draft, show 'publish' and 'draft'
+	 *  - If post is in the future, show 'draft', 'future', and 'unscheduled'
+	 */
+	let statusSelectHTML = '<label for="post_status" class="screen-reader-text">Post Status</label><select name="post_status" required ' + disabled + '/>&nbsp;';
 	if( moment(event.start).isAfter( getServerTime() ) ) {
 		statusSelectHTML += '<option value="draft">Draft</option><option value="future">Future</option><option value="unsched">Unscheduled</option>';
 	} else {
@@ -135,7 +136,8 @@ function openQuickEditModal( event, unsched ) {
 		message: 'Quick Edit' + publishText,
 		input: [
 			'<div class="calendario-modal" data-post-id="' + event.post_id + '" data-event-id="' + event._id + '">',
-				'<input name="post_title" type="text" value="' + event.title + '" required ' + disabled + '/>',
+				'<label for="post_title" class="screen-reader-text"></label><input name="post_title" placeholder="Title" type="text" value="' + event.title + '" required ' + disabled + '/>',
+				'<label for="post_date" class="screen-reader-text"></label><input type="date" name="post_date" placeholder="mm/dd/yyyy" value="' + event.start.format('YYYY-MM-DD') + '" required ' + disabled + ' />',
 				statusSelectHTML,
 				'<div class="post-links">',
 					'<a class="post-edit-link" href="' + wpApiSettings.homeUrl + 'wp-admin/post.php?post=' + event.post_id + '&action=edit">Edit Post</a>',
@@ -184,7 +186,7 @@ function openQuickEditModal( event, unsched ) {
 					data: {
 						post_id: event.post_id,
 						post_title: data.post_title,
-						post_date: moment(data.post_date).toISOString(),
+						post_date: moment(data.post_date).format(),
 						post_status: data.post_status
 					},
 					beforeSend: function( xhr ) {
@@ -195,6 +197,7 @@ function openQuickEditModal( event, unsched ) {
 					event.post_status = data.post-status;
 					event.color = postColors[data.post_status];
 					event.title = data.post_title;
+					event.start = moment(data.post_date).format()
 					
 					$calendario.fullCalendar( 'updateEvent', event );
 				} );
