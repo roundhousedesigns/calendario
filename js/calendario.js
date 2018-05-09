@@ -32,6 +32,21 @@ function getServerTime() {
 
 
 /**
+ * scrollToThisMonth function. Finds today's date and scrolls the calendar to the start of the current month.
+ * 
+ * @return {void}
+ */
+function scrollToThisMonth() {
+	let startOfMonth = moment().date(1).format('YYYY-MM-DD');
+	let $startOfMonthEl = jQuery(".fc-day-top[data-date='" + startOfMonth + "']");
+	
+	let todayPosition = $startOfMonthEl.parents('.fc-row').offset().top - $startOfMonthEl.parents('.fc-row').offsetParent().offset().top;
+	
+	jQuery(".fc-scroller").scrollTop(todayPosition);
+}
+
+
+/**
  * getUnscheduledDrafts function. Retrieves Unscheduled Draft posts from the server via AJAX.
  * 
  * @return {void}

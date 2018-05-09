@@ -109,7 +109,7 @@ function initPage() {
 		header: {
 			'left': 'today latestPostDate',
 			'center': 'title',
-			'right': 'newPostButton prev,next'
+			'right': 'newPostButton'
 		},
 		customButtons: {
 			newPostButton: {
@@ -279,8 +279,9 @@ function initPage() {
 			} );
 		},
 		eventAfterAllRender: function() {
-			$calendario.addClass('load-complete');
-			//console.info('eventAfterAllRender');
+			$calendario.addClass('load-complete');			
+			
+			scrollToThisMonth();
 		}
 	} );
 	
