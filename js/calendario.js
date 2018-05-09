@@ -34,15 +34,52 @@ function getServerTime() {
 /**
  * scrollToThisMonth function. Finds today's date and scrolls the calendar to the start of the current month.
  * 
+ * @param {number} [animateTime=0] The animateTime scroll duration. 0 to disable.
  * @return {void}
  */
-function scrollToThisMonth() {
-	let startOfMonth = moment().date(1).format('YYYY-MM-DD');
+function scrollToThisMonth( animateTime ) {
+	console.log("animateTime", animateTime);
+	if ( !animateTime ) {
+		animateTime = 0;
+	}
+	
+	let startOfMonth = moment().date(1).format('YYYY-MM-DD');	
 	let $startOfMonthEl = jQuery(".fc-day-top[data-date='" + startOfMonth + "']");
+	let elPosition = $startOfMonthEl.parents('.fc-row').offset().top - $startOfMonthEl.parents('.fc-row').offsetParent().offset().top;
 	
-	let todayPosition = $startOfMonthEl.parents('.fc-row').offset().top - $startOfMonthEl.parents('.fc-row').offsetParent().offset().top;
+	if ( animateTime > 0 ) {
+		jQuery(".fc-scroller").animate({
+			scrollTop: elPosition
+		}, animateTime, 'swing');
+	} else {
+		jQuery(".fc-scroller").scrollTop(elPosition);
+	}
+}
+
+
+/**
+ * scrollToLatestPostMonth function. Finds the latest post (any status) and scrolls to the start of its month.
+ * 
+ * @param {number} [animateTime=0] The animateTime scroll duration. 0 to disable.
+ * @return {void}
+ */
+function scrollToLatestPostMonth( animateTime ) {
+	console.log("animateTime", animateTime);
+	if ( !animateTime ) {
+		animateTime = 0;
+	}
 	
-	jQuery(".fc-scroller").scrollTop(todayPosition);
+	let startOfMonth = moment( $calendario.data("latest") ).date(1).format('YYYY-MM-DD');
+	let $startOfMonthEl = jQuery(".fc-day-top[data-date='" + startOfMonth + "']");
+	let elPosition = $startOfMonthEl.parents('.fc-row').offset().top - $startOfMonthEl.parents('.fc-row').offsetParent().offset().top;
+	
+	if ( animateTime > 0 ) {
+		jQuery(".fc-scroller").animate({
+			scrollTop: elPosition
+		}, animateTime, 'swing');
+	} else {
+		jQuery(".fc-scroller").scrollTop(elPosition);
+	}
 }
 
 

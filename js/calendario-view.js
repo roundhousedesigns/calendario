@@ -107,45 +107,29 @@ function initPage() {
 			}
 		},
 		header: {
-			'left': 'today latestPostDate',
+			'left': 'scrollToToday scrollToLatest',
 			'center': 'title',
 			'right': 'newPostButton'
 		},
 		customButtons: {
+			scrollToToday: {
+				text: 'Today',
+				click: function() {
+					scrollToThisMonth(500)
+				},
+			},
+			scrollToLatest: {
+				text: 'Latest Post',
+				click: function() {
+					scrollToLatestPostMonth(500)
+				},
+			},
 			newPostButton: {
 				text: 'New Draft',
 				click: function( event ) {
 					openNewPostModal( event );
 				}
 			},
-			latestPostDate: { // NOT WORKING
-				text: 'Latest Post',
-				click: function( event ) {
-					let post_type;
-					let last;
-					
-					if ( ! post_type ) {
-						post_type = 'post';
-					} else {
-						post_type = event.post_type;
-					}
-					
-					jQuery.get({
-						url: wpApiSettings.root + 'rhd/v1/cal/lastpostdate',
-						beforeSend: function( xhr ) {
-							xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );	
-						},
-						cache: true,
-						data: {
-							post_type: post_type,
-						},
-					} ).done( function( data ) {
-							// Refresh cached $calendario selector
-							$calendario = jQuery("#editorial-calendar");
-							$calendario.fullCalendar( 'gotoDate', data );
-					} );
-				}
-			}
 		},
 		dayRender: function( date, cell ) {
 			// Set a class on the first of every month and add the Month Name
