@@ -132,6 +132,7 @@ function openQuickEditModal( event, unsched ) {
 				dateFormat: "mm-dd-yy"
 			});
 			*/
+			
 		},
 		message: 'Quick Edit' + publishText,
 		input: [
