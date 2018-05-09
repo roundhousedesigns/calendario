@@ -115,13 +115,13 @@ function initPage() {
 			scrollToToday: {
 				text: 'Today',
 				click: function() {
-					scrollToThisMonth(500)
+					scrollToDate( moment(), 500 );
 				},
 			},
 			scrollToLatest: {
 				text: 'Latest Post',
 				click: function() {
-					scrollToLatestPostMonth(500)
+					scrollToDate( moment($calendario.data("latest")), 500);
 				},
 			},
 			newPostButton: {
@@ -263,9 +263,9 @@ function initPage() {
 			} );
 		},
 		eventAfterAllRender: function() {
-			$calendario.addClass('load-complete');			
+			$calendario.addClass('load-complete');
 			
-			scrollToThisMonth();
+			scrollToDate(moment(), 0);
 		}
 	} );
 	
