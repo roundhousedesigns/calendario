@@ -318,15 +318,17 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 		 */
 		public function calendario_page() {
 			$this->plugin_meta = get_plugin_data( __FILE__, true, true );
+			$oldest_date = self::get_oldest_post_date();
+			$latest_date = self::get_latest_post_date();
 			?>
 			
-			<div id="calendario" data-server-gmt-offset="<?php echo get_option('gmt_offset'); ?>">
+			<div id="calendario" data-server-gmt-offset="<?php echo get_option( 'gmt_offset' ); ?>">
 				<header class="plugin-header">
 					<h2 class="plugin-title"><?php echo $this->plugin_meta["Name"]; ?></h2>
 				</header>
 				
 				<div id="calendario-workspace">
-					<div id="editorial-calendar" class="editorial-calendar"></div>
+					<div id="editorial-calendar" class="editorial-calendar" data-oldest="<?php echo $oldest_date[0]; ?>" data-latest="<?php echo $latest_date[0]; ?>"></div>
 					<div id="calendario-sidebar" class="calendario-sidebar">
 						<div id="event-toggles" class="calendario-sidebar-container">
 							<h4 class="calendario-sidebar-box-title">Filter by Status</h4>
@@ -531,6 +533,30 @@ if ( !class_exists( 'RHD_Calendario' ) ) {
 			}
 			
 			self::calendario_make_unscheduled_draft( $postdata['ID'] );
+		}
+		
+		
+		/**
+		 * get_oldest_post_date function. Gets the date of the first post.
+		 * 
+		 * @access public
+		 * @return string The oldest post's post_date.
+		 */
+		public function get_oldest_post_date() {
+			$post = get_posts( 'numberposts=1&order=ASC' );
+			return self::format_post_date( $post[0]->post_date );
+		}
+		
+		
+		/**
+		 * get_latest_post_date function. Gets the date of the latest scheduled post (any status).
+		 * 
+		 * @access public
+		 * @return string The latest post's post_date.
+		 */
+		public function get_latest_post_date() {
+			$post = get_posts( 'numberposts=1&order=DESC&post_status=any' );
+			return self::format_post_date( $post[0]->post_date );
 		}
 	}
 }

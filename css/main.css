@@ -1,5 +1,5 @@
 /***
-* RHD Dev: Compiled at 5:54:29 PM on 20-04-2018
+* RHD Dev: Compiled at 12:56:22 PM on 09-05-2018
 ***/
 
 /*
@@ -66,6 +66,16 @@
 }
 #calendario-workspace .editorial-calendar .fc-header-toolbar .fc-center {
   font-size: 2em;
+}
+#calendario-workspace .editorial-calendar .fc-day.first-of-month .month-name {
+  line-height: 1.7;
+  padding-right: 0.85em;
+  text-transform: uppercase;
+  float: right;
+  color: #f00;
+}
+#calendario-workspace .editorial-calendar .fc-day-top[data-date$="01"] {
+  color: #f00;
 }
 #calendario-workspace .editorial-calendar .fc-time {
   display: none;

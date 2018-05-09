@@ -18,9 +18,6 @@
 
 let startDate;
 let endDate;
-const totalWeeksShown = 60; // # of weeks to display on the calendar.
-
-let monthsLookBack = 12; // Months in the past to retrieve on load.
 let $tempEvent; // Unscheduled Draft restore when dragging external event fails.
 
 /**
@@ -84,21 +81,29 @@ function initPage() {
 	// fullCalendar initialization
 	$calendario.fullCalendar({
 		defaultView: 'week',
+		defaultDate: moment( $calendario.data("oldest") ),
 		views: {
 			week: {
 				type: 'basic',
-				visibleRange: function(currentDate) {
-					let startOfMonth = getServerTime().clone().date(1);
-					let coupleMonthsAgo = startOfMonth.clone().subtract(monthsLookBack, 'months');
+				visibleRange: function() {
+					let firstPostDate = moment( $calendario.data("oldest") );
+					let latestPostDate = moment( $calendario.data("latest") );
 					
-					startDate = coupleMonthsAgo.subtract(coupleMonthsAgo.day(), 'days'); // Find the most recent past Sunday
-					endDate = startDate.clone().add(totalWeeksShown, 'weeks');
+					let startDate = firstPostDate.clone().subtract(firstPostDate.day(), 'days').subtract(1,'weeks'); // Find the most recent past Sunday
+					let overshootDate = startDate.clone();
+					let i = 1;
+					while ( overshootDate.isBefore(latestPostDate) ) {
+						overshootDate.add(1, 'months');
+						i++;
+					}
+					
+					let endDate = overshootDate.clone().add(3, 'months').day(7); // Line it up so we still get a month view!
 					
 					return {
 						start: startDate,
 						end: endDate
 					};
-				}
+				},
 			}
 		},
 		header: {
@@ -113,7 +118,7 @@ function initPage() {
 					openNewPostModal( event );
 				}
 			},
-			latestPostDate: {
+			latestPostDate: { // NOT WORKING
 				text: 'Latest Post',
 				click: function( event ) {
 					let post_type;
@@ -140,6 +145,14 @@ function initPage() {
 							$calendario.fullCalendar( 'gotoDate', data );
 					} );
 				}
+			}
+		},
+		dayRender: function( date, cell ) {
+			// Set a class on the first of every month and add the Month Name
+			if ( date.date() == 1 ) {
+				let monthName = '<span class="month-name">' + date.format('MMMM') + '</span>';
+				cell.addClass('first-of-month');
+				cell.html( monthName + cell.html() );
 			}
 		},
 		editable: true,

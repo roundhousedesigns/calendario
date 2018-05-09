@@ -48,6 +48,19 @@
 			.fc-center
 				font-size 2em
 		
+		.fc-day
+			&.first-of-month
+				.month-name
+					line-height 1.7
+					padding-right 0.85em
+					text-transform uppercase
+					float right
+					color red
+		
+		.fc-day-top
+			&[data-date$="01"]
+				color red
+		
 		.fc-time
 			display none
 		

@@ -7,7 +7,10 @@ grunt.initConfig({
 	pkg: grunt.file.readJSON('package.json'),
 
 	jshint : {
-		all : ['Gruntfile.js', '/js/*.js', '!js/**/*.min.js', '!js/vendor/**/*.js', '!node_modules/**/*.js']
+		all : ['Gruntfile.js', '/js/*.js', '!js/**/*.min.js', '!js/vendor/**/*.js', '!node_modules/**/*.js'],
+		options : {
+			esversion: 6,
+		},
 	},
 
 	watch : {
