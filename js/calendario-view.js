@@ -19,6 +19,8 @@
 let startDate;
 let endDate;
 let $tempEvent; // Unscheduled Draft restore when dragging external event fails.
+let fcInit = false; // Gets set to true on the first fullCalendar load.
+
 
 /**
  * initPage function. The big bad initialization function for the whole Calendar admin page.
@@ -82,6 +84,7 @@ function initPage() {
 	$calendario.fullCalendar({
 		defaultView: 'week',
 		defaultDate: moment( $calendario.data("oldest") ),
+		eventSources: [ futurePosts, publishedPosts, draftPosts, pendingPosts ],
 		views: {
 			week: {
 				type: 'basic',
@@ -91,6 +94,7 @@ function initPage() {
 					
 					let startDate = firstPostDate.date(1).subtract(firstPostDate.day(), 'days'); // Find the closest past Sunday to the start of the month
 					
+					/*
 					let i = 1;
 					let overshootDate = startDate.clone();
 					while ( overshootDate.isBefore(latestPostDate) ) {
@@ -98,6 +102,10 @@ function initPage() {
 						i++;
 					}
 					let endDate = overshootDate.clone().add(6, 'weeks').day(7); // Line it up so we still get a month view!
+					*/
+					
+					// Just make it big and long, baby
+					let endDate = startDate.clone().add(150, 'weeks');
 					
 					return {
 						start: startDate,
@@ -108,7 +116,7 @@ function initPage() {
 		},
 		height: 'parent',
 		header: {
-			'left': 'scrollToToday scrollToLatest',
+			'left': 'scrollToToday scrollToDate scrollToLatest',
 			'center': 'title',
 			'right': 'newPostButton'
 		},
@@ -119,6 +127,12 @@ function initPage() {
 				click: function() {
 					scrollToDate( moment(), 500 );
 				},
+			},
+			scrollToDate: {
+				text: 'Go To Date',
+				click: function() {
+					
+				}
 			},
 			scrollToLatest: {
 				text: 'Latest Post',
@@ -266,15 +280,13 @@ function initPage() {
 			} );
 		},
 		eventAfterAllRender: function() {
-			$calendario.addClass('load-complete');
+			// Scroll to Today on first load
+			if ( fcInit === false ) {
+				scrollToDate(moment(), 0);
+				fcInit = true;
+			}
 			
-			scrollToDate(moment(), 0);
+			$calendario.addClass('load-complete');
 		}
 	} );
-	
-	// Populate that bizznazz
-	$calendario.fullCalendar('addEventSource', futurePosts);
-	$calendario.fullCalendar('addEventSource', publishedPosts);
-	$calendario.fullCalendar('addEventSource', draftPosts);
-	$calendario.fullCalendar('addEventSource', pendingPosts);
 }

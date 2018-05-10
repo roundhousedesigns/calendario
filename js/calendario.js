@@ -31,11 +31,15 @@ function getServerTime() {
 }
 
 
+/**
+ * setWorkspaceHeight function. Well...sets the workspace height.
+ * 
+ * @access public
+ * @return void
+ */
 function setWorkspaceHeight() {
-	let percentFromTop = 100 - ( ( jQuery("#calendario-workspace").offset().top / jQuery(window).height() ) * 100 );
+	let percentFromTop = 98 - ( ( jQuery("#calendario-workspace").offset().top / jQuery(window).height() ) * 100 );
 	jQuery("#calendario-workspace").css('height', percentFromTop + 'vh' );
-	
-	console.log($calendario.offset().top);
 }
 
 
@@ -192,21 +196,4 @@ jQuery(document).ready( function() {
 	initPage();
 	initStatusToggles();
 	getUnscheduledDrafts();
-	
-	// View change listeners (TESTING)
-	jQuery("#add-week-before").click(function(e){
-		e.preventDefault();
-		$calendario.fullCalendar('option', 'visibleRange', {
-			start: startDate.subtract(1, 'weeks'),
-			end: endDate
-		});
-	});
-	
-	jQuery("#add-week-after").click(function(e){
-		e.preventDefault();
-		$calendario.fullCalendar('option', 'visibleRange', {
-			start: startDate,
-			end: endDate.add(1, 'weeks')
-		});
-	});
 } );
