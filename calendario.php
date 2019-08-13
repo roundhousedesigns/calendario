@@ -3,7 +3,7 @@
 Plugin Name: Calendario
 Plugin URI: https://roundhouse-designs.com/calendario
 Description: The professional blogger's editorial calendar for WordPress.
-Version: 0.1dev
+Version: 0.1.1
 Requires PHP: 5.6
 Requires at least: 4.7
 Text Domain: rhd
