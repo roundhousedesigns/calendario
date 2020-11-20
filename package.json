@@ -10,7 +10,8 @@
     "grunt": "^1.0.1",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-stylus": "^1.2.0",
-    "grunt-contrib-watch": "^1.0.0"
+    "grunt-contrib-watch": "^1.0.0",
+    "websocket-extensions": ">=0.1.4",
   },
   "dependencies": {
     "fullcalendar": "^3.7.0",
