@@ -86,12 +86,19 @@ function openNewPostModal() {
  */
 function openQuickEditModal(event, unsched) {
 	let $el; // New external event placeholder
-	let prettyDate = '';
 	let disabled = event.post_status == 'publish' ? 'disabled' : false;
 	let publishText = '';
 	let buttonYesText = 'Update';
 	let buttonNoText = 'Cancel';
 	let hideYesButtonStyle = '';
+	let eventStart;
+
+	if (typeof event.start === 'object') {
+		eventStart = event.start.format('YYYY-MM-DD');
+	} else if (typeof event.start === 'string') {
+		let _eventDate = new Date(event.start);
+		eventStart = _eventDate.toISOString().split('T')[0];
+	}
 
 	if (disabled) {
 		publishText = ' (Published)';
@@ -132,9 +139,6 @@ function openQuickEditModal(event, unsched) {
 	}
 
 	// Open the dialog
-	let eventStart = event.start.format('YYYY-MM-DD')
-		? event.start.format('YYYY-MM-DD')
-		: '';
 	currentVex = vex.dialog.open({
 		afterOpen: function () {
 			quickEditTrashPostHandler();
