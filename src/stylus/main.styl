@@ -1,0 +1,169 @@
+/*
+ * Main Stylesheet
+ */
+@require 'partials/_global.styl';
+@require 'partials/_plugins.styl';
+@require 'partials/_modals.styl';
+
+#calendario
+	margin-right: $spacer;
+	-ff-body();
+	position: relative;
+
+	.plugin-title
+		font-size: 2em;
+		-ff-headline();
+
+#calendario-workspace
+	position: relative;
+	width: 99%;
+	height: 100vh;
+
+	.fc-event
+		padding: .5em .35em;
+		border: 3px;
+		border-radius: 3px;
+		color: white;
+		font-size: 1em;
+
+	.editorial-calendar
+		float: left;
+		width: 80%;
+		height: 100%;
+		-opacity(.25);
+		transition: all 2.5s ease;
+
+		&.load-complete
+			-opacity(1);
+
+		.fc-header-toolbar
+			.fc-center
+				font-size: 2em;
+
+		.fc-day
+			&.first-of-month
+				.first-of-month-label
+					float: right;
+					padding-right: .85em;
+					color: red;
+					text-transform: uppercase;
+					line-height: 1.7;
+
+		.fc-day-top
+			&[data-date$='01']
+				color: red;
+
+		.fc-time
+			display: none;
+
+		.fc-event
+			.fc-content
+				white-space: normal;
+
+			.fc-title
+				display: block;
+
+			&.filter-hidden
+				z-index: -1;
+				visibility: hidden;
+
+	.status-draft
+		background-color: gray;
+
+	.status-publish
+		background-color: black;
+
+	.status-future
+		background-color: blue;
+
+	.calendario-sidebar
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 18%;
+
+		.calendario-sidebar-container
+			position: relative;
+			z-index: 999;
+
+		.calendario-sidebar-box-title
+			margin-bottom: $halfspacer;
+			font-size: 1.2em;
+
+		.calendario-sidebar-box
+			position: relative;
+			width: 100%;
+			height: auto;
+
+			.fc-event
+				margin: $quarterspacer;
+
+		.calendario-event-toggles
+			margin-bottom: $spacer;
+
+			.toggles
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: space-evenly;
+				margin: $quarterspacer 0;
+
+				.event-toggle-item
+					display: inline-block;
+					width: 40%;
+
+					button
+						@extends #calendario-workspace .fc-event;
+						margin: 0;
+						width: 100%;
+						border-width: 2px;
+						border-style: solid;
+						text-align: center;
+						font-size: 1.1em;
+						cursor: pointer;
+						transition: all .15s ease;
+
+						&.status-publish
+							border-color: @background-color;
+							background-color: black;
+
+						&.status-draft
+							border-color: @background-color;
+							background-color: gray;
+
+						&.status-future
+							border-color: @background-color;
+							background-color: blue;
+
+						&.status-pending
+							border-color: @background-color;
+							background-color: green;
+
+						&.filter-hidden
+							background-color: transparent;
+							color: black;
+
+		.unscheduled-drafts-list
+			z-index: 999;
+			margin: $halfspacer 0;
+			padding: $quarterspacer;
+			min-height: 300px;
+			width: 100%;
+			border: 3px solid black;
+			border-radius: 2px;
+			transition: all .25s ease;
+
+			&.drop-hover
+				background: blue;
+
+			&.drop-active
+				background: green;
+
+			.fc-event
+				-opacity(.5);
+
+				&.load-complete
+					-opacity(1);
+
+.ui-draggable
+	z-index: 999;
+	cursor: pointer;

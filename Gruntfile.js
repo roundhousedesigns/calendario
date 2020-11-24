@@ -1,87 +1,158 @@
-module.exports = grunt => {
-
+module.exports = function(grunt) {
 	var npmDependencies = require('./package.json').devDependencies;
-	var hasStylus = npmDependencies['grunt-contrib-stylus'] !== undefined;
 
-grunt.initConfig({
-	pkg: grunt.file.readJSON('package.json'),
+	grunt.initConfig({
+		pkg: grunt.file.readJSON('package.json'),
 
-	jshint : {
-		all : ['Gruntfile.js', '/js/*.js', '!js/**/*.min.js', '!js/vendor/**/*.js', '!node_modules/**/*.js'],
-		options : {
-			esversion: 6,
-		},
-	},
-
-	watch : {
-		js : {
-			files: ['js/**/*.js'],
-			tasks : ['jshint'],
-			options : {
-				livereload : true
+		jshint: {
+			all: [
+				'Gruntfile.js',
+				'src/js/*.js',
+				'!src/js/**/*.min.js',
+				'!src/js/vendor/**/*.js'
+			],
+			options: {
+				esversion: 6,
+				asi: true
 			}
 		},
-		stylus : {
-			files: ['stylus/**/*.styl'],
-			tasks : (hasStylus) ? ['stylus:dev'] : null
+
+		watch: {
+			js: {
+				files: ['src/js/**/*.js'],
+				tasks: ['jshint','copy:dev']
+			},
+			stylus: {
+				files: ['src/stylus/**/*.styl'],
+				tasks: ['stylus:build']
+			},
+			php: {
+				files: ['**/*.php']
+			},
+			css: {
+				files: ['**/*.css']
+			},
+			// livereload: {
+			// 	options: {
+			// 		livereload: {
+			// 			port: 9999
+			// 		}
+			// 	},
+			// 	files: ['dist/css/**/*.css', 'dist/js/**/*.js', '**/*.php']
+			// }
 		},
-		php : {
-			files : ['**/*.php'],
-			options : {
-				livereload : true
+
+		stylus: {
+			build: {
+				files: [
+					{
+						src: ['**/*.styl', '!**/_*.styl'],
+						cwd: 'src/stylus',
+						dest: 'dist/css',
+						ext: '.css',
+						expand: true
+					}
+				],
+				options: {
+					compress: true,
+					banner:
+						'/**\n' +
+						'* RHDWP Base Styles \n' +
+						'* \n' +
+						'* Generated <%= grunt.template.today("mm-dd-yyyy h:MM:ss TT") %>\n' +
+						'* \n' +
+						'* @package rhdwp\n' +
+						'*/'
+				}
 			}
 		},
-		css : {
-			files : ['**/*.css'],
-			options : {
-				livereload : true
+
+		copy: {
+			dev: {
+				files: [
+					{
+						expand: true,
+						cwd: 'src/js',
+						src: ['*.js'],
+						dest: 'dist/js/'
+					},
+				]
+			},
+			vendor: {
+				files: [
+					{
+						expand: true,
+						cwd: 'node_modules',
+						src: ['vex-js/dist/**', 'fullcalendar/dist/**', 'moment/dist/**'],
+						dest: 'dist/js/vendor'
+					}
+				]
+			},
+			build: {
+				files: [
+					{
+						expand: true,
+						cwd: 'src/js',
+						src: ['vendor/**/*.js','vendor/**/*.css'],
+						dest: 'dist/js/vendor'
+					},
+					{
+						expand: true,
+						cwd: 'node_modules',
+						src: ['vex-js/dist/**', 'fullcalendar/dist/**', 'moment/dist/**'],
+						dest: 'dist/js/vendor'
+					}
+				]
+			}
+		},
+
+		terser: {
+			dist: {
+				files: [
+					{
+						expand: true,
+						cwd: 'src/js',
+						src: ['**/*.js', '!vendor/**/*.js'],
+						dest: 'dist/js'
+					}
+				]
+			}
+		},
+
+		prettier: {
+			options: {
+				semi: true,
+				singleQuote: true,
+				useTabs: true,
+				trailingComma: 'es5'
+			},
+			files: {
+				src: ['src/js/**/**.js', 'src/js/**/**.css', '!src/js/vendor/**']
 			}
 		}
-	},
-
-	// Stylus dev and production build tasks
-	stylus : {
-		production : {
-			files : [
-				{
-					src : ['**/*.styl', '!**/_*.styl'],
-					cwd : 'stylus',
-					dest : 'css',
-					ext: '.css',
-					expand : true
-				}
-			],
-			options : {
-				compress : true,
-				banner: '/***\n' +
-						'* RHD Production: Compiled at <%= grunt.template.today("h:MM:ss TT") %> on <%= grunt.template.today("dd-mm-yyyy") %>\n' +
-						'***/\n\n'
-			}
-		},
-		dev : {
-			files : [
-				{
-					src : ['**/*.styl', '!**/_*.styl'],
-					cwd : 'stylus',
-					dest : 'css',
-					ext : '.css',
-					expand : true
-				}
-			],
-			options : {
-				compress : false,
-				banner: '/***\n' +
-						'* RHD Dev: Compiled at <%= grunt.template.today("h:MM:ss TT") %> on <%= grunt.template.today("dd-mm-yyyy") %>\n' +
-						'***/\n\n'
-			}
-		},
-	}
-});
+	});
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-stylus');
+	grunt.loadNpmTasks('grunt-prettier');
+	grunt.loadNpmTasks('grunt-terser');
 
-	grunt.registerTask('setup', ['stylus:dev']);
-	grunt.registerTask('default', ['jshint', 'watch']);
+	grunt.registerTask('setup',[
+		'copy:vendor',
+		'stylus:build',
+	]);
+	grunt.registerTask('build', [
+		'copy:vendor',
+		'copy:build',
+		'stylus:build',
+		'prettier',
+		'terser'
+	]);
+	grunt.registerTask('default', [
+		'copy:vendor',
+		'jshint',
+		'watch'
+	]);
 };
