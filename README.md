@@ -1,2 +1,0 @@
-# rhdwp-calendario
-Calendario plugin
