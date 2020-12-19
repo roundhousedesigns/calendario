@@ -21,17 +21,15 @@ define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-m
  */
 function rhd_load_plugin() {
 	// Loading the app in WordPress admin main screen.
-	new RHDLoadReactApp( 'admin_enqueue_scripts', 'index.php', false, '#wpbody .wrap' );
-	// Loading the app WordPress front end page.
-	new RHDLoadReactApp( 'wp_enqueue_scripts', '', 'is_front_page', '#site-footer' );
+	new Calendario( 'admin_enqueue_scripts', 'posts_page_calendario', false, '#calendario' );
 }
 
 add_action( 'init', 'rhd_load_plugin' );
 
 /**
- * Class RHDLoadReactApp.
+ * Class Calendario.
  */
-class RHDLoadReactApp {
+class Calendario {
 
 	/**
 	 * @var string
@@ -47,7 +45,7 @@ class RHDLoadReactApp {
 	private $limit_callback = '';
 
 	/**
-	 * RHDLoadReactApp constructor.
+	 * Calendario constructor.
 	 *
 	 * @param string $enqueue_hook Hook to enqueue scripts.
 	 * @param string $limit_load_hook Limit load to hook in admin load. If front end pass empty string.
@@ -60,6 +58,10 @@ class RHDLoadReactApp {
 		$this->limit_callback  = $limit_callback;
 
 		add_action( $enqueue_hook, [$this, 'load_react_app'] );
+
+		// wp-admin interface
+		add_action( 'admin_menu', [$this, 'create_plugin_page'] );
+
 	}
 
 	/**
@@ -72,6 +74,7 @@ class RHDLoadReactApp {
 	function load_react_app( $hook ) {
 		// Limit app load in admin by admin page hook.
 		$is_main_dashboard = $hook === $this->limit_load_hook;
+		error_log( $hook );
 		if ( ! $is_main_dashboard && is_bool( $this->limit_callback ) ) {
 			return;
 		}
@@ -102,6 +105,26 @@ class RHDLoadReactApp {
 		wp_localize_script( 'react-plugin-0', 'rhdReactPlugin',
 			array( 'appSelector' => $this->selector )
 		);
+	}
+
+	/**
+	 * create_plugin_page function. Creates the submenu!
+	 *
+	 * @access public
+	 *
+	 * @return void
+	 */
+	function create_plugin_page() {
+		add_submenu_page( 'edit.php', 'Calendario', 'Calendario', 'manage_options', 'calendario', array( $this, 'calendario_page' ) );
+	}
+
+	/**
+	 * calendario_page function. Prints the main workspace. Tasty!
+	 *
+	 * @return void
+	 */
+	public function calendario_page() {
+		include_once plugin_dir_path( __FILE__ ) . 'templates/main.php';
 	}
 
 	/**
