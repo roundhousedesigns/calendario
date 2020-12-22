@@ -4,9 +4,8 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-const reactAppData = window.rhdReactPlugin || {};
-
 // WP Dashboard admin rendering
+// const reactAppData = window.rhdReactPlugin || {};
 // const { appSelector } = reactAppData;
 // const appAnchorElement = document.querySelector(appSelector);
 
