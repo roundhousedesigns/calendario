@@ -7,11 +7,11 @@ import reportWebVitals from "./reportWebVitals";
 const reactAppData = window.rhdReactPlugin || {};
 
 // WP Dashboard admin rendering
-const { appSelector } = reactAppData;
-const appAnchorElement = document.querySelector(appSelector);
+// const { appSelector } = reactAppData;
+// const appAnchorElement = document.querySelector(appSelector);
 
 // dev only
-// const appAnchorElement = document.getElementById("root");
+const appAnchorElement = document.getElementById("root");
 
 if (appAnchorElement) {
 	ReactDOM.render(
