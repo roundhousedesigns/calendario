@@ -13,29 +13,6 @@ class App extends Component {
 		monthOffset: 0,
 	};
 
-	componentDidMount() {
-		fetch(postsRouteBase)
-			.then((response) => response.json())
-			.then((data) => {
-				this.setState({ posts: data });
-			})
-			.catch(console.log);
-	}
-
-	formatPosts() {
-		return this.state.posts.map((post) => {
-			const { title, start } = post;
-
-			let startTime = new Date(start);
-
-			return {
-				title,
-				start: startTime,
-				extendedProps: { ...post },
-			};
-		});
-	}
-
 	getFirstOfMonth(date, i) {
 		date.setDate(1);
 		date.setMonth(date.getMonth() + i);
@@ -43,6 +20,10 @@ class App extends Component {
 	}
 
 	render() {
+		if (!this.state.posts) {
+			return <div />;
+		}
+
 		let tempDatesString = "12-01-202/12-24-2020";
 		let postsRoute = postsRouteBase + tempDatesString;
 
@@ -55,7 +36,7 @@ class App extends Component {
 			let headerToolbar = {
 				start: "title",
 				center: "",
-				right: ""
+				right: "",
 			};
 			if (i <= 0) {
 				headerToolbar.right = "prev next";
