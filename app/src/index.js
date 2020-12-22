@@ -1,20 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 
 const reactAppData = window.rhdReactPlugin || {};
+
+// WP Dashboard admin rendering
 const { appSelector } = reactAppData;
 const appAnchorElement = document.querySelector(appSelector);
 
-if ( appAnchorElement) {
-  ReactDOM.render(
-   <React.StrictMode>
-    <App />
-   </React.StrictMode> ,
-   appAnchorElement
-  )
+// dev only
+// const appAnchorElement = document.getElementById("root");
+
+if (appAnchorElement) {
+	ReactDOM.render(
+		<React.StrictMode>
+			<App />
+		</React.StrictMode>,
+		appAnchorElement
+	);
 }
 
 // If you want to start measuring performance in your app, pass a function

@@ -15,6 +15,12 @@ define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.1.0' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
 define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
+define( 'RHD_CALENDARIO_REST_ROUTE', 'calendario/v1' );
+
+/**
+ * Endpoints
+ */
+include plugin_dir_path( __FILE__ ) . '/class-calendario-route.php';
 
 /**
  * Calling the plugin class with parameters.
@@ -22,8 +28,9 @@ define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-m
 function rhd_load_plugin() {
 	// Loading the app in WordPress admin main screen.
 	new Calendario( 'admin_enqueue_scripts', 'posts_page_calendario', false, '#calendario' );
-}
 
+	new Calendario_Route();
+}
 add_action( 'init', 'rhd_load_plugin' );
 
 /**
@@ -61,7 +68,6 @@ class Calendario {
 
 		// wp-admin interface
 		add_action( 'admin_menu', [$this, 'create_plugin_page'] );
-
 	}
 
 	/**
@@ -74,7 +80,7 @@ class Calendario {
 	function load_react_app( $hook ) {
 		// Limit app load in admin by admin page hook.
 		$is_main_dashboard = $hook === $this->limit_load_hook;
-		error_log( $hook );
+
 		if ( ! $is_main_dashboard && is_bool( $this->limit_callback ) ) {
 			return;
 		}
@@ -130,7 +136,7 @@ class Calendario {
 	/**
 	 * Get app entry points assets files.
 	 *
-	 * @return bool|void
+	 * @return array|void
 	 */
 	private function get_assets_files() {
 		// Request manifest file.
