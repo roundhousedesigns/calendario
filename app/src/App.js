@@ -24,6 +24,9 @@ const statuses = [
 		color: "red",
 	},
 ];
+
+const tempMonthCount = 3;
+
 const eventSources = () => {
 	let tempDatesString = "12-01-202/12-24-2020";
 	let postsRoute = postsRouteBase + tempDatesString;
@@ -37,6 +40,8 @@ const eventSources = () => {
 };
 
 export default class App extends Component {
+	calendarRef = [React.createRef(), React.createRef(), React.createRef()];
+
 	constructor(props) {
 		super(props);
 
@@ -46,9 +51,36 @@ export default class App extends Component {
 		this.state = {
 			posts: [],
 			baseMonth: today,
+			monthViewCount: tempMonthCount,
 		};
 
-		// bind increment/decrement handlers?
+		this.nextMonth = this.nextMonth.bind(this);
+		this.prevMonth = this.prevMonth.bind(this);
+	}
+
+	calendarios() {
+		let components = [];
+		for (let i = 0; i < this.state.monthViewCount; i++) {
+			components.push(
+				<div id={`fullcalendar-${i}`}>
+					<FullCalendar
+						key={i}
+						ref={this.calendarRef[i]}
+						plugins={plugins}
+						initialView="dayGridMonth"
+						eventSources={eventSources}
+						initialDate={this.addMonths(this.state.baseMonth, i)}
+						headerToolbar={{
+							left: "title",
+							center: "",
+							right: "",
+						}}
+					/>
+				</div>
+			);
+		}
+
+		return components;
 	}
 
 	addMonths(date, num) {
@@ -56,8 +88,21 @@ export default class App extends Component {
 		return newDate.setMonth(date.getMonth() + num);
 	}
 
-	incrementMonthOffset() {}
-	decrementMonthOffset() {}
+	nextMonth() {
+		for (let i = 0; i < this.state.monthViewCount; i++) {
+			let calendarApi = this.calendarRef[i].current.getApi();
+
+			calendarApi.next();
+		}
+	}
+
+	prevMonth() {
+		for (let i = 0; i < this.state.monthViewCount; i++) {
+			let calendarApi = this.calendarRef[i].current.getApi();
+
+			calendarApi.prev();
+		}
+	}
 
 	render() {
 		if (!this.state.posts || !this.state.baseMonth) {
@@ -70,56 +115,14 @@ export default class App extends Component {
 					<h1 className="page-title">Calendario II: The Datening</h1>
 				</header>
 
-				<div className="calendars">
-					<FullCalendar
-						key="1"
-						plugins={plugins}
-						initialView="dayGridMonth"
-						eventSources={eventSources}
-						initialDate={this.state.baseMonth}
-						customButtons={{
-							customPrev: {
-								text: "<",
-								click: this.decrementMonthOffset,
-							},
-							customNext: {
-								text: ">",
-								click: this.incrementMonthOffset,
-							},
-						}}
-						headerToolbar={{
-							left: "title",
-							center: "",
-							right: "customPrev customNext",
-						}}
-					/>
+				<button className="prev" id="prev" onClick={this.prevMonth}>
+					PREV
+				</button>
+				<button className="next" id="next" onClick={this.nextMonth}>
+					NEXT
+				</button>
 
-					<FullCalendar
-						key="2"
-						plugins={plugins}
-						initialView="dayGridMonth"
-						eventSources={eventSources}
-						initialDate={this.addMonths(this.state.baseMonth, 1)}
-						headerToolbar={{
-							left: "title",
-							center: "",
-							right: "",
-						}}
-					/>
-
-					<FullCalendar
-						key="3"
-						plugins={plugins}
-						initialView="dayGridMonth"
-						eventSources={eventSources}
-						initialDate={this.addMonths(this.state.baseMonth, 2)}
-						headerToolbar={{
-							left: "title",
-							center: "",
-							right: "",
-						}}
-					/>
-				</div>
+				{this.calendarios()}
 			</div>
 		);
 	}
