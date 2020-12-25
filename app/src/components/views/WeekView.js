@@ -1,7 +1,7 @@
-import { Component, Fragment } from "react";
+import React from "react";
 import { sliceEvents, createPlugin } from "@fullcalendar/react";
 
-class WeekView extends Component {
+class WeekView extends React.Component {
 	render(props) {
 		let segs = sliceEvents(props, true); // allDay=true
 
