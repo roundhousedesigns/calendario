@@ -8,12 +8,21 @@ class Calendario_Route extends WP_REST_Controller {
 		$version   = '1';
 		$namespace = 'calendario/v' . $version;
 		$base      = 'posts';
+
 		register_rest_route( $namespace, '/' . $base . '/(?P<start>.*?)/(?P<end>.*?)/(?P<status>[\w]+)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
 				'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				'args'                => array( $this->get_endpoint_args() ),
+				'args'                => array( $this->get_range_endpoint_args() ),
+			),
+		) );
+
+		register_rest_route( $namespace, '/' . $base . '/unscheduled', array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_unscheduled_items' ),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
 			),
 		) );
 
@@ -64,11 +73,55 @@ class Calendario_Route extends WP_REST_Controller {
 			'after'       => isset( $request['end'] ) ? $request['end'] : null,
 			'post_status' => isset( $request['status'] ) ? $request['status'] : null,
 			'inclusive'   => true,
+			'meta_query'  => array(
+				'relation' => 'OR',
+				array(
+					'key'     => 'rhd_unscheduled',
+					'compare' => '=',
+					'value'   => false,
+				),
+				array(
+					'key'     => 'rhd_unscheduled',
+					'compare' => 'NOT EXISTS',
+				),
+			),
 		) );
 
 		$data = [];
 		foreach ( $items as $item ) {
 			$data[] = $this->prepare_item_for_response( $item, $request );
+		}
+
+		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Get a collection of items
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_unscheduled_items( $request ) {
+		$items = get_posts( array(
+			'meta_query'     => array(
+				'relation' => 'OR',
+				array(
+					'key'     => 'rhd_unscheduled',
+					'compare' => '=',
+					'value'   => true,
+				),
+				array(
+					'key'     => 'rhd_unscheduled',
+					'compare' => 'EXISTS',
+				),
+			),
+			'posts_per_page' => -1,
+			'post_status'    => 'any',
+		) );
+
+		$data = [];
+		foreach ( $items as $item ) {
+			$data[] = $this->prepare_unscheduled_item_for_response( $item, $request );
 		}
 
 		return new WP_REST_Response( $data, 200 );
@@ -158,7 +211,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 *
 	 * @return array $args
 	 */
-	public function get_endpoint_args() {
+	public function get_range_endpoint_args() {
 		$args          = array();
 		$args['start'] = array(
 			'description'       => esc_html__( 'Start date', 'rhd' ),
@@ -315,6 +368,21 @@ class Calendario_Route extends WP_REST_Controller {
 			'start'  => $item->post_date,
 			'id'     => $item->ID,
 			'status' => $item->post_status,
+		];
+	}
+
+	/**
+	 * Prepare an 'unscheduled' item for the REST response
+	 *
+	 * @param mixed $item WordPress representation of the item.
+	 * @param WP_REST_Request $request Request object.
+	 * @return array
+	 */
+	public function prepare_unscheduled_item_for_response( $item, $request ) {
+		return [
+			'title' => $item->post_title,
+			'date'  => $item->post_date,
+			'id'    => $item->ID,
 		];
 	}
 

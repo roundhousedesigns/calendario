@@ -1,13 +1,41 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+		"Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+		"Helvetica Neue", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+		monospace;
+}
+
+.calendario {
+	padding: 0 2%;
+	display: grid;
+	gap: 22px;
+	grid-template-columns: 2fr 1fr;
+	grid-template-areas:
+		"header header"
+		"main   sidebar";
+}
+
+.calendario-header {
+	grid-area: header;
+}
+
+.calendars {
+	grid-area: main;
+}
+
+.calendar {
+	margin-bottom: 24px;
+}
+
+.sidebar {
+	grid-area: sidebar;
+	padding: 12px;
+	border: 1px solid gray;
 }
