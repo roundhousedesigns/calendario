@@ -7,7 +7,7 @@ import { eventSources } from "../lib/utils.js";
 const plugins = [dayGridPlugin];
 
 class Calendars extends Component {
-	calendarRef = [React.createRef(), React.createRef(), React.createRef()];
+	// calendarRef = [React.createRef(), React.createRef(), React.createRef()];
 
 	constructor(props) {
 		super(props);
@@ -17,8 +17,8 @@ class Calendars extends Component {
 			eventSources: "",
 		};
 
-		this.nextMonth = this.nextMonth.bind(this);
-		this.prevMonth = this.prevMonth.bind(this);
+		// this.nextMonth = this.nextMonth.bind(this);
+		// this.prevMonth = this.prevMonth.bind(this);
 	}
 
 	componentDidMount() {
@@ -28,7 +28,11 @@ class Calendars extends Component {
 	}
 
 	calendarios() {
-		if (!this.props.monthViewCount || !this.props.baseMonth) {
+		if (
+			!this.props.monthViewCount ||
+			!this.props.baseMonth ||
+			!this.props.calendarRef
+		) {
 			return;
 		}
 
@@ -38,7 +42,7 @@ class Calendars extends Component {
 				<div id={`fullcalendar-${i}`} className="calendar" key={i}>
 					<FullCalendar
 						key={i}
-						ref={this.calendarRef[i]}
+						ref={this.props.calendarRef[i]}
 						plugins={plugins}
 						initialView="dayGridMonth"
 						eventSources={eventSources(
@@ -53,6 +57,8 @@ class Calendars extends Component {
 							center: "",
 							right: "",
 						}}
+						displayEventTime={false}
+						eventDisplay="block"
 					/>
 				</div>
 			);
@@ -66,39 +72,28 @@ class Calendars extends Component {
 		return newDate.setMonth(date.getMonth() + num);
 	}
 
-	nextMonth() {
-		for (let i = 0; i < this.props.monthViewCount; i++) {
-			let calendarApi = this.calendarRef[i].current.getApi();
+	// nextMonth() {
+	// 	for (let i = 0; i < this.props.monthViewCount; i++) {
+	// 		let calendarApi = this.props.calendarRef[i].current.getApi();
 
-			calendarApi.next();
-		}
-	}
+	// 		calendarApi.next();
+	// 	}
+	// }
 
-	prevMonth() {
-		for (let i = 0; i < this.props.monthViewCount; i++) {
-			let calendarApi = this.calendarRef[i].current.getApi();
+	// prevMonth() {
+	// 	for (let i = 0; i < this.props.monthViewCount; i++) {
+	// 		let calendarApi = this.props.calendarRef[i].current.getApi();
 
-			calendarApi.prev();
-		}
-	}
+	// 		calendarApi.prev();
+	// 	}
+	// }
 
 	render() {
 		if (!this.props.baseMonth) {
 			return null;
 		}
 
-		return (
-			<div className="calendars">
-				<button className="prev" id="prev" onClick={this.prevMonth}>
-					PREV
-				</button>
-				<button className="next" id="next" onClick={this.nextMonth}>
-					NEXT
-				</button>
-
-				{this.calendarios()}
-			</div>
-		);
+		return <div className="calendars">{this.calendarios()}</div>;
 	}
 }
 

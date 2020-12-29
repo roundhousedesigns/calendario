@@ -1,5 +1,6 @@
 import React from "react";
 import { Component } from "@fullcalendar/react";
+import Header from "./components/Header";
 import Calendars from "./components/Calendars";
 import Sidebar from "./components/Sidebar";
 
@@ -8,6 +9,8 @@ import "./App.css";
 const tempMonthCount = 3;
 
 export default class App extends Component {
+	calendarRef = [React.createRef(), React.createRef(), React.createRef()];
+
 	constructor(props) {
 		super(props);
 		let today = new Date();
@@ -15,19 +18,22 @@ export default class App extends Component {
 
 		this.state = {
 			baseMonth: today,
+			monthViewCount: tempMonthCount,
 		};
 	}
 
 	render() {
 		return (
 			<div className="calendario">
-				<header className="calendario-header">
-					<h1 className="page-title">Calendario II: The Datening</h1>
-				</header>
+				<Header
+					calendarRef={this.calendarRef}
+					monthViewCount={this.state.monthViewCount}
+				/>
 
 				<Calendars
 					baseMonth={this.state.baseMonth}
-					monthViewCount={tempMonthCount}
+					monthViewCount={this.state.monthViewCount}
+					calendarRef={this.calendarRef}
 				/>
 				<Sidebar />
 			</div>

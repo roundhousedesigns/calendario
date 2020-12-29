@@ -29,7 +29,8 @@ class Sidebar extends Component {
 
 		return (
 			<div className="sidebar">
-				<ul className="unscheduled-posts">
+				<h2 className="sidebar-title">Unscheduled Drafts</h2>
+				<ul className="unscheduled-drafts">
 					{this.state.posts.map((postData, index) => (
 						<UnscheduledPost post={postData} key={index} />
 					))}

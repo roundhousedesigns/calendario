@@ -13,9 +13,9 @@ code {
 }
 
 .calendario {
-	padding: 0 2%;
+	padding: 0 22px;
 	display: grid;
-	gap: 22px;
+	gap: 1%;
 	grid-template-columns: 2fr 1fr;
 	grid-template-areas:
 		"header header"
@@ -37,5 +37,8 @@ code {
 .sidebar {
 	grid-area: sidebar;
 	padding: 12px;
+}
+
+.unscheduled-drafts {
 	border: 1px solid gray;
 }
