@@ -8,21 +8,25 @@ class Header extends Component {
 		this.prevMonth = this.prevMonth.bind(this);
 	}
 
-	nextMonth() {
-		for (let i = 0; i < this.props.monthViewCount; i++) {
+	nextMonth = () => {
+		for (let i = 0; i < this.props.maxViewMonths; i++) {
 			let calendarApi = this.props.calendarRef[i].current.getApi();
 
 			calendarApi.next();
 		}
-	}
+	};
 
-	prevMonth() {
-		for (let i = 0; i < this.props.monthViewCount; i++) {
+	prevMonth = () => {
+		for (let i = 0; i < this.props.maxViewMonths; i++) {
 			let calendarApi = this.props.calendarRef[i].current.getApi();
 
 			calendarApi.prev();
 		}
-	}
+	};
+
+	handleMonthViewCountChange = (e) => {
+		this.props.onMonthViewCountChange(e.target.value);
+	};
 
 	render() {
 		return (
@@ -37,6 +41,34 @@ class Header extends Component {
 						NEXT
 					</button>
 				</nav>
+
+				<div className="view-mode">
+					<label>
+						<input
+							type="radio"
+							value={3}
+							name="view-mode"
+							onChange={this.handleMonthViewCountChange}
+							checked={
+								this.props.monthViewCount.toString() === "3"
+							}
+						/>
+						3 months
+					</label>
+
+					<label>
+						<input
+							type="radio"
+							value={1}
+							name="view-mode"
+							onChange={this.handleMonthViewCountChange}
+							checked={
+								this.props.monthViewCount.toString() === "1"
+							}
+						/>
+						1 month
+					</label>
+				</div>
 			</header>
 		);
 	}

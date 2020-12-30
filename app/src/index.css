@@ -34,6 +34,10 @@ code {
 	margin-bottom: 24px;
 }
 
+.calendar.hidden {
+	display: none;
+}
+
 .sidebar {
 	grid-area: sidebar;
 	padding: 12px;

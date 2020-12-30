@@ -1,25 +1,34 @@
 import React from "react";
 import { Component } from "@fullcalendar/react";
 import Header from "./components/Header";
-import Calendars from "./components/Calendars";
+import MainView from "./components/MainView";
 import Sidebar from "./components/Sidebar";
 
 import "./App.css";
 
-const tempMonthCount = 3;
+const maxViewMonths = 3;
 
 export default class App extends Component {
 	calendarRef = [React.createRef(), React.createRef(), React.createRef()];
 
 	constructor(props) {
 		super(props);
+
+		this.handleMonthViewCountChange = this.handleMonthViewCountChange.bind(
+			this
+		);
+
 		let today = new Date();
 		today.setDate(1);
 
 		this.state = {
 			baseMonth: today,
-			monthViewCount: tempMonthCount,
+			monthViewCount: maxViewMonths,
 		};
+	}
+
+	handleMonthViewCountChange(monthViewCount) {
+		this.setState({ monthViewCount });
 	}
 
 	render() {
@@ -28,12 +37,16 @@ export default class App extends Component {
 				<Header
 					calendarRef={this.calendarRef}
 					monthViewCount={this.state.monthViewCount}
+					maxViewMonths={maxViewMonths}
+					onMonthViewCountChange={this.handleMonthViewCountChange}
 				/>
 
-				<Calendars
+				<MainView
+					calendarRef={this.calendarRef}
 					baseMonth={this.state.baseMonth}
 					monthViewCount={this.state.monthViewCount}
-					calendarRef={this.calendarRef}
+					maxViewMonths={maxViewMonths}
+					onMonthViewCountChange={this.handleMonthViewCountChange}
 				/>
 				<Sidebar />
 			</div>
