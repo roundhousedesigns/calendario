@@ -14,7 +14,7 @@ export default class App extends Component {
 	constructor(props) {
 		super(props);
 
-		this.handleMonthViewCountChange = this.handleMonthViewCountChange.bind(
+		this.handleViewChange = this.handleViewChange.bind(
 			this
 		);
 
@@ -23,12 +23,12 @@ export default class App extends Component {
 
 		this.state = {
 			baseMonth: today,
-			monthViewCount: maxViewMonths,
+			viewMode: maxViewMonths,
 		};
 	}
 
-	handleMonthViewCountChange(monthViewCount) {
-		this.setState({ monthViewCount });
+	handleViewChange(viewMode) {
+		this.setState({ viewMode });
 	}
 
 	render() {
@@ -36,17 +36,17 @@ export default class App extends Component {
 			<div className="calendario">
 				<Header
 					calendarRef={this.calendarRef}
-					monthViewCount={this.state.monthViewCount}
+					viewMode={this.state.viewMode}
 					maxViewMonths={maxViewMonths}
-					onMonthViewCountChange={this.handleMonthViewCountChange}
+					onViewChange={this.handleViewChange}
 				/>
 
 				<MainView
 					calendarRef={this.calendarRef}
 					baseMonth={this.state.baseMonth}
-					monthViewCount={this.state.monthViewCount}
+					viewMode={this.state.viewMode}
 					maxViewMonths={maxViewMonths}
-					onMonthViewCountChange={this.handleMonthViewCountChange}
+					onViewChange={this.handleViewChange}
 				/>
 				<Sidebar />
 			</div>

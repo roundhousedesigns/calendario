@@ -18,16 +18,14 @@ const STATUSES = [
 ];
 export const routeBase = "http://localhost/wp-json/calendario/v1/posts/";
 
-export function eventSources(baseMonth = "", monthViewCount = null) {
-	if (!baseMonth || !monthViewCount) {
+export function eventSources(baseMonth = "") {
+	if (!baseMonth) {
 		return;
 	}
 
 	let start = baseMonth;
-	let end = new Date(start);
-	end.setMonth(start.getMonth() + monthViewCount);
 
-	let postsRoute = `${routeBase}/${dateToMDY(start)}/${dateToMDY(end)}`;
+	let postsRoute = `${routeBase}/${dateToMDY(start)}`;
 
 	return STATUSES.map((item, index) => {
 		return {
@@ -37,14 +35,18 @@ export function eventSources(baseMonth = "", monthViewCount = null) {
 	});
 }
 
-export function dateToMDY(date) {
-	return (
-		(date.getMonth() > 8
-			? date.getMonth() + 1
-			: "0" + (date.getMonth() + 1)) +
-		"/" +
-		(date.getDate() > 9 ? date.getDate() : "0" + date.getDate()) +
-		"/" +
-		date.getFullYear()
-	);
+export function dateToMDY(date = null) {
+	if (date) {
+		return (
+			(date.getMonth() > 8
+				? date.getMonth() + 1
+				: "0" + (date.getMonth() + 1)) +
+			"/" +
+			(date.getDate() > 9 ? date.getDate() : "0" + date.getDate()) +
+			"/" +
+			date.getFullYear()
+		);
+	} else {
+		return "";
+	}
 }

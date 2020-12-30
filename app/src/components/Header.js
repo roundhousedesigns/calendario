@@ -24,8 +24,8 @@ class Header extends Component {
 		}
 	};
 
-	handleMonthViewCountChange = (e) => {
-		this.props.onMonthViewCountChange(e.target.value);
+	handleViewChange = (e) => {
+		this.props.onViewChange(e.target.value);
 	};
 
 	render() {
@@ -48,9 +48,9 @@ class Header extends Component {
 							type="radio"
 							value={3}
 							name="view-mode"
-							onChange={this.handleMonthViewCountChange}
+							onChange={this.handleViewChange}
 							checked={
-								this.props.monthViewCount.toString() === "3"
+								this.props.viewMode.toString() === "3"
 							}
 						/>
 						3 months
@@ -61,9 +61,9 @@ class Header extends Component {
 							type="radio"
 							value={1}
 							name="view-mode"
-							onChange={this.handleMonthViewCountChange}
+							onChange={this.handleViewChange}
 							checked={
-								this.props.monthViewCount.toString() === "1"
+								this.props.viewMode.toString() === "1"
 							}
 						/>
 						1 month

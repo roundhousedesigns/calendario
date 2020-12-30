@@ -25,8 +25,7 @@ class MainView extends Component {
 	calendarios = () => {
 		let components = [];
 		for (let i = 0; i < this.props.maxViewMonths; i++) {
-			let hideCalendar =
-				i < this.props.monthViewCount ? "visible" : "hidden";
+			let hideCalendar = i < this.props.viewMode ? "visible" : "hidden";
 			components.push(
 				<div
 					id={`fullcalendar-${i}`}
@@ -38,10 +37,7 @@ class MainView extends Component {
 						ref={this.props.calendarRef[i]}
 						plugins={plugins}
 						initialView="dayGridMonth"
-						eventSources={eventSources(
-							this.props.baseMonth,
-							this.props.monthViewCount
-						)}
+						eventSources={eventSources(this.props.baseMonth)}
 						initialDate={this.addMonths(this.props.baseMonth, i)}
 						fixedWeekCount={false}
 						showNonCurrentDates={false}

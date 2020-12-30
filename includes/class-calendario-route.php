@@ -9,7 +9,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$namespace = 'calendario/v' . $version;
 		$base      = 'posts';
 
-		register_rest_route( $namespace, '/' . $base . '/(?P<start>.*?)/(?P<end>.*?)/(?P<status>[\w]+)', array(
+		register_rest_route( $namespace, '/' . $base . '/(?P<start>.*?)/(?P<status>[\w]+)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
@@ -69,10 +69,12 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		$items = get_posts( array(
-			'before'      => isset( $request['start'] ) ? $request['start'] : null,
-			'after'       => isset( $request['end'] ) ? $request['end'] : null,
 			'post_status' => isset( $request['status'] ) ? $request['status'] : null,
 			'inclusive'   => true,
+			'date_query'  => array(
+				// 'before' => ( isset( $request['end'] ) && $request['end'] !== -1 ) ? $request['end'] : null,
+				'after'  => isset( $request['start'] ) ? $request['start'] : null,
+			),
 			'meta_query'  => array(
 				'relation' => 'OR',
 				array(
@@ -221,13 +223,13 @@ class Calendario_Route extends WP_REST_Controller {
 			'required'          => true,
 		);
 
-		$args['end'] = array(
-			'description'       => esc_html__( 'End date', 'rhd' ),
-			'type'              => 'string',
-			'validate_callback' => array( $this, 'validate_date_string' ),
-			'sanitize_callback' => array( $this, 'sanitize_string' ),
-			'required'          => true,
-		);
+		// $args['end'] = array(
+		// 	'description'       => esc_html__( 'End date', 'rhd' ),
+		// 	'type'              => 'string',
+		// 	'validate_callback' => array( $this, 'validate_date_string' ),
+		// 	'sanitize_callback' => array( $this, 'sanitize_string' ),
+		// 	'required'          => true,
+		// );
 
 		$args['status'] = array(
 			'description'       => esc_html__( 'Post status', 'rhd' ),
