@@ -1,6 +1,5 @@
 {
   "name": "react-app",
-  "homepage": "/wp-content/plugins/calendario/app/build",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
