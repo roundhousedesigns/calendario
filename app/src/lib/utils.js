@@ -17,7 +17,8 @@ const postStatuses = [
 	},
 ];
 
-export const routeBase = window.rhdReactPlugin.restBase;
+// export const routeBase = window.rhdReactPlugin.restBase; // Live URL
+export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
 
 export const eventSources = (baseMonth) => {
 	//TODO: validate base object
