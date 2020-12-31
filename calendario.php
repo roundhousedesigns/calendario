@@ -109,12 +109,16 @@ class Calendario {
 
 		// Load js files.
 		foreach ( $js_files as $index => $js_file ) {
-			wp_enqueue_script( 'react-plugin-' . $index, RHD_CALENDARIO_REACT_APP_BUILD . $js_file, array(), RHD_CALENDARIO_PLUGIN_VERSION, true );
+			$handle = 'react-plugin-' . $index;
+			wp_enqueue_script( $handle, RHD_CALENDARIO_REACT_APP_BUILD . $js_file, array(), RHD_CALENDARIO_PLUGIN_VERSION, true );
 		}
 
 		// Variables for app use - These variables will be available in window.rhdReactPlugin variable.
 		wp_localize_script( 'react-plugin-0', 'rhdReactPlugin',
-			array( 'appSelector' => $this->selector )
+			array(
+				'appSelector' => $this->selector,
+				'restBase'    => get_rest_url( null, 'calendario/v1/posts' ),
+			)
 		);
 	}
 
@@ -131,15 +135,15 @@ class Calendario {
 
 	/**
 	 * Registers the Unscheduled Draft post type.
-	 * 
+	 *
 	 * @return void
 	 */
 	function create_unscheduled_post_status() {
 		register_post_status( 'unscheduled', array(
-			'label' => __( 'Unscheduled', 'rhd' ),
+			'label'    => __( 'Unscheduled', 'rhd' ),
 			'internal' => true,
-			'public' => true, // FALSE for production
-		));
+			'public'   => true, // FALSE for production
+		) );
 	}
 
 	/**
@@ -180,17 +184,17 @@ class Calendario {
 	}
 
 	// Display Custom Post Status Option in Post Edit
-function √(){
-	global $post;
-	$complete = '';
-	$label = '';
-	if($post->post_type == 'post'){
-		if($post->post_status == 'unscheduled'){
+	function √() {
+		global $post;
+		$complete = '';
+		$label    = '';
+		if ( $post->post_type == 'post' ) {
+			if ( $post->post_status == 'unscheduled' ) {
 				$selected = 'selected';
-		}
+			}
 			echo '<script>
 			$(document).ready(function(){
-			$("select#post_status").append("<option value=\"unscheduled\" '.$selected.'>In Writing</option>");
+			$("select#post_status").append("<option value=\"unscheduled\" ' . $selected . '>In Writing</option>");
 			$(".misc-pub-section label").append("<span id=\"post-status-display\"> In Writing</span>");
 			});
 			</script>

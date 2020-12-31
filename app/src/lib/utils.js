@@ -1,4 +1,4 @@
-const STATUSES = [
+const postStatuses = [
 	{
 		status: "publish",
 		color: "blue",
@@ -16,7 +16,8 @@ const STATUSES = [
 		color: "red",
 	},
 ];
-export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
+
+export const routeBase = window.rhdReactPlugin.restBase;
 
 export const eventSources = (baseMonth) => {
 	//TODO: validate base object
@@ -24,7 +25,7 @@ export const eventSources = (baseMonth) => {
 
 	let postsRoute = `${routeBase}/${dateToMDY(start)}`;
 
-	return STATUSES.map((item, index) => {
+	return postStatuses.map((item, index) => {
 		return {
 			url: postsRoute + "/" + item.status,
 			color: item.color,
