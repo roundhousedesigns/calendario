@@ -18,11 +18,8 @@ const STATUSES = [
 ];
 export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
 
-export function eventSources(baseMonth = "") {
-	if (!baseMonth) {
-		return;
-	}
-
+export const eventSources = (baseMonth) => {
+	//TODO: validate base object
 	let start = baseMonth;
 
 	let postsRoute = `${routeBase}/${dateToMDY(start)}`;
@@ -33,9 +30,10 @@ export function eventSources(baseMonth = "") {
 			color: item.color,
 		};
 	});
-}
+};
 
 export function dateToMDY(date = null) {
+	// TODO: validate date object
 	if (date) {
 		return (
 			(date.getMonth() > 8

@@ -3,7 +3,6 @@ TODO
 - use WP timezone initializing fullcalendar
 - posts querying:
   - evaluate need to re-implement end/"before" post query date (limiting how far in the future we fetch)
-	- OR
 	- pull all future posts in and store them in state
 	- OR
 	- set eventSources to pull in only currently view

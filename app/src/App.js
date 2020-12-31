@@ -7,38 +7,27 @@ import Sidebar from "./components/Sidebar";
 import "./App.css";
 
 const maxViewMonths = 3;
+const thisMonth = new Date();
+thisMonth.setDate(1);
 
 export default class App extends Component {
-	// TODO: programatically create this array
-	calendarRef = [
-		React.createRef(),
-		React.createRef(),
-		React.createRef(),
-		React.createRef(),
-	];
-
 	constructor(props) {
 		super(props);
 
 		this.handleViewChange = this.handleViewChange.bind(this);
 
-		let today = new Date();
-		today.setDate(1);
-
 		this.state = {
-			baseMonth: today,
+			baseMonth: thisMonth,
 			viewMode: maxViewMonths.toString(),
 		};
+
+		this.calendarRef = [];
+		for (let i = 0; i < maxViewMonths; i++) {
+			this.calendarRef[i] = React.createRef();
+		}
 	}
 
-	componentDidMount() {}
-
 	handleViewChange(viewMode) {
-		// let calendarApi =
-		// if ( viewMode === "list" ) {
-		// 	this.calendarRef[0].current.getApi()
-		// }
-
 		this.setState({ viewMode });
 	}
 
