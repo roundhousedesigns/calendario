@@ -6,7 +6,6 @@ TODO
 	- pull all future posts in and store them in state
 	- OR
 	- set eventSources to pull in only currently view
-- create array of React.createRef() programmatically
 
 Features
 ---

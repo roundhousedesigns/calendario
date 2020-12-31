@@ -134,19 +134,6 @@ class Calendario {
 	}
 
 	/**
-	 * Registers the Unscheduled Draft post type.
-	 *
-	 * @return void
-	 */
-	function create_unscheduled_post_status() {
-		register_post_status( 'unscheduled', array(
-			'label'    => __( 'Unscheduled', 'rhd' ),
-			'internal' => true,
-			'public'   => true, // FALSE for production
-		) );
-	}
-
-	/**
 	 * calendario_page function. Prints the main workspace. Tasty!
 	 *
 	 * @return void
@@ -181,24 +168,5 @@ class Calendario {
 		}
 
 		return $files_data->entrypoints;
-	}
-
-	// Display Custom Post Status Option in Post Edit
-	function √() {
-		global $post;
-		$complete = '';
-		$label    = '';
-		if ( $post->post_type == 'post' ) {
-			if ( $post->post_status == 'unscheduled' ) {
-				$selected = 'selected';
-			}
-			echo '<script>
-			$(document).ready(function(){
-			$("select#post_status").append("<option value=\"unscheduled\" ' . $selected . '>In Writing</option>");
-			$(".misc-pub-section label").append("<span id=\"post-status-display\"> In Writing</span>");
-			});
-			</script>
-			';
-		}
 	}
 }

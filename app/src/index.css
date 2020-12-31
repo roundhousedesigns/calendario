@@ -46,3 +46,8 @@ code {
 .unscheduled-drafts {
 	border: 1px solid gray;
 }
+
+.fc-day-past {
+	/* background-color: gray; */
+	opacity: 0.25;
+}
