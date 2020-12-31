@@ -26,6 +26,14 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
+		register_rest_route( $namespace, '/' . $base . '/futuremost', array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_futuremost_item' ),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+			),
+		) );
+
 		// register_rest_route( $namespace, '/' . $base . '/(?P<id>[\d]+)', array(
 		// 	array(
 		// 		'methods'             => WP_REST_Server::READABLE,
@@ -73,7 +81,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'inclusive'   => true,
 			'date_query'  => array(
 				// 'before' => ( isset( $request['end'] ) && $request['end'] !== -1 ) ? $request['end'] : null,
-				'after'  => isset( $request['start'] ) ? $request['start'] : null,
+				'after' => isset( $request['start'] ) ? $request['start'] : null,
 			),
 			'meta_query'  => array(
 				'relation' => 'OR',
@@ -125,6 +133,23 @@ class Calendario_Route extends WP_REST_Controller {
 		foreach ( $items as $item ) {
 			$data[] = $this->prepare_unscheduled_item_for_response( $item, $request );
 		}
+
+		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Get the furthest-future unpublished post
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_futuremost_item( $request ) {
+		$items = get_posts( array(
+			'post_status'    => array( 'any' ),
+			'posts_per_page' => 1,
+		) );
+
+		$data = $this->prepare_futuremost_item_for_response( $items[0], $request );
 
 		return new WP_REST_Response( $data, 200 );
 	}
@@ -386,6 +411,17 @@ class Calendario_Route extends WP_REST_Controller {
 			'date'  => $item->post_date,
 			'id'    => $item->ID,
 		];
+	}
+
+	/**
+	 * Prepare the futuremost data for the REST response
+	 *
+	 * @param mixed $item WordPress representation of the item.
+	 * @param WP_REST_Request $request Request object.
+	 * @return array
+	 */
+	public function prepare_futuremost_item_for_response( $item, $request ) {
+		return $item->post_date;
 	}
 
 	/**

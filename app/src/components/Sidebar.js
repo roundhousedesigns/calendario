@@ -12,7 +12,7 @@ class Sidebar extends Component {
 	}
 
 	componentDidMount() {
-		const apiUrl = `${routeBase}unscheduled`;
+		const apiUrl = `${routeBase}/unscheduled`;
 		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((data) =>

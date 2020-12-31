@@ -2,9 +2,7 @@ import React from "react";
 import FullCalendar, { Component } from "@fullcalendar/react";
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { eventSources } from "../lib/utils.js";
-
-const plugins = [dayGridPlugin, listPlugin];
+import { eventSources, routeBase } from "../lib/utils.js";
 
 class MainView extends Component {
 	constructor(props) {
@@ -13,6 +11,7 @@ class MainView extends Component {
 		this.state = {
 			posts: [],
 			eventSources: "",
+			futuremostDate: "",
 		};
 	}
 
@@ -20,12 +19,21 @@ class MainView extends Component {
 		this.setState({
 			eventSources: eventSources(),
 		});
+
+		let postsRoute = `${routeBase}/futuremost`;
+
+		fetch(postsRoute)
+			.then((response) => response.json())
+			.then((future) => {
+				this.setState({ futuremostDate: new Date(future) });
+			});
 	}
 
-	calendarios = () => {
+	calendarioGrids = () => {
 		let components = [];
 		for (let i = 0; i < this.props.maxViewMonths; i++) {
 			let hideCalendar = i < this.props.viewMode ? "visible" : "hidden";
+
 			components.push(
 				<div
 					id={`fullcalendar-${i}`}
@@ -35,11 +43,12 @@ class MainView extends Component {
 					<FullCalendar
 						key={i}
 						ref={this.props.calendarRef[i]}
-						plugins={plugins}
+						plugins={[dayGridPlugin]}
 						initialView="dayGridMonth"
 						eventSources={eventSources(this.props.baseMonth)}
 						initialDate={this.addMonths(this.props.baseMonth, i)}
 						fixedWeekCount={false}
+						editable={true}
 						showNonCurrentDates={false}
 						headerToolbar={{
 							left: "title",
@@ -56,6 +65,39 @@ class MainView extends Component {
 		return components;
 	};
 
+	calendarioList = () => {
+		return (
+			<div id={`fullcalendar-list`} className={`calendar calendar-list`}>
+				<FullCalendar
+					key={this.props.maxViewMonths + 1}
+					ref={this.props.calendarRef[this.props.maxViewMonths + 1]}
+					plugins={[listPlugin]}
+					views={{
+						listAllFuture: {
+							type: "list",
+							visibleRange: {
+								start: new Date(),
+								end: this.state.futuremostDate,
+							},
+						},
+					}}
+					initialView="listAllFuture"
+					eventSources={eventSources(this.props.baseMonth)}
+					initialDate={this.props.baseMonth}
+					editable={true}
+					showNonCurrentDates={false}
+					headerToolbar={{
+						left: "title",
+						center: "",
+						right: "",
+					}}
+					displayEventTime={false}
+					eventDisplay="block"
+				/>
+			</div>
+		);
+	};
+
 	addMonths = (date, num) => {
 		let newDate = new Date(date);
 		return newDate.setMonth(date.getMonth() + num);
@@ -66,7 +108,13 @@ class MainView extends Component {
 			return null;
 		}
 
-		return <div className="calendars">{this.calendarios()}</div>;
+		return (
+			<div className="calendars">
+				{this.props.viewMode === "list"
+					? this.calendarioList()
+					: this.calendarioGrids()}
+			</div>
+		);
 	}
 }
 

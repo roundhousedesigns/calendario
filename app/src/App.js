@@ -9,25 +9,36 @@ import "./App.css";
 const maxViewMonths = 3;
 
 export default class App extends Component {
-	calendarRef = [React.createRef(), React.createRef(), React.createRef()];
+	// TODO: programatically create this array
+	calendarRef = [
+		React.createRef(),
+		React.createRef(),
+		React.createRef(),
+		React.createRef(),
+	];
 
 	constructor(props) {
 		super(props);
 
-		this.handleViewChange = this.handleViewChange.bind(
-			this
-		);
+		this.handleViewChange = this.handleViewChange.bind(this);
 
 		let today = new Date();
 		today.setDate(1);
 
 		this.state = {
 			baseMonth: today,
-			viewMode: maxViewMonths,
+			viewMode: maxViewMonths.toString(),
 		};
 	}
 
+	componentDidMount() {}
+
 	handleViewChange(viewMode) {
+		// let calendarApi =
+		// if ( viewMode === "list" ) {
+		// 	this.calendarRef[0].current.getApi()
+		// }
+
 		this.setState({ viewMode });
 	}
 

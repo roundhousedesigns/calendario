@@ -33,25 +33,33 @@ class Header extends Component {
 			<header className="calendario-header">
 				<h1 className="page-title">Calendario II: The Datening</h1>
 
-				<nav className="calendar-navigation">
-					<button className="prev" id="prev" onClick={this.prevMonth}>
-						PREV
-					</button>
-					<button className="next" id="next" onClick={this.nextMonth}>
-						NEXT
-					</button>
-				</nav>
+				{this.props.viewMode !== "list" ? (
+					<nav className="calendar-grid-navigation">
+						<button
+							className="prev"
+							id="prev"
+							onClick={this.prevMonth}
+						>
+							PREV
+						</button>
+						<button
+							className="next"
+							id="next"
+							onClick={this.nextMonth}
+						>
+							NEXT
+						</button>
+					</nav>
+				) : null}
 
 				<div className="view-mode">
 					<label>
 						<input
 							type="radio"
-							value={3}
+							value="3"
 							name="view-mode"
 							onChange={this.handleViewChange}
-							checked={
-								this.props.viewMode.toString() === "3"
-							}
+							checked={this.props.viewMode === "3"}
 						/>
 						3 months
 					</label>
@@ -59,14 +67,23 @@ class Header extends Component {
 					<label>
 						<input
 							type="radio"
-							value={1}
+							value="1"
 							name="view-mode"
 							onChange={this.handleViewChange}
-							checked={
-								this.props.viewMode.toString() === "1"
-							}
+							checked={this.props.viewMode === "1"}
 						/>
 						1 month
+					</label>
+
+					<label>
+						<input
+							type="radio"
+							value="list"
+							name="view-mode"
+							onChange={this.handleViewChange}
+							checked={this.props.viewMode === "list"}
+						/>
+						List
 					</label>
 				</div>
 			</header>

@@ -16,7 +16,7 @@ const STATUSES = [
 		color: "red",
 	},
 ];
-export const routeBase = "http://localhost/wp-json/calendario/v1/posts/";
+export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
 
 export function eventSources(baseMonth = "") {
 	if (!baseMonth) {
