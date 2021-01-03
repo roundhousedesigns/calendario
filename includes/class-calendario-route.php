@@ -393,7 +393,7 @@ class Calendario_Route extends WP_REST_Controller {
 		return [
 			'title'  => $item->post_title,
 			'start'  => $item->post_date,
-			'id'     => $item->ID,
+			'id'     => 'post-id-' . $item->ID,
 			'status' => $item->post_status,
 		];
 	}

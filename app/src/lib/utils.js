@@ -1,38 +1,5 @@
-const postStatuses = [
-	{
-		status: "publish",
-		color: "blue",
-	},
-	{
-		status: "future",
-		color: "green",
-	},
-	{
-		status: "draft",
-		color: "gray",
-	},
-	{
-		status: "pending",
-		color: "red",
-	},
-];
-
 // export const routeBase = window.rhdReactPlugin.restBase; // Live URL
 export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
-
-export const eventSources = (baseMonth) => {
-	//TODO: validate base object
-	let start = baseMonth;
-
-	let postsRoute = `${routeBase}/${dateToMDY(start)}`;
-
-	return postStatuses.map((item, index) => {
-		return {
-			url: postsRoute + "/" + item.status,
-			color: item.color,
-		};
-	});
-};
 
 export function dateToMDY(date = null) {
 	// TODO: validate date object

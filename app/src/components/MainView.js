@@ -1,8 +1,32 @@
-import React from "react";
-import FullCalendar, { Component } from "@fullcalendar/react";
+import React, { Component } from "react";
+import FullCalendar from "@fullcalendar/react";
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { eventSources, routeBase } from "../lib/utils.js";
+import interactionPlugin from "@fullcalendar/interaction";
+import { routeBase, dateToMDY } from "../lib/utils.js";
+
+const postStatuses = [
+	{
+		status: "publish",
+		color: "blue",
+		editable: false,
+	},
+	{
+		status: "future",
+		color: "green",
+		editable: true,
+	},
+	{
+		status: "draft",
+		color: "gray",
+		editable: true,
+	},
+	{
+		status: "pending",
+		color: "red",
+		editable: true,
+	},
+];
 
 class MainView extends Component {
 	constructor(props) {
@@ -16,10 +40,6 @@ class MainView extends Component {
 	}
 
 	componentDidMount() {
-		this.setState({
-			eventSources: eventSources(),
-		});
-
 		let postsRoute = `${routeBase}/futuremost`;
 
 		fetch(postsRoute)
@@ -28,6 +48,27 @@ class MainView extends Component {
 				this.setState({ futuremostDate: new Date(future) });
 			});
 	}
+
+	eventSources = () => {
+		let start = this.props.baseMonth;
+		let postsRoute = `${routeBase}/${dateToMDY(start)}`;
+
+		return postStatuses.map((item, index) => {
+			return {
+				url: postsRoute + "/" + item.status,
+				color: item.color,
+				// editable: item.editable,
+			};
+		});
+	};
+
+	handleDragStart = (stuff) => {
+		console.log("dragStart", stuff);
+	};
+
+	handleEventDrop = (stuff) => {
+		console.log("handleEventDrop", stuff);
+	};
 
 	calendarioGrids = () => {
 		let components = [];
@@ -43,12 +84,13 @@ class MainView extends Component {
 					<FullCalendar
 						key={i}
 						ref={this.props.calendarRef[i]}
-						plugins={[dayGridPlugin]}
+						plugins={[dayGridPlugin, interactionPlugin]}
 						initialView="dayGridMonth"
-						eventSources={eventSources(this.props.baseMonth)}
+						eventSources={this.eventSources(this.props.baseMonth)}
 						initialDate={this.addMonths(this.props.baseMonth, i)}
 						fixedWeekCount={false}
 						editable={true}
+						droppable={true}
 						showNonCurrentDates={false}
 						headerToolbar={{
 							left: "title",
@@ -57,6 +99,11 @@ class MainView extends Component {
 						}}
 						displayEventTime={false}
 						eventDisplay="block"
+						selectable={true}
+						// dateClick={this.handleDateClick}
+						// eventDragStart={this.handleDragStart}
+						// eventStartEditable={true}
+						// eventDrop={this.handleEventDrop}
 					/>
 				</div>
 			);
@@ -71,7 +118,7 @@ class MainView extends Component {
 				<FullCalendar
 					key={this.props.maxViewMonths + 1}
 					ref={this.props.calendarRef[this.props.maxViewMonths + 1]}
-					plugins={[listPlugin]}
+					plugins={[listPlugin, interactionPlugin]}
 					views={{
 						listAllFuture: {
 							type: "list",
@@ -82,7 +129,7 @@ class MainView extends Component {
 						},
 					}}
 					initialView="listAllFuture"
-					eventSources={eventSources(this.props.baseMonth)}
+					eventSources={this.eventSources(this.props.baseMonth)}
 					initialDate={this.props.baseMonth}
 					editable={true}
 					showNonCurrentDates={false}
@@ -91,8 +138,12 @@ class MainView extends Component {
 						center: "",
 						right: "",
 					}}
+					// dateClick={this.handleDateClick}
+					eventDragStart={this.handleDragStart}
 					displayEventTime={false}
 					eventDisplay="block"
+					eventStartEditable={true}
+					eventDrop={this.handleEventDrop}
 				/>
 			</div>
 		);
