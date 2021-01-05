@@ -9,7 +9,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$namespace = 'calendario/v' . $version;
 		$base      = 'posts';
 
-		register_rest_route( $namespace, '/' . $base . '/(?P<start>.*?)/(?P<status>[\w]+)', array(
+		register_rest_route( $namespace, '/' . $base . '/scheduled/(?P<start>.*?)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
@@ -86,10 +86,9 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function get_items( $request ) {
 		$items = get_posts( array(
-			'post_status' => isset( $request['status'] ) ? $request['status'] : null,
+			'post_status' => 'any',
 			'inclusive'   => true,
 			'date_query'  => array(
-				// 'before' => ( isset( $request['end'] ) && $request['end'] !== -1 ) ? $request['end'] : null,
 				'after' => isset( $request['start'] ) ? $request['start'] : null,
 			),
 			'meta_query'  => array(
@@ -107,6 +106,7 @@ class Calendario_Route extends WP_REST_Controller {
 		) );
 
 		$data = [];
+
 		foreach ( $items as $item ) {
 			$data[] = $this->prepare_item_for_response( $item, $request );
 		}
@@ -214,12 +214,10 @@ class Calendario_Route extends WP_REST_Controller {
 	public function delete_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
 
-		if ( function_exists( 'slug_some_function_to_delete_item' ) ) {
-			// $deleted = slug_some_function_to_delete_item( $item );
-			// if ( $deleted ) {
-			// 	return new WP_REST_Response( true, 200 );
-			// }
-		}
+		// $deleted = slug_some_function_to_delete_item( $item );
+		// if ( $deleted ) {
+		// 	return new WP_REST_Response( true, 200 );
+		// }
 
 		return new WP_Error( 'cant-delete', __( 'message', 'rhd' ), array( 'status' => 500 ) );
 	}
@@ -462,10 +460,12 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return array
 	 */
 	public function prepare_item_for_response( $item, $request ) {
+		$date = new DateTime( $item->post_date );
+
 		return [
-			'title'  => $item->post_title,
-			'start'  => $item->post_date,
 			'id'     => $item->ID,
+			'title'  => $item->post_title,
+			'start'  => $date->format( 'Y-m-d H:i:s' ),
 			'status' => $item->post_status,
 		];
 	}

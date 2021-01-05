@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
-// import { Component } from "@fullcalendar/react";
 import Header from "./components/Header";
 import MainView from "./components/MainView";
 import Sidebar from "./components/Sidebar";
 
 import "./App.css";
-
-export const AppContext = React.createContext();
 
 const maxViewMonths = 3;
 
