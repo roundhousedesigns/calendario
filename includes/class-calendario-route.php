@@ -34,6 +34,15 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
+		register_rest_route( $namespace, '/' . $base . '/update/(?P<ID>[\d]+)/(?P<post_date>.*?)', array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'update_item' ),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+				'args'                => array( $this->get_item_endpoint_args() ),
+			),
+		) );
+
 		// register_rest_route( $namespace, '/' . $base . '/(?P<id>[\d]+)', array(
 		// 	array(
 		// 		'methods'             => WP_REST_Server::READABLE,
@@ -162,15 +171,15 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function get_item( $request ) {
 		//get parameters from request
-		$params = $request->get_params();
-		$item   = []; //do a query, call another class, etc
-		$data   = $this->prepare_item_for_response( $item, $request );
+		// $params = $request->get_params();
+		$item = []; //do a query, call another class, etc
+		$data = $this->prepare_item_for_response( $item, $request );
 
 		//return a response or error based on some conditional
 		if ( 1 == 1 ) {
 			return new WP_REST_Response( $data, 200 );
 		} else {
-			return new WP_Error( 'code', __( 'message', 'text-domain' ) );
+			return new WP_Error( 'code', __( 'message', 'rhd' ) );
 		}
 	}
 
@@ -183,14 +192,17 @@ class Calendario_Route extends WP_REST_Controller {
 	public function update_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
 
-		if ( function_exists( 'slug_some_function_to_update_item' ) ) {
-			// $data = slug_some_function_to_update_item( $item );
-			// if ( is_array( $data ) ) {
-			// 	return new WP_REST_Response( $data, 200 );
-			// }
+		$result = wp_update_post( array(
+			'ID'          => $item['ID'],
+			'post_date'   => $item['post_date'],
+			'post_status' => $item['post_status'],
+		) );
+
+		if ( is_int( $result ) ) {
+			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -209,7 +221,7 @@ class Calendario_Route extends WP_REST_Controller {
 			// }
 		}
 
-		return new WP_Error( 'cant-delete', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-delete', __( 'message', 'rhd' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -239,32 +251,51 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return array $args
 	 */
 	public function get_range_endpoint_args() {
-		$args          = array();
-		$args['start'] = array(
-			'description'       => esc_html__( 'Start date', 'rhd' ),
-			'type'              => 'string',
-			'validate_callback' => array( $this, 'validate_date_string' ),
-			'sanitize_callback' => array( $this, 'sanitize_string' ),
-			'required'          => true,
+		return array(
+			'start'  => array(
+				'description'       => esc_html__( 'Start date', 'rhd' ),
+				'type'              => 'string',
+				'validate_callback' => array( $this, 'validate_date_string' ),
+				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'required'          => true,
+			),
+			'status' => array(
+				'description'       => esc_html__( 'Post status', 'rhd' ),
+				'type'              => 'string',
+				'validate_callback' => array( $this, 'validate_string' ),
+				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'required'          => true,
+			),
 		);
+	}
 
-		// $args['end'] = array(
-		// 	'description'       => esc_html__( 'End date', 'rhd' ),
-		// 	'type'              => 'string',
-		// 	'validate_callback' => array( $this, 'validate_date_string' ),
-		// 	'sanitize_callback' => array( $this, 'sanitize_string' ),
-		// 	'required'          => true,
-		// );
+	public function get_item_endpoint_args() {
+		return array(
+			'ID'        => array(
+				'description'       => esc_html__( 'Post ID', 'rhd' ),
+				'type'              => 'string',
+				'validate_callback' => array( $this, 'validate_integer' ),
+				'sanitize_callback' => 'absint',
+				'required'          => true,
+			),
 
-		$args['status'] = array(
-			'description'       => esc_html__( 'Post status', 'rhd' ),
-			'type'              => 'string',
-			'validate_callback' => array( $this, 'validate_string' ),
-			'sanitize_callback' => array( $this, 'sanitize_string' ),
-			'required'          => true,
+			'post_date' => array(
+				'description'       => esc_html__( 'New post date', 'rhd' ),
+				'type'              => 'string',
+				'validate_callback' => array( $this, 'validate_date_string' ),
+				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'required'          => true,
+			),
+
+			'status'    => array(
+				'description'       => esc_html__( 'New post status', 'rhd' ),
+				'type'              => 'string',
+				'validate_callback' => array( $this, 'validate_string' ),
+				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'required'          => false,
+				'default'           => '',
+			),
 		);
-
-		return $args;
 	}
 
 	/**
@@ -282,6 +313,30 @@ class Calendario_Route extends WP_REST_Controller {
 			$arg = $atts['args'][$param];
 
 			if ( 'string' === $arg['type'] && ! is_string( $value ) ) {
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), array( 'status' => 400 ) );
+			}
+		} else {
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), array( 'status' => 400 ) );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate integers
+	 *
+	 * @param mixed           $value   Value of the my-arg parameter.
+	 * @param WP_REST_Request $request Current request object.
+	 * @param string          $param   The name of the parameter in this case, 'my-arg'.
+	 * @return true|WP_Error True if the data is valid, WP_Error otherwise.
+	 */
+	public function validate_integer( $value, $request, $param ) {
+		$atts = $request->get_attributes();
+
+		if ( isset( $atts['args'][$param] ) ) {
+			$arg = $atts['args'][$param];
+
+			if ( 'integer' === $arg['type'] && ! is_int( $value ) ) {
 				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), array( 'status' => 400 ) );
 			}
 		} else {
@@ -349,7 +404,8 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function create_item_permissions_check( $request ) {
-		return current_user_can( 'edit_others_posts' );
+		return true; /*<--use to make readable by all*/
+		// return current_user_can( 'edit_others_posts' );
 	}
 
 	/**
@@ -379,7 +435,23 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|object $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
-		return [];
+		$params = $request->get_params();
+
+		$date = rhd_wp_format_date( $params['post_date'] );
+
+		$item = [
+			'ID'            => $params['ID'],
+			'post_date'     => $date['post_date'],
+			'post_date_gmt' => $date['post_date_gmt'],
+		];
+
+		if ( isset( $params['status'] ) ) {
+			$item['post_status'] = $params['status'];
+		} else {
+			$item['post_status'] = get_post_status( $params['ID'] );
+		}
+
+		return $item;
 	}
 
 	/**
@@ -393,7 +465,7 @@ class Calendario_Route extends WP_REST_Controller {
 		return [
 			'title'  => $item->post_title,
 			'start'  => $item->post_date,
-			'id'     => 'post-id-' . $item->ID,
+			'id'     => $item->ID,
 			'status' => $item->post_status,
 		];
 	}

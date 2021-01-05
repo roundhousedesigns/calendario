@@ -1,55 +1,59 @@
-import React from "react";
-import { Component } from "@fullcalendar/react";
+import React, { useEffect, useState } from "react";
+// import { Component } from "@fullcalendar/react";
 import Header from "./components/Header";
 import MainView from "./components/MainView";
 import Sidebar from "./components/Sidebar";
 
 import "./App.css";
 
+export const AppContext = React.createContext();
+
 const maxViewMonths = 3;
-const thisMonth = new Date();
-thisMonth.setDate(1);
 
-export default class App extends Component {
-	constructor(props) {
-		super(props);
+function getThisMonth() {
+	let thisMonth = new Date();
+	thisMonth.setDate(1);
+	return thisMonth;
+}
 
-		this.handleViewChange = this.handleViewChange.bind(this);
+export default function App() {
+	const baseMonth = getThisMonth();
+	const [viewMode, setViewMode] = useState("3");
+	const [calendarRef, setCalendarRefs] = useState([]);
 
-		this.state = {
-			baseMonth: thisMonth,
-			viewMode: maxViewMonths.toString(),
-		};
-
-		this.calendarRef = [];
+	const createCalendarRefs = () => {
+		let refs = [];
 		for (let i = 0; i < maxViewMonths; i++) {
-			this.calendarRef[i] = React.createRef();
+			refs[i] = React.createRef();
 		}
-	}
+		setCalendarRefs(refs);
+	};
 
-	handleViewChange(viewMode) {
-		this.setState({ viewMode });
-	}
+	useEffect(() => {
+		setCalendarRefs(createCalendarRefs);
+	}, []);
 
-	render() {
-		return (
-			<div className="calendario">
-				<Header
-					calendarRef={this.calendarRef}
-					viewMode={this.state.viewMode}
-					maxViewMonths={maxViewMonths}
-					onViewChange={this.handleViewChange}
-				/>
+	const handleViewChange = (viewMode) => {
+		setViewMode(viewMode);
+	};
 
-				<MainView
-					calendarRef={this.calendarRef}
-					baseMonth={this.state.baseMonth}
-					viewMode={this.state.viewMode}
-					maxViewMonths={maxViewMonths}
-					onViewChange={this.handleViewChange}
-				/>
-				<Sidebar />
-			</div>
-		);
-	}
+	return (
+		<div className="calendario">
+			<Header
+				calendarRef={calendarRef}
+				viewMode={viewMode}
+				maxViewMonths={maxViewMonths}
+				onViewChange={handleViewChange}
+			/>
+
+			<MainView
+				calendarRef={calendarRef}
+				baseMonth={baseMonth}
+				viewMode={viewMode}
+				maxViewMonths={maxViewMonths}
+				onViewChange={handleViewChange}
+			/>
+			<Sidebar />
+		</div>
+	);
 }

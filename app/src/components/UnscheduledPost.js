@@ -1,13 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 
-class UnscheduledPost extends Component {
-	render() {
-		return (
-			<li className={`unscheduled-post post-id-${this.props.post.id}`}>
-				<p className="post-title">{this.props.post.title}</p>
-			</li>
-		);
-	}
+export default function UnscheduledPost(props) {
+	return (
+		<li className={`unscheduled-post post-id-${props.post.id}`}>
+			<p className="post-title">{props.post.title}</p>
+		</li>
+	);
 }
-
-export default UnscheduledPost;

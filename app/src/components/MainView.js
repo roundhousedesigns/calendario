@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -28,52 +28,53 @@ const postStatuses = [
 	},
 ];
 
-class MainView extends Component {
-	constructor(props) {
-		super(props);
+export default function MainView(props) {
+	const [eventSources, setEventSources] = useState("");
+	const [futuremostDate, setFuturemostDate] = useState("");
 
-		this.state = {
-			posts: [],
-			eventSources: "",
-			futuremostDate: "",
-		};
-	}
-
-	componentDidMount() {
+	useEffect(() => {
 		let postsRoute = `${routeBase}/futuremost`;
-
 		fetch(postsRoute)
 			.then((response) => response.json())
 			.then((future) => {
-				this.setState({ futuremostDate: new Date(future) });
+				setFuturemostDate(new Date(future));
 			});
-	}
+	}, []);
 
-	eventSources = () => {
-		let start = this.props.baseMonth;
+	useEffect(() => {
+		let start = props.baseMonth;
 		let postsRoute = `${routeBase}/${dateToMDY(start)}`;
 
-		return postStatuses.map((item, index) => {
-			return {
-				url: postsRoute + "/" + item.status,
-				color: item.color,
-				// editable: item.editable,
-			};
-		});
+		setEventSources(
+			postStatuses.map((item, index) => {
+				return {
+					url: postsRoute + "/" + item.status,
+					color: item.color,
+					editable: item.editable,
+				};
+			})
+		);
+	}, [props.baseMonth]);
+
+	const handleEventDrop = (dropInfo) => {
+		// send update to API
+		// console.log(dropInfo.event.id + " new:", dropInfo.event.start);
+		// console.log("old post date: ", dropInfo.oldEvent.start);
+
+		let newDate = dateToMDY(dropInfo.event.start);
+		let postsRoute = `${routeBase}/update/${dropInfo.event.id}/${newDate}`;
+
+		fetch(postsRoute)
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+			});
 	};
 
-	handleDragStart = (stuff) => {
-		console.log("dragStart", stuff);
-	};
-
-	handleEventDrop = (stuff) => {
-		console.log("handleEventDrop", stuff);
-	};
-
-	calendarioGrids = () => {
+	const calendarioGrids = () => {
 		let components = [];
-		for (let i = 0; i < this.props.maxViewMonths; i++) {
-			let hideCalendar = i < this.props.viewMode ? "visible" : "hidden";
+		for (let i = 0; i < props.maxViewMonths; i++) {
+			let hideCalendar = i < props.viewMode ? "visible" : "hidden";
 
 			components.push(
 				<div
@@ -83,11 +84,11 @@ class MainView extends Component {
 				>
 					<FullCalendar
 						key={i}
-						ref={this.props.calendarRef[i]}
+						ref={props.calendarRef[i]}
 						plugins={[dayGridPlugin, interactionPlugin]}
 						initialView="dayGridMonth"
-						eventSources={this.eventSources(this.props.baseMonth)}
-						initialDate={this.addMonths(this.props.baseMonth, i)}
+						eventSources={eventSources}
+						initialDate={addMonths(props.baseMonth, i)}
 						fixedWeekCount={false}
 						editable={true}
 						droppable={true}
@@ -100,10 +101,7 @@ class MainView extends Component {
 						displayEventTime={false}
 						eventDisplay="block"
 						selectable={true}
-						// dateClick={this.handleDateClick}
-						// eventDragStart={this.handleDragStart}
-						// eventStartEditable={true}
-						// eventDrop={this.handleEventDrop}
+						eventDrop={handleEventDrop}
 					/>
 				</div>
 			);
@@ -112,25 +110,25 @@ class MainView extends Component {
 		return components;
 	};
 
-	calendarioList = () => {
+	const calendarioList = () => {
 		return (
 			<div id={`fullcalendar-list`} className={`calendar calendar-list`}>
 				<FullCalendar
-					key={this.props.maxViewMonths + 1}
-					ref={this.props.calendarRef[this.props.maxViewMonths + 1]}
+					key={props.maxViewMonths + 1}
+					ref={props.calendarRef[props.maxViewMonths + 1]}
 					plugins={[listPlugin, interactionPlugin]}
 					views={{
 						listAllFuture: {
 							type: "list",
 							visibleRange: {
 								start: new Date(),
-								end: this.state.futuremostDate,
+								end: futuremostDate,
 							},
 						},
 					}}
 					initialView="listAllFuture"
-					eventSources={this.eventSources(this.props.baseMonth)}
-					initialDate={this.props.baseMonth}
+					eventSources={eventSources}
+					initialDate={props.baseMonth}
 					editable={true}
 					showNonCurrentDates={false}
 					headerToolbar={{
@@ -138,35 +136,21 @@ class MainView extends Component {
 						center: "",
 						right: "",
 					}}
-					// dateClick={this.handleDateClick}
-					eventDragStart={this.handleDragStart}
 					displayEventTime={false}
 					eventDisplay="block"
-					eventStartEditable={true}
-					eventDrop={this.handleEventDrop}
 				/>
 			</div>
 		);
 	};
 
-	addMonths = (date, num) => {
+	const addMonths = (date, num) => {
 		let newDate = new Date(date);
 		return newDate.setMonth(date.getMonth() + num);
 	};
 
-	render() {
-		if (!this.props.baseMonth) {
-			return null;
-		}
-
-		return (
-			<div className="calendars">
-				{this.props.viewMode === "list"
-					? this.calendarioList()
-					: this.calendarioGrids()}
-			</div>
-		);
-	}
+	return (
+		<div className="calendars">
+			{props.viewMode === "list" ? calendarioList() : calendarioGrids()}
+		</div>
+	);
 }
-
-export default MainView;
