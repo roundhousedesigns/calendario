@@ -45,6 +45,22 @@ code {
 
 .unscheduled-drafts {
 	border: 1px solid gray;
+	min-height: 60px;
+	padding: 16px;
+}
+
+.unscheduled-drafts ul {
+	padding: 0;
+	list-style-position: inside;
+}
+
+.unscheduled-drafts ul li {
+	padding: 12px 0;
+	cursor: grab;
+}
+
+.unscheduled-drafts ul li:active {
+	cursor: grabbing;
 }
 
 .fc-day-past {

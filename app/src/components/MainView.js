@@ -2,18 +2,30 @@ import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import interactionPlugin /*Draggable*/ from "@fullcalendar/interaction";
 import { routeBase, postStatuses, dateToMDY } from "../lib/utils.js";
 
 function updatePost(event) {
 	let newDate = dateToMDY(event.start);
-	let postsRoute = `${routeBase}/update/${event.id}/${newDate}`;
+	let unscheduled = event.unscheduled === true ? 1 : 0;
+	let postsRoute = `${routeBase}/update/${event.id}/${newDate}/${unscheduled}`;
 
-	fetch(postsRoute)
-		.then((response) => response.json())
+	fetch(postsRoute, { method: "POST" })
+		.then((response) => {
+			response.json();
+			if (!response.ok) {
+				return false;
+			}
+		})
 		.then((data) => {
-			console.log(data);
+			// console.log(data);
 		});
+
+	return true;
+}
+
+function eventExists(eventID, calendarApi) {
+	return calendarApi.getEventById(eventID) === null ? false : true;
 }
 
 export default function MainView(props) {
@@ -46,15 +58,39 @@ export default function MainView(props) {
 	}, [props.baseMonth]);
 
 	const handleEventDrop = (dropInfo) => {
-		// send update to API
-		// console.log(dropInfo.event.id + " new:", dropInfo.event.start);
-		// console.log("old post date: ", dropInfo.oldEvent.start);
-
 		updatePost(dropInfo.event);
 	};
 
+	const handleDrop = (dropInfo) => {
+		let calendarApi = dropInfo.view.getCurrentData().calendarApi;
+		let eventData = JSON.parse(dropInfo.draggedEl.dataset.event);
+
+		// Check if event already exists (hacky: prevent duplicates)
+		let unscheduledEl = document.getElementById(`post-id-${eventData.id}`);
+		if (eventExists(eventData.id, calendarApi)) {
+			eventData.create = false;
+		} else {
+			// Add event
+			eventData.create = true;
+			eventData.start = dropInfo.date;
+			eventData.color = postStatuses["draft"].color;
+
+			// Update the post, and if successful, add the event
+			if (updatePost(eventData) === true) {
+				calendarApi.addEvent(eventData);
+			}
+
+			// Remove event from Unscheduled list
+			if (unscheduledEl && typeof unscheduledEl !== "undefined") {
+				unscheduledEl.remove();
+			}
+		}
+	};
+
 	const handleEventRecieve = (dropInfo) => {
-		updatePost(dropInfo.event);
+		let calendarApi = dropInfo.view.getCurrentData().calendarApi;
+
+		calendarApi.refetchEvents();
 	};
 
 	const calendarioGrids = () => {
@@ -88,6 +124,7 @@ export default function MainView(props) {
 						displayEventTime={false}
 						eventDisplay="block"
 						selectable={true}
+						drop={handleDrop}
 						eventDrop={handleEventDrop}
 						eventReceive={handleEventRecieve}
 					/>

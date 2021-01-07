@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import UnscheduledPost from "./UnscheduledPost";
+import UnscheduledDraft from "./UnscheduledDraft";
 import { routeBase } from "../lib/utils.js";
 
 export default function Sidebar() {
@@ -15,13 +15,15 @@ export default function Sidebar() {
 	}, []);
 
 	return (
-		<div className="sidebar">
+		<div id="sidebar" className="sidebar">
 			<h2 className="sidebar-title">Unscheduled Drafts</h2>
-			<ul className="unscheduled-drafts">
-				{sidebarPosts.map((postData, index) => (
-					<UnscheduledPost post={postData} key={index} />
-				))}
-			</ul>
+			<div id="unscheduled-drafts" className="unscheduled-drafts">
+				<ul>
+					{sidebarPosts.map((postData, index) => (
+						<UnscheduledDraft post={postData} key={index} />
+					))}
+				</ul>
+			</div>
 		</div>
 	);
 }

@@ -5,6 +5,7 @@
 -   Loading animations
 -   caching API responses?
 -   deal with post times when updating/retrieving posts
+-   Allow php versions < php 7.4
 
 ## Don't Forget
 

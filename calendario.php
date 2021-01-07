@@ -15,7 +15,7 @@ define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.1.0' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
 define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
-// define( 'RHD_CALENDARIO_REST_ROUTE', 'calendario/v1' );
+define( 'RHD_UNSCHEDULED_META_KEY', 'rhd_unscheduled' );
 
 /**
  * Functions

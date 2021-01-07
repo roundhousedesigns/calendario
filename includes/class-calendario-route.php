@@ -34,12 +34,12 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $base . '/update/(?P<ID>[\d]+)/(?P<post_date>.*?)', array(
+		register_rest_route( $namespace, '/' . $base . '/update/(?P<ID>\d+)/(?P<post_date>[0-9-]+)/(?P<unscheduled>\d)' /*(?P<status>.*?)*/, array(
 			array(
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'update_item' ),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				'args'                => array( $this->get_item_endpoint_args() ),
+				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+				'args'                => $this->get_endpoint_args_for_item_schema(),
 			),
 		) );
 
@@ -94,12 +94,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'meta_query'  => array(
 				'relation' => 'OR',
 				array(
-					'key'     => 'rhd_unscheduled',
-					'compare' => '=',
-					'value'   => false,
-				),
-				array(
-					'key'     => 'rhd_unscheduled',
+					'key'     => RHD_UNSCHEDULED_META_KEY,
 					'compare' => 'NOT EXISTS',
 				),
 			),
@@ -125,12 +120,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'meta_query'     => array(
 				'relation' => 'OR',
 				array(
-					'key'     => 'rhd_unscheduled',
-					'compare' => '=',
-					'value'   => true,
-				),
-				array(
-					'key'     => 'rhd_unscheduled',
+					'key'     => RHD_UNSCHEDULED_META_KEY,
 					'compare' => 'EXISTS',
 				),
 			),
@@ -192,15 +182,21 @@ class Calendario_Route extends WP_REST_Controller {
 	public function update_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
 
+		// Update the post
 		$result = wp_update_post( array(
 			'ID'          => $item['ID'],
 			'post_date'   => $item['post_date'],
 			'post_status' => $item['post_status'],
 		) );
 
-		if ( is_int( $result ) ) {
-			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
+		if ( $item['unscheduled'] === true ) {
+			// error_log( "meta delete" );
+			delete_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY );
 		}
+
+		// if ( is_int( $result ) ) {
+		return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
+		// }
 
 		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), array( 'status' => 500 ) );
 	}
@@ -293,6 +289,35 @@ class Calendario_Route extends WP_REST_Controller {
 				'required'          => false,
 				'default'           => '',
 			),
+		);
+	}
+
+	public function get_update_item_endpoint_args() {
+		return array(
+			'ID' => array(
+				'description'       => esc_html__( 'Post ID', 'rhd' ),
+				'type'              => 'string',
+				'validate_callback' => array( $this, 'validate_integer' ),
+				'sanitize_callback' => 'absint',
+				'required'          => true,
+			),
+
+			// 'post_date'   => array(
+			// 	'description'       => esc_html__( 'New post date', 'rhd' ),
+			// 	'type'              => 'string',
+			// 	'validate_callback' => array( $this, 'validate_date_string' ),
+			// 	'sanitize_callback' => array( $this, 'sanitize_string' ),
+			// 	'required'          => true,
+			// ),
+
+			// 'unscheduled' => array(
+			// 	'description'       => esc_html__( 'If the incoming post was an unscheduled post.', 'rhd' ),
+			// 	'type'              => 'boolean',
+			// 	'validate_callback' => array( $this, 'validate_string' ),
+			// 	'sanitize_callback' => array( $this, 'sanitize_string' ),
+			// 	'required'          => false,
+			// 	'default'           => '',
+			// ),
 		);
 	}
 
@@ -441,10 +466,14 @@ class Calendario_Route extends WP_REST_Controller {
 			'ID'            => $params['ID'],
 			'post_date'     => $date['post_date'],
 			'post_date_gmt' => $date['post_date_gmt'],
+			'unscheduled'   => isset( $params['unscheduled'] ) ? true : false,
 		];
 
 		if ( isset( $params['status'] ) ) {
 			$item['post_status'] = $params['status'];
+		} elseif ( $item['unscheduled'] === true ) {
+			// Set items moving from the Unscheduled area to 'draft'
+			$item['post_status'] = 'draft';
 		} else {
 			$item['post_status'] = get_post_status( $params['ID'] );
 		}
