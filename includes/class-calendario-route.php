@@ -34,7 +34,7 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $base . '/update/(?P<ID>\d+)/(?P<post_date>[0-9-]+)/(?P<unscheduled>\d)' /*(?P<status>.*?)*/, array(
+		register_rest_route( $namespace, '/' . $base . '/update/(?P<ID>\d+)/(?P<post_date>[0-9-]+)/(?P<post_status>\w+)/(?P<unscheduled>\d)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'update_item' ),
@@ -183,7 +183,8 @@ class Calendario_Route extends WP_REST_Controller {
 		$item = $this->prepare_item_for_database( $request );
 
 		// Update the post
-		$result = wp_update_post( array(
+		// TODO: check that the post exists first
+		wp_update_post( array(
 			'ID'          => $item['ID'],
 			'post_date'   => $item['post_date'],
 			'post_status' => $item['post_status'],
@@ -246,14 +247,14 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function get_range_endpoint_args() {
 		return array(
-			'start'  => array(
+			'start'       => array(
 				'description'       => esc_html__( 'Start date', 'rhd' ),
 				'type'              => 'string',
 				'validate_callback' => array( $this, 'validate_date_string' ),
 				'sanitize_callback' => array( $this, 'sanitize_string' ),
 				'required'          => true,
 			),
-			'status' => array(
+			'post_status' => array(
 				'description'       => esc_html__( 'Post status', 'rhd' ),
 				'type'              => 'string',
 				'validate_callback' => array( $this, 'validate_string' ),
@@ -265,7 +266,7 @@ class Calendario_Route extends WP_REST_Controller {
 
 	public function get_item_endpoint_args() {
 		return array(
-			'ID'        => array(
+			'ID'          => array(
 				'description'       => esc_html__( 'Post ID', 'rhd' ),
 				'type'              => 'string',
 				'validate_callback' => array( $this, 'validate_integer' ),
@@ -273,7 +274,7 @@ class Calendario_Route extends WP_REST_Controller {
 				'required'          => true,
 			),
 
-			'post_date' => array(
+			'post_date'   => array(
 				'description'       => esc_html__( 'New post date', 'rhd' ),
 				'type'              => 'string',
 				'validate_callback' => array( $this, 'validate_date_string' ),
@@ -281,7 +282,7 @@ class Calendario_Route extends WP_REST_Controller {
 				'required'          => true,
 			),
 
-			'status'    => array(
+			'post_status' => array(
 				'description'       => esc_html__( 'New post status', 'rhd' ),
 				'type'              => 'string',
 				'validate_callback' => array( $this, 'validate_string' ),
@@ -467,16 +468,8 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_date'     => $date['post_date'],
 			'post_date_gmt' => $date['post_date_gmt'],
 			'unscheduled'   => isset( $params['unscheduled'] ) ? true : false,
+			'post_status'   => $params['post_status'],
 		];
-
-		if ( isset( $params['status'] ) ) {
-			$item['post_status'] = $params['status'];
-		} elseif ( $item['unscheduled'] === true ) {
-			// Set items moving from the Unscheduled area to 'draft'
-			$item['post_status'] = 'draft';
-		} else {
-			$item['post_status'] = get_post_status( $params['ID'] );
-		}
 
 		return $item;
 	}
@@ -492,10 +485,10 @@ class Calendario_Route extends WP_REST_Controller {
 		$date = new DateTime( $item->post_date );
 
 		return [
-			'id'     => $item->ID,
-			'title'  => $item->post_title,
-			'start'  => $date->format( 'Y-m-d H:i:s' ),
-			'status' => $item->post_status,
+			'id'          => $item->ID,
+			'title'       => $item->post_title,
+			'start'       => $date->format( 'Y-m-d H:i:s' ),
+			'post_status' => $item->post_status,
 		];
 	}
 

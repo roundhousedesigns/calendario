@@ -6,6 +6,7 @@
 -   caching API responses?
 -   deal with post times when updating/retrieving posts
 -   Allow php versions < php 7.4
+-   PHP: when a post gets the rhd_unscheduled meta, set status to draft
 
 ## Don't Forget
 
