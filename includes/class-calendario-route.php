@@ -43,6 +43,15 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
+		register_rest_route( $namespace, '/' . $base . '/updateUnscheduledDraftOrder/(?P<ids>.*?)', array(
+			array(
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => array( $this, 'update_unscheduled_post_order' ),
+				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+				'args'                => $this->get_endpoint_args_for_item_schema(),
+			),
+		) );
+
 		// register_rest_route( $namespace, '/' . $base . '/(?P<id>[\d]+)', array(
 		// 	array(
 		// 		'methods'             => WP_REST_Server::READABLE,
@@ -124,6 +133,9 @@ class Calendario_Route extends WP_REST_Controller {
 					'compare' => 'EXISTS',
 				),
 			),
+			'orderby'        => 'meta_value_num',
+			'order' => 'ASC',
+			'meta_key'       => RHD_UNSCHEDULED_META_KEY,
 			'posts_per_page' => -1,
 			'post_status'    => 'any',
 		) );
@@ -200,6 +212,21 @@ class Calendario_Route extends WP_REST_Controller {
 		// }
 
 		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), array( 'status' => 500 ) );
+	}
+
+	/**
+	 * Update all unscheduled items with new indices.
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function update_unscheduled_post_order( $request ) {
+		$items = $this->prepare_unscheduled_items_for_database( $request );
+
+		for ( $i = 0; $i < count( $items ); $i++ ) {
+			update_post_meta( $items[$i], RHD_UNSCHEDULED_META_KEY, $i );
+		}
+
+		return new WP_REST_Response( 'Unscheduled Draft order updated.', 200 );
 	}
 
 	/**
@@ -475,6 +502,20 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
+	 * Prepare post ids with their indexes for updating the database.
+	 */
+	protected function prepare_unscheduled_items_for_database( $request ) {
+		$ids = explode( ';', $request->get_param( 'ids' ) );
+
+		$posts = [];
+		foreach ( $ids as $id ) {
+			$posts[] = $id;
+		}
+
+		return $posts;
+	}
+
+	/**
 	 * Prepare the item for the REST response
 	 *
 	 * @param mixed $item WordPress representation of the item.
@@ -500,11 +541,11 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return array
 	 */
 	public function prepare_unscheduled_item_for_response( $item, $request ) {
-		return [
+		return array(
 			'title' => $item->post_title,
 			'date'  => $item->post_date,
 			'id'    => $item->ID,
-		];
+		);
 	}
 
 	/**

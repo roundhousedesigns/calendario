@@ -8,9 +8,9 @@ import { routeBase, postStatuses, dateToMDY } from "../lib/utils.js";
 function updatePost(event, postStatus) {
 	let newDate = dateToMDY(event.start);
 	let unscheduled = event.unscheduled === true ? 1 : 0;
-	let postsRoute = `${routeBase}/update/${event.id}/${newDate}/${postStatus}/${unscheduled}`;
+	let apiUrl = `${routeBase}/update/${event.id}/${newDate}/${postStatus}/${unscheduled}`;
 
-	fetch(postsRoute, { method: "POST" })
+	fetch(apiUrl, { method: "POST" })
 		.then((response) => {
 			response.json();
 			if (!response.ok) {
@@ -42,9 +42,9 @@ export default function MainView(props) {
 	}, []);
 
 	useEffect(() => {
-		let postsRoute = `${routeBase}/scheduled/${dateToMDY(props.baseMonth)}`;
+		let apiUrl = `${routeBase}/scheduled/${dateToMDY(props.baseMonth)}`;
 
-		fetch(postsRoute)
+		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.length) {
