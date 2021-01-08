@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin /*Draggable*/ from "@fullcalendar/interaction";
 import { routeBase, postStatuses, dateToMDY } from "../lib/utils.js";
 
-function updatePost(event, postStatus) {
+function updatePost(event) {
 	let newDate = dateToMDY(event.start);
 	let unscheduled = event.unscheduled === true ? 1 : 0;
 	let apiUrl = `${routeBase}/update/${event.id}/${newDate}/${postStatus}/${unscheduled}`;
@@ -49,8 +49,7 @@ export default function MainView(props) {
 			.then((data) => {
 				if (data.length) {
 					data.forEach(function (item, index) {
-						this[index].color =
-							postStatuses[item.post_status].color;
+						this[index].color = postStatuses[item.status].color;
 					}, data);
 
 					setPosts(data);
@@ -59,7 +58,7 @@ export default function MainView(props) {
 	}, [props.baseMonth]);
 
 	const handleEventDrop = (dropInfo) => {
-		updatePost(dropInfo.event, dropInfo.event.extendedProps.post_status);
+		updatePost(dropInfo.event);
 	};
 
 	const handleDrop = (dropInfo) => {
@@ -77,8 +76,7 @@ export default function MainView(props) {
 			eventData.color = postStatuses["draft"].color;
 
 			// Update the post, and if successful, add the event
-			let updated = updatePost(eventData, eventData.post_status);
-			if (updated === true) {
+			if (updatePost(eventData) === true) {
 				calendarApi.addEvent(eventData);
 			}
 
