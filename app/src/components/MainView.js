@@ -7,7 +7,8 @@ import { routeBase, postStatuses, dateToMDY } from "../lib/utils.js";
 
 function updatePost(event) {
 	let newDate = dateToMDY(event.start);
-	let unscheduled = event.unscheduled === true ? 1 : 0;
+	let unscheduled = typeof event.unscheduled !== "undefined" ? 1 : 0;
+	let postStatus = event.post_status;
 	let apiUrl = `${routeBase}/update/${event.id}/${newDate}/${postStatus}/${unscheduled}`;
 
 	fetch(apiUrl, { method: "POST" })
@@ -29,7 +30,6 @@ function eventExists(eventID, calendarApi) {
 }
 
 export default function MainView(props) {
-	// const [eventSources, setEventSources] = useState("");
 	const [posts, setPosts] = useState([]);
 	const [futuremostDate, setFuturemostDate] = useState("");
 
@@ -49,7 +49,10 @@ export default function MainView(props) {
 			.then((data) => {
 				if (data.length) {
 					data.forEach(function (item, index) {
-						this[index].color = postStatuses[item.status].color;
+						this[index].color = "green";
+						// this[index].color =
+						// 	postStatuses[item.post_status].color;
+						this[index].end = this[index].start;
 					}, data);
 
 					setPosts(data);
@@ -57,41 +60,40 @@ export default function MainView(props) {
 			});
 	}, [props.baseMonth]);
 
-	const handleEventDrop = (dropInfo) => {
-		updatePost(dropInfo.event);
+	const handleEventDrop = (info) => {
+		let event = info.event;
+		event.post_status = info.event.extendedProps.post_status;
+
+		updatePost(event);
 	};
 
-	const handleDrop = (dropInfo) => {
-		let calendarApi = dropInfo.view.getCurrentData().calendarApi;
-		let eventData = JSON.parse(dropInfo.draggedEl.dataset.event);
+	const handleEventRecieve = (info) => {
+		// Fires on external event drop, including other calendars
+		var event = info.event;
+		var calendarApi = info.view.getCurrentData().calendarApi;
+		event.post_status = info.event.extendedProps.post_status;
 
-		// Check if event already exists (hacky: prevent duplicates)
-		let unscheduledEl = document.getElementById(`post-id-${eventData.id}`);
-		if (eventExists(eventData.id, calendarApi)) {
-			eventData.create = false;
+		if (info.draggedEl.classList.contains("unscheduled-draft")) {
+			event.unscheduled = true;
+			event.color = postStatuses["draft"].color;
+			console.log(event.color);
+			if (updatePost(event) === true) {
+				// calendarApi.addEvent(event);
+
+				// UNCOMMENT THIS:
+				document.getElementById(`post-id-${event.id}`).remove();
+				// console.log('removing')
+			}
 		} else {
-			// Add event
-			eventData.create = true;
-			eventData.start = dropInfo.date;
-			eventData.color = postStatuses["draft"].color;
-
-			// Update the post, and if successful, add the event
-			if (updatePost(eventData) === true) {
-				calendarApi.addEvent(eventData);
-			}
-
-			// Remove event from Unscheduled list
-			if (unscheduledEl && typeof unscheduledEl !== "undefined") {
-				unscheduledEl.remove();
-			}
+			updatePost(event);
 		}
 	};
 
-	const handleEventRecieve = (dropInfo) => {
-		let calendarApi = dropInfo.view.getCurrentData().calendarApi;
+	// const handleEventRecieve = (info) => {
+	// 	let calendarApi = info.view.getCurrentData().calendarApi;
 
-		calendarApi.refetchEvents();
-	};
+	// 	calendarApi.refetchEvents();
+	// };
 
 	const calendarioGrids = () => {
 		let components = [];
@@ -109,7 +111,6 @@ export default function MainView(props) {
 						ref={props.calendarRef[i]}
 						plugins={[dayGridPlugin, interactionPlugin]}
 						initialView="dayGridMonth"
-						// eventSources={eventSources}
 						events={posts}
 						initialDate={addMonths(props.baseMonth, i)}
 						fixedWeekCount={false}
@@ -124,7 +125,7 @@ export default function MainView(props) {
 						displayEventTime={false}
 						eventDisplay="block"
 						selectable={true}
-						drop={handleDrop}
+						// drop={handleDrop}
 						eventDrop={handleEventDrop}
 						eventReceive={handleEventRecieve}
 					/>
@@ -152,7 +153,6 @@ export default function MainView(props) {
 						},
 					}}
 					initialView="listAllFuture"
-					// eventSources={eventSources}
 					events={posts}
 					initialDate={props.baseMonth}
 					editable={true}
