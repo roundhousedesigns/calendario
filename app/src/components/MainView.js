@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin /*Draggable*/ from "@fullcalendar/interaction";
+import interactionPlugin from "@fullcalendar/interaction";
 import { routeBase, postStatuses, dateToMDY } from "../lib/utils.js";
 
 function updatePost(event) {
@@ -25,10 +25,6 @@ function updatePost(event) {
 	return true;
 }
 
-function eventExists(eventID, calendarApi) {
-	return calendarApi.getEventById(eventID) === null ? false : true;
-}
-
 export default function MainView(props) {
 	const [posts, setPosts] = useState([]);
 	const [futuremostDate, setFuturemostDate] = useState("");
@@ -49,9 +45,8 @@ export default function MainView(props) {
 			.then((data) => {
 				if (data.length) {
 					data.forEach(function (item, index) {
-						this[index].color = "green";
-						// this[index].color =
-						// 	postStatuses[item.post_status].color;
+						this[index].color =
+							postStatuses[item.post_status].color;
 						this[index].end = this[index].start;
 					}, data);
 
@@ -75,14 +70,11 @@ export default function MainView(props) {
 
 		if (info.draggedEl.classList.contains("unscheduled-draft")) {
 			event.unscheduled = true;
-			event.color = postStatuses["draft"].color;
-			console.log(event.color);
+			event.setProp("color", postStatuses["draft"].color);
 			if (updatePost(event) === true) {
 				// calendarApi.addEvent(event);
 
-				// UNCOMMENT THIS:
 				document.getElementById(`post-id-${event.id}`).remove();
-				// console.log('removing')
 			}
 		} else {
 			updatePost(event);
