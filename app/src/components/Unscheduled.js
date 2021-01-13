@@ -10,14 +10,14 @@ export default function Unscheduled(props) {
 			id: props.id,
 			title: props.title,
 			post_status: "draft",
-			// create: false
+			create: true,
 		});
 		setItemRendered(true);
 	}, [props.id, props.title]);
 
 	useEffect(() => {
 		if (itemRendered === true) {
-			new Draggable(document.getElementById(`post-id-${eventData.id}`), {
+			new Draggable(document.getElementById(`unsched-${eventData.id}`), {
 				eventData: eventData,
 			});
 		}
@@ -26,8 +26,8 @@ export default function Unscheduled(props) {
 	return (
 		<li
 			key={props.index}
-			id={`post-id-${props.id}`}
-			className={`unscheduled-draft post-id-${props.id}`}
+			id={`unsched-${props.id}`}
+			className={`unscheduled-draft fc-event post-id-${props.id}`}
 		>
 			{props.title}
 		</li>

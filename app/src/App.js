@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "./components/Header";
 import MainView from "./components/MainView";
 import Sidebar from "./components/Sidebar";
+import { routeBase } from "./lib/utils";
 
 import "./App.css";
 
@@ -17,6 +18,7 @@ export default function App() {
 	const baseMonth = getThisMonth();
 	const [viewMode, setViewMode] = useState("3");
 	const [calendarRef, setCalendarRefs] = useState([]);
+	const [futuremostDate, setFuturemostDate] = useState("");
 
 	const createCalendarRefs = () => {
 		let refs = [];
@@ -29,6 +31,31 @@ export default function App() {
 	useEffect(() => {
 		setCalendarRefs(createCalendarRefs);
 	}, []);
+
+	useEffect(() => {
+		fetch(`${routeBase}/posts/futuremost`)
+			.then((response) => response.json())
+			.then((future) => {
+				setFuturemostDate(new Date(future));
+			});
+
+		fetch(`${routeBase}/user/calendario_view_mode/0`)
+			.then((response) => response.json())
+			.then((viewMode) => {
+				viewMode = viewMode === false ? "3" : viewMode;
+				setViewMode(viewMode);
+			});
+	}, []);
+
+	useEffect(() => {
+		fetch(`${routeBase}/user/calendario_view_mode/${viewMode}`, {
+			method: "POST",
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				// console.log(data);
+			});
+	}, [viewMode]);
 
 	const handleViewChange = (viewMode) => {
 		setViewMode(viewMode);
@@ -49,6 +76,7 @@ export default function App() {
 				viewMode={viewMode}
 				maxViewMonths={maxViewMonths}
 				onViewChange={handleViewChange}
+				futuremostDate={futuremostDate}
 			/>
 			<Sidebar />
 		</div>

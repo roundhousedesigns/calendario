@@ -8,7 +8,7 @@ export default function Sidebar() {
 	const [listRendered, setListRendered] = useState(false);
 
 	useEffect(() => {
-		const apiUrl = `${routeBase}/unscheduled`;
+		const apiUrl = `${routeBase}/posts/unscheduled`;
 		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((data) => {
@@ -32,19 +32,23 @@ export default function Sidebar() {
 				<ul
 					id="unscheduled-drafts-list"
 					className="unscheduled-drafts-list"
+					style={{
+						display: "block",
+						backgroundColor: "#eee",
+						height: "200px",
+					}}
+					onDragEnter={(e) => {
+						console.log(e);
+					}}
+					onDragOver={(e) => {
+						console.log("dragover");
+					}}
+					onDrop={(e) => {
+						console.log("drop");
+					}}
 				>
 					{sidebarPosts.map(({ id, title }, index) => (
 						<Unscheduled key={index} id={id} title={title} />
-
-						// <li
-						// 	key={index}
-						// 	id={`post-id-${id}`}
-						// 	className={`unscheduled-draft post-id-${id}`}
-						// 	data-id={id}
-						// 	data-event={`{"id":${id},"title":"${title}","unscheduled":true, "post_status":"draft","create":false}`}
-						// >
-						// 	{title}
-						// </li>
 					))}
 				</ul>
 			</div>

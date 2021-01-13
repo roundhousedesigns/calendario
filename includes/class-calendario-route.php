@@ -7,9 +7,10 @@ class Calendario_Route extends WP_REST_Controller {
 	public function register_routes() {
 		$version   = '1';
 		$namespace = 'calendario/v' . $version;
-		$base      = 'posts';
+		$post_base = 'posts';
+		$user_base = 'user';
 
-		register_rest_route( $namespace, '/' . $base . '/scheduled/(?P<start>.*?)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
@@ -18,7 +19,7 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $base . '/unscheduled', array(
+		register_rest_route( $namespace, '/' . $post_base . '/unscheduled', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_unscheduled_items' ),
@@ -26,7 +27,7 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $base . '/futuremost', array(
+		register_rest_route( $namespace, '/' . $post_base . '/futuremost', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_futuremost_item' ),
@@ -34,7 +35,7 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $base . '/update/(?P<ID>\d+)/(?P<post_date>[0-9-]+)/(?P<post_status>.*?)/(?P<unscheduled>\d)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)/(?P<post_date>[0-9-]+)/(?P<post_status>.*?)/(?P<remove_unscheduled>\d)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'update_item' ),
@@ -43,12 +44,27 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $base . '/updateUnscheduledDraftOrder/(?P<ids>.*?)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/updateUnscheduledDraftOrder/(?P<ids>.*?)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'update_unscheduled_post_order' ),
 				'permission_callback' => array( $this, 'update_item_permissions_check' ),
 				'args'                => $this->get_endpoint_args_for_item_schema(),
+			),
+		) );
+
+		register_rest_route( $namespace, '/' . $user_base . '/(?P<option>[\w]+)/(?P<value>[\w]+)', array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_user_option' ),
+				'permission_callback' => array( $this, 'user_permissions_check' ),
+				'args'                => array( $this->get_user_option_endpoint_args() ),
+			),
+			array(
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => array( $this, 'update_user_option' ),
+				'permission_callback' => array( $this, 'user_permissions_check' ),
+				'args'                => array( $this->get_user_option_endpoint_args() ),
 			),
 		) );
 
@@ -103,6 +119,10 @@ class Calendario_Route extends WP_REST_Controller {
 			'meta_query'  => array(
 				'relation' => 'OR',
 				array(
+					'key'   => RHD_UNSCHEDULED_META_KEY,
+					'value' => 0,
+				),
+				array(
 					'key'     => RHD_UNSCHEDULED_META_KEY,
 					'compare' => 'NOT EXISTS',
 				),
@@ -127,10 +147,10 @@ class Calendario_Route extends WP_REST_Controller {
 	public function get_unscheduled_items( $request ) {
 		$items = get_posts( array(
 			'meta_query'     => array(
-				'relation' => 'OR',
 				array(
 					'key'     => RHD_UNSCHEDULED_META_KEY,
-					'compare' => 'EXISTS',
+					'compare' => '=',
+					'value'   => 1,
 				),
 			),
 			'orderby'        => 'meta_value_num',
@@ -155,13 +175,13 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_futuremost_item( $request ) {
-		$items = get_posts( array(
+		$posts = get_posts( array(
 			'post_status'    => array( 'any' ),
 			'posts_per_page' => 1,
 		) );
 
-		if ( $items ) {
-			$data = $this->prepare_futuremost_item_for_response( $items[0], $request );
+		if ( $posts ) {
+			$data = $this->prepare_futuremost_item_for_response( $posts[0], $request );
 		} else {
 			$data = [];
 		}
@@ -197,9 +217,6 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function update_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
-		ob_start();
-		print_r( $item );
-		error_log( ob_get_clean() );
 
 		// Update the post
 		$result = wp_update_post( array(
@@ -208,20 +225,20 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_status' => $item['post_status'],
 		) );
 
-		if ( $item['unscheduled'] === true ) {
-			// error_log( "meta delete" );
-			delete_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY );
+		if ( $item['remove_unscheduled'] == true && ! is_wp_error( $result ) ) {
+			$result = delete_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY );
 		}
 
-		// if ( is_int( $result ) ) {
-		return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
-		// }
+		if ( $result !== false && ! is_wp_error( $result ) ) {
+			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
+		}
 
 		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), array( 'status' => 500 ) );
 	}
 
 	/**
 	 * Update all unscheduled items with new indices.
+	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
@@ -229,10 +246,46 @@ class Calendario_Route extends WP_REST_Controller {
 		$items = $this->prepare_unscheduled_items_for_database( $request );
 
 		for ( $i = 0; $i < count( $items ); $i++ ) {
-			update_post_meta( $items[$i], RHD_UNSCHEDULED_META_KEY, $i );
+			$result = update_post_meta( $items[$i], RHD_UNSCHEDULED_META_KEY, $i );
 		}
 
 		return new WP_REST_Response( 'Unscheduled Draft order updated.', 200 );
+	}
+
+	/**
+	 * Gets a user option using get_user_option().
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|bool
+	 */
+	public function get_user_option( $request ) {
+		$item = $this->prepare_user_option_for_response( $request );
+
+		$value = get_user_option( $item['option'], $item['user_id'] );
+
+		if ( $value !== false ) {
+			return new WP_REST_Response( $value, 200 );
+		}
+
+		return new WP_REST_Response( false, 200 );
+	}
+
+	/**
+	 * Updates a user option in the database using update_user_option().
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|bool
+	 */
+	public function update_user_option( $request ) {
+		$item = $this->prepare_user_option_for_database( $request );
+
+		$result = update_user_option( $item['user_id'], $item['option'], $item['value'], false );
+
+		if ( $result !== false ) {
+			return new WP_REST_Response( 'View updated.', 200 );
+		}
+
+		return new WP_Error( 'user-not-updated', __( 'message', 'rhd' ), array( 'status' => 200 ) );
 	}
 
 	/**
@@ -274,6 +327,17 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
+	 * Check if the user is logged in.
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return bool
+	 */
+	public function user_permissions_check( $request ) {
+		return true;
+		// return is_user_logged_in() && 0 !== get_current_user_id();
+	}
+
+	/**
 	 * Get argument schema for post data.
 	 *
 	 * @return array $args
@@ -297,6 +361,28 @@ class Calendario_Route extends WP_REST_Controller {
 		);
 	}
 
+	public function get_user_option_endpoint_args() {
+		return array(
+			'option' => array(
+				'description'       => esc_html__( 'User option name', 'rhd' ),
+				'type'              => 'string',
+				'validate_callback' => array( $this, 'validate_string' ),
+				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'required'          => true,
+			),
+			'value'  => array(
+				'description'       => esc_html__( 'User option value', 'rhd' ),
+				'type'              => 'string',
+				'validate_callback' => array( $this, 'validate_string' ),
+				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'required'          => false,
+			),
+		);
+	}
+
+	/**
+	 * Get endpoint args.
+	 */
 	public function get_item_endpoint_args() {
 		return array(
 			'ID'          => array(
@@ -326,6 +412,11 @@ class Calendario_Route extends WP_REST_Controller {
 		);
 	}
 
+	/**
+	 * Get endpoint args for updating a post.
+	 *
+	 * @return array
+	 */
 	public function get_update_item_endpoint_args() {
 		return array(
 			'ID' => array(
@@ -493,14 +584,14 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	protected function prepare_item_for_database( $request ) {
 		$params = $request->get_params();
-		$date = rhd_wp_format_date( $params['post_date'] );
+		$date   = rhd_wp_format_date( $params['post_date'] );
 
 		$item = [
-			'ID'            => $params['ID'],
-			'post_date'     => $date['post_date'],
-			'post_date_gmt' => $date['post_date_gmt'],
-			'post_status'   => $params['post_status'],
-			'unscheduled'   => $params['unscheduled'] == 1 ? true : false,
+			'ID'                 => $params['ID'],
+			'post_date'          => $date['post_date'],
+			'post_date_gmt'      => $date['post_date_gmt'],
+			'post_status'        => $params['post_status'],
+			'remove_unscheduled' => $params['remove_unscheduled'] == 1 ? 1 : 0,
 		];
 
 		return $item;
@@ -518,6 +609,39 @@ class Calendario_Route extends WP_REST_Controller {
 		}
 
 		return $posts;
+	}
+
+	/**
+	 * Prepare the item for updating a user option.
+	 */
+	public function prepare_user_option_for_database( $request ) {
+		$params = $request->get_params();
+
+		// DEV
+		$user_id = 1;
+		// $user_id = get_current_user_id();
+
+		return array(
+			'user_id' => $user_id,
+			'option'  => $params['option'],
+			'value'   => $params['value'],
+		);
+	}
+
+	/**
+	 * Prepares the item for returning a user option
+	 */
+	public function prepare_user_option_for_response( $request ) {
+		$option = $request->get_param( 'option' );
+
+		// DEV
+		$user_id = 1;
+		// $user_id = get_current_user_id();
+
+		return array(
+			'user_id' => $user_id,
+			'option'  => $option,
+		);
 	}
 
 	/**

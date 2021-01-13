@@ -7,9 +7,9 @@ import { routeBase, postStatuses, dateToMDY } from "../lib/utils.js";
 
 function updatePost(event) {
 	let newDate = dateToMDY(event.start);
-	let unscheduled = typeof event.unscheduled !== "undefined" ? 1 : 0;
+	let remove_unscheduled = typeof event.unscheduled !== "undefined" ? 1 : 0;
 	let postStatus = event.post_status;
-	let apiUrl = `${routeBase}/update/${event.id}/${newDate}/${postStatus}/${unscheduled}`;
+	let apiUrl = `${routeBase}/posts/update/${event.id}/${newDate}/${postStatus}/${remove_unscheduled}`;
 
 	fetch(apiUrl, { method: "POST" })
 		.then((response) => {
@@ -27,24 +27,26 @@ function updatePost(event) {
 
 export default function MainView(props) {
 	const [posts, setPosts] = useState([]);
-	const [futuremostDate, setFuturemostDate] = useState("");
 
 	useEffect(() => {
-		fetch(`${routeBase}/futuremost`)
-			.then((response) => response.json())
-			.then((future) => {
-				setFuturemostDate(new Date(future));
-			});
-	}, []);
-
-	useEffect(() => {
-		let apiUrl = `${routeBase}/scheduled/${dateToMDY(props.baseMonth)}`;
+		let apiUrl = `${routeBase}/posts/scheduled/${dateToMDY(
+			props.baseMonth
+		)}`;
 
 		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((data) => {
+				var today = new Date();
+				today.setHours(0, 0, 0, 0);
+
 				if (data.length) {
 					data.forEach(function (item, index) {
+						let start = new Date(this[index].start);
+						start.setHours(0, 0, 0, 0);
+						if (start < today) {
+							this[index].editable = false;
+						}
+
 						this[index].color =
 							postStatuses[item.post_status].color;
 						this[index].end = this[index].start;
@@ -56,6 +58,7 @@ export default function MainView(props) {
 	}, [props.baseMonth]);
 
 	const handleEventDrop = (info) => {
+		// Internal calendar event drops
 		let event = info.event;
 		event.post_status = info.event.extendedProps.post_status;
 
@@ -64,28 +67,28 @@ export default function MainView(props) {
 
 	const handleEventRecieve = (info) => {
 		// Fires on external event drop, including other calendars
-		var event = info.event;
-		var calendarApi = info.view.getCurrentData().calendarApi;
-		event.post_status = info.event.extendedProps.post_status;
 
-		if (info.draggedEl.classList.contains("unscheduled-draft")) {
+		var { event, draggedEl } = info;
+		// var calendarApi = info.view.getCurrentData().calendarApi;
+		event.post_status = event.extendedProps.post_status;
+
+		if (draggedEl.classList.contains("unscheduled-draft")) {
+			// event.setEnd(event.start);
+			event.setProp("backgroundColor", postStatuses["draft"].color);
+			event.setProp("borderColor", postStatuses["draft"].color);
 			event.unscheduled = true;
-			event.setProp("color", postStatuses["draft"].color);
+
 			if (updatePost(event) === true) {
 				// calendarApi.addEvent(event);
 
-				document.getElementById(`post-id-${event.id}`).remove();
+				document.getElementById(`unsched-${event.id}`).remove();
+			} else {
+				event.remove();
 			}
 		} else {
 			updatePost(event);
 		}
 	};
-
-	// const handleEventRecieve = (info) => {
-	// 	let calendarApi = info.view.getCurrentData().calendarApi;
-
-	// 	calendarApi.refetchEvents();
-	// };
 
 	const calendarioGrids = () => {
 		let components = [];
@@ -114,10 +117,28 @@ export default function MainView(props) {
 							center: "",
 							right: "",
 						}}
+						eventDragStart={(e) => {
+							console.log("synthetic", e);
+						}}
+						eventDragStop={(ev) => {
+							// console.log("stop", ev);
+						}}
+						eventDidMount={(arg) => {
+							const { el, event } = arg;
+
+							// set the element ID
+							el.setAttribute("id", `post-id-${event.id}`);
+
+							// set draggable ... doesn't seem to do anything
+							// el.setAttribute("draggable", true);
+						}}
+						// eventLeave={(e) => {
+						// 	console.log('leave', e);
+						// }}
+						// selectMirror={true}
 						displayEventTime={false}
 						eventDisplay="block"
 						selectable={true}
-						// drop={handleDrop}
 						eventDrop={handleEventDrop}
 						eventReceive={handleEventRecieve}
 					/>
@@ -140,20 +161,16 @@ export default function MainView(props) {
 							type: "list",
 							visibleRange: {
 								start: new Date(),
-								end: futuremostDate,
+								end: props.futuremostDate,
 							},
 						},
 					}}
 					initialView="listAllFuture"
 					events={posts}
-					initialDate={props.baseMonth}
 					editable={true}
+					droppable={true}
 					showNonCurrentDates={false}
-					headerToolbar={{
-						left: "title",
-						center: "",
-						right: "",
-					}}
+					headerToolbar={false}
 					displayEventTime={false}
 					eventDisplay="block"
 				/>

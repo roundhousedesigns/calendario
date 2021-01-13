@@ -1,5 +1,5 @@
 // export const routeBase = window.rhdReactPlugin.restBase; // Live URL
-export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
+export const routeBase = "http://localhost/wp-json/calendario/v1";
 
 export const postStatuses = {
 	publish: {
@@ -21,7 +21,7 @@ export const postStatuses = {
 };
 
 export function dateToMDY(date = null) {
-	// TODO: validate date object
+	// TODO: validate date object?
 	if (date) {
 		return (
 			(date.getMonth() > 8

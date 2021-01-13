@@ -7,10 +7,12 @@
 -   deal with post times when updating/retrieving posts
 -   Allow php versions < php 7.4
 -   Past events uneditable
+-   Custom list view for reordering and dropping?
 
 ## Don't Forget
 
 -   Permissions checks: non-admins can only edit/delete their posts
+-   Check that view prefs persist per user
 
 ## Notes
 
