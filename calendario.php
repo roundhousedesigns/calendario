@@ -33,6 +33,10 @@ define ( 'RHD_CALENDARIO_POST_STATUS_COLORS', array(
 		'color' => 'red',
 		'editable' => true
 	),
+	'default' => array(
+		'color' => 'yellow',
+		'editable' => true
+	)
 ) );
 
 /**
@@ -136,7 +140,6 @@ class Calendario {
 			array(
 				'appSelector' => $this->selector,
 				'restBase'    => get_rest_url( null, 'calendario/v1/posts' ),
-				'postStatuses' => RHD_CALENDARIO_POST_STATUS_COLORS
 			)
 		);
 	}

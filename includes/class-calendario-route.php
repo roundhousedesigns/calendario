@@ -661,13 +661,15 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return array
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-		$date = new DateTime( $item->post_date );
+		$date         = new DateTime( $item->post_date );
+		$status_color = rhd_get_status_color( $item->post_status );
 
 		return [
 			'id'          => $item->ID,
 			'title'       => $item->post_title,
 			'start'       => $date->format( 'Y-m-d H:i:s' ),
 			'post_status' => $item->post_status,
+			'color'       => $status_color,
 		];
 	}
 

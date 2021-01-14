@@ -9,42 +9,42 @@ import {
 	dateToMDY,
 	updatePost,
 } from "../lib/utils.js";
-import SidebarPostsContext from "../Posts";
+import SidebarPostsContext from "../SidebarPosts";
 
 export default function MainView(props) {
-	const [posts, setPosts] = useState([]);
+	// const [posts, setPosts] = useState([]);
 	const [unscheduledList, setUnscheduledList] = useState("");
 	const [draggedEvent, setDraggedEvent] = useState({});
 
 	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
 
-	useEffect(() => {
-		let apiUrl = `${routeBase}/posts/scheduled/${dateToMDY(
-			props.baseMonth
-		)}`;
+	// useEffect(() => {
+	// 	let apiUrl = `${routeBase}/posts/scheduled/${dateToMDY(
+	// 		props.baseMonth
+	// 	)}`;
 
-		fetch(apiUrl)
-			.then((response) => response.json())
-			.then((data) => {
-				var today = new Date();
-				today.setHours(0, 0, 0, 0);
+	// 	fetch(apiUrl)
+	// 		.then((response) => response.json())
+	// 		.then((data) => {
+	// 			var today = new Date();
+	// 			today.setHours(0, 0, 0, 0);
 
-				if (data.length) {
-					data.forEach(function (item, index) {
-						let start = new Date(this[index].start);
-						start.setHours(0, 0, 0, 0);
-						if (start < today) {
-							this[index].editable = false;
-						}
+	// 			if (data.length) {
+	// 				data.forEach(function (item, index) {
+	// 					let start = new Date(this[index].start);
+	// 					start.setHours(0, 0, 0, 0);
+	// 					if (start < today) {
+	// 						this[index].editable = false;
+	// 					}
 
-						this[index].color =
-							postStatuses[item.post_status].color;
-					}, data);
+	// 					this[index].color =
+	// 						postStatuses[item.post_status].color;
+	// 				}, data);
 
-					setPosts(data);
-				}
-			});
-	}, [props.baseMonth]);
+	// 				setPosts(data);
+	// 			}
+	// 		});
+	// }, [props.baseMonth]);
 
 	useEffect(() => {
 		let el = document.getElementById("unscheduled-drafts-list");
@@ -161,8 +161,12 @@ export default function MainView(props) {
 						initialView="dayGridMonth"
 						// forceEventDuration={true}
 						defaultTimedEventDuration={"00:01"}
-						events={posts}
-						// eventSources={posts}
+						// events={posts}
+						eventSources={[
+							`${routeBase}/posts/scheduled/${dateToMDY(
+								props.baseMonth
+							)}`,
+						]}
 						initialDate={addMonths(props.baseMonth, i)}
 						fixedWeekCount={false}
 						editable={true}
@@ -218,7 +222,12 @@ export default function MainView(props) {
 						},
 					}}
 					initialView="listAllFuture"
-					events={posts}
+					eventSources={[
+						`${routeBase}/posts/scheduled/${dateToMDY(
+							props.baseMonth
+						)}`,
+					]}
+					// events={posts}
 					editable={true}
 					droppable={true}
 					showNonCurrentDates={false}

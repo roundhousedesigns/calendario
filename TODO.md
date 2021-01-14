@@ -7,7 +7,7 @@
 query date (limiting how far in the future we fetch)
 
 -   Loading animations
--   caching API responses?
+-   caching API responses? memoize or something?
 -   deal with post times when updating/retrieving posts
 -   Allow php versions < php 7.4
 -   Custom list view for reordering and dropping?

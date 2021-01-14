@@ -4,7 +4,7 @@
  * Validates a date string.
  *
  * @param string $date   The date to validate
- * @param string $format The date format
+ * @param string The date format
  */
 function rhd_validate_date( $date, $format = 'Y-m-d' ) {
 	$d = DateTime::createFromFormat( $format, $date );
@@ -15,6 +15,7 @@ function rhd_validate_date( $date, $format = 'Y-m-d' ) {
  * Formats a date string
  *
  * @param string $date The date string to format
+ * @param array Contains post_date and post_date_gmt date strings
  */
 function rhd_wp_format_date( $date_string ) {
 	if ( ! is_string( $date_string ) ) {
@@ -34,4 +35,18 @@ function rhd_wp_format_date( $date_string ) {
 	);
 
 	return $date_formatted;
+}
+
+/**
+ * Returns the proper color string associated with a post status.
+ *
+ * @param string $post_status a registered post status
+ * @return string
+ */
+function rhd_get_status_color( $post_status ) {
+	if ( isset( RHD_CALENDARIO_POST_STATUS_COLORS[$post_status] ) ) {
+		return RHD_CALENDARIO_POST_STATUS_COLORS[$post_status]['color'];
+	} else {
+		return RHD_CALENDARIO_POST_STATUS_COLORS['default']['color'];
+	}
 }

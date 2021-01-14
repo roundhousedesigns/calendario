@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import MainView from "./components/MainView";
 import Sidebar from "./components/Sidebar";
 import { routeBase, getThisMonth } from "./lib/utils";
-import SidebarPostsContext, { sidebarPostsReducer } from "./Posts";
+import SidebarPostsContext, { sidebarPostsReducer } from "./SidebarPosts";
 
 import "./App.css";
 
