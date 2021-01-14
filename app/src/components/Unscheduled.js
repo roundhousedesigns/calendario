@@ -10,7 +10,6 @@ export default function Unscheduled(props) {
 			id: props.id,
 			title: props.title,
 			post_status: "draft",
-			create: true,
 		});
 		setItemRendered(true);
 	}, [props.id, props.title]);

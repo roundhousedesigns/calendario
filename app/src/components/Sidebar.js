@@ -1,29 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { Draggable } from "@fullcalendar/interaction";
+import React, { useContext } from "react";
+// import { Draggable } from "@fullcalendar/interaction";
 import Unscheduled from "./Unscheduled.js";
-import { routeBase } from "../lib/utils.js";
+// import { routeBase } from "../lib/utils.js";
+import SidebarPostsContext from "../Posts";
 
 export default function Sidebar() {
-	const [sidebarPosts, setSidebarPosts] = useState([]);
-	const [listRendered, setListRendered] = useState(false);
+	// const [posts, setposts] = useState([]);
 
-	useEffect(() => {
-		const apiUrl = `${routeBase}/posts/unscheduled`;
-		fetch(apiUrl)
-			.then((response) => response.json())
-			.then((data) => {
-				setSidebarPosts(data);
-				setListRendered(true);
-			});
-	}, []);
+	const { sidebarPosts } = useContext(SidebarPostsContext);
+	// const [listRendered, setListRendered] = useState(false);
 
-	useEffect(() => {
-		if (listRendered === true) {
-			new Draggable(document.getElementById("unscheduled-drafts-list"), {
-				itemSelector: ".unscheduled-draft",
-			});
-		}
-	}, [listRendered]);
+	// useEffect(() => {
+	// 	const apiUrl = `${routeBase}/posts/unscheduled`;
+	// 	fetch(apiUrl)
+	// 		.then((response) => response.json())
+	// 		.then((data) => {
+	// 			setposts(data);
+	// 			setListRendered(true);
+	// 		});
+	// }, []);
+
+	// useEffect(() => {
+	// 	if (listRendered === true) {
+	// 		new Draggable(document.getElementById("unscheduled-drafts-list"), {
+	// 			itemSelector: ".unscheduled-draft",
+	// 		});
+	// 	}
+	// }, [listRendered]);
 
 	return (
 		<div id="sidebar" className="sidebar">
@@ -37,17 +40,8 @@ export default function Sidebar() {
 						backgroundColor: "#eee",
 						height: "200px",
 					}}
-					onDragEnter={(e) => {
-						console.log(e);
-					}}
-					onDragOver={(e) => {
-						console.log("dragover");
-					}}
-					onDrop={(e) => {
-						console.log("drop");
-					}}
 				>
-					{sidebarPosts.map(({ id, title }, index) => (
+					{sidebarPosts.events.map(({ id, title }, index) => (
 						<Unscheduled key={index} id={id} title={title} />
 					))}
 				</ul>

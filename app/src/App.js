@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import Header from "./components/Header";
 import MainView from "./components/MainView";
 import Sidebar from "./components/Sidebar";
-import { routeBase } from "./lib/utils";
+import { routeBase, getThisMonth } from "./lib/utils";
+import SidebarPostsContext, { sidebarPostsReducer } from "./Posts";
 
 import "./App.css";
 
 const maxViewMonths = 3;
-
-function getThisMonth() {
-	let thisMonth = new Date();
-	thisMonth.setDate(1);
-	return thisMonth;
-}
 
 export default function App() {
 	const baseMonth = getThisMonth();
 	const [viewMode, setViewMode] = useState("3");
 	const [calendarRef, setCalendarRefs] = useState([]);
 	const [futuremostDate, setFuturemostDate] = useState("");
+	const [sidebarPosts, sidebarPostsDispatch] = useReducer(
+		sidebarPostsReducer,
+		{
+			events: [],
+		}
+	);
 
 	const createCalendarRefs = () => {
 		let refs = [];
@@ -30,6 +31,18 @@ export default function App() {
 
 	useEffect(() => {
 		setCalendarRefs(createCalendarRefs);
+	}, []);
+
+	useEffect(() => {
+		const apiUrl = `${routeBase}/posts/unscheduled`;
+		fetch(apiUrl)
+			.then((response) => response.json())
+			.then((data) => {
+				sidebarPostsDispatch({
+					type: "POPULATE",
+					events: data,
+				});
+			});
 	}, []);
 
 	useEffect(() => {
@@ -70,15 +83,19 @@ export default function App() {
 				onViewChange={handleViewChange}
 			/>
 
-			<MainView
-				calendarRef={calendarRef}
-				baseMonth={baseMonth}
-				viewMode={viewMode}
-				maxViewMonths={maxViewMonths}
-				onViewChange={handleViewChange}
-				futuremostDate={futuremostDate}
-			/>
-			<Sidebar />
+			<SidebarPostsContext.Provider
+				value={{ sidebarPosts, sidebarPostsDispatch }}
+			>
+				<MainView
+					calendarRef={calendarRef}
+					baseMonth={baseMonth}
+					viewMode={viewMode}
+					maxViewMonths={maxViewMonths}
+					onViewChange={handleViewChange}
+					futuremostDate={futuremostDate}
+				/>
+				<Sidebar />
+			</SidebarPostsContext.Provider>
 		</div>
 	);
 }

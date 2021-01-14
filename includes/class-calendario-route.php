@@ -35,7 +35,7 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)/(?P<post_date>[0-9-]+)/(?P<post_status>.*?)/(?P<remove_unscheduled>\d)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)/(?P<post_date>[0-9-]+)/(?P<post_status>.*?)/(?P<set_unscheduled>\d)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'update_item' ),
@@ -225,8 +225,19 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_status' => $item['post_status'],
 		) );
 
-		if ( $item['remove_unscheduled'] == true && ! is_wp_error( $result ) ) {
-			$result = delete_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY );
+		error_log($item['post_date']);
+
+		if ( ! is_wp_error( $result ) ) {
+			$unscheduled_meta = get_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, true );
+			if ( $item['set_unscheduled'] == false && $unscheduled_meta ) {
+				// error_log( 'post becomes SCHEDULED.' );
+				$result = delete_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY );
+			} elseif ( $item['set_unscheduled'] == true ) {
+				// error_log( 'post becomes UNSCHEDULED.' );
+				$result = update_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, 1 );
+			} else {
+				// error_log( 'Nothing to do.' );
+			}
 		}
 
 		if ( $result !== false && ! is_wp_error( $result ) ) {
@@ -587,11 +598,11 @@ class Calendario_Route extends WP_REST_Controller {
 		$date   = rhd_wp_format_date( $params['post_date'] );
 
 		$item = [
-			'ID'                 => $params['ID'],
-			'post_date'          => $date['post_date'],
-			'post_date_gmt'      => $date['post_date_gmt'],
-			'post_status'        => $params['post_status'],
-			'remove_unscheduled' => $params['remove_unscheduled'] == 1 ? 1 : 0,
+			'ID'              => $params['ID'],
+			'post_date'       => $date['post_date'],
+			'post_date_gmt'   => $date['post_date_gmt'],
+			'post_status'     => $params['post_status'],
+			'set_unscheduled' => $params['set_unscheduled'] == 1 ? 1 : 0,
 		];
 
 		return $item;

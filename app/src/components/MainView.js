@@ -1,32 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import FullCalendar from "@fullcalendar/react";
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { routeBase, postStatuses, dateToMDY } from "../lib/utils.js";
-
-function updatePost(event) {
-	let newDate = dateToMDY(event.start);
-	let remove_unscheduled = typeof event.unscheduled !== "undefined" ? 1 : 0;
-	let postStatus = event.post_status;
-	let apiUrl = `${routeBase}/posts/update/${event.id}/${newDate}/${postStatus}/${remove_unscheduled}`;
-
-	fetch(apiUrl, { method: "POST" })
-		.then((response) => {
-			response.json();
-			if (!response.ok) {
-				return false;
-			}
-		})
-		.then((data) => {
-			// console.log(data);
-		});
-
-	return true;
-}
+import {
+	routeBase,
+	postStatuses,
+	dateToMDY,
+	updatePost,
+} from "../lib/utils.js";
+import SidebarPostsContext from "../Posts";
 
 export default function MainView(props) {
 	const [posts, setPosts] = useState([]);
+	const [unscheduledList, setUnscheduledList] = useState("");
+	const [draggedEvent, setDraggedEvent] = useState({});
+
+	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
 
 	useEffect(() => {
 		let apiUrl = `${routeBase}/posts/scheduled/${dateToMDY(
@@ -49,7 +39,6 @@ export default function MainView(props) {
 
 						this[index].color =
 							postStatuses[item.post_status].color;
-						this[index].end = this[index].start;
 					}, data);
 
 					setPosts(data);
@@ -57,36 +46,100 @@ export default function MainView(props) {
 			});
 	}, [props.baseMonth]);
 
+	useEffect(() => {
+		let el = document.getElementById("unscheduled-drafts-list");
+
+		if (el) {
+			setUnscheduledList(el);
+		}
+	}, [unscheduledList]);
+
+	const handleEventDragStart = (info) => {
+		const { event } = info;
+
+		setDraggedEvent({
+			event: event,
+		});
+	};
+
+	const handleEventDragStop = (info) => {
+		// Handles moving events off the sidebar
+
+		const { jsEvent, view } = info;
+		let dropZoneRect = unscheduledList.getBoundingClientRect();
+		let { top, right, bottom, left } = dropZoneRect;
+		let { clientX, clientY } = jsEvent;
+
+		if (
+			clientX >= left &&
+			clientX <= right &&
+			clientY >= top &&
+			clientY <= bottom
+		) {
+			if (
+				updatePost(
+					draggedEvent.event.id,
+					draggedEvent.event.start,
+					"draft",
+					true
+				) === true
+			) {
+				sidebarPostsDispatch({
+					type: "ADD",
+					event: draggedEvent.event,
+				});
+
+				let deleteEvent = view
+					.getCurrentData()
+					.calendarApi.getEventById(draggedEvent.event.id);
+
+				deleteEvent.remove();
+			}
+		}
+
+		setDraggedEvent({});
+	};
+
 	const handleEventDrop = (info) => {
 		// Internal calendar event drops
-		let event = info.event;
-		event.post_status = info.event.extendedProps.post_status;
+		const { event } = info;
 
-		updatePost(event);
+		updatePost(
+			event.id,
+			event.start,
+			event.extendedProps.post_status,
+			false
+		);
 	};
 
 	const handleEventRecieve = (info) => {
-		// Fires on external event drop, including other calendars
+		// Fires on external event drop, including from other calendars
 
 		var { event, draggedEl } = info;
-		// var calendarApi = info.view.getCurrentData().calendarApi;
-		event.post_status = event.extendedProps.post_status;
 
 		if (draggedEl.classList.contains("unscheduled-draft")) {
-			// event.setEnd(event.start);
-			event.setProp("backgroundColor", postStatuses["draft"].color);
-			event.setProp("borderColor", postStatuses["draft"].color);
-			event.unscheduled = true;
+			// FROM sidebar TO calendar
+			let post_status = "draft";
+			event.setProp("backgroundColor", postStatuses[post_status].color);
+			event.setProp("borderColor", postStatuses[post_status].color);
 
-			if (updatePost(event) === true) {
-				// calendarApi.addEvent(event);
+			if (
+				updatePost(event.id, event.start, post_status, false) === true
+			) {
+				sidebarPostsDispatch({
+					type: "REMOVE",
+					event: event,
+				});
 
-				document.getElementById(`unsched-${event.id}`).remove();
+				let el = document.getElementById(`unsched-${event.id}`);
+				if (el) el.remove();
 			} else {
+				// cancel
 				event.remove();
 			}
 		} else {
-			updatePost(event);
+			// FROM calendar A TO calendar B
+			updatePost(event.id, event.start, event.post_status, false);
 		}
 	};
 
@@ -106,7 +159,10 @@ export default function MainView(props) {
 						ref={props.calendarRef[i]}
 						plugins={[dayGridPlugin, interactionPlugin]}
 						initialView="dayGridMonth"
+						// forceEventDuration={true}
+						defaultTimedEventDuration={"00:01"}
 						events={posts}
+						// eventSources={posts}
 						initialDate={addMonths(props.baseMonth, i)}
 						fixedWeekCount={false}
 						editable={true}
@@ -117,12 +173,8 @@ export default function MainView(props) {
 							center: "",
 							right: "",
 						}}
-						eventDragStart={(e) => {
-							console.log("synthetic", e);
-						}}
-						eventDragStop={(ev) => {
-							// console.log("stop", ev);
-						}}
+						eventDragStart={handleEventDragStart}
+						eventDragStop={handleEventDragStop}
 						eventDidMount={(arg) => {
 							const { el, event } = arg;
 
