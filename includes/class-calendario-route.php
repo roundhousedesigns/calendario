@@ -225,8 +225,6 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_status' => $item['post_status'],
 		) );
 
-		error_log($item['post_date']);
-
 		if ( ! is_wp_error( $result ) ) {
 			$unscheduled_meta = get_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, true );
 			if ( $item['set_unscheduled'] == false && $unscheduled_meta ) {
