@@ -8,43 +8,15 @@ import {
 	postStatuses,
 	dateToMDY,
 	updatePost,
+	/*dateIsBeforeNow*/
 } from "../lib/utils.js";
 import SidebarPostsContext from "../SidebarPosts";
 
 export default function MainView(props) {
-	// const [posts, setPosts] = useState([]);
 	const [unscheduledList, setUnscheduledList] = useState("");
 	const [draggedEvent, setDraggedEvent] = useState({});
 
 	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
-
-	// useEffect(() => {
-	// 	let apiUrl = `${routeBase}/posts/scheduled/${dateToMDY(
-	// 		props.baseMonth
-	// 	)}`;
-
-	// 	fetch(apiUrl)
-	// 		.then((response) => response.json())
-	// 		.then((data) => {
-	// 			var today = new Date();
-	// 			today.setHours(0, 0, 0, 0);
-
-	// 			if (data.length) {
-	// 				data.forEach(function (item, index) {
-	// 					let start = new Date(this[index].start);
-	// 					start.setHours(0, 0, 0, 0);
-	// 					if (start < today) {
-	// 						this[index].editable = false;
-	// 					}
-
-	// 					this[index].color =
-	// 						postStatuses[item.post_status].color;
-	// 				}, data);
-
-	// 				setPosts(data);
-	// 			}
-	// 		});
-	// }, [props.baseMonth]);
 
 	useEffect(() => {
 		let el = document.getElementById("unscheduled-drafts-list");
@@ -53,6 +25,13 @@ export default function MainView(props) {
 			setUnscheduledList(el);
 		}
 	}, [unscheduledList]);
+
+	const handleEventDidMount = (arg) => {
+		const { el, event } = arg;
+
+		// set the element ID
+		el.setAttribute("id", `post-id-${event.id}`);
+	};
 
 	const handleEventDragStart = (info) => {
 		const { event } = info;
@@ -102,14 +81,22 @@ export default function MainView(props) {
 
 	const handleEventDrop = (info) => {
 		// Internal calendar event drops
-		const { event } = info;
+		const { event /*view*/ } = info;
 
-		updatePost(
+		// eslint-disable-next-line
+		let updateResult = updatePost(
 			event.id,
 			event.start,
 			event.extendedProps.post_status,
 			false
 		);
+
+		// if (updateResult === true) {
+		// 	let eventEl = view.getCurrentData().calendarApi.getEventById(event.id);
+		// 	if (dateIsBeforeNow(event.start)) {
+		// 		eventEl.setProp("editable", false);
+		// 	}
+		// }
 	};
 
 	const handleEventRecieve = (info) => {
@@ -179,19 +166,7 @@ export default function MainView(props) {
 						}}
 						eventDragStart={handleEventDragStart}
 						eventDragStop={handleEventDragStop}
-						eventDidMount={(arg) => {
-							const { el, event } = arg;
-
-							// set the element ID
-							el.setAttribute("id", `post-id-${event.id}`);
-
-							// set draggable ... doesn't seem to do anything
-							// el.setAttribute("draggable", true);
-						}}
-						// eventLeave={(e) => {
-						// 	console.log('leave', e);
-						// }}
-						// selectMirror={true}
+						eventDidMount={handleEventDidMount}
 						displayEventTime={false}
 						eventDisplay="block"
 						selectable={true}

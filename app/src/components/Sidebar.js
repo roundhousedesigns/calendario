@@ -1,12 +1,8 @@
 import React, { useContext } from "react";
-// import { Draggable } from "@fullcalendar/interaction";
 import Unscheduled from "./Unscheduled.js";
-// import { routeBase } from "../lib/utils.js";
 import SidebarPostsContext from "../SidebarPosts";
 
 export default function Sidebar() {
-	// const [posts, setposts] = useState([]);
-
 	const { sidebarPosts } = useContext(SidebarPostsContext);
 
 	return (

@@ -91,3 +91,16 @@ export function updatePost(id, start, post_status, set_unscheduled) {
 
 	return true;
 }
+
+/**
+ *
+ * @param {Date} date The date to check
+ * @return {boolean|undefined} Undefined if object passed is not of type Date
+ */
+export function dateIsBeforeNow(date) {
+	if (date instanceof Date) {
+		return date < new Date();
+	} else {
+		return undefined;
+	}
+}

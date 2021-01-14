@@ -17,6 +17,10 @@ query date (limiting how far in the future we fetch)
 
 -   Permissions checks: non-admins can only edit/delete their posts
 
+## Questions
+
+-   Should you be able to change past posts?
+
 ## Notes
 
 -   make sure time zones aren't cray cray somehow
