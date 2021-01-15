@@ -49,6 +49,7 @@ const PostModal = ({ modalClose, post, calendarRefs }) => {
 		updatePost(id, postDate, postStatus, post.unscheduled, {
 			post_title: title,
 		});
+		
 		calendarRefs.forEach((calendar) => {
 			calendar.current.getApi().refetchEvents();
 		});
