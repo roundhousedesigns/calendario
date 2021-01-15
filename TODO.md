@@ -12,6 +12,9 @@ query date (limiting how far in the future we fetch)
 -   Allow php versions < php 7.4
 -   Custom list view for reordering and dropping?
 -   createUseStyles()
+-   Show flag if unscheduled post is Pending
+-   When post is set to Unscheduled, make it a draft (or pending)
+-   Set end range per calendar
 
 ## Don't Forget
 

@@ -140,6 +140,7 @@ class Calendario {
 			array(
 				'appSelector' => $this->selector,
 				'restBase'    => get_rest_url( null, 'calendario/v1/posts' ),
+				'postStatuses' => RHD_CALENDARIO_POST_STATUS_COLORS
 			)
 		);
 	}

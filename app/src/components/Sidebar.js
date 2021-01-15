@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import Unscheduled from "./Unscheduled.js";
-import SidebarPostsContext from "../SidebarPosts";
+
+import SidebarPostsContext from "../context/SidebarPosts";
 
 export default function Sidebar() {
 	const { sidebarPosts } = useContext(SidebarPostsContext);
@@ -13,8 +14,8 @@ export default function Sidebar() {
 					id="unscheduled-drafts-list"
 					className="unscheduled-drafts-list"
 				>
-					{sidebarPosts.events.map(({ id, title }, index) => (
-						<Unscheduled key={index} id={id} title={title} />
+					{sidebarPosts.events.map((event, index) => (
+						<Unscheduled key={index} post={event} />
 					))}
 				</ul>
 			</div>

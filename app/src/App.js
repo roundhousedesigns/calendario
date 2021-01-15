@@ -2,8 +2,13 @@ import React, { useEffect, useState, useReducer } from "react";
 import Header from "./components/Header";
 import MainView from "./components/MainView";
 import Sidebar from "./components/Sidebar";
+import PostModal from "./components/PostModal";
 import { routeBase, getThisMonth } from "./lib/utils";
-import SidebarPostsContext, { sidebarPostsReducer } from "./SidebarPosts";
+
+import SidebarPostsContext, {
+	sidebarPostsReducer,
+} from "./context/SidebarPosts";
+import PostModalContext, { postModalReducer } from "./context/PostModal";
 
 import "./App.css";
 
@@ -12,7 +17,7 @@ const maxViewMonths = 3;
 export default function App() {
 	const baseMonth = getThisMonth();
 	const [viewMode, setViewMode] = useState("3");
-	const [calendarRef, setCalendarRefs] = useState([]);
+	const [calendarRefs, setCalendarRefs] = useState([]);
 	const [futuremostDate, setFuturemostDate] = useState("");
 	const [sidebarPosts, sidebarPostsDispatch] = useReducer(
 		sidebarPostsReducer,
@@ -20,6 +25,11 @@ export default function App() {
 			events: [],
 		}
 	);
+
+	const [postModal, postModalDispatch] = useReducer(postModalReducer, {
+		show: false,
+		post: {},
+	});
 
 	const createCalendarRefs = () => {
 		let refs = [];
@@ -74,28 +84,42 @@ export default function App() {
 		setViewMode(viewMode);
 	};
 
+	const handleModalClose = () => {
+		postModalDispatch({
+			type: "CLOSE",
+		});
+	};
+
 	return (
 		<div className="calendario">
 			<Header
-				calendarRef={calendarRef}
+				calendarRefs={calendarRefs}
 				viewMode={viewMode}
 				maxViewMonths={maxViewMonths}
 				onViewChange={handleViewChange}
 			/>
-
-			<SidebarPostsContext.Provider
-				value={{ sidebarPosts, sidebarPostsDispatch }}
-			>
-				<MainView
-					calendarRef={calendarRef}
-					baseMonth={baseMonth}
-					viewMode={viewMode}
-					maxViewMonths={maxViewMonths}
-					onViewChange={handleViewChange}
-					futuremostDate={futuremostDate}
-				/>
-				<Sidebar />
-			</SidebarPostsContext.Provider>
+			<PostModalContext.Provider value={{ postModal, postModalDispatch }}>
+				<SidebarPostsContext.Provider
+					value={{ sidebarPosts, sidebarPostsDispatch }}
+				>
+					<MainView
+						calendarRefs={calendarRefs}
+						baseMonth={baseMonth}
+						viewMode={viewMode}
+						maxViewMonths={maxViewMonths}
+						onViewChange={handleViewChange}
+						futuremostDate={futuremostDate}
+					/>
+					<Sidebar />
+					{postModal.show ? (
+						<PostModal
+							post={postModal.post}
+							modalClose={handleModalClose}
+							calendarRefs={calendarRefs}
+						/>
+					) : null}
+				</SidebarPostsContext.Provider>
+			</PostModalContext.Provider>
 		</div>
 	);
 }

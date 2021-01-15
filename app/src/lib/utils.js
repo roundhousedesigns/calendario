@@ -1,6 +1,7 @@
 // export const routeBase = window.rhdReactPlugin.restBase; // Live URL
 export const routeBase = "http://localhost/wp-json/calendario/v1";
 
+// export const postStatuses = window.rhdReactPlugin.postStatuses; // Live value
 export const postStatuses = {
 	publish: {
 		color: "blue",
@@ -43,42 +44,17 @@ export function dateToMDY(date = null) {
 	}
 }
 
-// function prepareEventForUpdate(event, overrides) {
-// 	console.log('overrides.post_status', overrides.post_status);
-
-// 	var eventData = {
-// 		id: event.id,
-// 		start: event.start,
-// 		post_status: overrides.post_status
-// 			? overrides.post_status
-// 			: event.post_status,
-// 		set_unscheduled: overrides.set_unscheduled
-// 			? overrides.set_unscheduled
-// 			: event.set_unscheduled,
-// 	};
-
-// 	if ( eventData.post_status === undefined ) {
-// 		console.log(eventData.id, 'STATUS UNDEFINED');
-// 		eventData.post_status = 'draft';
-// 	}
-
-// 	eventData.start = dateToMDY(eventData.start);
-// 	eventData.set_unscheduled = eventData.set_unscheduled ? 1 : 0;
-
-// 	return eventData;
-// }
-
-export function updatePost(id, start, post_status, set_unscheduled) {
+export function updatePost(id, start, post_status, set_unscheduled, args = {}) {
 	let date = dateToMDY(start);
 
 	let apiUrl = `${routeBase}/posts/update/${id}/${date}/${post_status}/${
 		set_unscheduled ? 1 : 0
 	}`;
 
-	console.log("url", apiUrl);
-	// return;
-
-	fetch(apiUrl, { method: "POST" })
+	fetch(apiUrl, {
+		method: "POST",
+		body: JSON.stringify(args),
+	})
 		.then((response) => {
 			response.json();
 			if (!response.ok) {

@@ -3,6 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import Loading from "./Loading";
 import {
 	routeBase,
 	postStatuses,
@@ -10,13 +11,17 @@ import {
 	updatePost,
 	/*dateIsBeforeNow*/
 } from "../lib/utils.js";
-import SidebarPostsContext from "../SidebarPosts";
+
+import SidebarPostsContext from "../context/SidebarPosts";
+import PostModalContext from "../context/PostModal";
 
 export default function MainView(props) {
+	const [calendarIsLoading, setCalendarIsLoading] = useState(false);
 	const [unscheduledList, setUnscheduledList] = useState("");
 	const [draggedEvent, setDraggedEvent] = useState({});
 
 	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
+	const { postModalDispatch } = useContext(PostModalContext);
 
 	useEffect(() => {
 		let el = document.getElementById("unscheduled-drafts-list");
@@ -33,8 +38,14 @@ export default function MainView(props) {
 		el.setAttribute("id", `post-id-${event.id}`);
 	};
 
+	const handleEventLoading = (isLoading) => {
+		setCalendarIsLoading(isLoading);
+	};
+
 	const handleEventDragStart = (info) => {
 		const { event } = info;
+
+		event.post_status = event.extendedProps.post_status;
 
 		setDraggedEvent({
 			event: event,
@@ -59,7 +70,7 @@ export default function MainView(props) {
 				updatePost(
 					draggedEvent.event.id,
 					draggedEvent.event.start,
-					"draft",
+					draggedEvent.event.post_status,
 					true
 				) === true
 			) {
@@ -106,7 +117,8 @@ export default function MainView(props) {
 
 		if (draggedEl.classList.contains("unscheduled-draft")) {
 			// FROM sidebar TO calendar
-			let post_status = "draft";
+			let post_status = event.extendedProps.post_status;
+
 			event.setProp("backgroundColor", postStatuses[post_status].color);
 			event.setProp("borderColor", postStatuses[post_status].color);
 
@@ -130,6 +142,24 @@ export default function MainView(props) {
 		}
 	};
 
+	const handleEventClick = (info) => {
+		const { event } = info;
+
+		let post = {
+			id: event.id,
+			title: event.title,
+			post_date: event.start,
+			post_status: event.extendedProps.post_status,
+			unscheduled: false,
+		};
+
+		postModalDispatch({
+			type: "OPEN",
+			post: post,
+			calendarRefs: props.calendarRefs,
+		});
+	};
+
 	const calendarioGrids = () => {
 		let components = [];
 		for (let i = 0; i < props.maxViewMonths; i++) {
@@ -143,7 +173,7 @@ export default function MainView(props) {
 				>
 					<FullCalendar
 						key={i}
-						ref={props.calendarRef[i]}
+						ref={props.calendarRefs[i]}
 						plugins={[dayGridPlugin, interactionPlugin]}
 						initialView="dayGridMonth"
 						// forceEventDuration={true}
@@ -154,10 +184,12 @@ export default function MainView(props) {
 								props.baseMonth
 							)}`,
 						]}
+						loading={handleEventLoading}
 						initialDate={addMonths(props.baseMonth, i)}
 						fixedWeekCount={false}
 						editable={true}
 						droppable={true}
+						eventClick={handleEventClick}
 						showNonCurrentDates={false}
 						headerToolbar={{
 							left: "title",
@@ -185,7 +217,7 @@ export default function MainView(props) {
 			<div id={`fullcalendar-list`} className={`calendar calendar-list`}>
 				<FullCalendar
 					key={props.maxViewMonths + 1}
-					ref={props.calendarRef[props.maxViewMonths + 1]}
+					ref={props.calendarRefs[props.maxViewMonths + 1]}
 					plugins={[listPlugin, interactionPlugin]}
 					views={{
 						listAllFuture: {
@@ -221,6 +253,8 @@ export default function MainView(props) {
 
 	return (
 		<div className="calendars">
+			<Loading show={calendarIsLoading} />
+
 			{props.viewMode === "list" ? calendarioList() : calendarioGrids()}
 		</div>
 	);

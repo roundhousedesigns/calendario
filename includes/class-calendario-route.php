@@ -216,14 +216,21 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
+		$item            = $this->prepare_item_for_database( $request );
+		$additional_data = json_decode( $request->get_body() );
 
-		// Update the post
-		$result = wp_update_post( array(
+		$args = array(
 			'ID'          => $item['ID'],
 			'post_date'   => $item['post_date'],
 			'post_status' => $item['post_status'],
-		) );
+		);
+
+		if ( $additional_data !== new stdClass() ) {
+			$args = array_merge( $args, (array) $additional_data );
+		}
+
+		// Update the post
+		$result = wp_update_post( $args );
 
 		if ( ! is_wp_error( $result ) ) {
 			$unscheduled_meta = get_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, true );
@@ -682,9 +689,10 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function prepare_unscheduled_item_for_response( $item, $request ) {
 		return array(
-			'title' => $item->post_title,
-			'date'  => $item->post_date,
-			'id'    => $item->ID,
+			'id'          => $item->ID,
+			'title'       => $item->post_title,
+			'post_date'   => $item->post_date,
+			'post_status' => $item->post_status,
 		);
 	}
 

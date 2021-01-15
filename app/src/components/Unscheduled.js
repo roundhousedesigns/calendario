@@ -1,18 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Draggable } from "@fullcalendar/interaction";
 
-export default function Unscheduled(props) {
+import PostModalContext from "../context/PostModal";
+
+const Unscheduled = ({ post, index }) => {
 	const [eventData, setEventData] = useState({});
 	const [itemRendered, setItemRendered] = useState(false);
 
+	const { postModalDispatch } = useContext(PostModalContext);
+
 	useEffect(() => {
 		setEventData({
-			id: props.id,
-			title: props.title,
-			post_status: "draft",
+			id: post.id,
+			title: post.title,
+			post_date: post.post_date,
+			post_status: post.post_status,
+			unscheduled: true,
 		});
+
 		setItemRendered(true);
-	}, [props.id, props.title]);
+	}, [post.id, post.title, post.post_date, post.post_status]);
 
 	useEffect(() => {
 		if (itemRendered === true) {
@@ -22,13 +29,23 @@ export default function Unscheduled(props) {
 		}
 	}, [eventData, itemRendered]);
 
+	const handleClick = () => {
+		postModalDispatch({
+			type: "OPEN",
+			post: eventData,
+		});
+	};
+
 	return (
 		<li
-			key={props.index}
-			id={`unsched-${props.id}`}
-			className={`unscheduled-draft fc-event post-id-${props.id}`}
+			key={index}
+			id={`unsched-${post.id}`}
+			className={`unscheduled-draft fc-event post-id-${post.id}`}
+			onClick={handleClick}
 		>
-			{props.title}
+			{post.title}
 		</li>
 	);
-}
+};
+
+export default Unscheduled;
