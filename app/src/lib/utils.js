@@ -16,6 +16,10 @@ export const postStatuses = {
 		editable: true,
 	},
 	pending: {
+		color: "yellow",
+		editable: true,
+	},
+	private: {
 		color: "red",
 		editable: true,
 	},
@@ -111,5 +115,18 @@ export function dateIsBeforeNow(date) {
  */
 export function addMonths(date, num) {
 	let newDate = new Date(date);
-	return newDate.setMonth(date.getMonth() + num);
+	newDate.setMonth(date.getMonth() + num);
+
+	return newDate;
+}
+
+/**
+ * Capitalizes the first letter in a string.
+ *   Does NOT capitalize more than the first word!
+ *
+ * @param {string} string
+ * @returns {string}
+ */
+export function firstToUpper(string) {
+	return string[0].toUpperCase() + string.slice(1);
 }

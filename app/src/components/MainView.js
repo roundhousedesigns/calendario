@@ -175,6 +175,14 @@ const MainView = ({
 		let components = [];
 		for (let i = 0; i < maxViewMonths; i++) {
 			let hideCalendar = i < viewMode ? "visible" : "hidden";
+			let monthStart = addMonths(baseMonth, i);
+			let monthEnd = new Date(
+				monthStart.getFullYear(),
+				monthStart.getMonth() + 1,
+				0
+			);
+			let monthStartString = dateToMDY(monthStart);
+			let monthEndString = dateToMDY(monthEnd);
 
 			components.push(
 				<div
@@ -189,9 +197,7 @@ const MainView = ({
 						initialView="dayGridMonth"
 						defaultTimedEventDuration={"00:01"}
 						eventSources={[
-							`${routeBase}/posts/scheduled/${dateToMDY(
-								baseMonth
-							)}`,
+							`${routeBase}/posts/scheduled/${monthStartString}/${monthEndString}`,
 						]}
 						loading={handleEventLoading}
 						initialDate={addMonths(baseMonth, i)}

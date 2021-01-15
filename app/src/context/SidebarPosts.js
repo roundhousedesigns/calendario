@@ -23,6 +23,22 @@ export function sidebarPostsReducer(state, action) {
 				),
 			};
 
+		case "UPDATE":
+			var { events } = state;
+
+			events.forEach((item, index, events) => {
+				if (action.updateEvent.id === item.id) {
+					Object.keys(action.updateEvent.props).forEach((prop) => {
+						events[index][prop] = action.updateEvent.props[prop];
+					});
+				}
+			});
+
+			return {
+				...state,
+				events: events,
+			};
+
 		default:
 			return state;
 	}

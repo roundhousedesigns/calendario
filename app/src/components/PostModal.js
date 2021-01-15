@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
-import { postStatuses, updatePost } from "../lib/utils";
+import { postStatuses, updatePost, firstToUpper } from "../lib/utils";
+
+import SidebarPostsContext from "../context/SidebarPosts";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -10,6 +12,8 @@ const PostModal = ({ modalClose, post, calendarRefs }) => {
 	const [postDate, setPostDate] = useState(new Date());
 	const [postStatus, setPostStatus] = useState("");
 	const [allowedStatuses, setAllowedStatuses] = useState([]);
+
+	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
 
 	useEffect(() => {
 		setID(post.id);
@@ -49,10 +53,24 @@ const PostModal = ({ modalClose, post, calendarRefs }) => {
 		updatePost(id, postDate, postStatus, post.unscheduled, {
 			post_title: title,
 		});
-		
-		calendarRefs.forEach((calendar) => {
-			calendar.current.getApi().refetchEvents();
-		});
+
+		if (!post.unscheduled) {
+			calendarRefs.forEach((calendar) => {
+				calendar.current.getApi().refetchEvents();
+			});
+		} else {
+			sidebarPostsDispatch({
+				type: "UPDATE",
+				updateEvent: {
+					id: id,
+					props: {
+						title: title,
+						post_date: postDate,
+						post_status: postStatus,
+					},
+				},
+			});
+		}
 
 		modalClose();
 	};
@@ -90,7 +108,7 @@ const PostModal = ({ modalClose, post, calendarRefs }) => {
 					>
 						{allowedStatuses.map((status, index) => (
 							<option key={index} value={status}>
-								{status}
+								{firstToUpper(status)}
 							</option>
 						))}
 					</select>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Draggable } from "@fullcalendar/interaction";
+import { firstToUpper } from "../lib/utils";
 
 import PostModalContext from "../context/PostModal";
 
@@ -44,6 +45,12 @@ const Unscheduled = ({ post, index }) => {
 			onClick={handleClick}
 		>
 			{post.title}
+			{post.post_status === "pending" ||
+			post.post_status === "private" ? (
+				<span className="flag">{firstToUpper(post.post_status)}</span>
+			) : (
+				""
+			)}
 		</li>
 	);
 };

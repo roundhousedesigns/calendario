@@ -59,6 +59,15 @@ code {
 .unscheduled-drafts ul li {
 	padding: 12px 0;
 	cursor: grab;
+	width: 100%;
+	text-align: left;
+}
+
+.unscheduled-drafts ul li .flag {
+	font-weight: bold;
+	float: right;
+	margin-right: 12px;
+	font-size: 0.8em;
 }
 
 .unscheduled-drafts ul li:active {

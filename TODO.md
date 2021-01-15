@@ -15,8 +15,8 @@
 ## Features
 
 -   Manual list view (drag and drop reordering, w/ days)
--   Show flag if unscheduled post is Pending
 -   Loading animations
+-   Option: show/include Private posts (and make editable)
 
 ## Don't Forget
 

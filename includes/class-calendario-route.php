@@ -10,7 +10,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$post_base = 'posts';
 		$user_base = 'user';
 
-		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)/(?P<end>.*?)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
@@ -114,7 +114,8 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_status' => 'any',
 			'inclusive'   => true,
 			'date_query'  => array(
-				'after' => isset( $request['start'] ) ? $request['start'] : null,
+				'before' => isset( $request['end'] ) ? $request['end'] : null,
+				'after'  => isset( $request['start'] ) ? $request['start'] : null,
 			),
 			'meta_query'  => array(
 				'relation' => 'OR',
@@ -235,10 +236,8 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( ! is_wp_error( $result ) ) {
 			$unscheduled_meta = get_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, true );
 			if ( $item['set_unscheduled'] == false && $unscheduled_meta ) {
-				// error_log( 'post becomes SCHEDULED.' );
 				$result = delete_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY );
-			} elseif ( $item['set_unscheduled'] == true ) {
-				// error_log( 'post becomes UNSCHEDULED.' );
+			} elseif ( $item['set_unscheduled'] == true && $unscheduled_meta != 1 ) {
 				$result = update_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, 1 );
 			} else {
 				// error_log( 'Nothing to do.' );
@@ -360,17 +359,17 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function get_range_endpoint_args() {
 		return array(
-			'start'       => array(
+			'start' => array(
 				'description'       => esc_html__( 'Start date', 'rhd' ),
 				'type'              => 'string',
 				'validate_callback' => array( $this, 'validate_date_string' ),
 				'sanitize_callback' => array( $this, 'sanitize_string' ),
 				'required'          => true,
 			),
-			'post_status' => array(
-				'description'       => esc_html__( 'Post status', 'rhd' ),
+			'end'   => array(
+				'description'       => esc_html__( 'End date', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_string' ),
+				'validate_callback' => array( $this, 'validate_date_string' ),
 				'sanitize_callback' => array( $this, 'sanitize_string' ),
 				'required'          => true,
 			),
