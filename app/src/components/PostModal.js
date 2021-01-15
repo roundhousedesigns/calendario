@@ -50,16 +50,7 @@ const PostModal = ({ modalClose, post, calendarRefs }) => {
 			post_title: title,
 		});
 		calendarRefs.forEach((calendar) => {
-			// let sources = calendar.current.getApi().getEventSources();
-
-			// console.log(sources);
-
-			// sources.forEach((source) => {
-			// 	source.refetch();
-			// });
-			let calendarApi = calendar.current.getApi();
-
-			calendarApi.refetchEvents();
+			calendar.current.getApi().refetchEvents();
 		});
 
 		modalClose();
@@ -83,18 +74,12 @@ const PostModal = ({ modalClose, post, calendarRefs }) => {
 						onChange={handleTitleChange}
 					/>
 
-					{post.unscheduled === true ? (
-						<div className="post-date-picker">
-							<label htmlFor="title">Post Date</label>
-							<DatePicker
-								closeOnScroll={(e) => e.target === document}
-								selected={postDate}
-								onChange={handlePostDateChange}
-							/>
-						</div>
-					) : (
-						""
-					)}
+					<label htmlFor="title">Post Date</label>
+					<DatePicker
+						closeOnScroll={(e) => e.target === document}
+						selected={postDate}
+						onChange={handlePostDateChange}
+					/>
 
 					<label htmlFor="title">Post Status</label>
 					<select

@@ -2,27 +2,25 @@
 
 ## FIX
 
--   Set posts as eventSource, maybe that'll help
-
-query date (limiting how far in the future we fetch)
-
--   Loading animations
 -   caching API responses? memoize or something?
 -   deal with post times when updating/retrieving posts
 -   Allow php versions < php 7.4
 -   Custom list view for reordering and dropping?
 -   createUseStyles()
--   Show flag if unscheduled post is Pending
 -   When post is set to Unscheduled, make it a draft (or pending)
 -   Set end range per calendar
+-   Modal
+    -   Update rendered values on submit (sidebar + mainview), refresh in the background
+
+## Features
+
+-   Manual list view (drag and drop reordering, w/ days)
+-   Show flag if unscheduled post is Pending
+-   Loading animations
 
 ## Don't Forget
 
 -   Permissions checks: non-admins can only edit/delete their posts
-
-## Questions
-
--   Should you be able to change past posts?
 
 ## Notes
 

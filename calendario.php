@@ -139,7 +139,7 @@ class Calendario {
 		wp_localize_script( 'react-plugin-0', 'rhdReactPlugin',
 			array(
 				'appSelector' => $this->selector,
-				'restBase'    => get_rest_url( null, 'calendario/v1/posts' ),
+				'restBase'    => get_rest_url( null, 'calendario/v1' ),
 				'postStatuses' => RHD_CALENDARIO_POST_STATUS_COLORS
 			)
 		);

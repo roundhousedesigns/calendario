@@ -9,13 +9,19 @@ import {
 	postStatuses,
 	dateToMDY,
 	updatePost,
-	/*dateIsBeforeNow*/
 } from "../lib/utils.js";
 
 import SidebarPostsContext from "../context/SidebarPosts";
 import PostModalContext from "../context/PostModal";
 
-export default function MainView(props) {
+const MainView = ({
+	calendarRefs,
+	baseMonth,
+	viewMode,
+	maxViewMonths,
+	onViewChange,
+	futuremostDate,
+}) => {
 	const [calendarIsLoading, setCalendarIsLoading] = useState(false);
 	const [unscheduledList, setUnscheduledList] = useState("");
 	const [draggedEvent, setDraggedEvent] = useState({});
@@ -52,9 +58,10 @@ export default function MainView(props) {
 		});
 	};
 
+	/**
+	 * Handles moving events off the sidebar
+	 */
 	const handleEventDragStop = (info) => {
-		// Handles moving events off the sidebar
-
 		const { jsEvent, view } = info;
 		let dropZoneRect = unscheduledList.getBoundingClientRect();
 		let { top, right, bottom, left } = dropZoneRect;
@@ -90,35 +97,31 @@ export default function MainView(props) {
 		setDraggedEvent({});
 	};
 
+	/**
+	 * Internal calendar event drops
+	 */
 	const handleEventDrop = (info) => {
-		// Internal calendar event drops
-		const { event /*view*/ } = info;
+		const { event } = info;
 
-		// eslint-disable-next-line
-		let updateResult = updatePost(
+		updatePost(
 			event.id,
 			event.start,
 			event.extendedProps.post_status,
 			false
 		);
-
-		// if (updateResult === true) {
-		// 	let eventEl = view.getCurrentData().calendarApi.getEventById(event.id);
-		// 	if (dateIsBeforeNow(event.start)) {
-		// 		eventEl.setProp("editable", false);
-		// 	}
-		// }
 	};
 
+	/**
+	 * Fires on external event drop, including from other calendars
+	 */
 	const handleEventRecieve = (info) => {
-		// Fires on external event drop, including from other calendars
-
 		var { event, draggedEl } = info;
+		let post_status = event.extendedProps.post_status;
 
 		if (draggedEl.classList.contains("unscheduled-draft")) {
-			// FROM sidebar TO calendar
-			let post_status = event.extendedProps.post_status;
-
+			/**
+			 * FROM sidebar TO calendar
+			 */
 			event.setProp("backgroundColor", postStatuses[post_status].color);
 			event.setProp("borderColor", postStatuses[post_status].color);
 
@@ -137,11 +140,16 @@ export default function MainView(props) {
 				event.remove();
 			}
 		} else {
-			// FROM calendar A TO calendar B
-			updatePost(event.id, event.start, event.post_status, false);
+			/**
+			 * FROM calendar A TO calendar B
+			 */
+			updatePost(event.id, event.start, post_status, false);
 		}
 	};
 
+	/**
+	 * Clicking an event on the calendar.
+	 */
 	const handleEventClick = (info) => {
 		const { event } = info;
 
@@ -156,14 +164,29 @@ export default function MainView(props) {
 		postModalDispatch({
 			type: "OPEN",
 			post: post,
-			calendarRefs: props.calendarRefs,
+			calendarRefs: calendarRefs,
 		});
 	};
 
+	/**
+	 * Advance a date `i` number of months.
+	 *
+	 * @param {Date} date A date
+	 * @param {int} num How many months to increment
+	 * @return {Date}
+	 */
+	const addMonths = (date, num) => {
+		let newDate = new Date(date);
+		return newDate.setMonth(date.getMonth() + num);
+	};
+
+	/**
+	 * Calendario Grid view
+	 */
 	const calendarioGrids = () => {
 		let components = [];
-		for (let i = 0; i < props.maxViewMonths; i++) {
-			let hideCalendar = i < props.viewMode ? "visible" : "hidden";
+		for (let i = 0; i < maxViewMonths; i++) {
+			let hideCalendar = i < viewMode ? "visible" : "hidden";
 
 			components.push(
 				<div
@@ -173,7 +196,7 @@ export default function MainView(props) {
 				>
 					<FullCalendar
 						key={i}
-						ref={props.calendarRefs[i]}
+						ref={calendarRefs[i]}
 						plugins={[dayGridPlugin, interactionPlugin]}
 						initialView="dayGridMonth"
 						// forceEventDuration={true}
@@ -181,11 +204,11 @@ export default function MainView(props) {
 						// events={posts}
 						eventSources={[
 							`${routeBase}/posts/scheduled/${dateToMDY(
-								props.baseMonth
+								baseMonth
 							)}`,
 						]}
 						loading={handleEventLoading}
-						initialDate={addMonths(props.baseMonth, i)}
+						initialDate={addMonths(baseMonth, i)}
 						fixedWeekCount={false}
 						editable={true}
 						droppable={true}
@@ -212,27 +235,28 @@ export default function MainView(props) {
 		return components;
 	};
 
+	/**
+	 * Calendario List view
+	 */
 	const calendarioList = () => {
 		return (
 			<div id={`fullcalendar-list`} className={`calendar calendar-list`}>
 				<FullCalendar
-					key={props.maxViewMonths + 1}
-					ref={props.calendarRefs[props.maxViewMonths + 1]}
+					key={maxViewMonths + 1}
+					ref={calendarRefs[maxViewMonths + 1]}
 					plugins={[listPlugin, interactionPlugin]}
 					views={{
 						listAllFuture: {
 							type: "list",
 							visibleRange: {
 								start: new Date(),
-								end: props.futuremostDate,
+								end: futuremostDate,
 							},
 						},
 					}}
 					initialView="listAllFuture"
 					eventSources={[
-						`${routeBase}/posts/scheduled/${dateToMDY(
-							props.baseMonth
-						)}`,
+						`${routeBase}/posts/scheduled/${dateToMDY(baseMonth)}`,
 					]}
 					// events={posts}
 					editable={true}
@@ -246,16 +270,13 @@ export default function MainView(props) {
 		);
 	};
 
-	const addMonths = (date, num) => {
-		let newDate = new Date(date);
-		return newDate.setMonth(date.getMonth() + num);
-	};
-
 	return (
 		<div className="calendars">
 			<Loading show={calendarIsLoading} />
 
-			{props.viewMode === "list" ? calendarioList() : calendarioGrids()}
+			{viewMode === "list" ? calendarioList() : calendarioGrids()}
 		</div>
 	);
-}
+};
+
+export default MainView;

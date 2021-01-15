@@ -3,7 +3,7 @@ import Unscheduled from "./Unscheduled.js";
 
 import SidebarPostsContext from "../context/SidebarPosts";
 
-export default function Sidebar() {
+const Sidebar = () => {
 	const { sidebarPosts } = useContext(SidebarPostsContext);
 
 	return (
@@ -21,4 +21,6 @@ export default function Sidebar() {
 			</div>
 		</div>
 	);
-}
+};
+
+export default Sidebar;

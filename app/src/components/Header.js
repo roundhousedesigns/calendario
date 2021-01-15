@@ -1,31 +1,31 @@
 import React from "react";
 
-export default function Header(props) {
+const Header = ({ calendarRefs, viewMode, maxViewMonths, onViewChange }) => {
 	const nextMonth = () => {
-		for (let i = 0; i < props.maxViewMonths; i++) {
-			let calendarApi = props.calendarRef[i].current.getApi();
+		for (let i = 0; i < maxViewMonths; i++) {
+			let calendarApi = calendarRefs[i].current.getApi();
 
 			calendarApi.next();
 		}
 	};
 
 	const prevMonth = () => {
-		for (let i = 0; i < props.maxViewMonths; i++) {
-			let calendarApi = props.calendarRef[i].current.getApi();
+		for (let i = 0; i < maxViewMonths; i++) {
+			let calendarApi = calendarRefs[i].current.getApi();
 
 			calendarApi.prev();
 		}
 	};
 
 	const handleViewChange = (e) => {
-		props.onViewChange(e.target.value);
+		onViewChange(e.target.value);
 	};
 
 	return (
 		<header className="calendario-header">
 			<h1 className="page-title">Calendario II: The Datening</h1>
 
-			{props.viewMode !== "list" ? (
+			{viewMode !== "list" ? (
 				<nav className="calendar-grid-navigation">
 					<button className="prev" id="prev" onClick={prevMonth}>
 						PREV
@@ -43,7 +43,7 @@ export default function Header(props) {
 						value="3"
 						name="view-mode"
 						onChange={handleViewChange}
-						checked={props.viewMode === "3"}
+						checked={viewMode === "3"}
 					/>
 					3 months
 				</label>
@@ -54,7 +54,7 @@ export default function Header(props) {
 						value="1"
 						name="view-mode"
 						onChange={handleViewChange}
-						checked={props.viewMode === "1"}
+						checked={viewMode === "1"}
 					/>
 					1 month
 				</label>
@@ -65,11 +65,13 @@ export default function Header(props) {
 						value="list"
 						name="view-mode"
 						onChange={handleViewChange}
-						checked={props.viewMode === "list"}
+						checked={viewMode === "list"}
 					/>
 					List
 				</label>
 			</div>
 		</header>
 	);
-}
+};
+
+export default Header;
