@@ -9,6 +9,7 @@ import {
 	postStatuses,
 	dateToMDY,
 	updatePost,
+	addMonths,
 } from "../lib/utils.js";
 
 import SidebarPostsContext from "../context/SidebarPosts";
@@ -19,7 +20,6 @@ const MainView = ({
 	baseMonth,
 	viewMode,
 	maxViewMonths,
-	onViewChange,
 	futuremostDate,
 }) => {
 	const [calendarIsLoading, setCalendarIsLoading] = useState(false);
@@ -169,18 +169,6 @@ const MainView = ({
 	};
 
 	/**
-	 * Advance a date `i` number of months.
-	 *
-	 * @param {Date} date A date
-	 * @param {int} num How many months to increment
-	 * @return {Date}
-	 */
-	const addMonths = (date, num) => {
-		let newDate = new Date(date);
-		return newDate.setMonth(date.getMonth() + num);
-	};
-
-	/**
 	 * Calendario Grid view
 	 */
 	const calendarioGrids = () => {
@@ -199,9 +187,7 @@ const MainView = ({
 						ref={calendarRefs[i]}
 						plugins={[dayGridPlugin, interactionPlugin]}
 						initialView="dayGridMonth"
-						// forceEventDuration={true}
 						defaultTimedEventDuration={"00:01"}
-						// events={posts}
 						eventSources={[
 							`${routeBase}/posts/scheduled/${dateToMDY(
 								baseMonth
@@ -258,7 +244,6 @@ const MainView = ({
 					eventSources={[
 						`${routeBase}/posts/scheduled/${dateToMDY(baseMonth)}`,
 					]}
-					// events={posts}
 					editable={true}
 					droppable={true}
 					showNonCurrentDates={false}
