@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
+import CalendarContext from "../context/Calendar";
 
-const Header = ({ calendarRefs, viewMode, maxViewMonths, onViewChange }) => {
+const Header = ({ viewMode, maxViewMonths, onViewChange }) => {
+	const calendarRefs = useContext(CalendarContext);
+
 	const nextMonth = () => {
 		for (let i = 0; i < maxViewMonths; i++) {
 			let calendarApi = calendarRefs[i].current.getApi();

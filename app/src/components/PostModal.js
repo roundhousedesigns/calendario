@@ -3,10 +3,12 @@ import DatePicker from "react-datepicker";
 import { postStatuses, updatePost, firstToUpper } from "../lib/utils";
 
 import SidebarPostsContext from "../context/SidebarPosts";
+import CalendarContext from "../context/Calendar";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const PostModal = ({ modalClose, post, calendarRefs }) => {
+const PostModal = ({ modalClose, post }) => {
+	const calendarRefs = useContext(CalendarContext);
 	const [id, setID] = useState("");
 	const [title, setTitle] = useState("");
 	const [postDate, setPostDate] = useState(new Date());

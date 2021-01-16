@@ -14,14 +14,10 @@ import {
 
 import SidebarPostsContext from "../context/SidebarPosts";
 import PostModalContext from "../context/PostModal";
+import CalendarContext from "../context/Calendar";
 
-const MainView = ({
-	calendarRefs,
-	baseMonth,
-	viewMode,
-	maxViewMonths,
-	futuremostDate,
-}) => {
+const MainView = ({ baseMonth, viewMode, maxViewMonths, futuremostDate }) => {
+	const calendarRefs = useContext(CalendarContext);
 	const [calendarIsLoading, setCalendarIsLoading] = useState(false);
 	const [unscheduledList, setUnscheduledList] = useState("");
 	const [draggedEvent, setDraggedEvent] = useState({});
