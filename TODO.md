@@ -12,13 +12,13 @@
 -   Finish implementing View (app in WP dashboard)
 -   Modal
     -   Update rendered values on submit (sidebar + mainview), refresh in the background
--   Move user view setting to localstorage instead of db call
 
 ## Features
 
 -   Manual list view (drag and drop reordering, w/ days)
 -   Loading animations
 -   Option: show/include Private posts (and make editable)
+- Finish implementing viewMonthCount (store data somewhere) and maybe move all view storage to localstorage instead of db?
 
 ## Don't Forget
 
