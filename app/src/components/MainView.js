@@ -16,7 +16,13 @@ import SidebarPostsContext from "../context/SidebarPosts";
 import PostModalContext from "../context/PostModal";
 import CalendarContext from "../context/Calendar";
 
-const MainView = ({ baseMonth, viewMode, maxViewMonths, futuremostDate }) => {
+const MainView = ({
+	baseMonth,
+	viewMode,
+	maxViewMonths,
+	viewMonthCount,
+	futuremostDate,
+}) => {
 	const calendarRefs = useContext(CalendarContext);
 	const [calendarIsLoading, setCalendarIsLoading] = useState(false);
 	const [unscheduledList, setUnscheduledList] = useState("");
@@ -168,9 +174,11 @@ const MainView = ({ baseMonth, viewMode, maxViewMonths, futuremostDate }) => {
 	 * Calendario Grid view
 	 */
 	const calendarioGrids = () => {
-		let components = [];
-		for (let i = 0; i < maxViewMonths; i++) {
-			let hideCalendar = i < viewMode ? "visible" : "hidden";
+		let calendars = [];
+		let monthCount =
+			viewMonthCount > maxViewMonths ? maxViewMonths : viewMonthCount;
+		for (let i = 0; i < monthCount; i++) {
+			let hideCalendar = i < monthCount ? "visible" : "hidden";
 			let monthStart = addMonths(baseMonth, i);
 			let monthEnd = new Date(
 				monthStart.getFullYear(),
@@ -180,7 +188,7 @@ const MainView = ({ baseMonth, viewMode, maxViewMonths, futuremostDate }) => {
 			let monthStartString = dateToMDY(monthStart);
 			let monthEndString = dateToMDY(monthEnd);
 
-			components.push(
+			calendars.push(
 				<div
 					id={`fullcalendar-${i}`}
 					className={`calendar ${hideCalendar}`}
@@ -197,16 +205,17 @@ const MainView = ({ baseMonth, viewMode, maxViewMonths, futuremostDate }) => {
 						]}
 						loading={handleEventLoading}
 						initialDate={addMonths(baseMonth, i)}
-						fixedWeekCount={false}
-						editable={true}
-						droppable={true}
-						eventClick={handleEventClick}
-						showNonCurrentDates={false}
 						headerToolbar={{
 							left: "title",
 							center: "",
 							right: "",
 						}}
+						selectMirror={false}
+						fixedWeekCount={false}
+						editable={true}
+						droppable={true}
+						eventClick={handleEventClick}
+						showNonCurrentDates={false}
 						eventDragStart={handleEventDragStart}
 						eventDragStop={handleEventDragStop}
 						eventDidMount={handleEventDidMount}
@@ -220,7 +229,7 @@ const MainView = ({ baseMonth, viewMode, maxViewMonths, futuremostDate }) => {
 			);
 		}
 
-		return components;
+		return calendars;
 	};
 
 	/**
@@ -230,8 +239,8 @@ const MainView = ({ baseMonth, viewMode, maxViewMonths, futuremostDate }) => {
 		return (
 			<div id={`fullcalendar-list`} className={`calendar calendar-list`}>
 				<FullCalendar
-					key={maxViewMonths + 1}
-					ref={calendarRefs[maxViewMonths + 1]}
+					key={viewMonthCount + 1}
+					ref={calendarRefs[viewMonthCount + 1]}
 					plugins={[listPlugin, interactionPlugin]}
 					views={{
 						listAllFuture: {

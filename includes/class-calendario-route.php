@@ -297,7 +297,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$result = update_user_option( $item['user_id'], $item['option'], $item['value'], false );
 
 		if ( $result !== false ) {
-			return new WP_REST_Response( 'View updated.', 200 );
+			return new WP_REST_Response( 'Option updated.', 200 );
 		}
 
 		return new WP_Error( 'user-not-updated', __( 'message', 'rhd' ), array( 'status' => 200 ) );

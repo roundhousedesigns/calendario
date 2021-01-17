@@ -14,11 +14,12 @@ import CalendarContext from "./context/Calendar";
 
 import "./App.css";
 
-const maxViewMonths = 3;
+const maxViewMonths = 6;
 
 export default function App() {
 	const baseMonth = getThisMonth();
-	const [viewMode, setViewMode] = useState("3");
+	const [viewMode, setViewMode] = useState("calendar");
+	const [viewMonthCount, setViewMonthCount] = useState(3);
 	const [futuremostDate, setFuturemostDate] = useState("");
 	const [sidebarPosts, sidebarPostsDispatch] = useReducer(
 		sidebarPostsReducer,
@@ -32,7 +33,7 @@ export default function App() {
 		post: {},
 	});
 
-	const calendarRefs = useCalendarRefs(maxViewMonths);
+	const calendarRefs = useCalendarRefs(viewMonthCount);
 
 	useEffect(() => {
 		fetch(`${routeBase}/posts/unscheduled`)
@@ -53,7 +54,7 @@ export default function App() {
 		fetch(`${routeBase}/user/calendario_view_mode/0`)
 			.then((response) => response.json())
 			.then((viewMode) => {
-				viewMode = viewMode === false ? "3" : viewMode;
+				viewMode = viewMode === false ? "calendar" : viewMode;
 				setViewMode(viewMode);
 			});
 	}, []);
@@ -72,6 +73,10 @@ export default function App() {
 		setViewMode(viewMode);
 	};
 
+	const handleViewMonthCountChange = (viewMonthCount) => {
+		setViewMonthCount(viewMonthCount);
+	};
+
 	const handleModalClose = () => {
 		postModalDispatch({
 			type: "CLOSE",
@@ -83,8 +88,10 @@ export default function App() {
 			<CalendarContext.Provider value={calendarRefs}>
 				<Header
 					viewMode={viewMode}
+					viewMonthCount={viewMonthCount}
 					maxViewMonths={maxViewMonths}
 					onViewChange={handleViewChange}
+					onViewMonthCountChange={handleViewMonthCountChange}
 				/>
 				<PostModalContext.Provider
 					value={{ postModal, postModalDispatch }}
@@ -95,6 +102,7 @@ export default function App() {
 						<MainView
 							baseMonth={baseMonth}
 							viewMode={viewMode}
+							viewMonthCount={viewMonthCount}
 							maxViewMonths={maxViewMonths}
 							onViewChange={handleViewChange}
 							futuremostDate={futuremostDate}

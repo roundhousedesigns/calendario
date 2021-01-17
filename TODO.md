@@ -9,9 +9,10 @@
 -   createUseStyles()
 -   When post is set to Unscheduled, make it a draft (or pending)
 -   Set end range per calendar
-- Finish implementing View (app in WP dashboard)
+-   Finish implementing View (app in WP dashboard)
 -   Modal
     -   Update rendered values on submit (sidebar + mainview), refresh in the background
+-   Move user view setting to localstorage instead of db call
 
 ## Features
 
