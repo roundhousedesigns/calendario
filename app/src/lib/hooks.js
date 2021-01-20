@@ -6,6 +6,5 @@ export const useCalendarRefs = (viewMonthCount) => {
 		refs[i] = React.createRef();
 	}
 
-	console.log('refs run');
 	return refs;
 };

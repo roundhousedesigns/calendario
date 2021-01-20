@@ -26,7 +26,7 @@ const MainView = ({
 	const calendarRefs = useContext(CalendarContext);
 	const [calendarIsLoading, setCalendarIsLoading] = useState(false);
 	const [unscheduledList, setUnscheduledList] = useState("");
-	const [draggedEvent, setDraggedEvent] = useState({});
+	const [draggedEvent, setDraggedEvent] = useState({ event: {} });
 
 	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
 	const { postModalDispatch } = useContext(PostModalContext);

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import DatePicker from "react-datepicker";
 import { postStatuses, updatePost, firstToUpper } from "../lib/utils";
 
@@ -7,22 +7,26 @@ import CalendarContext from "../context/Calendar";
 
 import "react-datepicker/dist/react-datepicker.css";
 
+function thisPostReducer(state, action) {
+	return {
+		...state,
+		[action.field]: action.value,
+	};
+}
+
 const PostModal = ({ modalClose, post }) => {
 	const calendarRefs = useContext(CalendarContext);
-	const [id, setID] = useState("");
-	const [title, setTitle] = useState("");
-	const [postDate, setPostDate] = useState(new Date());
-	const [postStatus, setPostStatus] = useState("");
+	const [thisPost, thisPostDispatch] = useReducer(thisPostReducer, {
+		id: post.id,
+		title: post.title,
+		postDate: new Date(post.post_date),
+		postStatus: post.post_status,
+		unscheduled: post.unscheduled,
+	});
+
 	const [allowedStatuses, setAllowedStatuses] = useState([]);
 
 	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
-
-	useEffect(() => {
-		setID(post.id);
-		setTitle(post.title);
-		setPostDate(new Date(post.post_date));
-		setPostStatus(post.post_status);
-	}, [post.id, post.title, post.post_date, post.post_status]);
 
 	useEffect(() => {
 		var allowed = Object.keys(postStatuses);
@@ -37,41 +41,53 @@ const PostModal = ({ modalClose, post }) => {
 		setAllowedStatuses(allowed);
 	}, [post.unscheduled]);
 
-	const handleTitleChange = (e) => {
-		setTitle(e.target.value);
-	};
-
 	const handlePostDateChange = (date) => {
-		setPostDate(date);
+		thisPostDispatch({
+			field: "postDate",
+			value: date,
+		});
 	};
 
-	const handlePostStatusChange = (e) => {
-		setPostStatus(e.target.value);
+	const handleInputChange = (e) => {
+		thisPostDispatch({
+			field: e.target.name,
+			value: e.target.value,
+		});
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		updatePost(id, postDate, postStatus, post.unscheduled, {
-			post_title: title,
-		});
+		let updateResult = updatePost(
+			thisPost.id,
+			thisPost.postDate,
+			thisPost.postStatus,
+			thisPost.unscheduled,
+			{
+				post_title: thisPost.title,
+			}
+		);
 
-		if (!post.unscheduled) {
-			calendarRefs.forEach((calendar) => {
-				calendar.current.getApi().refetchEvents();
-			});
-		} else {
-			sidebarPostsDispatch({
-				type: "UPDATE",
-				updateEvent: {
-					id: id,
-					props: {
-						title: title,
-						post_date: postDate,
-						post_status: postStatus,
+		if (updateResult) {
+			if (!post.unscheduled) {
+				calendarRefs.forEach((calendar) => {
+					let calendarApi = calendar.current.getApi();
+
+					calendarApi.refetchEvents();
+				});
+			} else {
+				sidebarPostsDispatch({
+					type: "UPDATE",
+					updateEvent: {
+						id: thisPost.id,
+						props: {
+							title: thisPost.title,
+							post_date: thisPost.postDate,
+							post_status: thisPost.postStatus,
+						},
 					},
-				},
-			});
+				});
+			}
 		}
 
 		modalClose();
@@ -85,28 +101,28 @@ const PostModal = ({ modalClose, post }) => {
 					className="post-modal-form"
 					onSubmit={handleSubmit}
 				>
-					<input type="hidden" name="id" value={id} />
+					<input type="hidden" name="id" value={thisPost.id} />
 
 					<label htmlFor="title">Post Title</label>
 					<input
 						type="text"
-						value={title}
+						value={thisPost.title}
 						name="title"
-						onChange={handleTitleChange}
+						onChange={handleInputChange}
 					/>
 
-					<label htmlFor="title">Post Date</label>
+					<label htmlFor="postDate">Post Date</label>
 					<DatePicker
 						closeOnScroll={(e) => e.target === document}
-						selected={postDate}
+						selected={thisPost.postDate}
 						onChange={handlePostDateChange}
 					/>
 
 					<label htmlFor="title">Post Status</label>
 					<select
 						name="post_status"
-						onChange={handlePostStatusChange}
-						value={postStatus}
+						onChange={handleInputChange}
+						value={thisPost.postStatus}
 					>
 						{allowedStatuses.map((status, index) => (
 							<option key={index} value={status}>
