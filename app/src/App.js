@@ -12,8 +12,6 @@ import SidebarPostsContext, {
 import PostModalContext, { postModalReducer } from "./context/PostModal";
 import CalendarContext from "./context/Calendar";
 
-import "./App.css";
-
 const maxViewMonths = 6;
 
 export default function App() {
