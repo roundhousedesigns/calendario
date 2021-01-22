@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useReducer } from "react";
 import Header from "./components/Header";
 import MainView from "./components/MainView";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/Sidebar/Sidebar";
 import PostModal from "./components/PostModal";
 import { useCalendarRefs, useStickyState } from "./lib/hooks";
 import { routeBase, getThisMonth } from "./lib/utils";
@@ -101,7 +101,9 @@ export default function App() {
 							onViewChange={handleViewChange}
 							futuremostDate={futuremostDate}
 						/>
+
 						<Sidebar />
+
 						{postModal.show ? (
 							<PostModal
 								post={postModal.post}

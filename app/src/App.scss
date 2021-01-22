@@ -31,12 +31,20 @@
 .sidebar {
 	grid-area: sidebar;
 	padding: 12px;
+
+	.widget {
+		border: 1px solid gray;
+		padding: 16px;
+		margin-bottom: 22px;
+
+		.widget-title {
+			margin-top: 0;
+		}
+	}
 }
 
 .unscheduled-drafts {
-	border: 1px solid gray;
 	min-height: 60px;
-	padding: 16px;
 
 	ul {
 		padding: 0;

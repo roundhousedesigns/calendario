@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Draggable } from "@fullcalendar/interaction";
-import { firstToUpper } from "../lib/utils";
-
-import PostModalContext from "../context/PostModal";
+import { firstToUpper } from "../../../lib/utils";
+import PostModalContext from "../../../context/PostModal";
 
 const Unscheduled = ({ post, index }) => {
 	const [eventData, setEventData] = useState({});
