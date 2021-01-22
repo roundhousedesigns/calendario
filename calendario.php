@@ -30,7 +30,7 @@ define ( 'RHD_CALENDARIO_POST_STATUS_COLORS', array(
 		'editable' => true
 	),
 	'pending' => array(
-		'color' => 'yellow',
+		'color' => 'purple',
 		'editable' => true
 	),
 	'private' => array(

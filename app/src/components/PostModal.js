@@ -101,9 +101,10 @@ const PostModal = ({ modalClose, post }) => {
 					className="post-modal-form"
 					onSubmit={handleSubmit}
 				>
-					<input type="hidden" name="id" value={thisPost.id} />
-
-					<label htmlFor="title">Post Title</label>
+					<label htmlFor="title">
+						<input type="hidden" name="id" value={thisPost.id} />
+						Post Title
+					</label>
 					<input
 						type="text"
 						value={thisPost.title}
@@ -111,25 +112,29 @@ const PostModal = ({ modalClose, post }) => {
 						onChange={handleInputChange}
 					/>
 
-					<label htmlFor="postDate">Post Date</label>
-					<DatePicker
-						closeOnScroll={(e) => e.target === document}
-						selected={thisPost.postDate}
-						onChange={handlePostDateChange}
-					/>
+					<label htmlFor="postDate">
+						Post Date
+						<DatePicker
+							closeOnScroll={(e) => e.target === document}
+							selected={thisPost.postDate}
+							onChange={handlePostDateChange}
+						/>
+					</label>
 
-					<label htmlFor="title">Post Status</label>
-					<select
-						name="post_status"
-						onChange={handleInputChange}
-						value={thisPost.postStatus}
-					>
-						{allowedStatuses.map((status, index) => (
-							<option key={index} value={status}>
-								{firstToUpper(status)}
-							</option>
-						))}
-					</select>
+					<label htmlFor="title">
+						Post Status
+						<select
+							name="postStatus"
+							onChange={handleInputChange}
+							value={thisPost.postStatus}
+						>
+							{allowedStatuses.map((status, index) => (
+								<option key={index} value={status}>
+									{firstToUpper(status)}
+								</option>
+							))}
+						</select>
+					</label>
 
 					<input
 						type="submit"
@@ -139,7 +144,7 @@ const PostModal = ({ modalClose, post }) => {
 				</form>
 
 				<button className="post-modal-close" onClick={modalClose}>
-					close
+					X
 				</button>
 			</div>
 		</div>

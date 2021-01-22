@@ -16,7 +16,7 @@ export const postStatuses = {
 		editable: true,
 	},
 	pending: {
-		color: "yellow",
+		color: "purple",
 		editable: true,
 	},
 	private: {
@@ -43,7 +43,6 @@ export function getThisMonth() {
  * @returns {string}
  */
 export function dateToMDY(date = null) {
-	// TODO: validate date object?
 	if (date) {
 		return (
 			(date.getMonth() > 8

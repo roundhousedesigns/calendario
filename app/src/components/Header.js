@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import CalendarContext from "../context/Calendar";
+import { getThisMonth, addMonths } from "../lib/utils";
 
 const Header = ({
 	viewMode,
@@ -11,7 +12,7 @@ const Header = ({
 	const calendarRefs = useContext(CalendarContext);
 
 	const nextMonth = () => {
-		for (let i = 0; i < maxViewMonths; i++) {
+		for (let i = 0; i < viewMonthCount; i++) {
 			let calendarApi = calendarRefs[i].current.getApi();
 
 			calendarApi.next();
@@ -19,10 +20,20 @@ const Header = ({
 	};
 
 	const prevMonth = () => {
-		for (let i = 0; i < maxViewMonths; i++) {
+		for (let i = 0; i < viewMonthCount; i++) {
 			let calendarApi = calendarRefs[i].current.getApi();
 
 			calendarApi.prev();
+		}
+	};
+
+	const thisMonth = () => {
+		const today = getThisMonth();
+
+		for (let i = 0; i < viewMonthCount; i++) {
+			let calendarApi = calendarRefs[i].current.getApi();
+
+			calendarApi.gotoDate(addMonths(today, i));
 		}
 	};
 
@@ -45,6 +56,9 @@ const Header = ({
 					</button>
 					<button className="next" id="next" onClick={nextMonth}>
 						NEXT
+					</button>
+					<button className="today" id="today" onClick={thisMonth}>
+						TODAY
 					</button>
 				</nav>
 			) : null}
@@ -70,7 +84,7 @@ const Header = ({
 			</div>
 			{viewMode === "calendar" ? (
 				<div className="view-count">
-					<label>Months Shown: </label>
+					<label>{`Months Visible (max ${maxViewMonths}): `}</label>
 					<input
 						type="number"
 						value={viewMonthCount}

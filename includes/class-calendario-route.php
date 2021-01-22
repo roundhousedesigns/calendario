@@ -10,7 +10,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$post_base = 'posts';
 		$user_base = 'user';
 
-		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)/(?P<end>.*?)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)(/(?P<end>.*))?', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
@@ -114,8 +114,8 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_status' => 'any',
 			'inclusive'   => true,
 			'date_query'  => array(
-				'before' => isset( $request['end'] ) ? $request['end'] : null,
-				'after'  => isset( $request['start'] ) ? $request['start'] : null,
+				'before' => isset( $params['end'] ) && $params['end'] ? $params['end'] : null,
+				'after'  => isset( $params['start'] ) && $params['start'] ? $params['start'] : null,
 			),
 			'meta_query'  => array(
 				'relation' => 'OR',
@@ -196,19 +196,16 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function get_item( $request ) {
-		//get parameters from request
-		// $params = $request->get_params();
-		$item = []; //do a query, call another class, etc
-		$data = $this->prepare_item_for_response( $item, $request );
+	// public function get_item( $request ) {
+	// 	$data = $this->prepare_item_for_response( $item, $request );
 
-		//return a response or error based on some conditional
-		if ( 1 == 1 ) {
-			return new WP_REST_Response( $data, 200 );
-		} else {
-			return new WP_Error( 'code', __( 'message', 'rhd' ) );
-		}
-	}
+	// 	//return a response or error based on some conditional
+	// 	if ( 1 == 1 ) {
+	// 		return new WP_REST_Response( $data, 200 );
+	// 	} else {
+	// 		return new WP_Error( 'code', __( 'message', 'rhd' ) );
+	// 	}
+	// }
 
 	/**
 	 * Update one item from the collection
@@ -371,7 +368,7 @@ class Calendario_Route extends WP_REST_Controller {
 				'type'              => 'string',
 				'validate_callback' => array( $this, 'validate_date_string' ),
 				'sanitize_callback' => array( $this, 'sanitize_string' ),
-				'required'          => true,
+				'required'          => false,
 			),
 		);
 	}

@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import MainView from "./components/MainView";
 import Sidebar from "./components/Sidebar";
 import PostModal from "./components/PostModal";
-import { useCalendarRefs } from "./lib/hooks";
+import { useCalendarRefs, useStickyState } from "./lib/hooks";
 import { routeBase, getThisMonth } from "./lib/utils";
 
 import SidebarPostsContext, {
@@ -16,8 +16,12 @@ const maxViewMonths = 6;
 
 export default function App() {
 	const baseMonth = getThisMonth();
-	const [viewMode, setViewMode] = useState("calendar");
-	const [viewMonthCount, setViewMonthCount] = useState(3);
+	const [viewMode, setViewMode] = useStickyState("calendar", "viewMode");
+	const [viewMonthCount, setViewMonthCount] = useStickyState(
+		3,
+		"viewMonthCount"
+	);
+	const [today, setToday] = useState(new Date());
 	const [futuremostDate, setFuturemostDate] = useState("");
 	const [sidebarPosts, sidebarPostsDispatch] = useReducer(
 		sidebarPostsReducer,
@@ -34,6 +38,12 @@ export default function App() {
 	const calendarRefs = useCalendarRefs(viewMonthCount);
 
 	useEffect(() => {
+		let today = new Date();
+		today.setHours(0, 0, 0);
+		setToday(today);
+	}, []);
+
+	useEffect(() => {
 		fetch(`${routeBase}/posts/unscheduled`)
 			.then((response) => response.json())
 			.then((data) => {
@@ -48,31 +58,16 @@ export default function App() {
 			.then((future) => {
 				setFuturemostDate(new Date(future));
 			});
-
-		fetch(`${routeBase}/user/calendario_view_mode/0`)
-			.then((response) => response.json())
-			.then((viewMode) => {
-				viewMode = viewMode === false ? "calendar" : viewMode;
-				setViewMode(viewMode);
-			});
 	}, []);
-
-	useEffect(() => {
-		fetch(`${routeBase}/user/calendario_view_mode/${viewMode}`, {
-			method: "POST",
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				// console.log(data);
-			});
-	}, [viewMode]);
 
 	const handleViewChange = (viewMode) => {
 		setViewMode(viewMode);
 	};
 
 	const handleViewMonthCountChange = (viewMonthCount) => {
-		setViewMonthCount(viewMonthCount);
+		setViewMonthCount(
+			viewMonthCount > maxViewMonths ? maxViewMonths : viewMonthCount
+		);
 	};
 
 	const handleModalClose = () => {
@@ -99,6 +94,7 @@ export default function App() {
 					>
 						<MainView
 							baseMonth={baseMonth}
+							today={today}
 							viewMode={viewMode}
 							viewMonthCount={viewMonthCount}
 							maxViewMonths={maxViewMonths}

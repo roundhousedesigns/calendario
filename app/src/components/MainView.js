@@ -22,6 +22,7 @@ const MainView = ({
 	maxViewMonths,
 	viewMonthCount,
 	futuremostDate,
+	today,
 }) => {
 	const calendarRefs = useContext(CalendarContext);
 	const [calendarIsLoading, setCalendarIsLoading] = useState(false);
@@ -48,6 +49,15 @@ const MainView = ({
 
 	const handleEventLoading = (isLoading) => {
 		setCalendarIsLoading(isLoading);
+	};
+
+	const handleEventAllow = (dropInfo, draggedEvent) => {
+		// Don't allow dropping onto past dates
+		if (today < dropInfo.start) {
+			return true;
+		} else {
+			return false;
+		}
 	};
 
 	const handleEventDragStart = (info) => {
@@ -155,6 +165,9 @@ const MainView = ({
 	const handleEventClick = (info) => {
 		const { event } = info;
 
+		if (event.start < today) {
+		}
+
 		let post = {
 			id: event.id,
 			title: event.title,
@@ -210,18 +223,19 @@ const MainView = ({
 							center: "",
 							right: "",
 						}}
+						showNonCurrentDates={false}
 						selectMirror={false}
 						fixedWeekCount={false}
 						editable={true}
 						droppable={true}
+						selectable={true}
+						eventAllow={handleEventAllow}
 						eventClick={handleEventClick}
-						showNonCurrentDates={false}
 						eventDragStart={handleEventDragStart}
 						eventDragStop={handleEventDragStop}
 						eventDidMount={handleEventDidMount}
 						displayEventTime={false}
 						eventDisplay="block"
-						selectable={true}
 						eventDrop={handleEventDrop}
 						eventReceive={handleEventRecieve}
 					/>
@@ -246,7 +260,7 @@ const MainView = ({
 						listAllFuture: {
 							type: "list",
 							visibleRange: {
-								start: new Date(),
+								start: today,
 								end: futuremostDate,
 							},
 						},
@@ -255,12 +269,18 @@ const MainView = ({
 					eventSources={[
 						`${routeBase}/posts/scheduled/${dateToMDY(baseMonth)}`,
 					]}
-					editable={true}
+					listDayFormat={{
+						month: "long",
+						day: "numeric",
+					}}
+					listDaySideFormat={{ weekday: "long" }}
+					// editable={true}
 					droppable={true}
 					showNonCurrentDates={false}
 					headerToolbar={false}
 					displayEventTime={false}
 					eventDisplay="block"
+					noEventsText="No upcoming posts."
 				/>
 			</div>
 		);
