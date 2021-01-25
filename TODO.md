@@ -17,6 +17,7 @@
 -   Loading animations
 -   Option: show/include Private posts (and make editable)
 -   Finish implementing viewMonthCount (store data somewhere) and maybe move all view storage to localstorage instead of db?
+-   MAYBE move List view to persistent sidebar widget, as a non-editable at-a-glance?
 
 ## Don't Forget
 

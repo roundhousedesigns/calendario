@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useReducer, useState } from "react";
 import DatePicker from "react-datepicker";
 import { postStatuses, updatePost, firstToUpper } from "../lib/utils";
 
-import SidebarPostsContext from "../context/SidebarPosts";
-import CalendarContext from "../context/Calendar";
+import SidebarPostsContext from "./Main/SidebarPostsContext";
+import CalendarContext from "../CalendarContext";
 
 import "react-datepicker/dist/react-datepicker.css";
 
