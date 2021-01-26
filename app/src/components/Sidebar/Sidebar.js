@@ -1,6 +1,6 @@
 import React from "react";
 import Widget from "./Widget";
-import UnscheduledDrafts from "./UnscheduledDrafts/UnscheduledDrafts";
+import UnscheduledDrafts from "./UnscheduledDrafts";
 import StatusFilters from "./StatusFilters";
 
 const Sidebar = () => {

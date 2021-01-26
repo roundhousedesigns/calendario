@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import Header from "./components/Header/Header";
+import Header from "./components/Header";
 import Main from "./components/Main/Main";
 import PostModal from "./components/PostModal";
 import { useCalendarRefs, useStickyState } from "./lib/hooks";

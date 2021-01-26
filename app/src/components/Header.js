@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import CalendarContext from "../../CalendarContext";
-import { getThisMonth, addMonths } from "../../lib/utils";
+import CalendarContext from "../CalendarContext";
+import { getThisMonth, addMonths } from "../lib/utils";
 
 const Header = ({
 	viewMode,
