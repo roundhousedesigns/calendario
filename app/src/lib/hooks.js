@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import { routeBase } from "./utils";
 
 export const useCalendarRefs = (viewMonthCount) => {
 	let refs = [];
 	for (let i = 0; i < viewMonthCount; i++) {
-		refs[i] = React.createRef();
+		refs[i] = createRef();
 	}
 
 	return refs;
@@ -37,20 +37,21 @@ export const useFutureMost = () => {
 };
 
 // export const useFetch = (url, options) => {
-// 	const [response, setResponse] = useState(null);
+// 	const [response, setResponse] = useState([]);
 // 	const [error, setError] = useState(null);
 
+// 	const fetchData = async (url, options) => {
+// 		try {
+// 			const res = await fetch(url, options);
+// 			const json = await res.json();
+// 			setResponse(json);
+// 		} catch (error) {
+// 			setError(error);
+// 		}
+// 	};
+
 // 	useEffect(() => {
-// 		const fetchData = async () => {
-// 			try {
-// 				const res = await fetch(url, options);
-// 				const json = await res.json();
-// 				setResponse(json);
-// 			} catch (error) {
-// 				setError(error);
-// 			}
-// 		};
-// 		fetchData();
+// 		fetchData(url, options);
 // 	}, [url, options]);
 
 // 	return { response, error };

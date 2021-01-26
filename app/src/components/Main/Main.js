@@ -1,7 +1,6 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer } from "react";
 import CalendarArea from "./CalendarArea";
 import Sidebar from "./Sidebar/Sidebar";
-import { routeBase } from "../../lib/utils";
 
 import SidebarPostsContext, {
 	sidebarPostsReducer,
@@ -19,17 +18,6 @@ const Main = ({
 			events: [],
 		}
 	);
-
-	useEffect(() => {
-		fetch(`${routeBase}/posts/unscheduled`)
-			.then((response) => response.json())
-			.then((data) => {
-				sidebarPostsDispatch({
-					type: "POPULATE",
-					events: data,
-				});
-			});
-	}, []);
 
 	return (
 		<SidebarPostsContext.Provider

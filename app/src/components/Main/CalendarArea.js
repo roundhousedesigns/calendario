@@ -3,7 +3,6 @@ import FullCalendar from "@fullcalendar/react";
 import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import Loading from "../Loading";
 import {
 	routeBase,
 	postStatuses,
@@ -20,14 +19,13 @@ import CalendarContext from "../../CalendarContext";
 
 const CalendarArea = ({ viewMode, maxViewMonths, viewMonthCount }) => {
 	const calendarRefs = useContext(CalendarContext);
-	const [calendarIsLoading, setCalendarIsLoading] = useState(false);
+	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
+	const { postModalDispatch } = useContext(PostModalContext);
+
 	const [unscheduledList, setUnscheduledList] = useState({});
 	const [draggedEvent, setDraggedEvent] = useState({});
 	const today = useToday();
 	const baseMonth = getThisMonth();
-
-	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
-	const { postModalDispatch } = useContext(PostModalContext);
 	const futuremostDate = useFutureMost();
 
 	useEffect(() => {
@@ -45,11 +43,7 @@ const CalendarArea = ({ viewMode, maxViewMonths, viewMonthCount }) => {
 		el.setAttribute("id", `post-id-${event.id}`);
 	};
 
-	const handleEventLoading = (isLoading) => {
-		setCalendarIsLoading(isLoading);
-	};
-
-	const handleEventAllow = (dropInfo, draggedEvent) => {
+	const handleEventAllow = (dropInfo) => {
 		// Don't allow dropping onto past dates
 		if (today < dropInfo.start) {
 			return true;
@@ -159,11 +153,7 @@ const CalendarArea = ({ viewMode, maxViewMonths, viewMonthCount }) => {
 	 * Clicking an event on the calendar.
 	 */
 	const handleEventClick = (info) => {
-		console.log(info);
 		const { event } = info;
-
-		if (event.start < today) {
-		}
 
 		let post = {
 			id: event.id,
@@ -213,13 +203,14 @@ const CalendarArea = ({ viewMode, maxViewMonths, viewMonthCount }) => {
 						eventSources={[
 							`${routeBase}/posts/scheduled/${monthStartString}/${monthEndString}`,
 						]}
-						loading={handleEventLoading}
 						initialDate={addMonths(baseMonth, i)}
 						headerToolbar={{
 							left: "title",
 							center: "",
 							right: "",
 						}}
+						editable={true}
+						droppable={true}
 						showNonCurrentDates={false}
 						selectMirror={false}
 						fixedWeekCount={false}
@@ -248,7 +239,6 @@ const CalendarArea = ({ viewMode, maxViewMonths, viewMonthCount }) => {
 			<div id={`fullcalendar-list`} className={`calendar calendar-list`}>
 				<FullCalendar
 					key={viewMonthCount + 1}
-					ref={calendarRefs[viewMonthCount + 1]}
 					plugins={[listPlugin, interactionPlugin]}
 					views={{
 						listAllFuture: {
@@ -280,8 +270,6 @@ const CalendarArea = ({ viewMode, maxViewMonths, viewMonthCount }) => {
 
 	return (
 		<div className="calendars">
-			<Loading show={calendarIsLoading} />
-
 			{viewMode === "list" ? calendarioList() : calendarioGrids()}
 		</div>
 	);

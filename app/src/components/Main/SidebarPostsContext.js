@@ -9,6 +9,7 @@ export function sidebarPostsReducer(state, action) {
 			return {
 				events: action.events,
 			};
+
 		case "ADD":
 			return {
 				...state,
