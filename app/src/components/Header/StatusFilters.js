@@ -2,8 +2,8 @@ import React from "react";
 
 const StatusFilters = () => {
 	return (
-		<div>
-			<p>Show/hide statuses here</p>
+		<div className="status-filters">
+			<p>Status filters over here</p>
 		</div>
 	);
 };

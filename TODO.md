@@ -1,5 +1,9 @@
 # TODO
 
+## PRIORITY
+
+-   Change eventSources BACK to using event arrays. OR work out subscribing to event changes for refetches in other components.
+
 ## FIX
 
 -   caching API responses? memoize or something?
@@ -9,7 +13,7 @@
 -   Finish implementing View (app in WP dashboard)
 -   Modal
     -   Update rendered values on submit (sidebar + mainview), refresh in the background
--   refetching issues/ref issues
+-   Don't allow setting future posts to 'publish,' force to Future
 
 ## Features
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Widget from "./Widget";
 import UnscheduledDrafts from "./UnscheduledDrafts";
-import StatusFilters from "./StatusFilters";
+import ListView from "./ListView";
 
 const Sidebar = () => {
 	return (
@@ -9,8 +9,8 @@ const Sidebar = () => {
 			<Widget title="Unscheduled Drafts" classString="unscheduled-drafts">
 				<UnscheduledDrafts />
 			</Widget>
-			<Widget title="Status Filters" classString="status-filters">
-				<StatusFilters />
+			<Widget title="At a glance" classString="list-view">
+				<ListView />
 			</Widget>
 		</div>
 	);

@@ -10,19 +10,6 @@ export const useCalendarRefs = (viewMonthCount) => {
 	return refs;
 };
 
-export const useToday = () => {
-	const [today, setToday] = useState(null);
-
-	useEffect(() => {
-		let today = new Date();
-		today.setHours(0, 0, 0);
-
-		setToday(today);
-	}, []);
-
-	return today;
-};
-
 export const useFutureMost = () => {
 	const [futuremostDate, setFuturemostDate] = useState(null);
 	useEffect(() => {

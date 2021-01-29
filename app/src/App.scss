@@ -6,14 +6,20 @@
 	padding: 0 22px;
 	display: grid;
 	gap: 1%;
-	grid-template-columns: 2fr 1fr;
+	grid-template-columns: 2fr 1.3334fr;
 	grid-template-areas:
-		"header sidebar"
+		"header header"
 		"main   sidebar";
 }
 
 .calendario-header {
 	grid-area: header;
+
+	.header-tools {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
+	}
 }
 
 .calendars {
@@ -31,7 +37,6 @@
 .sidebar {
 	grid-area: sidebar;
 	padding: 12px;
-	margin-top: 60px;
 
 	.widget {
 		border: 1px solid gray;
@@ -40,6 +45,18 @@
 
 		.widget-title {
 			margin-top: 0;
+		}
+
+		&__list-view {
+			height: auto;
+
+			.calendar {
+				height: 300px;
+
+				.fc {
+					height: 100%;
+				}
+			}
 		}
 	}
 }

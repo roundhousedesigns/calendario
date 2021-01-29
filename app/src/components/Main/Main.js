@@ -1,10 +1,13 @@
 import React, { useReducer } from "react";
 import CalendarArea from "./CalendarArea";
 import Sidebar from "../Sidebar/Sidebar";
+import PostModal from "../PostModal";
+
+import PostModalContext, { postModalReducer } from "../../PostModalContext";
 
 import SidebarPostsContext, {
 	sidebarPostsReducer,
-} from "./SidebarPostsContext";
+} from "../SidebarPostsContext";
 
 const Main = ({
 	viewMode,
@@ -12,6 +15,11 @@ const Main = ({
 	maxViewMonths,
 	handleViewChange,
 }) => {
+	const [postModal, postModalDispatch] = useReducer(postModalReducer, {
+		show: false,
+		post: {},
+	});
+
 	const [sidebarPosts, sidebarPostsDispatch] = useReducer(
 		sidebarPostsReducer,
 		{
@@ -19,19 +27,34 @@ const Main = ({
 		}
 	);
 
-	return (
-		<SidebarPostsContext.Provider
-			value={{ sidebarPosts, sidebarPostsDispatch }}
-		>
-			<CalendarArea
-				viewMode={viewMode}
-				viewMonthCount={viewMonthCount}
-				maxViewMonths={maxViewMonths}
-				onViewChange={handleViewChange}
-			/>
+	const handleModalClose = () => {
+		postModalDispatch({
+			type: "CLOSE",
+		});
+	};
 
-			<Sidebar />
-		</SidebarPostsContext.Provider>
+	return (
+		<PostModalContext.Provider value={{ postModal, postModalDispatch }}>
+			<SidebarPostsContext.Provider
+				value={{ sidebarPosts, sidebarPostsDispatch }}
+			>
+				<CalendarArea
+					viewMode={viewMode}
+					viewMonthCount={viewMonthCount}
+					maxViewMonths={maxViewMonths}
+					onViewChange={handleViewChange}
+				/>
+
+				<Sidebar />
+
+				{postModal.show ? (
+					<PostModal
+						post={postModal.post}
+						modalClose={handleModalClose}
+					/>
+				) : null}
+			</SidebarPostsContext.Provider>
+		</PostModalContext.Provider>
 	);
 };
 

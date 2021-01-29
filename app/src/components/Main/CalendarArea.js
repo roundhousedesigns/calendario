@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import FullCalendar from "@fullcalendar/react";
-import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import {
@@ -10,23 +9,23 @@ import {
 	updatePost,
 	addMonths,
 	getThisMonth,
+	getToday,
 } from "../../lib/utils.js";
-import { useToday, useFutureMost } from "../../lib/hooks";
 
-import SidebarPostsContext from "./SidebarPostsContext";
+import SidebarPostsContext from "../SidebarPostsContext";
 import PostModalContext from "../../PostModalContext";
 import CalendarContext from "../../CalendarContext";
 
-const CalendarArea = ({ viewMode, maxViewMonths, viewMonthCount }) => {
+const CalendarArea = ({ maxViewMonths, viewMonthCount }) => {
 	const calendarRefs = useContext(CalendarContext);
 	const { sidebarPostsDispatch } = useContext(SidebarPostsContext);
 	const { postModalDispatch } = useContext(PostModalContext);
 
 	const [unscheduledList, setUnscheduledList] = useState({});
 	const [draggedEvent, setDraggedEvent] = useState({});
-	const today = useToday();
+	getToday();
 	const baseMonth = getThisMonth();
-	const futuremostDate = useFutureMost();
+	const today = getToday();
 
 	useEffect(() => {
 		let el = document.getElementById("unscheduled-drafts-list");
@@ -231,48 +230,7 @@ const CalendarArea = ({ viewMode, maxViewMonths, viewMonthCount }) => {
 		return calendars;
 	};
 
-	/**
-	 * Calendario List view
-	 */
-	const calendarioList = () => {
-		return (
-			<div id={`fullcalendar-list`} className={`calendar calendar-list`}>
-				<FullCalendar
-					key={viewMonthCount + 1}
-					plugins={[listPlugin, interactionPlugin]}
-					views={{
-						listAllFuture: {
-							type: "list",
-							visibleRange: {
-								start: today,
-								end: futuremostDate,
-							},
-						},
-					}}
-					initialView="listAllFuture"
-					eventSources={[
-						`${routeBase}/posts/scheduled/${dateToMDY(baseMonth)}`,
-					]}
-					listDayFormat={{
-						month: "long",
-						day: "numeric",
-					}}
-					listDaySideFormat={{ weekday: "long" }}
-					showNonCurrentDates={false}
-					headerToolbar={false}
-					displayEventTime={false}
-					eventDisplay="block"
-					noEventsText="No upcoming posts."
-				/>
-			</div>
-		);
-	};
-
-	return (
-		<div className="calendars">
-			{viewMode === "list" ? calendarioList() : calendarioGrids()}
-		</div>
-	);
+	return <div className="calendars">{calendarioGrids()}</div>;
 };
 
 export default CalendarArea;

@@ -25,6 +25,13 @@ export const postStatuses = {
 	},
 };
 
+export function getToday() {
+	let today = new Date();
+	today.setHours(0, 0, 0);
+
+	return today;
+}
+
 /**
  * Gets a Date object representing the first day of the current month.
  *
@@ -71,6 +78,11 @@ export function dateToMDY(date = null) {
 export function updatePost(id, date, post_status, set_unscheduled, args = {}) {
 	let formattedDate = dateToMDY(date);
 
+	// Force future posts w/ "publish" status to "future"
+	if (isFutureDate(date) && post_status === "publish") {
+		post_status = "future";
+	}
+
 	let apiUrl = `${routeBase}/posts/update/${id}/${formattedDate}/${post_status}/${
 		set_unscheduled ? 1 : 0
 	}`;
@@ -97,13 +109,13 @@ export function updatePost(id, date, post_status, set_unscheduled, args = {}) {
  * @param {Date} date The date to check
  * @returns {boolean|undefined} Undefined if object passed is not of type Date
  */
-// export function dateIsBeforeNow(date) {
-// 	if (date instanceof Date) {
-// 		return date < new Date();
-// 	} else {
-// 		return undefined;
-// 	}
-// }
+export function isFutureDate(date) {
+	if (date instanceof Date) {
+		return new Date() < date;
+	} else {
+		return undefined;
+	}
+}
 
 /**
  * Advance a date `i` number of months.

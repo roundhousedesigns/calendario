@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import Draft from "./Draft.js";
 import { routeBase } from "../../lib/utils";
 
-import SidebarPostsContext from "../Main/SidebarPostsContext";
+import SidebarPostsContext from "../SidebarPostsContext";
 
 const UnscheduledDrafts = () => {
 	const { sidebarPosts, sidebarPostsDispatch } = useContext(
