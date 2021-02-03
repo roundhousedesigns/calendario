@@ -231,7 +231,12 @@ const CalendarArea = ({ maxViewMonths, viewMonthCount }) => {
 		return calendars;
 	};
 
-	return <div className="calendars">{calendarioGrids()}</div>;
+	return (
+		<div className="calendars">
+			{/* {calendarioGrids()} */}
+			{<Calendar />}
+		</div>
+	);
 };
 
 export default CalendarArea;
