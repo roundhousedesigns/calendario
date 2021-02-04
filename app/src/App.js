@@ -1,125 +1,40 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import Header from "./components/Header";
-import MainView from "./components/MainView";
+import Main from "./components/Calendar";
 import Sidebar from "./components/Sidebar";
-import PostModal from "./components/PostModal";
-import { routeBase, getThisMonth } from "./lib/utils";
 
-import SidebarPostsContext, {
-	sidebarPostsReducer,
-} from "./context/SidebarPosts";
-import PostModalContext, { postModalReducer } from "./context/PostModal";
+import PostsContext, { postsReducer } from "./PostsContext";
+import DragContext, { dragReducer } from "./DragContext";
 
-import "./App.css";
+import { samplePosts } from "./lib/utils";
 
-const maxViewMonths = 3;
+import "./App.scss";
 
 export default function App() {
-	const baseMonth = getThisMonth();
-	const [viewMode, setViewMode] = useState("3");
-	const [calendarRefs, setCalendarRefs] = useState([]);
-	const [futuremostDate, setFuturemostDate] = useState("");
-	const [sidebarPosts, sidebarPostsDispatch] = useReducer(
-		sidebarPostsReducer,
-		{
-			events: [],
-		}
-	);
-
-	const [postModal, postModalDispatch] = useReducer(postModalReducer, {
-		show: false,
+	const [posts, postsDispatch] = useReducer(postsReducer, samplePosts);
+	const [draggedPost, dragDispatch] = useReducer(dragReducer, {
+		isDragging: false,
 		post: {},
 	});
 
-	const createCalendarRefs = () => {
-		let refs = [];
-		for (let i = 0; i < maxViewMonths; i++) {
-			refs[i] = React.createRef();
-		}
-		setCalendarRefs(refs);
-	};
-
 	useEffect(() => {
-		setCalendarRefs(createCalendarRefs);
-	}, []);
-
-	useEffect(() => {
-		const apiUrl = `${routeBase}/posts/unscheduled`;
-		fetch(apiUrl)
-			.then((response) => response.json())
-			.then((data) => {
-				sidebarPostsDispatch({
-					type: "POPULATE",
-					events: data,
-				});
-			});
-	}, []);
-
-	useEffect(() => {
-		fetch(`${routeBase}/posts/futuremost`)
-			.then((response) => response.json())
-			.then((future) => {
-				setFuturemostDate(new Date(future));
-			});
-
-		fetch(`${routeBase}/user/calendario_view_mode/0`)
-			.then((response) => response.json())
-			.then((viewMode) => {
-				viewMode = viewMode === false ? "3" : viewMode;
-				setViewMode(viewMode);
-			});
-	}, []);
-
-	useEffect(() => {
-		fetch(`${routeBase}/user/calendario_view_mode/${viewMode}`, {
-			method: "POST",
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				// console.log(data);
-			});
-	}, [viewMode]);
-
-	const handleViewChange = (viewMode) => {
-		setViewMode(viewMode);
-	};
-
-	const handleModalClose = () => {
-		postModalDispatch({
-			type: "CLOSE",
+		postsDispatch({
+			type: "POPULATE",
+			scheduled: samplePosts.scheduled,
+			unscheduled: samplePosts.unscheduled,
 		});
-	};
+	}, []);
 
 	return (
 		<div className="calendario">
-			<Header
-				calendarRefs={calendarRefs}
-				viewMode={viewMode}
-				maxViewMonths={maxViewMonths}
-				onViewChange={handleViewChange}
-			/>
-			<PostModalContext.Provider value={{ postModal, postModalDispatch }}>
-				<SidebarPostsContext.Provider
-					value={{ sidebarPosts, sidebarPostsDispatch }}
-				>
-					<MainView
-						calendarRefs={calendarRefs}
-						baseMonth={baseMonth}
-						viewMode={viewMode}
-						maxViewMonths={maxViewMonths}
-						onViewChange={handleViewChange}
-						futuremostDate={futuremostDate}
-					/>
+			<Header />
+
+			<DragContext.Provider value={{ draggedPost, dragDispatch }}>
+				<PostsContext.Provider value={{ posts, postsDispatch }}>
+					<Main />
 					<Sidebar />
-					{postModal.show ? (
-						<PostModal
-							post={postModal.post}
-							modalClose={handleModalClose}
-							calendarRefs={calendarRefs}
-						/>
-					) : null}
-				</SidebarPostsContext.Provider>
-			</PostModalContext.Provider>
+				</PostsContext.Provider>
+			</DragContext.Provider>
 		</div>
 	);
 }

@@ -1,82 +1,47 @@
-// export const routeBase = window.rhdReactPlugin.restBase; // Live URL
-export const routeBase = "http://localhost/wp-json/calendario/v1";
-
-// export const postStatuses = window.rhdReactPlugin.postStatuses; // Live value
-export const postStatuses = {
-	publish: {
-		color: "blue",
-		editable: false,
-	},
-	future: {
-		color: "green",
-		editable: true,
-	},
-	draft: {
-		color: "gray",
-		editable: true,
-	},
-	pending: {
-		color: "red",
-		editable: true,
-	},
+export const samplePosts = {
+	scheduled: [
+		{
+			id: 1,
+			post_title: "Test Post 1",
+			post_status: "draft",
+			post_date: "02-10-2021", // will be more accurate and have post time, as well
+		},
+		{
+			id: 2,
+			post_title: "Test Post 2",
+			post_status: "future",
+			post_date: "02-13-2021", // will be more accurate and have post time, as well
+		},
+		{
+			id: 6,
+			post_title: "Test Post 6",
+			post_status: "future",
+			post_date: "02-14-2021", // will be more accurate and have post time, as well
+		},
+	],
+	unscheduled: [
+		{
+			id: 3,
+			post_title: "Test Post 3",
+			post_status: "draft",
+			post_date: "02-16-2021", // will be more accurate and have post time, as well
+		},
+		{
+			id: 4,
+			post_title: "Test Post 4",
+			post_status: "pending",
+			post_date: "02-22-2021", // will be more accurate and have post time, as well
+		},
+		{
+			id: 5,
+			post_title: "Test Post 5",
+			post_status: "pending",
+			post_date: "02-22-2021", // will be more accurate and have post time, as well
+		},
+	],
 };
 
-export function getThisMonth() {
-	let thisMonth = new Date();
-	thisMonth.setDate(1);
-	return thisMonth;
-}
-
-export function dateToMDY(date = null) {
-	// TODO: validate date object?
-	if (date) {
-		return (
-			(date.getMonth() > 8
-				? date.getMonth() + 1
-				: "0" + (date.getMonth() + 1)) +
-			"-" +
-			(date.getDate() > 9 ? date.getDate() : "0" + date.getDate()) +
-			"-" +
-			date.getFullYear()
-		);
-	} else {
-		return "";
-	}
-}
-
-export function updatePost(id, start, post_status, set_unscheduled, args = {}) {
-	let date = dateToMDY(start);
-
-	let apiUrl = `${routeBase}/posts/update/${id}/${date}/${post_status}/${
-		set_unscheduled ? 1 : 0
-	}`;
-
-	fetch(apiUrl, {
-		method: "POST",
-		body: JSON.stringify(args),
-	})
-		.then((response) => {
-			response.json();
-			if (!response.ok) {
-				return false;
-			}
-		})
-		.then((data) => {
-			// console.log(data);
-		});
-
-	return true;
-}
-
-/**
- *
- * @param {Date} date The date to check
- * @return {boolean|undefined} Undefined if object passed is not of type Date
- */
-export function dateIsBeforeNow(date) {
-	if (date instanceof Date) {
-		return date < new Date();
-	} else {
-		return undefined;
-	}
-}
+export const dateFormat = {
+	day: "d",
+	date: "MM-dd-yyyy",
+};

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Draggable } from "@fullcalendar/interaction";
-
-import PostModalContext from "../context/PostModal";
+import { firstToUpper } from "../../lib/utils";
+import PostModalContext from "../../PostModalContext";
 
 const Unscheduled = ({ post, index }) => {
 	const [eventData, setEventData] = useState({});
@@ -44,6 +44,12 @@ const Unscheduled = ({ post, index }) => {
 			onClick={handleClick}
 		>
 			{post.title}
+			{post.post_status === "pending" ||
+			post.post_status === "private" ? (
+				<span className="flag">{firstToUpper(post.post_status)}</span>
+			) : (
+				""
+			)}
 		</li>
 	);
 };

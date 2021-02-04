@@ -10,7 +10,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$post_base = 'posts';
 		$user_base = 'user';
 
-		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)(/(?P<end>.*))?', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
@@ -67,40 +67,6 @@ class Calendario_Route extends WP_REST_Controller {
 				'args'                => array( $this->get_user_option_endpoint_args() ),
 			),
 		) );
-
-		// register_rest_route( $namespace, '/' . $base . '/(?P<id>[\d]+)', array(
-		// 	array(
-		// 		'methods'             => WP_REST_Server::READABLE,
-		// 		'callback'            => array( $this, 'get_item' ),
-		// 		'permission_callback' => array( $this, 'get_item_permissions_check' ),
-		// 		'args'                => array(
-		// 			'context' => array(
-		// 				'default' => 'view',
-		// 			),
-		// 		),
-		// 	),
-		// 	array(
-		// 		'methods'             => WP_REST_Server::EDITABLE,
-		// 		'callback'            => array( $this, 'update_item' ),
-		// 		'permission_callback' => array( $this, 'update_item_permissions_check' ),
-		// 		'args'                => $this->get_endpoint_args_for_item_schema( false ),
-		// 	),
-		// 	array(
-		// 		'methods'             => WP_REST_Server::DELETABLE,
-		// 		'callback'            => array( $this, 'delete_item' ),
-		// 		'permission_callback' => array( $this, 'delete_item_permissions_check' ),
-		// 		'args'                => array(
-		// 			'force' => array(
-		// 				'default' => false,
-		// 			),
-		// 		),
-		// 	),
-		// ) );
-
-		// register_rest_route( $namespace, '/' . $base . '/schema', array(
-		// 	'methods'  => WP_REST_Server::READABLE,
-		// 	'callback' => array( $this, 'get_public_item_schema' ),
-		// ) );
 	}
 
 	/**
@@ -114,7 +80,8 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_status' => 'any',
 			'inclusive'   => true,
 			'date_query'  => array(
-				'after' => isset( $request['start'] ) ? $request['start'] : null,
+				'before' => isset( $params['end'] ) && $params['end'] ? $params['end'] : null,
+				'after'  => isset( $params['start'] ) && $params['start'] ? $params['start'] : null,
 			),
 			'meta_query'  => array(
 				'relation' => 'OR',
@@ -195,19 +162,16 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function get_item( $request ) {
-		//get parameters from request
-		// $params = $request->get_params();
-		$item = []; //do a query, call another class, etc
-		$data = $this->prepare_item_for_response( $item, $request );
+	// public function get_item( $request ) {
+	// 	$data = $this->prepare_item_for_response( $item, $request );
 
-		//return a response or error based on some conditional
-		if ( 1 == 1 ) {
-			return new WP_REST_Response( $data, 200 );
-		} else {
-			return new WP_Error( 'code', __( 'message', 'rhd' ) );
-		}
-	}
+	// 	//return a response or error based on some conditional
+	// 	if ( 1 == 1 ) {
+	// 		return new WP_REST_Response( $data, 200 );
+	// 	} else {
+	// 		return new WP_Error( 'code', __( 'message', 'rhd' ) );
+	// 	}
+	// }
 
 	/**
 	 * Update one item from the collection
@@ -235,10 +199,8 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( ! is_wp_error( $result ) ) {
 			$unscheduled_meta = get_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, true );
 			if ( $item['set_unscheduled'] == false && $unscheduled_meta ) {
-				// error_log( 'post becomes SCHEDULED.' );
 				$result = delete_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY );
-			} elseif ( $item['set_unscheduled'] == true ) {
-				// error_log( 'post becomes UNSCHEDULED.' );
+			} elseif ( $item['set_unscheduled'] == true && $unscheduled_meta != 1 ) {
 				$result = update_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, 1 );
 			} else {
 				// error_log( 'Nothing to do.' );
@@ -298,7 +260,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$result = update_user_option( $item['user_id'], $item['option'], $item['value'], false );
 
 		if ( $result !== false ) {
-			return new WP_REST_Response( 'View updated.', 200 );
+			return new WP_REST_Response( 'Option updated.', 200 );
 		}
 
 		return new WP_Error( 'user-not-updated', __( 'message', 'rhd' ), array( 'status' => 200 ) );
@@ -360,19 +322,19 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function get_range_endpoint_args() {
 		return array(
-			'start'       => array(
+			'start' => array(
 				'description'       => esc_html__( 'Start date', 'rhd' ),
 				'type'              => 'string',
 				'validate_callback' => array( $this, 'validate_date_string' ),
 				'sanitize_callback' => array( $this, 'sanitize_string' ),
 				'required'          => true,
 			),
-			'post_status' => array(
-				'description'       => esc_html__( 'Post status', 'rhd' ),
+			'end'   => array(
+				'description'       => esc_html__( 'End date', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_string' ),
+				'validate_callback' => array( $this, 'validate_date_string' ),
 				'sanitize_callback' => array( $this, 'sanitize_string' ),
-				'required'          => true,
+				'required'          => false,
 			),
 		);
 	}
