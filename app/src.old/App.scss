@@ -2,66 +2,62 @@
   * Style it up styley
   */
 
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
-@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
-
-:root {
-	--main-color: #1a8fff;
-	--main-color-light: #53cbf1;
-	--text-color: #777;
-	--text-color-light: #ccc;
-	--border-color: #eee;
-	--bg-color: #f9f9f9;
-	--neutral-color: #fff;
-}
-
-* {
-	box-sizing: border-box;
-}
-
-body {
-	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-	font-size: 1em;
-	font-weight: 300;
-	line-height: 1.5;
-	color: var(--text-color);
-	background: var(--bg-color);
-	position: relative;
-}
-
 .calendario {
+	padding: 0 22px;
 	display: grid;
 	gap: 1%;
 	grid-template-columns: 2fr 1.3334fr;
 	grid-template-areas:
 		"header header"
 		"main   sidebar";
+}
 
-	&__header,
-	&__main,
-	&__sidebar {
-		background: var(--neutral-color);
-	}
+.calendario-header {
+	grid-area: header;
 
-	&__header {
-		grid-area: header;
-		display: block;
-		width: 100%;
-		padding: 1.75em 22px;
-		border-bottom: 1px solid var(--border-color);
-	}
-
-	&__main {
-		grid-area: main;
-		margin: 0 auto;
+	.header-tools {
+		display: flex;
+		justify-content: space-between;
 		width: 100%;
 	}
+}
 
-	&__sidebar {
-		grid-area: sidebar;
-		padding: 12px;
-		width: 100%;
-		border: 1px solid var(--border-color);
+.calendars {
+	grid-area: main;
+}
+
+.calendar {
+	margin-bottom: 24px;
+
+	.hidden {
+		display: none;
+	}
+}
+
+.sidebar {
+	grid-area: sidebar;
+	padding: 12px;
+
+	.widget {
+		border: 1px solid gray;
+		padding: 16px;
+		margin-bottom: 22px;
+
+		.widget-title {
+			margin-top: 0;
+		}
+
+		&__list-view {
+			height: auto;
+
+			.calendar {
+				height: 300px;
+
+				.fc {
+					height: 100%;
+				}
+			}
+		}
 	}
 }
 
@@ -92,6 +88,10 @@ body {
 			}
 		}
 	}
+}
+
+.fc-day-past {
+	opacity: 0.25;
 }
 
 .post-modal {
@@ -141,4 +141,11 @@ body {
 	background: rgba(0, 0, 0, 0.2);
 	color: white;
 	font-size: 16px;
+}
+
+.calendar-loading {
+	position: fixed;
+	text-align: center;
+	padding: 36px;
+	background: white;
 }

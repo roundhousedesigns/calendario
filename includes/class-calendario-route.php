@@ -67,40 +67,6 @@ class Calendario_Route extends WP_REST_Controller {
 				'args'                => array( $this->get_user_option_endpoint_args() ),
 			),
 		) );
-
-		// register_rest_route( $namespace, '/' . $base . '/(?P<id>[\d]+)', array(
-		// 	array(
-		// 		'methods'             => WP_REST_Server::READABLE,
-		// 		'callback'            => array( $this, 'get_item' ),
-		// 		'permission_callback' => array( $this, 'get_item_permissions_check' ),
-		// 		'args'                => array(
-		// 			'context' => array(
-		// 				'default' => 'view',
-		// 			),
-		// 		),
-		// 	),
-		// 	array(
-		// 		'methods'             => WP_REST_Server::EDITABLE,
-		// 		'callback'            => array( $this, 'update_item' ),
-		// 		'permission_callback' => array( $this, 'update_item_permissions_check' ),
-		// 		'args'                => $this->get_endpoint_args_for_item_schema( false ),
-		// 	),
-		// 	array(
-		// 		'methods'             => WP_REST_Server::DELETABLE,
-		// 		'callback'            => array( $this, 'delete_item' ),
-		// 		'permission_callback' => array( $this, 'delete_item_permissions_check' ),
-		// 		'args'                => array(
-		// 			'force' => array(
-		// 				'default' => false,
-		// 			),
-		// 		),
-		// 	),
-		// ) );
-
-		// register_rest_route( $namespace, '/' . $base . '/schema', array(
-		// 	'methods'  => WP_REST_Server::READABLE,
-		// 	'callback' => array( $this, 'get_public_item_schema' ),
-		// ) );
 	}
 
 	/**

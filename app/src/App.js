@@ -1,39 +1,16 @@
 import React from "react";
-import Header from "./components/Header/Header";
-import Main from "./components/Main/Main";
-import { useCalendarRefs, useStickyState } from "./lib/hooks";
-import CalendarContext from "./CalendarContext";
+import Header from "./components/Header";
+import Main from "./components/Main";
+import Sidebar from "./components/Sidebar";
 
-const maxViewMonths = 6;
+import "./App.scss";
 
 export default function App() {
-	const [viewMonthCount, setViewMonthCount] = useStickyState(
-		3,
-		"viewMonthCount"
-	);
-
-	const calendarRefs = useCalendarRefs(viewMonthCount);
-
-	const handleViewMonthCountChange = (viewMonthCount) => {
-		setViewMonthCount(
-			viewMonthCount > maxViewMonths ? maxViewMonths : viewMonthCount
-		);
-	};
-
 	return (
 		<div className="calendario">
-			<CalendarContext.Provider value={calendarRefs}>
-				<Header
-					viewMonthCount={viewMonthCount}
-					maxViewMonths={maxViewMonths}
-					onViewMonthCountChange={handleViewMonthCountChange}
-				/>
-
-				<Main
-					viewMonthCount={viewMonthCount}
-					maxViewMonths={maxViewMonths}
-				/>
-			</CalendarContext.Provider>
+			<Header />
+			<Main />
+			<Sidebar />
 		</div>
 	);
 }
