@@ -4,6 +4,16 @@ export default function Header() {
 	return (
 		<header className="calendario__header">
 			<h1 className="page-title">Calendario II: The Datening</h1>
+			<p>
+				Drag posts back and forth from the <strong>Calendar</strong> to
+				the <strong>Unscheduled Drafts</strong> area. Coming soon:
+			</p>
+			<p>Coming soon:</p>
+			<ul style={{ margin: 0 }}>
+				<li>Status color indicators</li>
+				<li>Do UI for drag-and-drop feedback</li>
+				<li>Post Modal for changing post data</li>
+			</ul>
 		</header>
 	);
 }

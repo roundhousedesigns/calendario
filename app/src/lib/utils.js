@@ -12,6 +12,12 @@ export const samplePosts = {
 			post_status: "future",
 			post_date: "02-13-2021", // will be more accurate and have post time, as well
 		},
+		{
+			id: 6,
+			post_title: "Test Post 6",
+			post_status: "future",
+			post_date: "02-14-2021", // will be more accurate and have post time, as well
+		},
 	],
 	unscheduled: [
 		{
@@ -23,6 +29,12 @@ export const samplePosts = {
 		{
 			id: 4,
 			post_title: "Test Post 4",
+			post_status: "pending",
+			post_date: "02-22-2021", // will be more accurate and have post time, as well
+		},
+		{
+			id: 5,
+			post_title: "Test Post 5",
 			post_status: "pending",
 			post_date: "02-22-2021", // will be more accurate and have post time, as well
 		},
