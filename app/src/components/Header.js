@@ -10,6 +10,7 @@ export default function Header() {
 			</p>
 			<p>Coming soon:</p>
 			<ul style={{ margin: 0 }}>
+				<li>Re-connect to WP for real data</li>
 				<li>Status color indicators</li>
 				<li>Do UI for drag-and-drop feedback</li>
 				<li>Post Modal for changing post data</li>
