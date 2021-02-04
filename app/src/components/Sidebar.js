@@ -1,14 +1,17 @@
 import React from "react";
+import Widget from "./Widget";
+import UnscheduledDrafts from "./UnscheduledDrafts";
+import ListView from "./ListView";
 
 export default function Sidebar() {
 	return (
 		<aside className="calendario__sidebar">
-			<div className="widget">
-				<h3 className="widget-title">Unscheduled Drafts</h3>
-			</div>
-			<div className="widget">
-				<h3 className="widget-title">At a Glance</h3>
-			</div>
+			<Widget title="Unscheduled Drafts" className={"unscheduled-drafts"}>
+				<UnscheduledDrafts />
+			</Widget>
+			<Widget title="At a glance" className={"list-view"}>
+				<ListView />
+			</Widget>
 		</aside>
 	);
 }

@@ -1,0 +1,150 @@
+// import React, { useReducer, useContext } from "react";
+// import {
+// 	format,
+// 	isSameMonth,
+// 	isPast,
+// 	isToday,
+// 	addDays,
+// 	addMonths,
+// 	subMonths,
+// 	startOfWeek,
+// 	startOfMonth,
+// 	endOfMonth,
+// 	endOfWeek,
+// } from "date-fns";
+// import Day from "./Day";
+// import DayPosts from "./DayPosts";
+
+// import PostsContext from "../PostsContext";
+
+// function reducer(state, action) {
+// 	return {
+// 		...state,
+// 		currentMonth: action.currentMonth
+// 			? action.currentMonth
+// 			: state.currentMonth,
+// 		selectedDate: action.selectedDate
+// 			? action.selectedDate
+// 			: state.selectedDate,
+// 	};
+// }
+
+// export default function Calendar() {
+// 	const [dateState, dateDispatch] = useReducer(reducer, {
+// 		currentMonth: new Date(),
+// 		selectedDate: new Date(),
+// 	});
+
+// 	const { posts } = useContext(PostsContext);
+
+// 	function renderHeader() {
+// 		const dateFormat = "MMMM yyyy";
+
+// 		return (
+// 			<div className="header row flex-middle">
+// 				<div className="col col-start">
+// 					<div className="icon" onClick={prevMonth}>
+// 						chevron_left
+// 					</div>
+// 				</div>
+// 				<div className="col col-center">
+// 					<span>{format(dateState.currentMonth, dateFormat)}</span>
+// 				</div>
+// 				<div className="col col-end" onClick={nextMonth}>
+// 					<div className="icon">chevron_right</div>
+// 				</div>
+// 			</div>
+// 		);
+// 	}
+
+// 	function renderDays() {
+// 		const dateFormat = "EEEE";
+// 		const days = [];
+
+// 		let startDate = startOfWeek(dateState.currentMonth);
+
+// 		for (let i = 0; i < 7; i++) {
+// 			days.push(
+// 				<div className="col col-center" key={i}>
+// 					{format(addDays(startDate, i), dateFormat)}
+// 				</div>
+// 			);
+// 		}
+
+// 		return <div className="days row">{days}</div>;
+// 	}
+
+// 	function renderCells() {
+// 		const { currentMonth, selectedDate } = dateState;
+// 		const firstOfMonth = startOfMonth(currentMonth);
+// 		const lastOfMonth = endOfMonth(firstOfMonth);
+// 		const startDate = startOfWeek(firstOfMonth);
+// 		const endDate = endOfWeek(lastOfMonth);
+
+// 		const dateFormat__Day = "d";
+// 		const dateFormat__Date = "MM-dd-yyyy";
+// 		const rows = [];
+
+// 		let days = [];
+// 		let day = startDate;
+// 		let formattedDate = {};
+
+// 		while (day <= endDate) {
+// 			for (let i = 0; i < 7; i++) {
+// 				formattedDate = {
+// 					day: format(day, dateFormat__Day),
+// 					date: format(day, dateFormat__Date),
+// 				};
+
+// 				// const cloneDay = day;
+
+// 				var classes = [];
+// 				if (isToday(day)) {
+// 					classes.push("today");
+// 				}
+// 				if (isPast(day) && !isToday(day)) {
+// 					classes.push("past");
+// 				}
+// 				if (!isSameMonth(day, firstOfMonth)) {
+// 					classes.push("outside-month");
+// 				}
+
+// 				days.push(
+// 					<Day
+// 						className={`col cell ${classes.join(" ")}`}
+// 						key={day}
+// 						day={day}
+// 						dayNumber={formattedDate.day}
+// 						// onClick={onDateClick}
+// 					>
+// 						<DayPosts dateKey={formattedDate.date} posts={posts} />
+// 					</Day>
+// 				);
+// 				day = addDays(day, 1);
+// 			}
+// 			rows.push(
+// 				<div className="row" key={day}>
+// 					{days}
+// 				</div>
+// 			);
+// 			days = [];
+// 		}
+// 		return <div className="body">{rows}</div>;
+// 	}
+
+// 	const nextMonth = () => {
+// 		dateDispatch({ currentMonth: addMonths(dateState.currentMonth, 1) });
+// 	};
+
+// 	const prevMonth = () => {
+// 		dateDispatch({ currentMonth: subMonths(dateState.currentMonth, 1) });
+// 	};
+
+// 	return (
+// 		<div className="calendar">
+// 			{renderHeader()}
+// 			{renderDays()}
+// 			{renderCells()}
+// 		</div>
+// 	);
+// }

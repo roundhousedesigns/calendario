@@ -1,8 +1,8 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useContext } from "react";
 import {
 	format,
 	isSameMonth,
-	isSameDay,
+	isPast,
 	isToday,
 	addDays,
 	addMonths,
@@ -13,23 +13,9 @@ import {
 	endOfWeek,
 } from "date-fns";
 import Day from "./Day";
-import PostEvent from "./PostEvent";
-import "./Calendar.scss";
+import DayPosts from "./DayPosts";
 
-const events = {
-	"02-10-2021": [
-		{
-			post_title: "Test Post 1",
-			post_status: "draft",
-			post_date: "02-10-2021", // will be more accurate and have post time, as well
-		},
-		{
-			post_title: "Test Post 2",
-			post_status: "future",
-			post_date: "02-10-2021", // will be more accurate and have post time, as well
-		},
-	],
-};
+import PostsContext from "../PostsContext";
 
 function reducer(state, action) {
 	return {
@@ -48,6 +34,8 @@ export default function Calendar() {
 		currentMonth: new Date(),
 		selectedDate: new Date(),
 	});
+
+	const { scheduled } = useContext(PostsContext);
 
 	function renderHeader() {
 		const dateFormat = "MMMM yyyy";
@@ -88,10 +76,10 @@ export default function Calendar() {
 
 	function renderCells() {
 		const { currentMonth, selectedDate } = dateState;
-		const monthStart = startOfMonth(currentMonth);
-		const monthEnd = endOfMonth(monthStart);
-		const startDate = startOfWeek(monthStart);
-		const endDate = endOfWeek(monthEnd);
+		const firstOfMonth = startOfMonth(currentMonth);
+		const lastOfMonth = endOfMonth(firstOfMonth);
+		const startDate = startOfWeek(firstOfMonth);
+		const endDate = endOfWeek(lastOfMonth);
 
 		const dateFormat__Day = "d";
 		const dateFormat__Date = "MM-dd-yyyy";
@@ -108,29 +96,28 @@ export default function Calendar() {
 					date: format(day, dateFormat__Date),
 				};
 
-				// const cloneDay = day;
+				var classes = [];
+				if (isToday(day)) {
+					classes.push("today");
+				}
+				if (isPast(day) && !isToday(day)) {
+					classes.push("past");
+				}
+				if (!isSameMonth(day, firstOfMonth)) {
+					classes.push("outside-month");
+				}
 
 				days.push(
 					<Day
-						className={`col cell ${
-							!isSameMonth(day, monthStart)
-								? "disabled"
-								: isSameDay(day, selectedDate)
-								? "selected"
-								: ""
-						} ${isToday(day) ? "today" : ""}`}
+						className={`col cell ${classes.join(" ")}`}
 						key={day}
 						day={day}
 						dayNumber={formattedDate.day}
-						onClick={onDateClick}
 					>
-						{formattedDate.date in events
-							? events[formattedDate.date].map((post, index) => {
-									return (
-										<PostEvent post={post} key={index} />
-									);
-							  })
-							: null}
+						<DayPosts
+							dateKey={formattedDate.date}
+							posts={scheduled}
+						/>
 					</Day>
 				);
 				day = addDays(day, 1);
@@ -145,10 +132,6 @@ export default function Calendar() {
 		return <div className="body">{rows}</div>;
 	}
 
-	const onDateClick = (day) => {
-		dateDispatch({ selectedDate: day });
-	};
-
 	const nextMonth = () => {
 		dateDispatch({ currentMonth: addMonths(dateState.currentMonth, 1) });
 	};
@@ -158,7 +141,7 @@ export default function Calendar() {
 	};
 
 	return (
-		<div className="calendar">
+		<div className="calendar calendario__main">
 			{renderHeader()}
 			{renderDays()}
 			{renderCells()}
