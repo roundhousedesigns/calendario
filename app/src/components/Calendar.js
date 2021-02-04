@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
 	format,
 	isSameMonth,
@@ -14,28 +14,13 @@ import {
 } from "date-fns";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
+import { dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
-function reducer(state, action) {
-	return {
-		...state,
-		currentMonth: action.currentMonth
-			? action.currentMonth
-			: state.currentMonth,
-		selectedDate: action.selectedDate
-			? action.selectedDate
-			: state.selectedDate,
-	};
-}
-
 export default function Calendar() {
-	const [dateState, dateDispatch] = useReducer(reducer, {
-		currentMonth: new Date(),
-		selectedDate: new Date(),
-	});
-
-	const { scheduled } = useContext(PostsContext);
+	const { posts } = useContext(PostsContext);
+	const [currentMonth, setCurrentMonth] = useState(new Date());
 
 	function renderHeader() {
 		const dateFormat = "MMMM yyyy";
@@ -48,7 +33,7 @@ export default function Calendar() {
 					</div>
 				</div>
 				<div className="col col-center">
-					<span>{format(dateState.currentMonth, dateFormat)}</span>
+					<span>{format(currentMonth, dateFormat)}</span>
 				</div>
 				<div className="col col-end" onClick={nextMonth}>
 					<div className="icon">chevron_right</div>
@@ -61,7 +46,7 @@ export default function Calendar() {
 		const dateFormat = "EEEE";
 		const days = [];
 
-		let startDate = startOfWeek(dateState.currentMonth);
+		let startDate = startOfWeek(currentMonth);
 
 		for (let i = 0; i < 7; i++) {
 			days.push(
@@ -75,14 +60,11 @@ export default function Calendar() {
 	}
 
 	function renderCells() {
-		const { currentMonth, selectedDate } = dateState;
 		const firstOfMonth = startOfMonth(currentMonth);
 		const lastOfMonth = endOfMonth(firstOfMonth);
 		const startDate = startOfWeek(firstOfMonth);
 		const endDate = endOfWeek(lastOfMonth);
 
-		const dateFormat__Day = "d";
-		const dateFormat__Date = "MM-dd-yyyy";
 		const rows = [];
 
 		let days = [];
@@ -92,8 +74,8 @@ export default function Calendar() {
 		while (day <= endDate) {
 			for (let i = 0; i < 7; i++) {
 				formattedDate = {
-					day: format(day, dateFormat__Day),
-					date: format(day, dateFormat__Date),
+					day: format(day, dateFormat.day),
+					date: format(day, dateFormat.date),
 				};
 
 				var classes = [];
@@ -114,10 +96,7 @@ export default function Calendar() {
 						day={day}
 						dayNumber={formattedDate.day}
 					>
-						<DayPosts
-							dateKey={formattedDate.date}
-							posts={scheduled}
-						/>
+						<DayPosts date={day} posts={posts.scheduled} />
 					</Day>
 				);
 				day = addDays(day, 1);
@@ -133,11 +112,11 @@ export default function Calendar() {
 	}
 
 	const nextMonth = () => {
-		dateDispatch({ currentMonth: addMonths(dateState.currentMonth, 1) });
+		setCurrentMonth(addMonths(currentMonth, 1));
 	};
 
 	const prevMonth = () => {
-		dateDispatch({ currentMonth: subMonths(dateState.currentMonth, 1) });
+		setCurrentMonth(subMonths(currentMonth, 1));
 	};
 
 	return (

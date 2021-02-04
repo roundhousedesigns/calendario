@@ -4,56 +4,37 @@ import Main from "./components/Calendar";
 import Sidebar from "./components/Sidebar";
 
 import PostsContext, { postsReducer } from "./PostsContext";
+import DragContext, { dragReducer } from "./DragContext";
+
+import { samplePosts } from "./lib/utils";
 
 import "./App.scss";
 
-const samplePosts = {
-	scheduled: {
-		"02-10-2021": [
-			{
-				post_title: "Test Post 1",
-				post_status: "draft",
-				post_date: "02-10-2021", // will be more accurate and have post time, as well
-			},
-		],
-		"02-13-2021": [
-			{
-				post_title: "Test Post 2",
-				post_status: "future",
-				post_date: "02-13-2021", // will be more accurate and have post time, as well
-			},
-		],
-	},
-	unscheduled: [
-		{
-			post_title: "Test Post 3",
-			post_status: "draft",
-			post_date: "02-16-2021", // will be more accurate and have post time, as well
-		},
-		{
-			post_title: "Test Post 4",
-			post_status: "pending",
-			post_date: "02-22-2021", // will be more accurate and have post time, as well
-		},
-	],
-};
-
 export default function App() {
 	const [posts, postsDispatch] = useReducer(postsReducer, samplePosts);
+	const [draggedPost, dragDispatch] = useReducer(dragReducer, {
+		isDragging: false,
+		post: {},
+	});
 
 	useEffect(() => {
 		postsDispatch({
-			posts: samplePosts,
+			type: "POPULATE",
+			scheduled: samplePosts.scheduled,
+			unscheduled: samplePosts.unscheduled,
 		});
 	}, []);
 
 	return (
 		<div className="calendario">
 			<Header />
-			<PostsContext.Provider value={posts}>
-				<Main />
-				<Sidebar />
-			</PostsContext.Provider>
+
+			<DragContext.Provider value={{ draggedPost, dragDispatch }}>
+				<PostsContext.Provider value={{ posts, postsDispatch }}>
+					<Main />
+					<Sidebar />
+				</PostsContext.Provider>
+			</DragContext.Provider>
 		</div>
 	);
 }
