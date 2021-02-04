@@ -1,6 +1,6 @@
 # TODO
 
--   set dateFormat somewhere global
+-   ~set dateFormat somewhere global~
 
 ## Don't Forget
 

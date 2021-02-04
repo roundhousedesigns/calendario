@@ -1,3 +1,3 @@
-WP Plugin Base with React
+Calendario II: The Datening
 ===
-Bare-bones setup for a WP plugin using React in the backend (or frontend!). Just the setup, no connections or data.
+The professional blogger's editorial calendar. In development. For the second time.
