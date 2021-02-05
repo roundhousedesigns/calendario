@@ -19,7 +19,7 @@ export function postsReducer(state, action) {
 				scheduled: state.scheduled.filter(
 					(item) => item.id !== action.post.id
 				),
-				unscheduled: [...state.unscheduled, action.post],
+				unscheduled: [...new Set([...state.unscheduled, action.post])],
 			};
 
 		case "SCHEDULE":

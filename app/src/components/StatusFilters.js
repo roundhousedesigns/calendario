@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { postStatuses } from "../lib/utils";
 
 export default function StatusFilters() {
@@ -6,10 +6,10 @@ export default function StatusFilters() {
 
 	return (
 		<ul className="filters">
-			{keys.map((item) => {
+			{keys.map((item, index) => {
 				const { color, backgroundColor, name } = postStatuses[item];
 				return (
-					<li className={`filter-item status__${item}`}>
+					<li className={`filter-item status__${item}`} key={index}>
 						<span
 							className="dot"
 							style={{
@@ -17,7 +17,7 @@ export default function StatusFilters() {
 								backgroundColor,
 							}}
 						/>
-						<span class="name">{name}</span>
+						<span className="name">{name}</span>
 					</li>
 				);
 			})}
