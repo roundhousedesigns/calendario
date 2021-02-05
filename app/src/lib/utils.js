@@ -41,7 +41,32 @@ export const samplePosts = {
 	],
 };
 
+export const postStatuses = {
+	publish: {
+		name: "Publish",
+		backgroundColor: "cornflowerblue",
+		color: "white",
+	},
+	draft: {
+		name: "Draft",
+		backgroundColor: "silver",
+		color: "white",
+	},
+	future: {
+		name: "Future",
+		backgroundColor: "lightseagreen",
+		color: "white",
+	},
+	pending: {
+		name: "Pending",
+		backgroundColor: "lightcoral",
+		color: "white",
+	},
+};
+
 export const dateFormat = {
 	day: "d",
 	date: "MM-dd-yyyy",
+	header: "MMMM yyyy",
+	dayName: "EEEE",
 };

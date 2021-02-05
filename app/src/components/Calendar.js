@@ -23,8 +23,6 @@ export default function Calendar() {
 	const [currentMonth, setCurrentMonth] = useState(new Date());
 
 	function renderHeader() {
-		const dateFormat = "MMMM yyyy";
-
 		return (
 			<div className="header row flex-middle">
 				<div className="col col-start">
@@ -33,7 +31,7 @@ export default function Calendar() {
 					</div>
 				</div>
 				<div className="col col-center">
-					<span>{format(currentMonth, dateFormat)}</span>
+					<span>{format(currentMonth, dateFormat.header)}</span>
 				</div>
 				<div className="col col-end" onClick={nextMonth}>
 					<div className="icon">chevron_right</div>
@@ -43,7 +41,6 @@ export default function Calendar() {
 	}
 
 	function renderDays() {
-		const dateFormat = "EEEE";
 		const days = [];
 
 		let startDate = startOfWeek(currentMonth);
@@ -51,7 +48,7 @@ export default function Calendar() {
 		for (let i = 0; i < 7; i++) {
 			days.push(
 				<div className="col col-center" key={i}>
-					{format(addDays(startDate, i), dateFormat)}
+					{format(addDays(startDate, i), dateFormat.dayName)}
 				</div>
 			);
 		}

@@ -1,11 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { postStatuses } from "../lib/utils";
 
 export default function StatusFilters() {
+	const keys = Object.keys(postStatuses);
+
 	return (
-		<div>
-			One day, there will be stuff here. Until that day comes....
-			<br />
-			...eat my shorts.
-		</div>
+		<ul className="filters">
+			{keys.map((item) => {
+				const { color, backgroundColor, name } = postStatuses[item];
+				return (
+					<li className={`filter-item status__${item}`}>
+						<span
+							className="dot"
+							style={{
+								color,
+								backgroundColor,
+							}}
+						/>
+						<span class="name">{name}</span>
+					</li>
+				);
+			})}
+		</ul>
 	);
 }

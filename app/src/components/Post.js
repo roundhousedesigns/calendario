@@ -1,21 +1,26 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import DragContext from "../DragContext";
+import { postStatuses } from "../lib/utils";
 
 export default function Post({ post }) {
 	const { dragDispatch } = useContext(DragContext);
+	const [colors, setColors] = useState({});
 
-	const handleDragStart = (e) => {
-		// e.preventDefault();
+	useEffect(() => {
+		setColors({
+			color: postStatuses[post.post_status].color,
+			backgroundColor: postStatuses[post.post_status].backgroundColor,
+		});
+	}, [post.post_status]);
 
+	const handleDragStart = () => {
 		dragDispatch({
 			type: "START",
 			post: post,
 		});
 	};
 
-	const handleDragEnd = (e) => {
-		e.preventDefault();
-
+	const handleDragEnd = () => {
 		dragDispatch({
 			type: "END",
 		});
@@ -23,10 +28,14 @@ export default function Post({ post }) {
 
 	return post ? (
 		<li
-			className="post"
+			className={`post status__${post.post_status}`}
 			draggable={true}
 			onDragStart={handleDragStart}
 			onDragEnd={handleDragEnd}
+			style={{
+				backgroundColor: colors.backgroundColor,
+				color: colors.color,
+			}}
 		>
 			{post.post_title}
 		</li>
