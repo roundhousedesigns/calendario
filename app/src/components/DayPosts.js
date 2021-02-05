@@ -1,16 +1,12 @@
 import React from "react";
-import Post from "./Post";
+// import Post from "./Post";
 import PostList from "./PostList";
-import { isSameDay } from "date-fns";
+import { useDayPosts } from "../lib/hooks";
 
 export default function DayPosts({ date, posts }) {
+	const dayPosts = useDayPosts(posts, date);
+
 	return posts ? (
-		<PostList className="scheduled-posts" date={date}>
-			{posts.map((post, index) => {
-				return isSameDay(date, new Date(post.post_date)) ? (
-					<Post post={post} key={index} />
-				) : null;
-			})}
-		</PostList>
+		<PostList className="scheduled-posts" date={date} posts={dayPosts} />
 	) : null;
 }

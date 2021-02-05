@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
+import Post from "./Post";
 import { isToday, isPast } from "date-fns";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-export default function PostList({ children, className, date }) {
+export default function PostList({ posts, className, date }) {
 	const { postsDispatch } = useContext(PostsContext);
 	const { draggedPost } = useContext(DragContext);
-	const dropAction = date === false ? "UNSCHEDULE" : "SCHEDULE";
+	const dropAction = date === false ? "UNSCHEDULE" : "CALENDAR";
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
@@ -23,6 +24,10 @@ export default function PostList({ children, className, date }) {
 		});
 	};
 
+	const renderPost = (post, index) => {
+		return <Post post={post} key={index} />;
+	};
+
 	let listProps = {
 		className: `post-list ${className}`,
 		onDragOver: handleDragOver,
@@ -34,5 +39,7 @@ export default function PostList({ children, className, date }) {
 		listProps.className += " drop-disabled";
 	}
 
-	return <ul {...listProps}>{children}</ul>;
+	return (
+		<ul {...listProps}>{posts.map((post, i) => renderPost(post, i))}</ul>
+	);
 }

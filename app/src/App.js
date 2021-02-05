@@ -14,6 +14,8 @@ export default function App() {
 	const [posts, postsDispatch] = useReducer(postsReducer, samplePosts);
 	const [draggedPost, dragDispatch] = useReducer(dragReducer, {
 		isDragging: false,
+		dragIndex: null,
+		hoverIndex: null,
 		post: {},
 	});
 

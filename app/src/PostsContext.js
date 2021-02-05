@@ -22,7 +22,7 @@ export function postsReducer(state, action) {
 				unscheduled: [...new Set([...state.unscheduled, action.post])],
 			};
 
-		case "SCHEDULE":
+		case "CALENDAR":
 			var post = action.post;
 			post.post_date = format(action.newDate, dateFormat.date);
 
