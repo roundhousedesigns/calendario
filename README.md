@@ -6,5 +6,5 @@ In development...for the second time.
 
 ### For now:
 
--   cd app && yarn start
+-   Run `yarn install` and `yarn start` inside the `app/` directory
 -   http://localhost:3000
