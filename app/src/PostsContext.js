@@ -14,12 +14,14 @@ export function postsReducer(state, action) {
 			};
 
 		case "UNSCHEDULE":
+			var posts = [...new Set([...state.unscheduled, action.post])];
+
 			return {
 				...state,
 				scheduled: state.scheduled.filter(
 					(item) => item.id !== action.post.id
 				),
-				unscheduled: [...new Set([...state.unscheduled, action.post])],
+				unscheduled: posts,
 			};
 
 		case "CALENDAR":

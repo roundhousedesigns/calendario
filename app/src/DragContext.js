@@ -8,15 +8,12 @@ export function dragReducer(state, action) {
 		case "START":
 			return {
 				isDragging: true,
-				dragIndex: action.dragIndex ? action.dragIndex : null,
-				hoverIndex: action.hoverIndex ? action.hoverIndex : null,
 				post: action.post,
 			};
 
 		case "END": {
 			return {
 				isDragging: false,
-				dragIndex: null,
 				post: {},
 			};
 		}
@@ -25,3 +22,12 @@ export function dragReducer(state, action) {
 			return state;
 	}
 }
+
+export const initialDrag = {
+	post: {},
+	isDragging: false,
+	draggedFrom: null,
+	draggedTo: null,
+	originalOrder: [],
+	updatedOrder: [],
+};
