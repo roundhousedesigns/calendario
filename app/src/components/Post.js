@@ -1,9 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import DragContext from "../DragContext";
 import { postStatuses } from "../lib/utils";
 
-export default function Post({ post }) {
-	const { dragDispatch } = useContext(DragContext);
+import PostsContext from "../PostsContext";
+import DragContext from "../DragContext";
+
+export default function Post({ post, index }) {
+	const {
+		posts: { unscheduled },
+	} = useContext(PostsContext);
+	const { draggedPost, dragDispatch } = useContext(DragContext);
 	const [colors, setColors] = useState({});
 
 	useEffect(() => {
@@ -13,14 +18,26 @@ export default function Post({ post }) {
 		});
 	}, [post.post_status]);
 
-	const handleDragStart = () => {
+	const handleDragStart = (e) => {
+		let draggingUnscheduled = e.currentTarget.parentNode.classList.contains(
+			"unscheduled-drafts"
+		)
+			? true
+			: false;
+
 		dragDispatch({
 			type: "START",
 			post: post,
+			draggedFrom: draggingUnscheduled
+				? Number(e.currentTarget.dataset.index)
+				: false,
+			originalUnscheduledOrder: unscheduled,
 		});
 	};
 
-	const handleDragEnd = () => {
+	const handleDragEnd = (e) => {
+		e.preventDefault();
+
 		dragDispatch({
 			type: "END",
 		});
@@ -28,7 +45,13 @@ export default function Post({ post }) {
 
 	return post ? (
 		<li
-			className={`post status__${post.post_status}`}
+			className={`post status__${post.post_status} ${
+				draggedPost.isDragging &&
+				draggedPost.draggedTo === Number(index)
+					? "dropArea"
+					: ""
+			}`}
+			data-index={index}
 			draggable={true}
 			onDragStart={handleDragStart}
 			onDragEnd={handleDragEnd}

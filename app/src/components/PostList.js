@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import Post from "./Post";
 import { isToday, isPast } from "date-fns";
 
@@ -7,25 +7,47 @@ import DragContext from "../DragContext";
 
 export default function PostList({ posts, className, date }) {
 	const { postsDispatch } = useContext(PostsContext);
-	const { draggedPost } = useContext(DragContext);
-	const dropAction = date === false ? "UNSCHEDULE" : "CALENDAR";
+	const { draggedPost, dragDispatch } = useContext(DragContext);
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
 
-		// indexes and reordering items while dragging, setting calendar date currently over
+		if (e.currentTarget.classList.contains("unscheduled-drafts")) {
+			let draggedTo = e.target.dataset.index
+				? Number(e.target.dataset.index)
+				: false;
+
+			dragDispatch({
+				type: "DRAGGING_OVER_UNSCHEDULED",
+				draggedTo: draggedTo,
+			});
+		}
 	};
 
 	const handleDrop = (e) => {
-		postsDispatch({
-			type: dropAction,
-			post: draggedPost.post,
-			newDate: date,
+		if (date === false) {
+			// unscheduled
+			postsDispatch({
+				type: "UNSCHEDULE",
+				post: draggedPost.post,
+				posts: draggedPost.updatedUnscheduledOrder,
+			});
+		} else {
+			// calendar
+			postsDispatch({
+				type: "CALENDAR",
+				post: draggedPost.post,
+				newDate: date,
+			});
+		}
+
+		dragDispatch({
+			type: "END",
 		});
 	};
 
 	const renderPost = (post, index) => {
-		return <Post post={post} key={index} />;
+		return <Post post={post} key={post.id} index={index} />;
 	};
 
 	let listProps = {
