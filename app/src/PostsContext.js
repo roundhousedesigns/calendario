@@ -41,9 +41,6 @@ export function postsReducer(state, action) {
 				),
 			};
 
-		// case "reorderUnscheduled":
-		// do things
-
 		default:
 			return state;
 	}
