@@ -62,28 +62,28 @@ export default function EditPost() {
 			<div className="editPost__editor">
 				{editMode ? (
 					<form className="editPost__editor__form">
-						<label for="post_title">
+						<label htmlFor="post_title">
 							Post Title
 							<input
 								name="post_title"
 								value={currentPost.post_title}
 							/>
 						</label>
-						<label for="post_date">
+						<label htmlFor="post_date">
 							Post Date
 							<input
 								name="post_date"
 								value={currentPost.post_date}
 							/>
 						</label>
-						<label for="post_status">
+						<label htmlFor="post_status">
 							Post Status
 							<input
 								name="post_status"
 								value={currentPost.post_status}
 							/>
 						</label>
-						<label for="post-thumbnail-chooser">
+						<label htmlFor="post-thumbnail-chooser">
 							{/* <input name="post-thumbnail-chooser"></input> */}
 							<div className="post-thumbnail">
 								Dreams: Choose/Replace Featured image here
