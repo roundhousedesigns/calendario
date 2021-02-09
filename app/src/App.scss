@@ -13,7 +13,7 @@
 	--border-color: #eee;
 	--bg-color: #f9f9f9;
 	--neutral-color: #fff;
-	--border-radius: 12px;
+	--border-radius: 8px;
 }
 
 * {
@@ -97,8 +97,8 @@ body {
 
 		.post {
 			&.dropArea {
-				color: white !important;
-				background: white !important;
+				// color: white !important;
+				// background: white !important;
 				position: relative;
 
 				&::before {
@@ -123,6 +123,10 @@ body {
 				p {
 					margin-left: 1em;
 				}
+			}
+
+			&.draggedOver {
+				// padding-top: 100px;
 			}
 		}
 	}
@@ -355,6 +359,7 @@ body {
 	z-index: -1;
 	font-size: 80%;
 	line-height: 2;
+	list-style: none;
 
 	&:not(.drop-disabled) {
 		z-index: 999;
@@ -362,8 +367,14 @@ body {
 
 	.post {
 		cursor: pointer;
-		padding: 3px 6px;
-		border-radius: var(--border-radius);
+		padding: 3px 0;
+
+		.post-data {
+			pointer-events: none;
+			margin: 0;
+			padding: 3px 6px;
+			border-radius: var(--border-radius);
+		}
 	}
 }
 

@@ -10,6 +10,7 @@ export default function Post({ post, index }) {
 	} = useContext(PostsContext);
 	const { draggedPost, dragDispatch } = useContext(DragContext);
 	const [colors, setColors] = useState({});
+	const [isDraggedOver, setIsDraggedOver] = useState(false);
 
 	useEffect(() => {
 		setColors({
@@ -35,8 +36,22 @@ export default function Post({ post, index }) {
 		});
 	};
 
-	const handleDragEnd = (e) => {
-		e.preventDefault();
+	const handleDragOver = () => {
+		setIsDraggedOver(true);
+	};
+
+	const handleDragLeave = () => {
+		setIsDraggedOver(false);
+	};
+
+	const handleDragEnd = () => {
+		dragDispatch({
+			type: "END",
+		});
+	};
+
+	const handleDrop = () => {
+		setIsDraggedOver(false);
 
 		dragDispatch({
 			type: "END",
@@ -50,17 +65,24 @@ export default function Post({ post, index }) {
 				draggedPost.draggedTo === Number(index)
 					? "dropArea"
 					: ""
-			}`}
+			} ${isDraggedOver ? "draggedOver" : ""}`}
 			data-index={index}
 			draggable={true}
 			onDragStart={handleDragStart}
+			onDragOver={handleDragOver}
+			onDragLeave={handleDragLeave}
 			onDragEnd={handleDragEnd}
-			style={{
-				backgroundColor: colors.backgroundColor,
-				color: colors.color,
-			}}
+			onDrop={handleDrop}
 		>
-			{post.post_title}
+			<p
+				className="post-data"
+				style={{
+					backgroundColor: colors.backgroundColor,
+					color: colors.color,
+				}}
+			>
+				{post.post_title}
+			</p>
 		</li>
 	) : null;
 }

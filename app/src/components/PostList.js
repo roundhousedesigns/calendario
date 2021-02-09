@@ -46,22 +46,26 @@ export default function PostList({ posts, className, date }) {
 		});
 	};
 
-	const renderPost = (post, index) => {
-		return <Post post={post} key={post.id} index={index} />;
+	const renderPostList = () => {
+		let listProps = {
+			className: `post-list ${className}`,
+			onDragOver: handleDragOver,
+		};
+
+		if (!isToday(date) && !isPast(date)) {
+			listProps.onDrop = handleDrop;
+		} else {
+			listProps.className += " drop-disabled";
+		}
+
+		return (
+			<ul {...listProps}>
+				{posts.map((post, index) => (
+					<Post post={post} key={post.id} index={index} />
+				))}
+			</ul>
+		);
 	};
 
-	let listProps = {
-		className: `post-list ${className}`,
-		onDragOver: handleDragOver,
-	};
-
-	if (!isToday(date) && !isPast(date)) {
-		listProps.onDrop = handleDrop;
-	} else {
-		listProps.className += " drop-disabled";
-	}
-
-	return (
-		<ul {...listProps}>{posts.map((post, i) => renderPost(post, i))}</ul>
-	);
+	return renderPostList();
 }
