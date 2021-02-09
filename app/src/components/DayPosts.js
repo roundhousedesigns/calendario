@@ -1,5 +1,4 @@
 import React from "react";
-// import Post from "./Post";
 import PostList from "./PostList";
 import { useDayPosts } from "../lib/hooks";
 

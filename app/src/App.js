@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import Main from "./components/Calendar";
 import Sidebar from "./components/Sidebar";
 
-import PostsContext, { postsReducer } from "./PostsContext";
+import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
 import DragContext, { dragReducer, initialDrag } from "./DragContext";
 
 import { samplePosts } from "./lib/utils";
@@ -11,7 +11,7 @@ import { samplePosts } from "./lib/utils";
 import "./App.scss";
 
 export default function App() {
-	const [posts, postsDispatch] = useReducer(postsReducer, samplePosts);
+	const [posts, postsDispatch] = useReducer(postsReducer, initialPosts);
 	const [draggedPost, dragDispatch] = useReducer(dragReducer, initialDrag);
 
 	useEffect(() => {

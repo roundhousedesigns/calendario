@@ -1,4 +1,5 @@
 import { isSameDay } from "date-fns";
+import { isEmpty } from "lodash";
 
 export function useDayPosts(posts, date) {
 	let dayPosts = [];
@@ -9,4 +10,12 @@ export function useDayPosts(posts, date) {
 	});
 
 	return dayPosts;
+}
+
+export function useCurrentPost(posts) {
+	if (!isEmpty(posts.currentPost)) {
+		return posts.currentPost;
+	} else {
+		return {};
+	}
 }

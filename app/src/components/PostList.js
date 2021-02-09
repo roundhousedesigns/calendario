@@ -5,6 +5,8 @@ import { isToday, isPast } from "date-fns";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
+// TODO: Cache drag handlers and/or figure out polling
+
 export default function PostList({ posts, className, date }) {
 	const { postsDispatch } = useContext(PostsContext);
 	const { draggedPost, dragDispatch } = useContext(DragContext);
@@ -55,7 +57,7 @@ export default function PostList({ posts, className, date }) {
 		if (!isToday(date) && !isPast(date)) {
 			listProps.onDrop = handleDrop;
 		} else {
-			listProps.className += " drop-disabled";
+			listProps.className += " dropDisabled";
 		}
 
 		return (

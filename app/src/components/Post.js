@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { postStatuses } from "../lib/utils";
+import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
 export default function Post({ post, index }) {
 	const {
-		posts: { unscheduled },
+		postsDispatch,
+		posts: { unscheduled, currentPost },
 	} = useContext(PostsContext);
 	const { draggedPost, dragDispatch } = useContext(DragContext);
 	const [colors, setColors] = useState({});
-	const [isDraggedOver, setIsDraggedOver] = useState(false);
 
 	useEffect(() => {
 		setColors({
@@ -36,14 +37,6 @@ export default function Post({ post, index }) {
 		});
 	};
 
-	const handleDragOver = () => {
-		setIsDraggedOver(true);
-	};
-
-	const handleDragLeave = () => {
-		setIsDraggedOver(false);
-	};
-
 	const handleDragEnd = () => {
 		dragDispatch({
 			type: "END",
@@ -51,31 +44,52 @@ export default function Post({ post, index }) {
 	};
 
 	const handleDrop = () => {
-		setIsDraggedOver(false);
-
 		dragDispatch({
 			type: "END",
 		});
 	};
 
+	const handleClick = (e) => {
+		let unscheduled =
+			e.target.classList.contains("unscheduled-drafts") ||
+			e.target.parentNode.classList.contains("unscheduled-drafts")
+				? true
+				: false;
+		
+		postsDispatch({
+			type: "CLICK",
+			post: post,
+			unscheduled: unscheduled,
+		});
+	};
+
 	return post ? (
 		<li
-			className={`post status__${post.post_status} ${
+			className={`post status__${post.post_status}${
 				draggedPost.isDragging &&
-				draggedPost.draggedTo === Number(index)
-					? "dropArea"
+				draggedPost.draggedTo === Number(index) &&
+				draggedPost.draggedTo !== draggedPost.draggedFrom
+					? " dropArea"
 					: ""
-			} ${isDraggedOver ? "draggedOver" : ""}`}
+			}${
+				draggedPost.isDragging &&
+				draggedPost.draggedFrom === Number(index)
+					? " dragging"
+					: ""
+			}${
+				!isEmpty(currentPost) && currentPost.id === post.id
+					? " currentPost"
+					: ""
+			}`}
 			data-index={index}
 			draggable={true}
 			onDragStart={handleDragStart}
-			onDragOver={handleDragOver}
-			onDragLeave={handleDragLeave}
 			onDragEnd={handleDragEnd}
 			onDrop={handleDrop}
+			onClick={handleClick}
 		>
 			<p
-				className="post-data"
+				className="postData"
 				style={{
 					backgroundColor: colors.backgroundColor,
 					color: colors.color,

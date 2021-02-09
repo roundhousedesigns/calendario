@@ -41,7 +41,52 @@ export function postsReducer(state, action) {
 				),
 			};
 
+		case "CLICK":
+			return {
+				...state,
+				currentPost: {
+					...action.post,
+					unscheduled: action.unscheduled,
+				},
+			};
+
+		case "UNCLICK":
+			return {
+				...state,
+				currentPost: {},
+			};
+
+		case "UPDATE_POST":
+			let searchType =
+				state.currentPost.unscheduled === true
+					? "unscheduled"
+					: "scheduled";
+
+			let updatedPosts = state[searchType];
+
+			const postIndex = updatedPosts.findIndex(
+				(post) => action.updatedPost.id === post.id
+			);
+
+			// TODO: loop through object props and update fields based on edit
+			// TODO: Decide on editing this data and THEN firing REST update, or just using REST update + responses and rerender
+			updatedPosts[postIndex] = {
+				...updatedPosts[postIndex],
+				post_title: "farts",
+			};
+
+			return {
+				...state,
+				[searchType]: updatedPosts,
+			};
+
 		default:
 			return state;
 	}
 }
+
+export const initialPosts = {
+	scheduled: [],
+	unscheduled: [],
+	currentPost: {},
+};

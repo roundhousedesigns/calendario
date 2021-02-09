@@ -57,12 +57,7 @@ export function dragReducer(state, action) {
 			};
 
 		case "END": {
-			return {
-				post: {},
-				isDragging: false,
-				draggedFrom: null,
-				draggedTo: null,
-			};
+			return initialDrag;
 		}
 
 		default:
