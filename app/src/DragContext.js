@@ -57,7 +57,6 @@ export function dragReducer(state, action) {
 			};
 
 		case "END": {
-			console.log("ended");
 			return {
 				post: {},
 				isDragging: false,
