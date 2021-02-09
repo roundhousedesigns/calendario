@@ -1,38 +1,65 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useReducer } from "react";
 import { isEmpty } from "lodash";
-import { useCurrentPost } from "../lib/hooks";
+// import { useCurrentPost } from "../lib/hooks";
 
 import PostsContext from "../PostsContext";
 
+function editPostReducer(state, action) {
+	switch (action.type) {
+		case "INIT":
+			return action.post;
+
+		case "EDIT":
+			return {
+				...state,
+				[action.field]: action.value,
+			};
+
+		default:
+			return { state };
+	}
+}
+
 export default function EditPost() {
-	const { posts, postsDispatch } = useContext(PostsContext);
+	const {
+		posts: { currentPost },
+		postsDispatch,
+	} = useContext(PostsContext);
 	const [editMode, setEditMode] = useState(false);
-	const currentPost = useCurrentPost(posts);
+	const [editPost, editPostDispatch] = useReducer(editPostReducer, {});
 
 	useEffect(() => {
+		editPostDispatch({
+			type: "INIT",
+			post: currentPost,
+		});
+
 		setEditMode(false);
-	}, [currentPost.id]);
+	}, [currentPost]);
 
 	const editHandler = () => {
-		setEditMode(!editMode);
+		setEditMode(true);
 	};
 
 	const saveHandler = () => {
 		postsDispatch({
 			type: "UPDATE_POST",
-			updatedPost: {...currentPost}
+			post: { ...editPost },
 		});
 		setEditMode(false);
 	};
 
-	const cancelHandler = () => {
-		// postsDispatch({
-		// 	type: "UNCLICK",
-		// });
-		setEditMode(false);
+	const cancelHandler = () => setEditMode(false);
+
+	const handleInputChange = (e) => {
+		editPostDispatch({
+			type: "EDIT",
+			field: e.target.name,
+			value: e.target.value,
+		});
 	};
 
-	return !isEmpty(currentPost) ? (
+	return !isEmpty(editPost) ? (
 		<div className="editPost">
 			<div className="editPost__buttons">
 				{editMode ? (
@@ -66,21 +93,23 @@ export default function EditPost() {
 							Post Title
 							<input
 								name="post_title"
-								value={currentPost.post_title}
+								value={editPost.post_title}
+								onChange={handleInputChange}
 							/>
 						</label>
-						<label htmlFor="post_date">
+						{/* <label htmlFor="post_date">
 							Post Date
 							<input
 								name="post_date"
-								value={currentPost.post_date}
+								value={editPost.post_date}
 							/>
-						</label>
+						</label> */}
 						<label htmlFor="post_status">
 							Post Status
 							<input
 								name="post_status"
-								value={currentPost.post_status}
+								value={editPost.post_status}
+								onChange={handleInputChange}
 							/>
 						</label>
 						<label htmlFor="post-thumbnail-chooser">
@@ -93,9 +122,9 @@ export default function EditPost() {
 				) : (
 					<div className="editPost__editor__display">
 						<div className="postData">
-							<p>{currentPost.post_title}</p>
-							<p>{currentPost.post_date}</p>
-							<p>{currentPost.post_status}</p>
+							<p>{editPost.post_title}</p>
+							<p>{editPost.post_date}</p>
+							<p>{editPost.post_status}</p>
 						</div>
 						<div className="post-thumbnail">
 							Featured image here

@@ -39,6 +39,8 @@ export function postsReducer(state, action) {
 				unscheduled: state.unscheduled.filter(
 					(item) => item.id !== post.id
 				),
+				currentPost:
+					state.currentPost.id === post.id ? post : state.currentPost,
 			};
 
 		case "CLICK":
@@ -65,15 +67,11 @@ export function postsReducer(state, action) {
 			let updatedPosts = state[searchType];
 
 			const postIndex = updatedPosts.findIndex(
-				(post) => action.updatedPost.id === post.id
+				(post) => action.post.id === post.id
 			);
 
-			// TODO: loop through object props and update fields based on edit
 			// TODO: Decide on editing this data and THEN firing REST update, or just using REST update + responses and rerender
-			updatedPosts[postIndex] = {
-				...updatedPosts[postIndex],
-				post_title: "farts",
-			};
+			updatedPosts[postIndex] = action.post;
 
 			return {
 				...state,
