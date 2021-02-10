@@ -4,9 +4,9 @@ import { format } from "date-fns";
 import { postStatuses, dateFormat, isEmptyPost } from "../lib/utils";
 import { useUnscheduledStatuses } from "../lib/hooks";
 
-import "react-datepicker/dist/react-datepicker.css";
-
 import PostsContext from "../PostsContext";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 function editPostReducer(state, action) {
 	switch (action.type) {
@@ -104,82 +104,95 @@ export default function EditPost() {
 		));
 	};
 
-	return isEmptyPost(currentPost) ? (
+	return (
 		<div className="editPost">
-			<div className="editPost__buttons">
-				{editMode ? (
-					<div>
-						<button
-							className="editPost__buttons__save"
-							onClick={saveHandler}
-						>
-							Save
-						</button>
-						<button
-							className="editPost__buttons__cancel"
-							onClick={cancelHandler}
-						>
-							Cancel
-						</button>
-					</div>
-				) : (
-					<button
-						className="editPost__buttons__edit"
-						onClick={editHandler}
-					>
-						Edit Post
-					</button>
-				)}
-			</div>
-			<div className="editPost__editor">
-				{editMode ? (
-					<form className="editPost__editor__form">
-						<label htmlFor="post_title">
-							Post Title
-							<input
-								name="post_title"
-								value={editPost.post_title}
-								onChange={handleInputChange}
-							/>
-						</label>
-						<label htmlFor="post_date">
-							Post Date
-							<DatePicker
-								closeOnScroll={(e) => e.target === document}
-								selected={new Date(editPost.post_date)}
-								onChange={handleInputDateChange}
-							/>
-						</label>
-						<label htmlFor="post_status">
-							Post Status
-							<select
-								name="post_status"
-								onChange={handleInputChange}
-								value={editPost.post_status}
-							>
-								{renderStatusOptions()}
-							</select>
-						</label>
-						<label htmlFor="post-thumbnail-chooser">
-							{/* <input name="post-thumbnail-chooser"></input> */}
-							<div className="post-thumbnail">
-								Dreams: Choose/Replace Featured image here
+			{isEmptyPost(currentPost) ? (
+				<div>
+					<div className="editPost__buttons">
+						{editMode ? (
+							<div className="editPost__buttons__row">
+								{/* TODO Get keyboard ENTER to work as Save button */}
+								<button
+									className="editPost__buttons__save"
+									onClick={saveHandler}
+								>
+									Save
+								</button>
+								<button
+									className="editPost__buttons__cancel"
+									onClick={cancelHandler}
+								>
+									Cancel
+								</button>
 							</div>
-						</label>
-					</form>
-				) : (
-					<div className="editPost__editor__display">
-						<div className="postData">
-							<p>{currentPost.post_title}</p>
-							<p>{currentPost.post_date}</p>
-							<p>{currentPost.post_status}</p>
-						</div>
-						<div className="post-thumbnail">
-							Featured image here
-						</div>
+						) : (
+							<div>
+								<button
+									className="editPost__buttons__edit"
+									onClick={editHandler}
+								>
+									Edit Post
+								</button>
+							</div>
+						)}
 					</div>
-				)}
-			</div>
+					<div className="editPost__editor">
+						{editMode ? (
+							<form className="editPost__editor__form">
+								<label htmlFor="post_title">
+									Post Title
+									<input
+										name="post_title"
+										value={editPost.post_title}
+										onChange={handleInputChange}
+									/>
+								</label>
+								<label htmlFor="post_date">
+									Post Date
+									<DatePicker
+										closeOnScroll={(e) =>
+											e.target === document
+										}
+										selected={new Date(editPost.post_date)}
+										onChange={handleInputDateChange}
+									/>
+								</label>
+								<label htmlFor="post_status">
+									Post Status
+									<select
+										name="post_status"
+										onChange={handleInputChange}
+										value={editPost.post_status}
+									>
+										{renderStatusOptions()}
+									</select>
+								</label>
+								<label htmlFor="post-thumbnail-chooser">
+									{/* <input name="post-thumbnail-chooser"></input> */}
+									{/* TODO: Featured image display/selection */}
+									<div className="post-thumbnail">
+										Dreams: Choose/Replace Featured image
+										here
+									</div>
+								</label>
+							</form>
+						) : (
+							<div className="editPost__editor__display">
+								<div className="postData">
+									<p>{currentPost.post_title}</p>
+									<p>{currentPost.post_date}</p>
+									<p>{currentPost.post_status}</p>
+								</div>
+								<div className="post-thumbnail">
+									Featured image here
+								</div>
+							</div>
+						)}
+					</div>
+				</div>
+			) : (
+				<small>Click a post to Quick Edit.</small>
+			)}
 		</div>
-	) : null;
+	);
 }

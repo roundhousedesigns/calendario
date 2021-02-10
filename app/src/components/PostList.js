@@ -5,11 +5,11 @@ import { isToday, isPast } from "date-fns";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-// TODO: Cache drag handlers and/or figure out polling
+// TODO: Cache drag handlers and/or figure out polling?
 
 export default function PostList({ posts, className, date }) {
 	const { postsDispatch } = useContext(PostsContext);
-	const { draggedPost, dragDispatch } = useContext(DragContext);
+	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
@@ -19,7 +19,7 @@ export default function PostList({ posts, className, date }) {
 				? Number(e.target.dataset.index)
 				: false;
 
-			dragDispatch({
+			draggedPostDispatch({
 				type: "DRAGGING_OVER_UNSCHEDULED",
 				draggedTo: draggedTo,
 			});
@@ -43,7 +43,7 @@ export default function PostList({ posts, className, date }) {
 			});
 		}
 
-		dragDispatch({
+		draggedPostDispatch({
 			type: "END",
 		});
 	};

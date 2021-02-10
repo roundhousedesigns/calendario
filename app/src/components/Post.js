@@ -10,7 +10,7 @@ export default function Post({ post, index }) {
 		postsDispatch,
 		posts: { unscheduled, currentPost },
 	} = useContext(PostsContext);
-	const { draggedPost, dragDispatch } = useContext(DragContext);
+	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
 	const [colors, setColors] = useState({});
 
 	useEffect(() => {
@@ -27,7 +27,7 @@ export default function Post({ post, index }) {
 			? true
 			: false;
 
-		dragDispatch({
+		draggedPostDispatch({
 			type: "START",
 			post: post,
 			draggedFrom: draggingUnscheduled
@@ -38,13 +38,13 @@ export default function Post({ post, index }) {
 	};
 
 	const handleDragEnd = () => {
-		dragDispatch({
+		draggedPostDispatch({
 			type: "END",
 		});
 	};
 
 	const handleDrop = () => {
-		dragDispatch({
+		draggedPostDispatch({
 			type: "END",
 		});
 	};
@@ -55,7 +55,7 @@ export default function Post({ post, index }) {
 			e.target.parentNode.classList.contains("unscheduled-drafts")
 				? true
 				: false;
-		
+
 		postsDispatch({
 			type: "SET_CURRENTPOST",
 			post: post,
@@ -64,6 +64,7 @@ export default function Post({ post, index }) {
 	};
 
 	return post ? (
+		/* TODO Clean up this className nightmare */
 		<li
 			className={`post status__${post.post_status}${
 				draggedPost.isDragging &&

@@ -17,9 +17,8 @@ export default function Header() {
 					</p>
 					<ul style={{ margin: 0 }}>
 						<li>Re-connect to WP for real data</li>
-						<li>Status color indicators</li>
-						<li>Do UI for drag-and-drop feedback</li>
-						<li>Post Modal for changing post data</li>
+						<li>Show/hide statuses from filter menu</li>
+						<li>Improve DND UI</li>
 					</ul>
 				</div>
 				<div className="calendario__header__right">
