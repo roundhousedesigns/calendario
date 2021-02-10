@@ -21,11 +21,11 @@ const UnscheduledDrafts = () => {
 	}, [sidebarPostsDispatch]);
 
 	return (
-		<div id="unscheduled-drafts" className="unscheduled-drafts">
+		<div id="unscheduledDrafts" className="unscheduledDrafts">
 			{sidebarPosts ? (
 				<ul
-					id="unscheduled-drafts-list"
-					className="unscheduled-drafts-list"
+					id="unscheduledDrafts__list"
+					className="unscheduledDrafts__list"
 				>
 					{sidebarPosts.events.map((event, index) => (
 						<Draft key={index} post={event} />

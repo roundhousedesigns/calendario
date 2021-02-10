@@ -29,7 +29,7 @@ const CalendarArea = ({ maxViewMonths, viewMonthCount }) => {
 	const today = getToday();
 
 	useEffect(() => {
-		let el = document.getElementById("unscheduled-drafts-list");
+		let el = document.getElementById("unscheduledDrafts__list");
 
 		if (el) {
 			setUnscheduledList(el);

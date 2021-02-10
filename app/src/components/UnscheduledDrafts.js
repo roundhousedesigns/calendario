@@ -11,7 +11,7 @@ export default function UnscheduledDrafts() {
 
 	return (
 		<PostList
-			className="unscheduled-drafts"
+			className="unscheduledDrafts"
 			date={false}
 			posts={unscheduled}
 		/>

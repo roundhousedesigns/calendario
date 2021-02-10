@@ -22,7 +22,7 @@ export default function Post({ post, index }) {
 
 	const handleDragStart = (e) => {
 		let draggingUnscheduled = e.currentTarget.parentNode.classList.contains(
-			"unscheduled-drafts"
+			"unscheduledDrafts"
 		)
 			? true
 			: false;
@@ -51,8 +51,8 @@ export default function Post({ post, index }) {
 
 	const handleClick = (e) => {
 		let unscheduled =
-			e.target.classList.contains("unscheduled-drafts") ||
-			e.target.parentNode.classList.contains("unscheduled-drafts")
+			e.target.classList.contains("unscheduledDrafts") ||
+			e.target.parentNode.classList.contains("unscheduledDrafts")
 				? true
 				: false;
 

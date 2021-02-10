@@ -8,7 +8,7 @@ export default function Sidebar() {
 		<aside className="calendario__sidebar">
 			<Widget
 				title="Unscheduled Drafts"
-				className={"widget__unscheduled-drafts"}
+				className={"widget__unscheduledDrafts"}
 			>
 				<UnscheduledDrafts />
 			</Widget>

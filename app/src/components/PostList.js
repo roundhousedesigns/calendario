@@ -14,7 +14,7 @@ export default function PostList({ posts, className, date }) {
 	const handleDragOver = (e) => {
 		e.preventDefault();
 
-		if (e.currentTarget.classList.contains("unscheduled-drafts")) {
+		if (e.currentTarget.classList.contains("unscheduledDrafts")) {
 			let draggedTo = e.target.dataset.index
 				? Number(e.target.dataset.index)
 				: false;
@@ -50,7 +50,7 @@ export default function PostList({ posts, className, date }) {
 
 	const renderPostList = () => {
 		let listProps = {
-			className: `post-list ${className}`,
+			className: `postList ${className}`,
 			onDragOver: handleDragOver,
 		};
 

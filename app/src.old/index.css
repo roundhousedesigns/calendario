@@ -43,34 +43,34 @@ code {
 	padding: 12px;
 }
 
-.unscheduled-drafts {
+.unscheduledDrafts {
 	border: 1px solid gray;
 	min-height: 60px;
 	padding: 16px;
 }
 
-.unscheduled-drafts ul {
+.unscheduledDrafts ul {
 	padding: 0;
 	list-style-position: inside;
 	min-height: 100px;
 	background: #eee;
 }
 
-.unscheduled-drafts ul li {
+.unscheduledDrafts ul li {
 	padding: 12px 0;
 	cursor: grab;
 	width: 100%;
 	text-align: left;
 }
 
-.unscheduled-drafts ul li .flag {
+.unscheduledDrafts ul li .flag {
 	font-weight: bold;
 	float: right;
 	margin-right: 12px;
 	font-size: 0.8em;
 }
 
-.unscheduled-drafts ul li:active {
+.unscheduledDrafts ul li:active {
 	cursor: grabbing;
 }
 

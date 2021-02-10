@@ -5,14 +5,14 @@ export default function StatusFilters() {
 	const keys = Object.keys(postStatuses);
 
 	return (
-		<div className="status-filters">
+		<div className="statusFilters">
 			<p>Clickable one day...</p>
 			<ul className="filters">
 				{keys.map((item, index) => {
 					const { color, backgroundColor, name } = postStatuses[item];
 					return (
 						<li
-							className={`filter-item status__${item}`}
+							className={`filterItem status__${item}`}
 							key={index}
 						>
 							<span

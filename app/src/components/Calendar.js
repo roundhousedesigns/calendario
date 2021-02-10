@@ -25,15 +25,15 @@ export default function Calendar() {
 	function renderHeader() {
 		return (
 			<div className="header row flex-middle">
-				<div className="col col-start">
+				<div className="col col__start">
 					<div className="icon" onClick={prevMonth}>
 						chevron_left
 					</div>
 				</div>
-				<div className="col col-center">
+				<div className="col col__center">
 					<span>{format(currentMonth, dateFormat.header)}</span>
 				</div>
-				<div className="col col-end" onClick={nextMonth}>
+				<div className="col col__end" onClick={nextMonth}>
 					<div className="icon">chevron_right</div>
 				</div>
 			</div>
@@ -47,7 +47,7 @@ export default function Calendar() {
 
 		for (let i = 0; i < 7; i++) {
 			days.push(
-				<div className="col col-center" key={i}>
+				<div className="col col__center" key={i}>
 					{format(addDays(startDate, i), dateFormat.dayName)}
 				</div>
 			);
@@ -83,7 +83,7 @@ export default function Calendar() {
 					classes.push("past");
 				}
 				if (!isSameMonth(day, firstOfMonth)) {
-					classes.push("outside-month");
+					classes.push("outsideMonth");
 				}
 
 				days.push(

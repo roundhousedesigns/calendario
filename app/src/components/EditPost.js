@@ -167,10 +167,10 @@ export default function EditPost() {
 										{renderStatusOptions()}
 									</select>
 								</label>
-								<label htmlFor="post-thumbnail-chooser">
-									{/* <input name="post-thumbnail-chooser"></input> */}
+								<label htmlFor="postThumb-chooser">
+									{/* <input name="postThumb-chooser"></input> */}
 									{/* TODO: Featured image display/selection */}
-									<div className="post-thumbnail">
+									<div className="postThumb">
 										Dreams: Choose/Replace Featured image
 										here
 									</div>
@@ -183,7 +183,7 @@ export default function EditPost() {
 									<p>{currentPost.post_date}</p>
 									<p>{currentPost.post_status}</p>
 								</div>
-								<div className="post-thumbnail">
+								<div className="postThumb">
 									Featured image here
 								</div>
 							</div>
