@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import PostList from "./PostList";
-// import Post from "./Post";
 
 import PostsContext from "../PostsContext";
 

@@ -84,6 +84,7 @@ export function postsReducer(state, action) {
 	}
 }
 
+// TODO Change 'scheduled' key to 'calendar'
 export const initialPosts = {
 	scheduled: [],
 	unscheduled: [],

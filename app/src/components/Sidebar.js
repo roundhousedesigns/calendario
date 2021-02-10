@@ -4,17 +4,22 @@ import UnscheduledDrafts from "./UnscheduledDrafts";
 import EditPost from "./EditPost";
 
 export default function Sidebar() {
+	const renderWidget = (title, className, children) => {
+		return (
+			<Widget title={title} className={`widget__${className}`}>
+				{children}
+			</Widget>
+		);
+	};
+
 	return (
 		<aside className="calendario__sidebar">
-			<Widget
-				title="Unscheduled Drafts"
-				className={"widget__unscheduledDrafts"}
-			>
+			{renderWidget(
+				"Unscheduled Drafts",
+				"unscheduledDrafts",
 				<UnscheduledDrafts />
-			</Widget>
-			<Widget title="Post Area" className={"widget__editPost"}>
-				<EditPost />
-			</Widget>
+			)}
+			{renderWidget("Post Area", "editPost", <EditPost />)}
 		</aside>
 	);
 }

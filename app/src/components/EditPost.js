@@ -40,6 +40,10 @@ export default function EditPost() {
 	const unscheduledStatuses = useUnscheduledStatuses(postStatuses);
 
 	useEffect(() => {
+		console.log(editPost);
+	}, [editPost]);
+
+	useEffect(() => {
 		if (editMode === true && editPost.id !== currentPost.id) {
 			setEditMode(false);
 		}
@@ -96,10 +100,10 @@ export default function EditPost() {
 		});
 	};
 
-	const renderStatusOptions = () => {
-		return Object.keys(unscheduledStatuses).map((status) => (
+	const renderStatusOptions = (statusList) => {
+		return Object.keys(statusList).map((status) => (
 			<option key={status} value={status}>
-				{unscheduledStatuses[status].name}
+				{statusList[status].name}
 			</option>
 		));
 	};
@@ -164,7 +168,11 @@ export default function EditPost() {
 										onChange={handleInputChange}
 										value={editPost.post_status}
 									>
-										{renderStatusOptions()}
+										{editPost.unscheduled === true
+											? renderStatusOptions(
+													unscheduledStatuses
+											  )
+											: renderStatusOptions(postStatuses)}
 									</select>
 								</label>
 								<label htmlFor="postThumb-chooser">

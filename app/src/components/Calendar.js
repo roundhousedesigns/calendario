@@ -17,6 +17,7 @@ import DayPosts from "./DayPosts";
 import { dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
+
 // TODO BIG FUCKING ONE Add months to the calendar somehow
 export default function Calendar() {
 	const { posts } = useContext(PostsContext);

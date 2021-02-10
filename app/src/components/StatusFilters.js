@@ -6,7 +6,6 @@ export default function StatusFilters() {
 
 	return (
 		<div className="statusFilters">
-			<p>Clickable one day...</p>
 			<ul className="filters">
 				{keys.map((item, index) => {
 					const { color, backgroundColor, name } = postStatuses[item];

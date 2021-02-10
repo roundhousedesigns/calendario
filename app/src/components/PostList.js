@@ -5,8 +5,6 @@ import { isToday, isPast } from "date-fns";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-// TODO: Cache drag handlers and/or figure out polling?
-
 export default function PostList({ posts, className, date }) {
 	const { postsDispatch } = useContext(PostsContext);
 	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
@@ -26,7 +24,8 @@ export default function PostList({ posts, className, date }) {
 		}
 	};
 
-	const handleDrop = (e) => {
+	// TODO: Cache drag handlers and/or figure out polling?
+	const handleDrop = () => {
 		if (date === false) {
 			// unscheduled
 			postsDispatch({

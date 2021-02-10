@@ -1,3 +1,4 @@
+// TODO key these by ID? Necessary?
 export const samplePosts = {
 	scheduled: [
 		{
@@ -76,7 +77,13 @@ export const dateFormat = {
 	dayName: "EEEE",
 };
 
+/**
+ * Tests if a post contains ANY empty data (is incomplete/empty post)
+ *
+ * @param {object} post
+ */
 export function isEmptyPost(post) {
+	// TODO Debug/error checks here?
 	return Object.values(post).some(
 		(prop) => prop !== null && prop !== "" && prop !== undefined
 	);

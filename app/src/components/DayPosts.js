@@ -6,6 +6,6 @@ export default function DayPosts({ date, posts }) {
 	const dayPosts = useDayPosts(posts, date);
 
 	return posts ? (
-		<PostList className="scheduled-posts" date={date} posts={dayPosts} />
+		<PostList className="calendarPosts" date={date} posts={dayPosts} />
 	) : null;
 }

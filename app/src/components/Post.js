@@ -37,11 +37,7 @@ export default function Post({ post, index }) {
 		});
 	};
 
-	const handleDragEnd = () => {
-		draggedPostDispatch({
-			type: "END",
-		});
-	};
+	const handleDragEnd = () => draggedPostDispatch({ type: "END" });
 
 	const handleDrop = () => {
 		draggedPostDispatch({
