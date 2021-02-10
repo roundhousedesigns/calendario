@@ -53,6 +53,8 @@ export default function EditPost() {
 				newDate: currentPost.post_date,
 			});
 		}
+		// we don't want to re-fire when editPost.post_date changes, so leave it out of deps.
+		// TODO Figure out a `usePrevious` solution that doesn't require an eslint hack
 		//eslint-disable-next-line
 	}, [currentPost.post_date]);
 
