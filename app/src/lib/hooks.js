@@ -1,5 +1,5 @@
 import { isSameDay } from "date-fns";
-// import { isEmpty } from "lodash";
+import { omit } from "lodash";
 
 export function useDayPosts(posts, date) {
 	let dayPosts = [];
@@ -12,10 +12,15 @@ export function useDayPosts(posts, date) {
 	return dayPosts;
 }
 
-// export function useCurrentPost(posts) {
-// 	 if (!isEmpty(posts.currentPost)) {
-// 		return posts.currentPost;
-// 	} else {
-// 		return {};
-// 	}
-// }
+export function useUnscheduledStatuses(postStatuses) {
+	const exclude = ["publish", "future"];
+	let newStatuses = postStatuses;
+
+	for (let key in postStatuses) {
+		if (exclude.includes(key)) {
+			newStatuses = omit(newStatuses, key);
+		}
+	}
+
+	return newStatuses;
+}

@@ -1,6 +1,10 @@
 import React, { useContext, useEffect, useState, useReducer } from "react";
-import { isEmpty } from "lodash";
-// import { useCurrentPost } from "../lib/hooks";
+import DatePicker from "react-datepicker";
+import { format } from "date-fns";
+import { postStatuses, dateFormat, isEmptyPost } from "../lib/utils";
+import { useUnscheduledStatuses } from "../lib/hooks";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 import PostsContext from "../PostsContext";
 
@@ -15,6 +19,12 @@ function editPostReducer(state, action) {
 				[action.field]: action.value,
 			};
 
+		case "DATE_CHANGE":
+			return {
+				...state,
+				post_date: action.newDate,
+			};
+
 		default:
 			return { state };
 	}
@@ -27,17 +37,34 @@ export default function EditPost() {
 	} = useContext(PostsContext);
 	const [editMode, setEditMode] = useState(false);
 	const [editPost, editPostDispatch] = useReducer(editPostReducer, {});
+	const unscheduledStatuses = useUnscheduledStatuses(postStatuses);
 
 	useEffect(() => {
-		editPostDispatch({
-			type: "INIT",
-			post: currentPost,
-		});
+		if (editMode === true && editPost.id !== currentPost.id) {
+			setEditMode(false);
+		}
+	}, [editMode, editPost.id, currentPost.id]);
 
-		setEditMode(false);
-	}, [currentPost]);
+	useEffect(() => {
+		// Handle changing post date (i.e. dragging on calendar) while in edit mode
+		if (currentPost.post_date !== editPost.post_date) {
+			editPostDispatch({
+				type: "DATE_CHANGE",
+				newDate: currentPost.post_date,
+			});
+		}
+		//eslint-disable-next-line
+	}, [currentPost.post_date]);
 
 	const editHandler = () => {
+		editPostDispatch(
+			{
+				type: "INIT",
+				post: currentPost,
+			},
+			[unscheduledStatuses]
+		);
+
 		setEditMode(true);
 	};
 
@@ -59,7 +86,23 @@ export default function EditPost() {
 		});
 	};
 
-	return !isEmpty(editPost) ? (
+	const handleInputDateChange = (date) => {
+		editPostDispatch({
+			type: "EDIT",
+			field: "post_date",
+			value: format(date, dateFormat.date),
+		});
+	};
+
+	const renderStatusOptions = () => {
+		return Object.keys(unscheduledStatuses).map((status) => (
+			<option key={status} value={status}>
+				{unscheduledStatuses[status].name}
+			</option>
+		));
+	};
+
+	return isEmptyPost(currentPost) ? (
 		<div className="editPost">
 			<div className="editPost__buttons">
 				{editMode ? (
@@ -97,20 +140,23 @@ export default function EditPost() {
 								onChange={handleInputChange}
 							/>
 						</label>
-						{/* <label htmlFor="post_date">
+						<label htmlFor="post_date">
 							Post Date
-							<input
-								name="post_date"
-								value={editPost.post_date}
+							<DatePicker
+								closeOnScroll={(e) => e.target === document}
+								selected={new Date(editPost.post_date)}
+								onChange={handleInputDateChange}
 							/>
-						</label> */}
+						</label>
 						<label htmlFor="post_status">
 							Post Status
-							<input
+							<select
 								name="post_status"
-								value={editPost.post_status}
 								onChange={handleInputChange}
-							/>
+								value={editPost.post_status}
+							>
+								{renderStatusOptions()}
+							</select>
 						</label>
 						<label htmlFor="post-thumbnail-chooser">
 							{/* <input name="post-thumbnail-chooser"></input> */}
@@ -122,9 +168,9 @@ export default function EditPost() {
 				) : (
 					<div className="editPost__editor__display">
 						<div className="postData">
-							<p>{editPost.post_title}</p>
-							<p>{editPost.post_date}</p>
-							<p>{editPost.post_status}</p>
+							<p>{currentPost.post_title}</p>
+							<p>{currentPost.post_date}</p>
+							<p>{currentPost.post_status}</p>
 						</div>
 						<div className="post-thumbnail">
 							Featured image here

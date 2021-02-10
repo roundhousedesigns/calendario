@@ -4,7 +4,7 @@ export const samplePosts = {
 			id: 1,
 			post_title: "Test Post 1",
 			post_status: "draft",
-			post_date: "02-10-2021", // will be more accurate and have post time, as well
+			post_date: "02-5-2021", // will be more accurate and have post time, as well
 		},
 		{
 			id: 2,
@@ -62,6 +62,11 @@ export const postStatuses = {
 		backgroundColor: "lightcoral",
 		color: "white",
 	},
+	private: {
+		name: "Private",
+		backgroundColor: "maroon",
+		color: "white",
+	},
 };
 
 export const dateFormat = {
@@ -70,3 +75,9 @@ export const dateFormat = {
 	header: "MMMM yyyy",
 	dayName: "EEEE",
 };
+
+export function isEmptyPost(post) {
+	return Object.values(post).some(
+		(prop) => prop !== null && prop !== "" && prop !== undefined
+	);
+}

@@ -9,6 +9,7 @@ export function postsReducer(state, action) {
 	switch (action.type) {
 		case "POPULATE":
 			return {
+				...state,
 				scheduled: action.scheduled,
 				unscheduled: action.unscheduled,
 			};
@@ -43,7 +44,7 @@ export function postsReducer(state, action) {
 					state.currentPost.id === post.id ? post : state.currentPost,
 			};
 
-		case "CLICK":
+		case "SET_CURRENTPOST":
 			return {
 				...state,
 				currentPost: {
@@ -52,10 +53,10 @@ export function postsReducer(state, action) {
 				},
 			};
 
-		case "UNCLICK":
+		case "UNSET_CURRENTPOST":
 			return {
 				...state,
-				currentPost: {},
+				currentPost: initialPosts.currentPost,
 			};
 
 		case "UPDATE_POST":
@@ -70,12 +71,12 @@ export function postsReducer(state, action) {
 				(post) => action.post.id === post.id
 			);
 
-			// TODO: Decide on editing this data and THEN firing REST update, or just using REST update + responses and rerender
 			updatedPosts[postIndex] = action.post;
 
 			return {
 				...state,
 				[searchType]: updatedPosts,
+				currentPost: action.post,
 			};
 
 		default:
@@ -86,5 +87,10 @@ export function postsReducer(state, action) {
 export const initialPosts = {
 	scheduled: [],
 	unscheduled: [],
-	currentPost: {},
+	currentPost: {
+		id: null,
+		post_title: "",
+		post_status: "",
+		post_date: "",
+	},
 };

@@ -57,7 +57,7 @@ export default function Post({ post, index }) {
 				: false;
 		
 		postsDispatch({
-			type: "CLICK",
+			type: "SET_CURRENTPOST",
 			post: post,
 			unscheduled: unscheduled,
 		});
