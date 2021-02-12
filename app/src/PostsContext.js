@@ -93,5 +93,6 @@ export const initialPosts = {
 		post_title: "",
 		post_status: "",
 		post_date: "",
+		unscheduled: null,
 	},
 };

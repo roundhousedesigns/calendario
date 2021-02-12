@@ -1,3 +1,5 @@
+import { omit } from "lodash";
+
 // TODO key these by ID? Necessary?
 export const samplePosts = {
 	scheduled: [
@@ -87,4 +89,23 @@ export function isEmptyPost(post) {
 	return Object.values(post).some(
 		(prop) => prop !== null && prop !== "" && prop !== undefined
 	);
+}
+
+/**
+ * Produces a filtered list of post status objects.
+ *
+ * @param {array} exclude keys to exclude.
+ * @return {object} The filtered postStatuses object.
+ */
+export function filterStatusList(exclude = []) {
+	let filtered = postStatuses;
+	if (exclude.length > 0) {
+		for (let key in postStatuses) {
+			if (exclude.includes(key)) {
+				filtered = omit(filtered, key);
+			}
+		}
+	}
+
+	return filtered;
 }

@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState, useReducer } from "react";
 import DatePicker from "react-datepicker";
-import { format } from "date-fns";
-import { postStatuses, dateFormat, isEmptyPost } from "../lib/utils";
-import { useUnscheduledStatuses } from "../lib/hooks";
+import { format, isFuture, isPast } from "date-fns";
+import { dateFormat, isEmptyPost } from "../lib/utils";
+import { filterStatusList } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 function editPostReducer(state, action) {
 	switch (action.type) {
-		case "INIT":
+		case "SET":
 			return action.post;
 
 		case "EDIT":
@@ -37,11 +37,24 @@ export default function EditPost() {
 	} = useContext(PostsContext);
 	const [editMode, setEditMode] = useState(false);
 	const [editPost, editPostDispatch] = useReducer(editPostReducer, {});
-	const unscheduledStatuses = useUnscheduledStatuses(postStatuses);
+	const [allowedStatuses, setAllowedStatuses] = useState({});
 
 	useEffect(() => {
-		console.log(editPost);
-	}, [editPost]);
+		const date = new Date(editPost.post_date);
+		let exclude = [];
+
+		if (editPost.unscheduled === true) {
+			exclude.push("publish", "future");
+		} else if (isFuture(date)) {
+			exclude.push("publish");
+		} else if (isPast(date)) {
+			exclude.push("future");
+		}
+
+		const statusList = filterStatusList(exclude);
+
+		setAllowedStatuses(statusList);
+	}, [editPost.post_date, editPost.unscheduled]);
 
 	useEffect(() => {
 		if (editMode === true && editPost.id !== currentPost.id) {
@@ -51,7 +64,10 @@ export default function EditPost() {
 
 	useEffect(() => {
 		// Handle changing post date (i.e. dragging on calendar) while in edit mode
-		if (currentPost.post_date !== editPost.post_date) {
+		if (
+			currentPost.post_date !== editPost.post_date &&
+			!isEmptyPost(currentPost)
+		) {
 			editPostDispatch({
 				type: "DATE_CHANGE",
 				newDate: currentPost.post_date,
@@ -63,13 +79,10 @@ export default function EditPost() {
 	}, [currentPost.post_date]);
 
 	const editHandler = () => {
-		editPostDispatch(
-			{
-				type: "INIT",
-				post: currentPost,
-			},
-			[unscheduledStatuses]
-		);
+		editPostDispatch({
+			type: "SET",
+			post: currentPost,
+		});
 
 		setEditMode(true);
 	};
@@ -85,6 +98,14 @@ export default function EditPost() {
 	const cancelHandler = () => setEditMode(false);
 
 	const handleInputChange = (e) => {
+		editPostDispatch({
+			type: "EDIT",
+			field: e.target.name,
+			value: e.target.value,
+		});
+	};
+
+	const handleStatusChange = (e) => {
 		editPostDispatch({
 			type: "EDIT",
 			field: e.target.name,
@@ -113,7 +134,7 @@ export default function EditPost() {
 			{isEmptyPost(currentPost) ? (
 				<div>
 					<div className="editPost__buttons">
-						{editMode ? (
+						{editMode === true ? (
 							<div className="editPost__buttons__row">
 								{/* TODO Get keyboard ENTER to work as Save button */}
 								<button
@@ -143,16 +164,18 @@ export default function EditPost() {
 					<div className="editPost__editor">
 						{editMode ? (
 							<form className="editPost__editor__form">
-								<label htmlFor="post_title">
-									Post Title
+								<div className="field-group field-group__post_title">
+									<label htmlFor="post_title">
+										Post Title
+									</label>
 									<input
 										name="post_title"
 										value={editPost.post_title}
 										onChange={handleInputChange}
 									/>
-								</label>
-								<label htmlFor="post_date">
-									Post Date
+								</div>
+								<div className="field-group field-group__post_date">
+									<label htmlFor="post_date">Post Date</label>
 									<DatePicker
 										closeOnScroll={(e) =>
 											e.target === document
@@ -160,29 +183,30 @@ export default function EditPost() {
 										selected={new Date(editPost.post_date)}
 										onChange={handleInputDateChange}
 									/>
-								</label>
-								<label htmlFor="post_status">
-									Post Status
+								</div>
+								<div className="field-group field-group__post_status">
+									<label htmlFor="post_status">
+										Post Status
+									</label>
 									<select
 										name="post_status"
-										onChange={handleInputChange}
+										onChange={handleStatusChange}
 										value={editPost.post_status}
 									>
-										{editPost.unscheduled === true
-											? renderStatusOptions(
-													unscheduledStatuses
-											  )
-											: renderStatusOptions(postStatuses)}
+										{renderStatusOptions(allowedStatuses)}
 									</select>
-								</label>
-								<label htmlFor="postThumb-chooser">
+								</div>
+								<div className="field-group field-group__thumb">
 									{/* <input name="postThumb-chooser"></input> */}
-									{/* TODO: Featured image display/selection */}
+									{/* TODO Featured image display/selection */}
+									<label htmlFor="postThumb-chooser">
+										{/* Image... */}
+									</label>
 									<div className="postThumb">
 										Dreams: Choose/Replace Featured image
 										here
 									</div>
-								</label>
+								</div>
 							</form>
 						) : (
 							<div className="editPost__editor__display">

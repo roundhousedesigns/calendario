@@ -17,6 +17,18 @@ export default function PostList({ posts, className, date }) {
 				? Number(e.target.dataset.index)
 				: false;
 
+			if (draggedTo === false) {
+				let mouseY = e.pageY - e.currentTarget.offsetTop;
+				const listItems = e.currentTarget.childNodes;
+				let itemCount = listItems.length;
+
+				if (mouseY < listItems[0].offsetTop) {
+					draggedTo = 0;
+				} else {
+					draggedTo = itemCount;
+				}
+			}
+
 			draggedPostDispatch({
 				type: "DRAGGING_OVER_UNSCHEDULED",
 				draggedTo: draggedTo,
