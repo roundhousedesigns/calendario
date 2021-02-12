@@ -44,21 +44,21 @@ export function postsReducer(state, action) {
 					state.currentPost.id === post.id ? post : state.currentPost,
 			};
 
-		case "ADD_VIEW_MONTH":
+		case "UPDATE_MONTH_COUNT":
 			console.log(state.calendarMonths + 1);
 			return {
 				...state,
-				calendarMonths: state.calendarMonths + 1,
+				calendarMonths: action.calendarMonths,
 			};
 
-		case "SUB_VIEW_MONTH":
-			return {
-				...state,
-				calendarMonths:
-					state.calendarMonths - 1 >= 1
-						? state.calendarMonths - 1
-						: state.calendarMonths,
-			};
+		// case "SUB_VIEW_MONTH":
+		// 	return {
+		// 		...state,
+		// 		calendarMonths:
+		// 			state.calendarMonths - 1 >= 1
+		// 				? state.calendarMonths - 1
+		// 				: state.calendarMonths,
+		// 	};
 
 		case "SET_CURRENTPOST":
 			return {

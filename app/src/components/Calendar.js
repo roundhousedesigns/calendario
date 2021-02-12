@@ -32,9 +32,7 @@ export default function Calendar() {
 					</div>
 				</div>
 				<div className="col col__center">
-					<span>{format(startMonth, dateFormat.year)}</span>
-					<button onClick={addViewMonth}>+</button>
-					<button onClick={subViewMonth}>-</button>
+					<span>{format(startMonth, dateFormat.monthName)} {format(startMonth, dateFormat.year)}</span>
 				</div>
 				<div className="col col__end" onClick={nextMonth}>
 					<div className="icon">chevron_right</div>

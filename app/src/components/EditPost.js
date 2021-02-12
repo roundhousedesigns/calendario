@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState, useReducer } from "react";
+import SidebarInput from "./SidebarInput";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast } from "date-fns";
 import { dateFormat, isEmptyPost } from "../lib/utils";
@@ -164,18 +165,14 @@ export default function EditPost() {
 					<div className="editPost__editor">
 						{editMode ? (
 							<form className="editPost__editor__form">
-								<div className="field-group field-group__post_title">
-									<label htmlFor="post_title">
-										Post Title
-									</label>
+								<SidebarInput name="post_title" label="Post Title">
 									<input
 										name="post_title"
 										value={editPost.post_title}
 										onChange={handleInputChange}
 									/>
-								</div>
-								<div className="field-group field-group__post_date">
-									<label htmlFor="post_date">Post Date</label>
+								</SidebarInput>
+								<SidebarInput name="post_date" label="Post Date">
 									<DatePicker
 										closeOnScroll={(e) =>
 											e.target === document
@@ -183,11 +180,8 @@ export default function EditPost() {
 										selected={new Date(editPost.post_date)}
 										onChange={handleInputDateChange}
 									/>
-								</div>
-								<div className="field-group field-group__post_status">
-									<label htmlFor="post_status">
-										Post Status
-									</label>
+								</SidebarInput>
+								<SidebarInput name="post_status" label="Post Status">
 									<select
 										name="post_status"
 										onChange={handleStatusChange}
@@ -195,18 +189,15 @@ export default function EditPost() {
 									>
 										{renderStatusOptions(allowedStatuses)}
 									</select>
-								</div>
-								<div className="field-group field-group__thumb">
+								</SidebarInput>
+								<SidebarInput name="post_thumb" label="Post Title">
 									{/* <input name="postThumb-chooser"></input> */}
 									{/* TODO Featured image display/selection */}
-									<label htmlFor="postThumb-chooser">
-										{/* Image... */}
-									</label>
 									<div className="postThumb">
 										Dreams: Choose/Replace Featured image
 										here
 									</div>
-								</div>
+								</SidebarInput>
 							</form>
 						) : (
 							<div className="editPost__editor__display">

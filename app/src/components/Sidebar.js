@@ -1,5 +1,6 @@
 import React from "react";
 import Widget from "./Widget";
+import ViewOptions from "./ViewOptions";
 import UnscheduledDrafts from "./UnscheduledDrafts";
 import EditPost from "./EditPost";
 
@@ -14,6 +15,7 @@ export default function Sidebar() {
 
 	return (
 		<aside className="calendario__sidebar">
+			{renderWidget("View Options", "viewOptions", <ViewOptions />)}
 			{renderWidget(
 				"Unscheduled Drafts",
 				"unscheduledDrafts",
