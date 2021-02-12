@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useState, useReducer, Profiler } from "react";
 import Header from "./components/Header";
 import Main from "./components/Calendar";
 import Sidebar from "./components/Sidebar";
@@ -19,7 +19,7 @@ export default function App() {
 
 	useEffect(() => {
 		postsDispatch({
-			type: "POPULATE",
+			type: "INIT",
 			scheduled: samplePosts.scheduled,
 			unscheduled: samplePosts.unscheduled,
 		});
@@ -29,16 +29,30 @@ export default function App() {
 		setDarkMode(() => !darkMode);
 	};
 
+	function mainRenderCallback(
+		id,
+		phase,
+		actualDuration,
+		baseDuration,
+		startTime,
+		commitTime,
+		interactions
+	) {}
+
 	return (
 		<div className={`calendario ${darkMode ? "darkMode" : "lightMode"}`}>
 			<Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
 
-			<DragContext.Provider value={{ draggedPost, draggedPostDispatch }}>
-				<PostsContext.Provider value={{ posts, postsDispatch }}>
-					<Main />
-					<Sidebar />
-				</PostsContext.Provider>
-			</DragContext.Provider>
+			<Profiler id="Main" onRender={mainRenderCallback}>
+				<DragContext.Provider
+					value={{ draggedPost, draggedPostDispatch }}
+				>
+					<PostsContext.Provider value={{ posts, postsDispatch }}>
+						<Main />
+						<Sidebar />
+					</PostsContext.Provider>
+				</DragContext.Provider>
+			</Profiler>
 		</div>
 	);
 }

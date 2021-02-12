@@ -7,7 +7,7 @@ export default PostsContext;
 
 export function postsReducer(state, action) {
 	switch (action.type) {
-		case "POPULATE":
+		case "INIT":
 			return {
 				...state,
 				scheduled: action.scheduled,
@@ -42,6 +42,22 @@ export function postsReducer(state, action) {
 				),
 				currentPost:
 					state.currentPost.id === post.id ? post : state.currentPost,
+			};
+
+		case "ADD_VIEW_MONTH":
+			console.log(state.calendarMonths + 1);
+			return {
+				...state,
+				calendarMonths: state.calendarMonths + 1,
+			};
+
+		case "SUB_VIEW_MONTH":
+			return {
+				...state,
+				calendarMonths:
+					state.calendarMonths - 1 >= 1
+						? state.calendarMonths - 1
+						: state.calendarMonths,
 			};
 
 		case "SET_CURRENTPOST":
@@ -88,6 +104,7 @@ export function postsReducer(state, action) {
 export const initialPosts = {
 	scheduled: [],
 	unscheduled: [],
+	calendarMonths: 1,
 	currentPost: {
 		id: null,
 		post_title: "",

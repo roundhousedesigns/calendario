@@ -75,8 +75,9 @@ export const postStatuses = {
 export const dateFormat = {
 	day: "d",
 	date: "MM-dd-yyyy",
-	header: "MMMM yyyy",
+	year: "yyyy",
 	dayName: "EEEE",
+	monthName: "MMMM",
 };
 
 /**

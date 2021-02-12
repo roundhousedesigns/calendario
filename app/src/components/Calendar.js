@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
 import {
 	format,
-	isSameMonth,
 	isPast,
+	isAfter,
 	isToday,
 	addDays,
 	addMonths,
@@ -11,6 +11,7 @@ import {
 	startOfMonth,
 	endOfMonth,
 	endOfWeek,
+	isFirstDayOfMonth,
 } from "date-fns";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
@@ -18,10 +19,9 @@ import { dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
-// TODO BIG FUCKING ONE Add months to the calendar somehow
 export default function Calendar() {
-	const { posts } = useContext(PostsContext);
-	const [currentMonth, setCurrentMonth] = useState(new Date());
+	const { posts, postsDispatch } = useContext(PostsContext);
+	const [startMonth, setStartMonth] = useState(new Date());
 
 	function renderHeader() {
 		return (
@@ -32,7 +32,9 @@ export default function Calendar() {
 					</div>
 				</div>
 				<div className="col col__center">
-					<span>{format(currentMonth, dateFormat.header)}</span>
+					<span>{format(startMonth, dateFormat.year)}</span>
+					<button onClick={addViewMonth}>+</button>
+					<button onClick={subViewMonth}>-</button>
 				</div>
 				<div className="col col__end" onClick={nextMonth}>
 					<div className="icon">chevron_right</div>
@@ -44,7 +46,7 @@ export default function Calendar() {
 	function renderDays() {
 		const days = [];
 
-		let startDate = startOfWeek(currentMonth);
+		let startDate = startOfWeek(startMonth);
 
 		for (let i = 0; i < 7; i++) {
 			days.push(
@@ -58,10 +60,13 @@ export default function Calendar() {
 	}
 
 	function renderCells() {
-		const firstOfMonth = startOfMonth(currentMonth);
-		const lastOfMonth = endOfMonth(firstOfMonth);
-		const startDate = startOfWeek(firstOfMonth);
-		const endDate = endOfWeek(lastOfMonth);
+		const firstOfViewMonth = startOfMonth(startMonth);
+		const lastOfViewMonth = endOfMonth(
+			addMonths(firstOfViewMonth, posts.calendarMonths - 1)
+		);
+		const startDate = startOfWeek(firstOfViewMonth);
+		const endDate = endOfWeek(lastOfViewMonth);
+		let isMonthEven = false;
 
 		const rows = [];
 
@@ -71,6 +76,7 @@ export default function Calendar() {
 
 		while (day <= endDate) {
 			for (let i = 0; i < 7; i++) {
+				let isFirstDay = isFirstDayOfMonth(day);
 				formattedDate = {
 					day: format(day, dateFormat.day),
 					date: format(day, dateFormat.date),
@@ -83,16 +89,28 @@ export default function Calendar() {
 				if (isPast(day) && !isToday(day)) {
 					classes.push("past");
 				}
-				if (!isSameMonth(day, firstOfMonth)) {
+
+				// Outside ranges
+				if (isPast(day) || isAfter(day, lastOfViewMonth)) {
 					classes.push("outsideMonth");
+				}
+
+				// even/odd month
+				if (isFirstDay && !isPast(day)) {
+					isMonthEven = !isMonthEven;
 				}
 
 				days.push(
 					<Day
-						className={`col cell ${classes.join(" ")}`}
+						className={`col cell ${classes.join(" ")} ${
+							isMonthEven ? "even" : "odd"
+						}`}
 						key={day}
 						day={day}
 						dayNumber={formattedDate.day}
+						monthName={
+							isFirstDay ? format(day, dateFormat.monthName) : ""
+						}
 					>
 						<DayPosts date={day} posts={posts.scheduled} />
 					</Day>
@@ -109,13 +127,13 @@ export default function Calendar() {
 		return <div className="body">{rows}</div>;
 	}
 
-	const nextMonth = () => {
-		setCurrentMonth(addMonths(currentMonth, 1));
-	};
+	const nextMonth = () => setStartMonth(addMonths(startMonth, 1));
 
-	const prevMonth = () => {
-		setCurrentMonth(subMonths(currentMonth, 1));
-	};
+	const prevMonth = () => setStartMonth(subMonths(startMonth, 1));
+
+	const addViewMonth = () => postsDispatch({ type: "ADD_VIEW_MONTH" });
+
+	const subViewMonth = () => postsDispatch({ type: "SUB_VIEW_MONTH" });
 
 	return (
 		<div className="calendar calendario__main">

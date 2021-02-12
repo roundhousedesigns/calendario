@@ -13,6 +13,7 @@
 	--border-color: #eee;
 	--bg-color: #f9f9f9;
 	--neutral-color: #fff;
+	--neutral-color-dark: rgb(247, 247, 247);
 	--border-radius: 8px;
 }
 
@@ -246,33 +247,38 @@ body {
 			height: 7em;
 			border-right: 1px solid var(--border-color);
 			overflow: hidden;
-			background: var(--neutral-color);
 			transition: 0.25s ease-out;
+
+			&.odd {
+				background: var(--neutral-color);
+			}
+
+			&.even {
+				background: var(--neutral-color-dark);
+			}
 
 			&:last-child {
 				border-right: none;
 			}
 
+			.month,
 			.number {
 				position: absolute;
-				font-size: 82.5%;
 				line-height: 1;
-				top: 0.75em;
-				right: 0.75em;
 				font-weight: 700;
 			}
 
-			.bg {
-				font-weight: 700;
-				line-height: 1;
-				color: var(--main-color);
-				opacity: 0;
-				font-size: 8em;
-				position: absolute;
-				top: -0.2em;
-				right: -0.05em;
-				transition: 0.25s ease-out;
-				letter-spacing: -0.07em;
+			.month {
+				font-size: 120%;
+				text-transform: uppercase;
+				top: 0.45em;
+				left: 0.45em;
+			}
+
+			.number {
+				font-size: 82.5%;
+				top: 0.75em;
+				right: 0.75em;
 			}
 		}
 
@@ -284,11 +290,6 @@ body {
 				var(--main-color-light) 40%
 			);
 			border-image-slice: 1;
-
-			.bg {
-				opacity: 0.05;
-				transition: 0.5s ease-in;
-			}
 		}
 
 		.outsideMonth,

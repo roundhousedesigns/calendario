@@ -24,7 +24,9 @@ export default function Header({ darkMode, toggleDarkMode }) {
 				<div className="calendario__header__right">
 					<div className="darkLight">
 						<button onClick={toggleDarkMode}>
-							{darkMode ? "Please Light Mode Woof" : "Worst Dark Mode Ever"}
+							{darkMode
+								? "Please Light Mode Woof"
+								: "Worst Dark Mode Ever"}
 						</button>
 					</div>
 					<StatusFilters />
