@@ -1,7 +1,7 @@
 import React from "react";
 import StatusFilters from "./StatusFilters";
 
-export default function Header() {
+export default function Header({ darkMode, toggleDarkMode }) {
 	return (
 		<header className="calendario__header">
 			<h1 className="page-title">Calendario II: The Datening</h1>
@@ -22,6 +22,11 @@ export default function Header() {
 					</ul>
 				</div>
 				<div className="calendario__header__right">
+					<div className="darkLight">
+						<button onClick={toggleDarkMode}>
+							{darkMode ? "Please Light Mode Woof" : "Worst Dark Mode Ever"}
+						</button>
+					</div>
 					<StatusFilters />
 				</div>
 			</div>

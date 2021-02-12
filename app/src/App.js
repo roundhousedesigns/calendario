@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import Header from "./components/Header";
 import Main from "./components/Calendar";
 import Sidebar from "./components/Sidebar";
@@ -15,6 +15,7 @@ export default function App() {
 		dragReducer,
 		initialDrag
 	);
+	const [darkMode, setDarkMode] = useState(false);
 
 	useEffect(() => {
 		postsDispatch({
@@ -24,9 +25,13 @@ export default function App() {
 		});
 	}, []);
 
+	const toggleDarkMode = () => {
+		setDarkMode(() => !darkMode);
+	};
+
 	return (
-		<div className="calendario">
-			<Header />
+		<div className={`calendario ${darkMode ? "darkMode" : "lightMode"}`}>
+			<Header toggleDarkMode={toggleDarkMode} darkMode={darkMode} />
 
 			<DragContext.Provider value={{ draggedPost, draggedPostDispatch }}>
 				<PostsContext.Provider value={{ posts, postsDispatch }}>
