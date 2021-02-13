@@ -20,8 +20,11 @@ import { dateFormat } from "../lib/utils";
 import PostsContext from "../PostsContext";
 
 export default function Calendar() {
-	const { posts, postsDispatch } = useContext(PostsContext);
+	const { posts } = useContext(PostsContext);
 	const [startMonth, setStartMonth] = useState(new Date());
+
+	const nextMonth = () => setStartMonth(addMonths(startMonth, 1));
+	const prevMonth = () => setStartMonth(subMonths(startMonth, 1));
 
 	function renderHeader() {
 		return (
@@ -32,7 +35,10 @@ export default function Calendar() {
 					</div>
 				</div>
 				<div className="col col__center">
-					<span>{format(startMonth, dateFormat.monthName)} {format(startMonth, dateFormat.year)}</span>
+					<span>
+						{format(startMonth, dateFormat.monthName)}{" "}
+						{format(startMonth, dateFormat.year)}
+					</span>
 				</div>
 				<div className="col col__end" onClick={nextMonth}>
 					<div className="icon">chevron_right</div>
@@ -124,14 +130,6 @@ export default function Calendar() {
 		}
 		return <div className="body">{rows}</div>;
 	}
-
-	const nextMonth = () => setStartMonth(addMonths(startMonth, 1));
-
-	const prevMonth = () => setStartMonth(subMonths(startMonth, 1));
-
-	const addViewMonth = () => postsDispatch({ type: "ADD_VIEW_MONTH" });
-
-	const subViewMonth = () => postsDispatch({ type: "SUB_VIEW_MONTH" });
 
 	return (
 		<div className="calendar calendario__main">

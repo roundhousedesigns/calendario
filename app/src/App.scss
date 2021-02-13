@@ -411,45 +411,52 @@ body {
 
 	&__editor {
 		&__form {
-			.field-group {
-				margin: 12px 0;
-
-				&__post_status {
-					label,
-					select {
-						display: inline-block;
-					}
-
-					label {
-						margin-right: 12px;
-					}
-				}
-			}
-
-			label {
-				display: block;
-			}
-
-			input,
-			select {
-				display: block;
-				padding: 4px;
-				border: 1px solid var(--text-color);
-				border-radius: calc(var(--border-radius) / 2);
-			}
-
-			select {
-				cursor: pointer;
+			.postThumb {
+				width: 100%;
+				padding: 20px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border: 1px solid var(--main-color-light);
 			}
 		}
+	}
+}
 
-		.postThumb {
-			width: 100%;
-			padding: 20px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border: 1px solid var(--main-color-light);
+.fieldGroup {
+	margin: 12px 0;
+
+	&.inlineLabel {
+		label,
+		input,
+		select {
+			display: inline-block;
 		}
+
+		label {
+			margin-right: 8px;
+		}
+	}
+
+	label {
+		display: block;
+	}
+
+	input,
+	select {
+		display: block;
+		padding: 4px;
+		border: 1px solid var(--text-color);
+		border-radius: calc(var(--border-radius) / 2);
+	}
+
+	input {
+		&.mini {
+			width: 40px;
+		}
+	}
+
+	select {
+		cursor: pointer;
 	}
 }

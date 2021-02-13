@@ -18,16 +18,20 @@ export default function ViewOptions() {
 	};
 
 	return (
-		<div className="view-options">
+		<div className="viewOptions">
 			<SidebarInput
 				name="monthCount"
 				label="Months to view"
-				type="number"
-				atts={{ min: 1 }}
-				value={calendarMonths}
-				onChange={handleMonthCountChange}
-				groupClass="monthCount"
-			/>
+				inlineLabel={true}
+			>
+				<input
+					type="number"
+					min={1}
+					value={calendarMonths}
+					onChange={handleMonthCountChange}
+					className="mini"
+				/>
+			</SidebarInput>
 		</div>
 	);
 }
