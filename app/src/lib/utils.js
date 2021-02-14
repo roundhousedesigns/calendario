@@ -1,7 +1,7 @@
 import { omit } from "lodash";
 
 export const samplePosts = {
-	scheduled: [
+	calendar: [
 		{
 			id: 1,
 			post_title: "Test Post 1",

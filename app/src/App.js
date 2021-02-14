@@ -25,7 +25,7 @@ export default function App() {
 	useEffect(() => {
 		postsDispatch({
 			type: "INIT",
-			scheduled: samplePosts.scheduled,
+			calendar: samplePosts.calendar,
 			unscheduled: samplePosts.unscheduled,
 		});
 

@@ -11,16 +11,16 @@ export function postsReducer(state, action) {
 		case "INIT":
 			return {
 				...state,
-				scheduled: action.scheduled,
+				calendar: action.calendar,
 				unscheduled: action.unscheduled,
 			};
 
 		case "UNSCHEDULE":
 			return {
 				...state,
-				scheduled: state.scheduled.filter(
+				calendar: state.calendar.filter(
 					(item) => item.id !== action.post.id
-				), // remove previously scheduled post from calendar
+				), // remove previously calendar post from calendar
 				unscheduled: action.posts,
 			};
 
@@ -28,16 +28,16 @@ export function postsReducer(state, action) {
 			var post = action.post;
 			post.post_date = format(action.newDate, dateFormat.date);
 
-			// If the post already exists (i.e. post already scheduled), remove the original
-			var scheduled = state.scheduled.filter(
+			// If the post already exists (i.e. post already calendar), remove the original
+			var calendar = state.calendar.filter(
 				(item) => item.id !== post.id
 			);
 
-			scheduled.push(post);
+			calendar.push(post);
 
 			return {
 				...state,
-				scheduled: scheduled,
+				calendar: calendar,
 				unscheduled: state.unscheduled.filter(
 					(item) => item.id !== post.id
 				),
@@ -93,7 +93,7 @@ export function postsReducer(state, action) {
 
 // TODO Change 'scheduled' key to 'calendar'
 export const initialPosts = {
-	scheduled: [],
+	calendar: [],
 	unscheduled: [],
 	monthCount: 1,
 	currentPost: {

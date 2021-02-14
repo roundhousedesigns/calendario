@@ -127,7 +127,7 @@ export default function Calendar() {
 								: ""
 						}
 					>
-						<DayPosts date={day} posts={posts.scheduled} />
+						<DayPosts date={day} posts={posts.calendar} />
 					</Day>
 				);
 				day = addDays(day, 1);
