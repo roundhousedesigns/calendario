@@ -6,13 +6,14 @@ const PostsContext = createContext({});
 export default PostsContext;
 
 export function postsReducer(state, action) {
-	
 	switch (action.type) {
 		case "INIT":
 			return {
 				...state,
-				calendar: action.calendar,
-				unscheduled: action.unscheduled,
+				calendar: action.calendar ? action.calendar : state.calendar,
+				unscheduled: action.unscheduled
+					? action.unscheduled
+					: state.unscheduled,
 			};
 
 		case "UNSCHEDULE":
@@ -29,9 +30,7 @@ export function postsReducer(state, action) {
 			post.post_date = format(action.newDate, dateFormat.date);
 
 			// If the post already exists (i.e. post already calendar), remove the original
-			var calendar = state.calendar.filter(
-				(item) => item.id !== post.id
-			);
+			var calendar = state.calendar.filter((item) => item.id !== post.id);
 
 			calendar.push(post);
 

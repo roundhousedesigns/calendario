@@ -1,5 +1,8 @@
 import { omit } from "lodash";
 
+// export const routeBase = window.rhdReactPlugin.restBase; // Live URL
+export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
+
 export const samplePosts = {
 	calendar: [
 		{
@@ -73,7 +76,8 @@ export const postStatuses = {
 
 export const dateFormat = {
 	day: "d",
-	date: "MM-dd-yyyy",
+	// date: "MM-dd-yyyy",
+	date: "yyyy-MM-dd",
 	year: "yyyy",
 	dayName: "EEEE",
 	monthName: "MMMM",

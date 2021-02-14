@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { isSameDay } from "date-fns";
 
+// export const routeBase = window.rhdReactPlugin.restBase; // Live URL
+export const routeBase = "http://localhost/wp-json/calendario/v1";
+
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
 		const stickyValue = window.localStorage.getItem(key);

@@ -10,7 +10,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$post_base = 'posts';
 		$user_base = 'user';
 
-		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)(/(?P<end>.*))?', array(
+		register_rest_route( $namespace, '/' . $post_base . '/calendar/(?P<start>.*?)(/(?P<end>.*))?', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
@@ -129,7 +129,7 @@ class Calendario_Route extends WP_REST_Controller {
 
 		$data = [];
 		foreach ( $items as $item ) {
-			$data[] = $this->prepare_unscheduled_item_for_response( $item, $request );
+			$data[] = $this->prepare_item_for_response( $item, $request );
 		}
 
 		return new WP_REST_Response( $data, 200 );
@@ -634,28 +634,10 @@ class Calendario_Route extends WP_REST_Controller {
 
 		return [
 			'id'          => $item->ID,
-			'title'       => $item->post_title,
-			'start'       => $post_date->format( 'Y-m-d H:i:s' ),
+			'post_title'  => $item->post_title,
+			'post_date'   => $post_date->format( 'Y-m-d H:i:s' ),
 			'post_status' => $item->post_status,
-			'color'       => rhd_get_status_color( $item->post_status ),
-			'editable'    => ( new DateTime() <= $post_date ) ? true : false,
 		];
-	}
-
-	/**
-	 * Prepare an 'unscheduled' item for the REST response
-	 *
-	 * @param mixed $item WordPress representation of the item.
-	 * @param WP_REST_Request $request Request object.
-	 * @return array
-	 */
-	public function prepare_unscheduled_item_for_response( $item, $request ) {
-		return array(
-			'id'          => $item->ID,
-			'title'       => $item->post_title,
-			'post_date'   => $item->post_date,
-			'post_status' => $item->post_status,
-		);
 	}
 
 	/**

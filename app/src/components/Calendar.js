@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+// TODO Refactor or subdivide this component further
+import React, { useState, useContext, useEffect } from "react";
 import {
 	format,
 	isPast,
@@ -16,13 +17,41 @@ import {
 } from "date-fns";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
-import { dateFormat } from "../lib/utils";
+import { routeBase, dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
 export default function Calendar() {
-	const { posts } = useContext(PostsContext);
+	const { posts, postsDispatch } = useContext(PostsContext);
 	const [startMonth, setStartMonth] = useState(new Date());
+
+	// const [futuremostDate, setFuturemostDate] = useState(new Date());
+
+	// useEffect(() => {
+	// 	fetch(`${routeBase}/futuremost`)
+	// 		.then((response) => response.json())
+	// 		.then((data) => {
+	// 			setFuturemostDate(new Date(data));
+	// 		});
+	// }, []);
+
+	useEffect(() => {
+		let endMonth = addMonths(startMonth, posts.monthCount);
+
+		fetch(
+			`${routeBase}/calendar/${format(
+				startMonth,
+				dateFormat.date
+			)}/${format(endMonth, dateFormat.date)}`
+		)
+			.then((response) => response.json())
+			.then((data) => {
+				postsDispatch({
+					type: "INIT",
+					calendar: data,
+				});
+			});
+	}, [posts.monthCount, startMonth, postsDispatch]);
 
 	const nextMonth = () => setStartMonth(addMonths(startMonth, 1));
 	const prevMonth = () => setStartMonth(subMonths(startMonth, 1));

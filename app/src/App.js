@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, Profiler } from "react";
 import Header from "./components/Header";
 import Main from "./components/Calendar";
 import Sidebar from "./components/Sidebar";
-import { samplePosts } from "./lib/utils";
 import { useStickyState } from "./lib/hooks";
 
 import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
@@ -23,12 +22,6 @@ export default function App() {
 	);
 
 	useEffect(() => {
-		postsDispatch({
-			type: "INIT",
-			calendar: samplePosts.calendar,
-			unscheduled: samplePosts.unscheduled,
-		});
-
 		// Update the context just initially
 		postsDispatch({
 			type: "UPDATE_MONTH_COUNT",
