@@ -33,7 +33,7 @@ body {
 
 .calendario {
 	display: grid;
-	gap: 1%;
+	gap: 1rem;
 	grid-template-columns: 2fr /*fit-content(45%)*/ 0.6667fr;
 	grid-template-areas:
 		"header header"
@@ -69,7 +69,6 @@ body {
 
 	&__main {
 		grid-area: main;
-		margin: 0 auto;
 		width: 100%;
 	}
 
@@ -249,12 +248,15 @@ body {
 			overflow: hidden;
 			transition: 0.25s ease-out;
 
-			&.odd {
-				background: var(--neutral-color);
-			}
+			&:not(.past),
+			&:not(.outsideMonth) {
+				&.odd {
+					background: var(--neutral-color);
+				}
 
-			&.even {
-				background: var(--neutral-color-dark);
+				&.even {
+					background: var(--neutral-color-dark);
+				}
 			}
 
 			&:last-child {

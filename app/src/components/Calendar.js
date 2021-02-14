@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import {
 	format,
 	isPast,
+	isBefore,
 	isAfter,
 	isToday,
 	addDays,
@@ -95,7 +96,10 @@ export default function Calendar() {
 				}
 
 				// Outside ranges
-				if (isPast(day) || isAfter(day, lastOfViewMonth)) {
+				if (
+					isAfter(day, lastOfViewMonth) ||
+					isBefore(day, firstOfViewMonth)
+				) {
 					classes.push("outsideMonth");
 				}
 
@@ -132,10 +136,12 @@ export default function Calendar() {
 	}
 
 	return (
-		<div className="calendar calendario__main">
-			{renderHeader()}
-			{renderDays()}
-			{renderCells()}
+		<div className="calendario__main">
+			<div className="calendar">
+				{renderHeader()}
+				{renderDays()}
+				{renderCells()}
+			</div>
 		</div>
 	);
 }
