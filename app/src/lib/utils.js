@@ -1,13 +1,12 @@
 import { omit } from "lodash";
 
-// TODO key these by ID? Necessary?
 export const samplePosts = {
 	scheduled: [
 		{
 			id: 1,
 			post_title: "Test Post 1",
 			post_status: "draft",
-			post_date: "02-5-2021", // will be more accurate and have post time, as well
+			post_date: "02-15-2021", // will be more accurate and have post time, as well
 		},
 		{
 			id: 2,
@@ -86,7 +85,6 @@ export const dateFormat = {
  * @param {object} post
  */
 export function isEmptyPost(post) {
-	// TODO Debug/error checks here?
 	return Object.values(post).some(
 		(prop) => prop !== null && prop !== "" && prop !== undefined
 	);

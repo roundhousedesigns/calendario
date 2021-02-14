@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useReducer } from "react";
 import SidebarInput from "./SidebarInput";
 import DatePicker from "react-datepicker";
-import { format, isFuture, isPast } from "date-fns";
+import { format, isFuture, isPast, isToday } from "date-fns";
 import { dateFormat, isEmptyPost } from "../lib/utils";
 import { filterStatusList } from "../lib/utils";
 
@@ -38,10 +38,20 @@ export default function EditPost() {
 	} = useContext(PostsContext);
 	const [editMode, setEditMode] = useState(false);
 	const [editPost, editPostDispatch] = useReducer(editPostReducer, {});
+	const [date, setDate] = useState(new Date());
 	const [allowedStatuses, setAllowedStatuses] = useState({});
 
 	useEffect(() => {
-		const date = new Date(editPost.post_date);
+		if (editPost.post_date && editPost.post_date !== "undefined") {
+			setDate(new Date(editPost.post_date));
+		}
+
+		return function cleanup() {
+			setDate(new Date());
+		};
+	}, [editPost.post_date]);
+
+	useEffect(() => {
 		let exclude = [];
 
 		if (editPost.unscheduled === true) {
@@ -55,7 +65,7 @@ export default function EditPost() {
 		const statusList = filterStatusList(exclude);
 
 		setAllowedStatuses(statusList);
-	}, [editPost.post_date, editPost.unscheduled]);
+	}, [date, editPost.unscheduled]);
 
 	useEffect(() => {
 		if (editMode === true && editPost.id !== currentPost.id) {
@@ -165,23 +175,37 @@ export default function EditPost() {
 					<div className="editPost__editor">
 						{editMode ? (
 							<form className="editPost__editor__form">
-								<SidebarInput name="post_title" label="Post Title">
+								<SidebarInput
+									name="post_title"
+									label="Post Title"
+								>
 									<input
 										name="post_title"
 										value={editPost.post_title}
 										onChange={handleInputChange}
 									/>
 								</SidebarInput>
-								<SidebarInput name="post_date" label="Post Date">
+								<SidebarInput
+									name="post_date"
+									label="Post Date"
+								>
 									<DatePicker
 										closeOnScroll={(e) =>
 											e.target === document
 										}
-										selected={new Date(editPost.post_date)}
+										selected={date}
 										onChange={handleInputDateChange}
+										disabled={
+											isToday(date) || isPast(date)
+												? true
+												: false
+										}
 									/>
 								</SidebarInput>
-								<SidebarInput name="post_status" label="Post Status">
+								<SidebarInput
+									name="post_status"
+									label="Post Status"
+								>
 									<select
 										name="post_status"
 										onChange={handleStatusChange}
@@ -190,7 +214,10 @@ export default function EditPost() {
 										{renderStatusOptions(allowedStatuses)}
 									</select>
 								</SidebarInput>
-								<SidebarInput name="post_thumb" label="Post Title">
+								<SidebarInput
+									name="post_thumb"
+									label="Post Title"
+								>
 									{/* <input name="postThumb-chooser"></input> */}
 									{/* TODO Featured image display/selection */}
 									<div className="postThumb">

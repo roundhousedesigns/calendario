@@ -36,7 +36,6 @@ export default function PostList({ posts, className, date }) {
 		}
 	};
 
-	// TODO: Cache drag handlers and/or figure out polling?
 	const handleDrop = () => {
 		if (date === false) {
 			// unscheduled

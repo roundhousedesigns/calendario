@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { postStatuses } from "../lib/utils";
 import { isEmpty } from "lodash";
+import { isPast, isToday } from "date-fns";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
@@ -12,6 +13,11 @@ export default function Post({ post, index }) {
 	} = useContext(PostsContext);
 	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
 	const [colors, setColors] = useState({});
+	const [date, setDate] = useState(new Date());
+
+	useEffect(() => {
+		setDate(new Date(post.post_date));
+	}, [post.post_date]);
 
 	useEffect(() => {
 		setColors({
@@ -59,41 +65,47 @@ export default function Post({ post, index }) {
 		});
 	};
 
-	return post ? (
-		/* TODO Clean up this className nightmare */
-		<li
-			className={`post status__${post.post_status}${
-				draggedPost.isDragging &&
+	const renderPost = () => {
+		let classes = ["post", `status__${post.post_status}`];
+		if (draggedPost.isDragging) {
+			if (
 				draggedPost.draggedTo === Number(index) &&
 				draggedPost.draggedTo !== draggedPost.draggedFrom
-					? " dropArea"
-					: ""
-			}${
-				draggedPost.isDragging &&
-				draggedPost.draggedFrom === Number(index)
-					? " dragging"
-					: ""
-			}${
-				!isEmpty(currentPost) && currentPost.id === post.id
-					? " currentPost"
-					: ""
-			}`}
-			data-index={index}
-			draggable={true}
-			onDragStart={handleDragStart}
-			onDragEnd={handleDragEnd}
-			onDrop={handleDrop}
-			onClick={handleClick}
-		>
-			<p
-				className="postData"
-				style={{
-					backgroundColor: colors.backgroundColor,
-					color: colors.color,
-				}}
+			) {
+				classes.push("dropArea");
+			}
+
+			if (draggedPost.draggedFrom === Number(index)) {
+				classes.push("dragging");
+			}
+		}
+
+		if (!isEmpty(currentPost) && currentPost.id === post.id) {
+			classes.push("currentPost");
+		}
+
+		return (
+			<li
+				className={classes.join(" ")}
+				data-index={index}
+				draggable={isToday(date) || isPast(date) ? false : true}
+				onDragStart={handleDragStart}
+				onDragEnd={handleDragEnd}
+				onDrop={handleDrop}
+				onClick={handleClick}
 			>
-				{post.post_title}
-			</p>
-		</li>
-	) : null;
+				<p
+					className="postData"
+					style={{
+						backgroundColor: colors.backgroundColor,
+						color: colors.color,
+					}}
+				>
+					{post.post_title}
+				</p>
+			</li>
+		);
+	};
+
+	return post ? renderPost() : null;
 }

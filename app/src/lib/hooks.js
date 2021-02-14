@@ -1,17 +1,6 @@
 import { useState, useEffect } from "react";
 import { isSameDay } from "date-fns";
 
-export function useDayPosts(posts, date) {
-	let dayPosts = [];
-	posts.forEach((post) => {
-		if (isSameDay(date, new Date(post.post_date))) {
-			dayPosts.push(post);
-		}
-	});
-
-	return dayPosts;
-}
-
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
 		const stickyValue = window.localStorage.getItem(key);
@@ -23,3 +12,14 @@ export const useStickyState = (defaultValue, key) => {
 	}, [key, value]);
 	return [value, setValue];
 };
+
+export function useDayPosts(posts, date) {
+	let dayPosts = [];
+	posts.forEach((post) => {
+		if (isSameDay(date, new Date(post.post_date))) {
+			dayPosts.push(post);
+		}
+	});
+
+	return dayPosts;
+}
