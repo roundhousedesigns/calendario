@@ -85,6 +85,11 @@ export default function Calendar() {
 				const dayIsToday = isToday(day);
 				const dayIsPast = isPast(day);
 
+				// even/odd month
+				if (dayIsFirstDay && !dayIsPast) {
+					isMonthEven = !isMonthEven;
+				}
+
 				formattedDate = {
 					day: format(day, dateFormat.day),
 					date: format(day, dateFormat.date),
@@ -94,7 +99,7 @@ export default function Calendar() {
 				if (dayIsToday) {
 					classes.push("today");
 				} else {
-					classes.push(isMonthEven && !dayIsToday ? "even" : "odd");
+					classes.push(isMonthEven ? "even" : "odd");
 				}
 				if (dayIsPast && !dayIsToday) {
 					classes.push("past");
@@ -108,11 +113,6 @@ export default function Calendar() {
 					classes.push("outsideMonth");
 				} else {
 					classes.push("insideMonth");
-				}
-
-				// even/odd month
-				if (dayIsFirstDay && !dayIsPast) {
-					isMonthEven = !isMonthEven;
 				}
 
 				days.push(

@@ -6,15 +6,16 @@
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
 :root {
-	--main-color: #1a8fff;
-	--main-color-light: #53cbf1;
-	--text-color: #777;
-	--text-color-light: #ccc;
-	--border-color: #eee;
-	--bg-color: #f9f9f9;
-	--neutral-color: #fff;
-	--neutral-color-dark: rgb(247, 247, 247);
-	--border-radius: 8px;
+	--mainColor: #1a8fff;
+	--mainColor-light: #53cbf1;
+	--textColor: #777;
+	--textColor-light: #ccc;
+	--borderColor: #eee;
+	--bgColor: #f9f9f9;
+	--neutralColor: #fff;
+	--neutralColor-dark: rgb(247, 247, 247);
+	--borderRadius: 8px;
+	--pastColor: #654654a9;
 }
 
 * {
@@ -26,8 +27,8 @@ body {
 	font-size: 1em;
 	font-weight: 300;
 	line-height: 1.5;
-	color: var(--text-color);
-	background: var(--bg-color);
+	color: var(--textColor);
+	background: var(--bgColor);
 	position: relative;
 }
 
@@ -42,7 +43,7 @@ body {
 	&__header,
 	&__main,
 	&__sidebar {
-		background: var(--neutral-color);
+		background: var(--neutralColor);
 	}
 
 	&__header {
@@ -50,7 +51,7 @@ body {
 		display: block;
 		width: 100%;
 		padding: 1.75em 22px;
-		border-bottom: 1px solid var(--border-color);
+		border-bottom: 1px solid var(--borderColor);
 
 		&__inner {
 			display: flex;
@@ -76,13 +77,13 @@ body {
 		grid-area: sidebar;
 		padding: 12px;
 		width: 100%;
-		border: 1px solid var(--border-color);
+		border: 1px solid var(--borderColor);
 
 		.widget {
 			width: 100%;
 			margin-bottom: 12px;
 			padding: 12px;
-			border: 1px solid var(--border-color);
+			border: 1px solid var(--borderColor);
 
 			.widgetTitle {
 				margin: 0 1em 0 0;
@@ -102,9 +103,9 @@ body {
 	line-height: 1.8;
 
 	&.postList {
-		background-color: var(--border-color);
+		background-color: var(--borderColor);
 		height: 100%;
-		border-radius: var(--border-radius);
+		border-radius: var(--borderRadius);
 		padding: 22px 6px;
 		display: flex;
 		flex-direction: column;
@@ -115,7 +116,7 @@ body {
 			cursor: move;
 
 			&.dropArea {
-				color: var(--neutral-color);
+				color: var(--neutralColor);
 				position: relative;
 				transition: all 0.15s ease;
 
@@ -129,10 +130,10 @@ body {
 					display: flex;
 					justify-content: center;
 					align-items: center;
-					// color: var(--main-color);
-					// border: 2px dashed var(--main-color);
-					// border-radius: var(--border-radius);
-					// background-color: var(--text-color-light);
+					// color: var(--mainColor);
+					// border: 2px dashed var(--mainColor);
+					// border-radius: var(--borderRadius);
+					// background-color: var(--textColor-light);
 					// position: absolute;
 				}
 
@@ -201,15 +202,15 @@ body {
 	display: block;
 	position: relative;
 	width: 100%;
-	background: var(--neutral-color);
-	border: 1px solid var(--border-color);
+	background: var(--neutralColor);
+	border: 1px solid var(--borderColor);
 
 	.header {
 		text-transform: uppercase;
 		font-weight: 700;
 		font-size: 115%;
 		padding: 1.5em 0;
-		border-bottom: 1px solid var(--border-color);
+		border-bottom: 1px solid var(--borderColor);
 
 		.icon {
 			cursor: pointer;
@@ -218,7 +219,7 @@ body {
 			&:hover {
 				transform: scale(1.75);
 				transition: 0.25s ease-out;
-				color: var(--main-color);
+				color: var(--mainColor);
 			}
 
 			&:first-of-type {
@@ -234,27 +235,27 @@ body {
 	.days {
 		text-transform: uppercase;
 		font-weight: 400;
-		color: var(--text-color-light);
+		color: var(--textColor-light);
 		font-size: 70%;
 		padding: 0.75em 0;
-		border-bottom: 1px solid var(--border-color);
+		border-bottom: 1px solid var(--borderColor);
 	}
 
 	.body {
 		.cell {
 			position: relative;
 			height: 7em;
-			border-right: 1px solid var(--border-color);
+			border-right: 1px solid var(--borderColor);
 			overflow: hidden;
 			transition: 0.25s ease-out;
 
 			&.insideMonth {
 				&.odd {
-					background: var(--neutral-color);
+					background: var(--neutralColor);
 				}
 
 				&.even {
-					background: var(--neutral-color-dark);
+					background: var(--neutralColor-dark);
 				}
 			}
 
@@ -291,8 +292,8 @@ body {
 			border-left: 10px solid transparent;
 			border-image: linear-gradient(
 				45deg,
-				var(--main-color) 0%,
-				var(--main-color-light) 40%
+				var(--mainColor) 0%,
+				var(--mainColor-light) 40%
 			);
 			border-image-slice: 1;
 		}
@@ -303,7 +304,9 @@ body {
 
 		.outsideMonth,
 		.past {
-			opacity: 0.4;
+			.postList {
+				opacity: 0.4;
+			}
 		}
 
 		.outsideMonth {
@@ -316,7 +319,7 @@ body {
 				height: 100%;
 				display: block;
 				z-index: 0;
-				background-color: red;
+				background-color: var(--pastColor);
 				font-size: 100%;
 				position: absolute;
 				-webkit-clip-path: polygon(0 0, 0 15px, 15px 0);
@@ -325,7 +328,7 @@ body {
 		}
 
 		.row {
-			border-bottom: 1px solid var(--border-color);
+			border-bottom: 1px solid var(--borderColor);
 
 			&:last-child {
 				border-bottom: none;
@@ -407,12 +410,12 @@ body {
 			margin: 0;
 			padding: 3px 6px;
 			border: 2px solid transparent;
-			border-radius: var(--border-radius);
+			border-radius: var(--borderRadius);
 		}
 
 		&.currentPost {
 			.postData {
-				border: 2px solid var(--main-color-light);
+				border: 2px solid var(--mainColor-light);
 			}
 		}
 	}
@@ -437,7 +440,7 @@ body {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				border: 1px solid var(--main-color-light);
+				border: 1px solid var(--mainColor-light);
 			}
 		}
 	}
@@ -466,8 +469,8 @@ body {
 	select {
 		display: block;
 		padding: 4px;
-		border: 1px solid var(--text-color);
-		border-radius: calc(var(--border-radius) / 2);
+		border: 1px solid var(--textColor);
+		border-radius: calc(var(--borderRadius) / 2);
 	}
 
 	input {
