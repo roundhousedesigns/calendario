@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useReducer, Profiler } from "react";
+import React, { useEffect, useReducer, Profiler } from "react";
 import Header from "./components/Header";
 import Main from "./components/Calendar";
 import Sidebar from "./components/Sidebar";
 import { samplePosts } from "./lib/utils";
+import { useStickyState } from "./lib/hooks";
 
 import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
 import DragContext, { dragReducer, initialDrag } from "./DragContext";
@@ -15,7 +16,11 @@ export default function App() {
 		dragReducer,
 		initialDrag
 	);
-	const [darkMode, setDarkMode] = useState(false);
+	const [darkMode, setDarkMode] = useStickyState(false, "darkMode");
+	const [calendarMonthCount, setCalendarMonthCount] = useStickyState(
+		1,
+		"monthCount"
+	);
 
 	useEffect(() => {
 		postsDispatch({
@@ -23,7 +28,19 @@ export default function App() {
 			scheduled: samplePosts.scheduled,
 			unscheduled: samplePosts.unscheduled,
 		});
+
+		// Update the context just initially
+		postsDispatch({
+			type: "UPDATE_MONTH_COUNT",
+			monthCount: calendarMonthCount,
+		});
+		//eslint-disable-next-line
 	}, []);
+
+	useEffect(() => {
+		// Store the value if it's updated elsewhere
+		setCalendarMonthCount(posts.monthCount);
+	}, [setCalendarMonthCount, posts.monthCount]);
 
 	const toggleDarkMode = () => {
 		setDarkMode(() => !darkMode);

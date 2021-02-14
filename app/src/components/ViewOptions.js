@@ -5,15 +5,14 @@ import PostsContext from "../PostsContext";
 
 export default function ViewOptions() {
 	const {
-		posts: { calendarMonths },
+		posts: { monthCount },
 		postsDispatch,
 	} = useContext(PostsContext);
-	// const [monthCount, setMonthCount] = useState(calendarMonths);
 
 	const handleMonthCountChange = (e) => {
 		postsDispatch({
 			type: "UPDATE_MONTH_COUNT",
-			calendarMonths: e.target.value,
+			monthCount: e.target.value,
 		});
 	};
 
@@ -27,7 +26,7 @@ export default function ViewOptions() {
 				<input
 					type="number"
 					min={1}
-					value={calendarMonths}
+					value={monthCount}
 					onChange={handleMonthCountChange}
 					className="mini"
 				/>

@@ -6,6 +6,7 @@ const PostsContext = createContext({});
 export default PostsContext;
 
 export function postsReducer(state, action) {
+	
 	switch (action.type) {
 		case "INIT":
 			return {
@@ -45,20 +46,10 @@ export function postsReducer(state, action) {
 			};
 
 		case "UPDATE_MONTH_COUNT":
-			console.log(state.calendarMonths + 1);
 			return {
 				...state,
-				calendarMonths: action.calendarMonths,
+				monthCount: action.monthCount,
 			};
-
-		// case "SUB_VIEW_MONTH":
-		// 	return {
-		// 		...state,
-		// 		calendarMonths:
-		// 			state.calendarMonths - 1 >= 1
-		// 				? state.calendarMonths - 1
-		// 				: state.calendarMonths,
-		// 	};
 
 		case "SET_CURRENTPOST":
 			return {
@@ -104,7 +95,7 @@ export function postsReducer(state, action) {
 export const initialPosts = {
 	scheduled: [],
 	unscheduled: [],
-	calendarMonths: 1,
+	monthCount: 1,
 	currentPost: {
 		id: null,
 		post_title: "",

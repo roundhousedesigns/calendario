@@ -67,7 +67,7 @@ export default function Calendar() {
 	function renderCells() {
 		const firstOfViewMonth = startOfMonth(startMonth);
 		const lastOfViewMonth = endOfMonth(
-			addMonths(firstOfViewMonth, posts.calendarMonths - 1)
+			addMonths(firstOfViewMonth, posts.monthCount - 1)
 		);
 		const startDate = startOfWeek(firstOfViewMonth);
 		const endDate = endOfWeek(lastOfViewMonth);
@@ -81,43 +81,50 @@ export default function Calendar() {
 
 		while (day <= endDate) {
 			for (let i = 0; i < 7; i++) {
-				let isFirstDay = isFirstDayOfMonth(day);
+				const dayIsFirstDay = isFirstDayOfMonth(day);
+				const dayIsToday = isToday(day);
+				const dayIsPast = isPast(day);
+
 				formattedDate = {
 					day: format(day, dateFormat.day),
 					date: format(day, dateFormat.date),
 				};
 
 				var classes = [];
-				if (isToday(day)) {
+				if (dayIsToday) {
 					classes.push("today");
+				} else {
+					classes.push(isMonthEven && !dayIsToday ? "even" : "odd");
 				}
-				if (isPast(day) && !isToday(day)) {
+				if (dayIsPast && !dayIsToday) {
 					classes.push("past");
 				}
 
-				// Outside ranges
+				// Ranges
 				if (
 					isAfter(day, lastOfViewMonth) ||
 					isBefore(day, firstOfViewMonth)
 				) {
 					classes.push("outsideMonth");
+				} else {
+					classes.push("insideMonth");
 				}
 
 				// even/odd month
-				if (isFirstDay && !isPast(day)) {
+				if (dayIsFirstDay && !dayIsPast) {
 					isMonthEven = !isMonthEven;
 				}
 
 				days.push(
 					<Day
-						className={`col cell ${classes.join(" ")} ${
-							isMonthEven ? "even" : "odd"
-						}`}
+						className={`col cell ${classes.join(" ")}`}
 						key={day}
 						day={day}
 						dayNumber={formattedDate.day}
 						monthName={
-							isFirstDay ? format(day, dateFormat.monthName) : ""
+							dayIsFirstDay
+								? format(day, dateFormat.monthName)
+								: ""
 						}
 					>
 						<DayPosts date={day} posts={posts.scheduled} />

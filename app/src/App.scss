@@ -248,8 +248,7 @@ body {
 			overflow: hidden;
 			transition: 0.25s ease-out;
 
-			&:not(.past),
-			&:not(.outsideMonth) {
+			&.insideMonth {
 				&.odd {
 					background: var(--neutral-color);
 				}
@@ -282,6 +281,10 @@ body {
 				top: 0.75em;
 				right: 0.75em;
 			}
+
+			.pastMark {
+				display: none;
+			}
 		}
 
 		.selected {
@@ -294,6 +297,10 @@ body {
 			border-image-slice: 1;
 		}
 
+		.today {
+			background: rgba(252, 152, 2, 0.068);
+		}
+
 		.outsideMonth,
 		.past {
 			opacity: 0.4;
@@ -303,8 +310,18 @@ body {
 			background: rgba(141, 141, 141, 0.226);
 		}
 
-		.today {
-			background: rgba(252, 152, 2, 0.068);
+		.past {
+			.pastMark {
+				width: 100%;
+				height: 100%;
+				display: block;
+				z-index: 0;
+				background-color: red;
+				font-size: 100%;
+				position: absolute;
+				-webkit-clip-path: polygon(0 0, 0 15px, 15px 0);
+				clip-path: polygon(0 0, 0 15px, 15px 0);
+			}
 		}
 
 		.row {
@@ -330,6 +347,7 @@ body {
 		padding: 3px;
 		list-style: none;
 		margin: 0;
+		z-index: 999;
 
 		.post {
 			line-height: 1.3;
