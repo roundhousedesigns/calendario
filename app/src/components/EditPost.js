@@ -189,6 +189,7 @@ export default function EditPost() {
 									name="post_date"
 									label="Post Date"
 								>
+									{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
 									<DatePicker
 										closeOnScroll={(e) =>
 											e.target === document
