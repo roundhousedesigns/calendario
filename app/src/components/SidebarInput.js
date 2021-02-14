@@ -8,7 +8,7 @@ export default function SidebarInput({ name, label, inlineLabel, children }) {
 					inlineLabel ? "inlineLabel" : ""
 				}`}
 			>
-				<label htmlFor={name}>{label}</label>
+				{label ? <label htmlFor={name}>{label}</label> : null}
 				{children}
 			</div>
 		);

@@ -1,5 +1,5 @@
 // TODO Refactor or subdivide this component further
-import React, { useState, useContext, useEffect } from "react";
+import React, { useReducer, useContext } from "react";
 import {
 	format,
 	isPast,
@@ -17,44 +17,37 @@ import {
 } from "date-fns";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
-import { routeBase, dateFormat } from "../lib/utils";
+import { useFetch } from "../lib/hooks";
+import { dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
+import ViewContext from "../ViewContext";
+
+function monthRangeReducer(state, action) {
+	return {
+		start: action.start,
+		end: addMonths(action.start + action.monthCount),
+	};
+}
 
 export default function Calendar() {
-	const { posts, postsDispatch } = useContext(PostsContext);
-	const [startMonth, setStartMonth] = useState(new Date());
+	const {
+		posts: { calendar },
+	} = useContext(PostsContext);
+	const [monthRange, monthRangeDispatch] = useReducer(monthRangeReducer, {
+		start: new Date(),
+		end: new Date(),
+	});
+	const {
+		viewOptions: { monthCount },
+	} = useContext(ViewContext);
 
-	// const [futuremostDate, setFuturemostDate] = useState(new Date());
+	const fetchStatus = useFetch(true, monthRange.start, monthRange.end);
 
-	// useEffect(() => {
-	// 	fetch(`${routeBase}/futuremost`)
-	// 		.then((response) => response.json())
-	// 		.then((data) => {
-	// 			setFuturemostDate(new Date(data));
-	// 		});
-	// }, []);
-
-	useEffect(() => {
-		let endMonth = addMonths(startMonth, posts.monthCount);
-
-		fetch(
-			`${routeBase}/calendar/${format(
-				startMonth,
-				dateFormat.date
-			)}/${format(endMonth, dateFormat.date)}`
-		)
-			.then((response) => response.json())
-			.then((data) => {
-				postsDispatch({
-					type: "INIT",
-					calendar: data,
-				});
-			});
-	}, [posts.monthCount, startMonth, postsDispatch]);
-
-	const nextMonth = () => setStartMonth(addMonths(startMonth, 1));
-	const prevMonth = () => setStartMonth(subMonths(startMonth, 1));
+	const nextMonth = () =>
+		monthRangeDispatch({ start: addMonths(monthRange.start, 1) });
+	const prevMonth = () =>
+		monthRangeDispatch({ start: subMonths(monthRange.start, 1) });
 
 	function renderHeader() {
 		return (
@@ -66,8 +59,8 @@ export default function Calendar() {
 				</div>
 				<div className="col col__center">
 					<span>
-						{format(startMonth, dateFormat.monthName)}{" "}
-						{format(startMonth, dateFormat.year)}
+						{format(monthRange.start, dateFormat.monthName)}{" "}
+						{format(monthRange.start, dateFormat.year)}
 					</span>
 				</div>
 				<div className="col col__end" onClick={nextMonth}>
@@ -80,7 +73,7 @@ export default function Calendar() {
 	function renderDays() {
 		const days = [];
 
-		let startDate = startOfWeek(startMonth);
+		let startDate = startOfWeek(monthRange.start);
 
 		for (let i = 0; i < 7; i++) {
 			days.push(
@@ -94,9 +87,9 @@ export default function Calendar() {
 	}
 
 	function renderCells() {
-		const firstOfViewMonth = startOfMonth(startMonth);
+		const firstOfViewMonth = startOfMonth(monthRange.start);
 		const lastOfViewMonth = endOfMonth(
-			addMonths(firstOfViewMonth, posts.monthCount - 1)
+			addMonths(firstOfViewMonth, monthCount - 1)
 		);
 		const startDate = startOfWeek(firstOfViewMonth);
 		const endDate = endOfWeek(lastOfViewMonth);
@@ -156,7 +149,7 @@ export default function Calendar() {
 								: ""
 						}
 					>
-						<DayPosts date={day} posts={posts.calendar} />
+						<DayPosts date={day} posts={calendar} />
 					</Day>
 				);
 				day = addDays(day, 1);
@@ -171,13 +164,13 @@ export default function Calendar() {
 		return <div className="body">{rows}</div>;
 	}
 
-	return (
-		<div className="calendario__main">
-			<div className="calendar">
-				{renderHeader()}
-				{renderDays()}
-				{renderCells()}
-			</div>
+	return fetchStatus === "fetching" ? (
+		"Loading"
+	) : (
+		<div className="view view__calendar">
+			{renderHeader()}
+			{renderDays()}
+			{renderCells()}
 		</div>
 	);
 }

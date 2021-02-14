@@ -5,34 +5,36 @@ import { isToday, isPast } from "date-fns";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-export default function PostList({ posts, className, date }) {
+export default function PostList({ posts, className, allowDrag, date }) {
 	const { postsDispatch } = useContext(PostsContext);
 	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
 
-		if (e.currentTarget.classList.contains("unscheduledDrafts")) {
-			let draggedTo = e.target.dataset.index
-				? Number(e.target.dataset.index)
-				: false;
+		if (allowDrag !== false) {
+			if (e.currentTarget.classList.contains("unscheduledDrafts")) {
+				let draggedTo = e.target.dataset.index
+					? Number(e.target.dataset.index)
+					: false;
 
-			if (draggedTo === false) {
-				let mouseY = e.pageY - e.currentTarget.offsetTop;
-				const listItems = e.currentTarget.childNodes;
-				let itemCount = listItems.length;
+				if (draggedTo === false) {
+					let mouseY = e.pageY - e.currentTarget.offsetTop;
+					const listItems = e.currentTarget.childNodes;
+					let itemCount = listItems.length;
 
-				if (mouseY < listItems[0].offsetTop) {
-					draggedTo = 0;
-				} else {
-					draggedTo = itemCount;
+					if (mouseY < listItems[0].offsetTop) {
+						draggedTo = 0;
+					} else {
+						draggedTo = itemCount;
+					}
 				}
-			}
 
-			draggedPostDispatch({
-				type: "DRAGGING_OVER_UNSCHEDULED",
-				draggedTo: draggedTo,
-			});
+				draggedPostDispatch({
+					type: "DRAGGING_OVER_UNSCHEDULED",
+					draggedTo: draggedTo,
+				});
+			}
 		}
 	};
 
@@ -73,7 +75,12 @@ export default function PostList({ posts, className, date }) {
 		return (
 			<ul {...listProps}>
 				{posts.map((post, index) => (
-					<Post post={post} key={post.id} index={index} />
+					<Post
+						post={post}
+						key={post.id}
+						index={index}
+						allowDrag={allowDrag}
+					/>
 				))}
 			</ul>
 		);

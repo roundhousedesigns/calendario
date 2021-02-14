@@ -17,6 +17,7 @@ export function postsReducer(state, action) {
 			};
 
 		case "UNSCHEDULE":
+			// TODO Fetch (method: POST) to update REST
 			return {
 				...state,
 				calendar: state.calendar.filter(
@@ -26,6 +27,7 @@ export function postsReducer(state, action) {
 			};
 
 		case "CALENDAR":
+			// TODO Fetch (method: POST) to update REST
 			var post = action.post;
 			post.post_date = format(action.newDate, dateFormat.date);
 
@@ -44,12 +46,6 @@ export function postsReducer(state, action) {
 					state.currentPost.id === post.id ? post : state.currentPost,
 			};
 
-		case "UPDATE_MONTH_COUNT":
-			return {
-				...state,
-				monthCount: action.monthCount,
-			};
-
 		case "SET_CURRENTPOST":
 			return {
 				...state,
@@ -66,12 +62,13 @@ export function postsReducer(state, action) {
 			};
 
 		case "UPDATE_POST":
-			let searchType =
+			// TODO Fetch (method: POST) to update REST
+			let viewType =
 				state.currentPost.unscheduled === true
 					? "unscheduled"
-					: "scheduled";
+					: "calendar";
 
-			let updatedPosts = state[searchType];
+			let updatedPosts = state[viewType];
 
 			const postIndex = updatedPosts.findIndex(
 				(post) => action.post.id === post.id
@@ -81,20 +78,25 @@ export function postsReducer(state, action) {
 
 			return {
 				...state,
-				[searchType]: updatedPosts,
+				[viewType]: updatedPosts,
 				currentPost: action.post,
 			};
+
+		// TODO (Maybe) set up flag for bypassing cache/refetch source
+		// case "REFETCH":
+		// 	return {
+		// 		...state,
+		// 		refetch: true,
+		// 	};
 
 		default:
 			return state;
 	}
 }
 
-// TODO Change 'scheduled' key to 'calendar'
 export const initialPosts = {
 	calendar: [],
 	unscheduled: [],
-	monthCount: 1,
 	currentPost: {
 		id: null,
 		post_title: "",
@@ -102,4 +104,5 @@ export const initialPosts = {
 		post_date: "",
 		unscheduled: null,
 	},
+	refetch: false,
 };

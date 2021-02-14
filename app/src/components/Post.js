@@ -6,7 +6,7 @@ import { isPast, isToday } from "date-fns";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-export default function Post({ post, index }) {
+export default function Post({ post, index, allowDrag }) {
 	const {
 		postsDispatch,
 		posts: { unscheduled, currentPost },
@@ -88,7 +88,11 @@ export default function Post({ post, index }) {
 			<li
 				className={classes.join(" ")}
 				data-index={index}
-				draggable={isToday(date) || isPast(date) ? false : true}
+				draggable={
+					allowDrag === false || isToday(date) || isPast(date)
+						? false
+						: true
+				}
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
 				onDrop={handleDrop}

@@ -1,27 +1,19 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import PostList from "./PostList";
-import { routeBase } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
+import { useFetch } from "../lib/hooks";
 
 export default function UnscheduledDrafts() {
 	const {
 		posts: { unscheduled },
-		postsDispatch,
 	} = useContext(PostsContext);
 
-	useEffect(() => {
-		fetch(`${routeBase}/unscheduled/`)
-			.then((response) => response.json())
-			.then((data) => {
-				postsDispatch({
-					type: "INIT",
-					unscheduled: data,
-				});
-			});
-	}, [postsDispatch]);
+	const fetchStatus = useFetch(false);
 
-	return (
+	return fetchStatus === "fetching" ? (
+		"Loading..."
+	) : (
 		<PostList
 			className="unscheduledDrafts"
 			date={false}
