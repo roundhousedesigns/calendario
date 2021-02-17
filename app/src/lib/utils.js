@@ -1,10 +1,10 @@
-import { omit } from "lodash";
+import { omit, isEmpty } from "lodash";
 
 // export const routeBase = window.rhdReactPlugin.restBase; // Live URL
 export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
 
 export const samplePosts = {
-	calendar: [
+	scheduled: [
 		{
 			id: 1,
 			post_title: "Test Post 1",
@@ -112,3 +112,59 @@ export function filterStatusList(exclude = []) {
 
 	return filtered;
 }
+
+/**
+ * Updates a post via the REST API.
+ *
+ * @param {object} post The post object
+ * @param {object} updateParams Key/value pairs of post attributes to update
+ * @returns {object} The fetch result and/or error message
+ */
+export const updatePost = (post, updateParams) => {
+	const { id } = post;
+
+	let url = `${routeBase}/update/${id}`;
+
+	// Only include updated values
+	if (updateParams.length > 0) {
+		for (let key in updateParams) {
+			if (updateParams[key] === post[key]) {
+				updateParams = omit(updateParams, key);
+			}
+		}
+	}
+
+	let result = {
+		data: "",
+		error: false,
+	};
+
+	if (isEmpty(updateParams)) {
+		return { data: "Update not necessary.", error: true };
+	}
+
+	const fetchData = async () => {
+		try {
+			const response = await fetch(url, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(updateParams),
+			});
+			const data = await response.json();
+
+			result = {
+				data,
+				error: false,
+			};
+		} catch (error) {
+			result = {
+				data: error,
+				error: true,
+			};
+		}
+	};
+
+	fetchData();
+
+	return result;
+};

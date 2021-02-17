@@ -99,6 +99,7 @@ export default function EditPost() {
 	};
 
 	const saveHandler = () => {
+		// TODO call updatePost here and kill postsDispatch
 		postsDispatch({
 			type: "UPDATE_POST",
 			post: { ...editPost },

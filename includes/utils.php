@@ -22,7 +22,7 @@ function rhd_wp_format_date( $date_string ) {
 		return;
 	}
 
-	$from_format = 'm-d-Y';
+	$from_format = 'Y-m-d';
 	$to_format   = 'Y-m-d H:i:s';
 
 	$date     = DateTime::createFromFormat( $from_format, $date_string );
@@ -49,4 +49,20 @@ function rhd_get_status_color( $post_status ) {
 	} else {
 		return RHD_CALENDARIO_POST_STATUS_COLORS['default']['color'];
 	}
+}
+
+/**
+ * Get the furthest-future post date
+ *
+ * @return string|boolean The post date, or false if no posts found.
+ */
+function rhd_get_futuremost_date() {
+	$posts = get_posts( array(
+		'post_status'    => array( 'any' ),
+		'posts_per_page' => 1,
+	) );
+
+	$date = $posts ? $posts[0]->post_date : false;
+
+	return $date;
 }

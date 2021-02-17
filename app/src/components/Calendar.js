@@ -1,5 +1,7 @@
 // TODO Refactor or subdivide this component further
-import React, { useReducer, useContext } from "react";
+import React, { useState, useReducer, useContext, useEffect } from "react";
+import Day from "./Day";
+import DayPosts from "./DayPosts";
 import {
 	format,
 	isPast,
@@ -15,39 +17,110 @@ import {
 	endOfWeek,
 	isFirstDayOfMonth,
 } from "date-fns";
-import Day from "./Day";
-import DayPosts from "./DayPosts";
-import { useFetch } from "../lib/hooks";
-import { dateFormat } from "../lib/utils";
+
+import {
+	dateFormat,
+	// isEmptyPost,
+	routeBase,
+} from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
-function monthRangeReducer(state, action) {
-	return {
-		start: action.start,
-		end: addMonths(action.start + action.monthCount),
-	};
+function dateRangeReducer(state, action) {
+	switch (action.type) {
+		case "START":
+			return {
+				...state,
+				start: action.start,
+			};
+
+		case "END":
+			return {
+				...state,
+				end: action.end,
+			};
+
+		default:
+			return state;
+	}
 }
 
 export default function Calendar() {
 	const {
-		posts: { calendar },
+		posts: { refetch },
+		postsDispatch,
 	} = useContext(PostsContext);
-	const [monthRange, monthRangeDispatch] = useReducer(monthRangeReducer, {
+	const [dateRange, dateRangeDispatch] = useReducer(dateRangeReducer, {
 		start: new Date(),
 		end: new Date(),
 	});
+	const [posts, setPosts] = useState([]);
 	const {
 		viewOptions: { monthCount },
 	} = useContext(ViewContext);
 
-	const fetchStatus = useFetch(true, monthRange.start, monthRange.end);
+	useEffect(() => {
+		dateRangeDispatch({
+			type: "START",
+			start: startOfWeek(startOfMonth(new Date())),
+		});
+	}, []);
+
+	useEffect(() => {
+		postsDispatch({
+			type: "REFETCH",
+		});
+	}, [postsDispatch]);
+
+	useEffect(() => {
+		// Set the fetch range
+		const firstOfViewMonth = startOfMonth(dateRange.start);
+		const lastOfViewMonth = endOfMonth(
+			addMonths(firstOfViewMonth, monthCount - 1)
+		);
+		const endDate = endOfWeek(lastOfViewMonth);
+
+		// Calculate the end date whenever dateRange.start or monthCount updates!
+		dateRangeDispatch({
+			type: "END",
+			end: endDate,
+		});
+	}, [refetch, dateRange.start, monthCount]);
+
+	useEffect(() => {
+		if (dateRange.start !== null && dateRange.end !== null) {
+			let startDate = format(dateRange.start, dateFormat.date);
+			let endDate = format(dateRange.end, dateFormat.date);
+			let url = `${routeBase}/scheduled/${startDate}/${endDate}`;
+			const fetchData = async () => {
+				try {
+					const res = await fetch(url);
+					const data = await res.json();
+					setPosts(data);
+				} catch (error) {
+					console.log("REST error", error.message);
+				}
+			};
+
+			fetchData();
+		}
+
+		return function cleanup() {
+			setPosts([]);
+		};
+	}, [dateRange.start, dateRange.end]);
 
 	const nextMonth = () =>
-		monthRangeDispatch({ start: addMonths(monthRange.start, 1) });
+		dateRangeDispatch({
+			type: "START",
+			start: addMonths(dateRange.start, 1),
+		});
 	const prevMonth = () =>
-		monthRangeDispatch({ start: subMonths(monthRange.start, 1) });
+		dateRangeDispatch({
+			type: "START",
+			start: subMonths(dateRange.start, 1),
+		});
 
 	function renderHeader() {
 		return (
@@ -59,8 +132,8 @@ export default function Calendar() {
 				</div>
 				<div className="col col__center">
 					<span>
-						{format(monthRange.start, dateFormat.monthName)}{" "}
-						{format(monthRange.start, dateFormat.year)}
+						{format(dateRange.start, dateFormat.monthName)}{" "}
+						{format(dateRange.start, dateFormat.year)}
 					</span>
 				</div>
 				<div className="col col__end" onClick={nextMonth}>
@@ -73,7 +146,7 @@ export default function Calendar() {
 	function renderDays() {
 		const days = [];
 
-		let startDate = startOfWeek(monthRange.start);
+		let startDate = startOfWeek(dateRange.start);
 
 		for (let i = 0; i < 7; i++) {
 			days.push(
@@ -87,21 +160,17 @@ export default function Calendar() {
 	}
 
 	function renderCells() {
-		const firstOfViewMonth = startOfMonth(monthRange.start);
-		const lastOfViewMonth = endOfMonth(
-			addMonths(firstOfViewMonth, monthCount - 1)
-		);
-		const startDate = startOfWeek(firstOfViewMonth);
-		const endDate = endOfWeek(lastOfViewMonth);
+		// TODO sometimes previous incomplete month shows wrong even/odd
+		//        (e.g. jan 31 as 1st day of the week of feb 1st, jan 31 and feb 1 are 'odd')
 		let isMonthEven = false;
 
 		const rows = [];
 
 		let days = [];
-		let day = startDate;
+		let day = dateRange.start;
 		let formattedDate = {};
 
-		while (day <= endDate) {
+		while (day <= dateRange.end) {
 			for (let i = 0; i < 7; i++) {
 				const dayIsFirstDay = isFirstDayOfMonth(day);
 				const dayIsToday = isToday(day);
@@ -129,8 +198,8 @@ export default function Calendar() {
 
 				// Ranges
 				if (
-					isAfter(day, lastOfViewMonth) ||
-					isBefore(day, firstOfViewMonth)
+					isAfter(day, dateRange.last) ||
+					isBefore(day, dateRange.first)
 				) {
 					classes.push("outsideMonth");
 				} else {
@@ -149,9 +218,10 @@ export default function Calendar() {
 								: ""
 						}
 					>
-						<DayPosts date={day} posts={calendar} />
+						<DayPosts date={day} posts={posts} />
 					</Day>
 				);
+
 				day = addDays(day, 1);
 			}
 			rows.push(
@@ -164,9 +234,7 @@ export default function Calendar() {
 		return <div className="body">{rows}</div>;
 	}
 
-	return fetchStatus === "fetching" ? (
-		"Loading"
-	) : (
+	return (
 		<div className="view view__calendar">
 			{renderHeader()}
 			{renderDays()}

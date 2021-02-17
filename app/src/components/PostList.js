@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import Post from "./Post";
-import { isToday, isPast } from "date-fns";
+import { isToday, isPast, format } from "date-fns";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
+import { updatePost, dateFormat } from "../lib/utils";
 
 export default function PostList({ posts, className, allowDrag, date }) {
 	const { postsDispatch } = useContext(PostsContext);
@@ -39,24 +40,16 @@ export default function PostList({ posts, className, allowDrag, date }) {
 	};
 
 	const handleDrop = () => {
-		if (date === false) {
-			// unscheduled
-			postsDispatch({
-				type: "UNSCHEDULE",
-				post: draggedPost.post,
-				posts: draggedPost.updatedUnscheduledOrder,
-			});
-		} else {
-			// calendar
-			postsDispatch({
-				type: "CALENDAR",
-				post: draggedPost.post,
-				newDate: date,
-			});
-		}
+		updatePost(draggedPost.post, {
+			post_date: format(date, dateFormat.date),
+		});
 
 		draggedPostDispatch({
 			type: "END",
+		});
+
+		postsDispatch({
+			type: "REFETCH",
 		});
 	};
 
@@ -77,6 +70,7 @@ export default function PostList({ posts, className, allowDrag, date }) {
 				{posts.map((post, index) => (
 					<Post
 						post={post}
+						order={posts}
 						key={post.id}
 						index={index}
 						allowDrag={allowDrag}

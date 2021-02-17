@@ -1,38 +1,44 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PostList from "./PostList";
+import { format } from "date-fns";
+import { routeBase, dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
 export default function List() {
 	const {
-		posts: { calendar },
+		posts: { refetch },
+		postsDispatch,
 	} = useContext(PostsContext);
+	const [posts, setPosts] = useState([]);
 
-	// TODO Get/set this from cache
-	// TODO use futuremost date to get all 'calendared' posts from today onward
-	//        that aren't published
-	// useEffect(() => {
-	// 	let endMonth = addMonths(startMonth, monthCount);
+	useEffect(() => {
+		postsDispatch({
+			type: "REFETCH",
+		});
+	}, [postsDispatch]);
 
-	// 	fetch(
-	// 		`${routeBase}/calendar/${format(
-	// 			startMonth,
-	// 			dateFormat.date
-	// 		)}/${format(endMonth, dateFormat.date)}`
-	// 	)
-	// 		.then((response) => response.json())
-	// 		.then((data) => {
-	// 			postsDispatch({
-	// 				type: "INIT",
-	// 				calendar: data,
-	// 			});
-	// 		});
-	// }, [monthCount, startMonth, postsDispatch]);
+	useEffect(() => {
+		let startDate = format(new Date(), dateFormat.date);
+
+		let url = `${routeBase}/scheduled/${startDate}`;
+		const fetchData = async () => {
+			try {
+				const res = await fetch(url);
+				const data = await res.json();
+				setPosts(data);
+			} catch (error) {
+				console.log("REST error", error.message);
+			}
+		};
+
+		fetchData();
+	}, [refetch]);
 
 	return (
 		<PostList
 			className="view view__list"
-			posts={calendar}
+			posts={posts}
 			date={false}
 			allowDrag={false}
 		/>

@@ -1,9 +1,6 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useReducer } from "react";
 import { format, isSameDay } from "date-fns";
 import { routeBase, dateFormat } from "../lib/utils";
-import { isEmpty } from "lodash";
-
-import PostsContext from "../PostsContext";
 
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
@@ -28,52 +25,74 @@ export const useDayPosts = (posts, date) => {
 	return dayPosts;
 };
 
-export const useFetch = (
-	calendar = false,
-	startMonth = null,
-	endMonth = null
+export const useFetchPosts = (
+	scheduled = false,
+	params = { start: null, end: null }
 ) => {
-	const { postsDispatch } = useContext(PostsContext);
 	const cache = useRef({});
-	const [data, setData] = useState([]);
-	const [status, setStatus] = useState("idle");
-	const postBase = calendar === true ? "calendar" : "unscheduled";
-	var url = `${routeBase}/${postBase}`;
+	const postBase = scheduled === true ? "calendar" : "unscheduled";
+	const initialState = {
+		status: "idle",
+		error: null,
+		data: [],
+	};
+	const [state, dispatch] = useReducer((state, action) => {
+		switch (action.type) {
+			case "FETCHING":
+				return { ...state, status: "fetching" };
 
-	if (calendar === true) {
-		const startDate = format(startMonth, dateFormat.date);
-		const endDate = format(endMonth, dateFormat.date);
+			case "FETCHED":
+				return {
+					...state,
+					status: "fetched",
+					data: action.data,
+				};
+
+			case "FETCH_ERROR":
+				return { ...state, status: "error", error: action.data };
+
+			default:
+				return state;
+		}
+	}, initialState);
+	let url = `${routeBase}/${postBase}`;
+
+	if (scheduled === true) {
+		const startDate = format(params.start, dateFormat.date);
+		const endDate =
+			params.end !== null ? format(params.end, dateFormat.date) : null;
 
 		url = `${url}/${startDate}/${endDate}`;
 	}
 
 	useEffect(() => {
-		const fetchData = async () => {
-			setStatus("fetching");
-			if (cache.current[url]) {
-				const res = cache.current[url];
-				setData(res);
-				setStatus("fetched");
-			} else {
-				const response = await fetch(url);
-				const res = await response.json();
-				cache.current[url] = data; // set response in cache;
-				setData(res);
-				setStatus("fetched");
-			}
+		let cancelRequest = false;
 
-			if (!isEmpty(data)) {
-				postsDispatch({
-					type: "INIT",
-					[postBase]: data,
-				});
+		const fetchData = async () => {
+			dispatch({ type: "FETCHING" });
+
+			if (cache.current[url]) {
+				const data = cache.current[url];
+				dispatch({ type: "FETCHED", data: data });
+			} else {
+				try {
+					const response = await fetch(url);
+					const data = await response.json();
+					cache.current[url] = data; // set response in cache;
+					dispatch({ type: "FETCHED", data: data });
+				} catch (error) {
+					if (cancelRequest) return;
+					dispatch({ type: "FETCH_ERROR", data: error.message });
+				}
 			}
 		};
 
 		fetchData();
-	}, [url, data, postBase, postsDispatch]);
 
-	return status;
+		return function cleanup() {
+			cancelRequest = true;
+		};
+	}, [url, postBase]);
+
+	return state;
 };
-
-export const useUpdatePost = (url) => {};

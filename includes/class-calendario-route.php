@@ -10,7 +10,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$post_base = 'posts';
 		$user_base = 'user';
 
-		register_rest_route( $namespace, '/' . $post_base . '/calendar/(?P<start>.*?)(/(?P<end>.*))?', array(
+		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)(/(?P<end>.*))?', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_items' ),
@@ -27,15 +27,7 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $post_base . '/futuremost', array(
-			array(
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_futuremost_item' ),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
-			),
-		) );
-
-		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)/(?P<post_date>[0-9-]+)/(?P<post_status>.*?)/(?P<set_unscheduled>\d)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'update_item' ),
@@ -76,12 +68,14 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		$body = $request->get_params();
+
 		$items = get_posts( array(
 			'post_status' => 'any',
 			'inclusive'   => true,
 			'date_query'  => array(
-				'before' => isset( $params['end'] ) && $params['end'] ? $params['end'] : null,
-				'after'  => isset( $params['start'] ) && $params['start'] ? $params['start'] : null,
+				'before' => isset( $body['end'] ) && $body['end'] ? $body['end'] : rhd_get_futuremost_date(),
+				'after'  => isset( $body['start'] ) && $body['start'] ? $body['start'] : null,
 			),
 			'meta_query'  => array(
 				'relation' => 'OR',
@@ -136,27 +130,6 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get the furthest-future unpublished post
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_futuremost_item( $request ) {
-		$posts = get_posts( array(
-			'post_status'    => array( 'any' ),
-			'posts_per_page' => 1,
-		) );
-
-		if ( $posts ) {
-			$data = $this->prepare_futuremost_item_for_response( $posts[0], $request );
-		} else {
-			$data = [];
-		}
-
-		return new WP_REST_Response( $data, 200 );
-	}
-
-	/**
 	 * Get one item from the collection
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
@@ -180,32 +153,11 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
-		$item            = $this->prepare_item_for_database( $request );
-		$additional_data = json_decode( $request->get_body() );
-
-		$args = array(
-			'ID'          => $item['ID'],
-			'post_date'   => $item['post_date'],
-			'post_status' => $item['post_status'],
-		);
-
-		if ( $additional_data !== new stdClass() ) {
-			$args = array_merge( $args, (array) $additional_data );
-		}
+		$item = $this->prepare_item_for_database( $request );
+		// $unscheduled = isset( $item['unscheduled'] ) ? true : false;
 
 		// Update the post
-		$result = wp_update_post( $args );
-
-		if ( ! is_wp_error( $result ) ) {
-			$unscheduled_meta = get_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, true );
-			if ( $item['set_unscheduled'] == false && $unscheduled_meta ) {
-				$result = delete_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY );
-			} elseif ( $item['set_unscheduled'] == true && $unscheduled_meta != 1 ) {
-				$result = update_post_meta( $item['ID'], RHD_UNSCHEDULED_META_KEY, 1 );
-			} else {
-				// error_log( 'Nothing to do.' );
-			}
-		}
+		$result = wp_update_post( $item );
 
 		if ( $result !== false && ! is_wp_error( $result ) ) {
 			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
@@ -530,7 +482,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function create_item_permissions_check( $request ) {
-		return true; /*<--use to make readable by all*/
+		return true; // DEV ONLY; NO AUTHENTICATION
 		// return current_user_can( 'edit_others_posts' );
 	}
 
@@ -541,7 +493,8 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function update_item_permissions_check( $request ) {
-		return $this->create_item_permissions_check( $request );
+		return true; // DEV ONLY; NO AUTHENTICATION
+		// return $this->create_item_permissions_check( $request );
 	}
 
 	/**
@@ -561,16 +514,30 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|object $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
-		$params = $request->get_params();
-		$date   = rhd_wp_format_date( $params['post_date'] );
+		$params      = $request->get_params();
+		$newPostData = json_decode( $request->get_body(), true );
 
 		$item = [
-			'ID'              => $params['ID'],
-			'post_date'       => $date['post_date'],
-			'post_date_gmt'   => $date['post_date_gmt'],
-			'post_status'     => $params['post_status'],
-			'set_unscheduled' => $params['set_unscheduled'] == 1 ? 1 : 0,
+			'ID' => $params['ID'],
 		];
+
+		foreach ( $newPostData as $key => $value ) {
+			if ( $key === 'post_date' && $value !== false ) {
+				$date = rhd_wp_format_date( $value );
+
+				$item['post_date']     = $date['post_date'];
+				$item['post_date_gmt'] = $date['post_date_gmt'];
+				$item['meta_input']    = [
+					RHD_UNSCHEDULED_META_KEY => 0,
+				];
+			} elseif ( $key === 'post_date' && $value === false ) {
+				$item['meta_input'] = [
+					RHD_UNSCHEDULED_META_KEY => 1,
+				];
+			} else {
+				$item[$key] = $value;
+			}
+		}
 
 		return $item;
 	}
@@ -638,17 +605,6 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_date'   => $post_date->format( 'Y-m-d H:i:s' ),
 			'post_status' => $item->post_status,
 		];
-	}
-
-	/**
-	 * Prepare the futuremost data for the REST response
-	 *
-	 * @param mixed $item WordPress representation of the item.
-	 * @param WP_REST_Request $request Request object.
-	 * @return array
-	 */
-	public function prepare_futuremost_item_for_response( $item, $request ) {
-		return $item->post_date;
 	}
 
 	/**

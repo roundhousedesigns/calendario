@@ -6,10 +6,10 @@ import { isPast, isToday } from "date-fns";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-export default function Post({ post, index, allowDrag }) {
+export default function Post({ post, index, allowDrag, order }) {
 	const {
 		postsDispatch,
-		posts: { unscheduled, currentPost },
+		posts: { /*unscheduled,*/ currentPost },
 	} = useContext(PostsContext);
 	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
 	const [colors, setColors] = useState({});
@@ -39,7 +39,7 @@ export default function Post({ post, index, allowDrag }) {
 			draggedFrom: draggingUnscheduled
 				? Number(e.currentTarget.dataset.index)
 				: false,
-			originalUnscheduledOrder: unscheduled,
+			originalUnscheduledOrder: order,
 		});
 	};
 
@@ -66,7 +66,10 @@ export default function Post({ post, index, allowDrag }) {
 	};
 
 	const renderPost = () => {
-		let classes = ["post", `status__${post.post_status}`];
+		let classes = [
+			"post",
+			`post-id-${post.id} status__${post.post_status}`,
+		];
 		if (draggedPost.isDragging) {
 			if (
 				draggedPost.draggedTo === Number(index) &&
