@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useReducer } from "react";
+import { useState, useEffect, /*useRef,*/ useReducer } from "react";
 import { format, isSameDay } from "date-fns";
 import { routeBase, dateFormat } from "../lib/utils";
 
@@ -29,7 +29,7 @@ export const useFetchPosts = (
 	scheduled = false,
 	params = { start: null, end: null }
 ) => {
-	const cache = useRef({});
+	// const cache = useRef({});
 	const postBase = scheduled === true ? "calendar" : "unscheduled";
 	const initialState = {
 		status: "idle",
@@ -71,20 +71,20 @@ export const useFetchPosts = (
 		const fetchData = async () => {
 			dispatch({ type: "FETCHING" });
 
-			if (cache.current[url]) {
-				const data = cache.current[url];
+			// if (cache.current[url]) {
+			// const data = cache.current[url];
+			// dispatch({ type: "FETCHED", data: data });
+			// } else {
+			try {
+				const response = await fetch(url);
+				const data = await response.json();
+				// cache.current[url] = data; // set response in cache;
 				dispatch({ type: "FETCHED", data: data });
-			} else {
-				try {
-					const response = await fetch(url);
-					const data = await response.json();
-					cache.current[url] = data; // set response in cache;
-					dispatch({ type: "FETCHED", data: data });
-				} catch (error) {
-					if (cancelRequest) return;
-					dispatch({ type: "FETCH_ERROR", data: error.message });
-				}
+			} catch (error) {
+				if (cancelRequest) return;
+				dispatch({ type: "FETCH_ERROR", data: error.message });
 			}
+			// }
 		};
 
 		fetchData();

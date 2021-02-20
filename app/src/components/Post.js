@@ -8,8 +8,8 @@ import DragContext from "../DragContext";
 
 export default function Post({ post, index, allowDrag, order }) {
 	const {
+		posts: { currentPost },
 		postsDispatch,
-		posts: { /*unscheduled,*/ currentPost },
 	} = useContext(PostsContext);
 	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
 	const [colors, setColors] = useState({});
@@ -44,12 +44,6 @@ export default function Post({ post, index, allowDrag, order }) {
 	};
 
 	const handleDragEnd = () => draggedPostDispatch({ type: "END" });
-
-	const handleDrop = () => {
-		draggedPostDispatch({
-			type: "END",
-		});
-	};
 
 	const handleClick = (e) => {
 		let unscheduled =
@@ -92,13 +86,12 @@ export default function Post({ post, index, allowDrag, order }) {
 				className={classes.join(" ")}
 				data-index={index}
 				draggable={
-					allowDrag === false || isToday(date) || isPast(date)
-						? false
-						: true
+					allowDrag === true || (!isToday(date) && !isPast(date))
+						? true
+						: false
 				}
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
-				onDrop={handleDrop}
 				onClick={handleClick}
 			>
 				<p

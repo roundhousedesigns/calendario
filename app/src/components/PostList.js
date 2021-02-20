@@ -1,14 +1,70 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useReducer } from "react";
 import Post from "./Post";
+import { dateFormat, routeBase, filterUnchangedParams } from "../lib/utils";
+import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import { isToday, isPast, format } from "date-fns";
+import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
-import { updatePost, dateFormat } from "../lib/utils";
 
 export default function PostList({ posts, className, allowDrag, date }) {
-	const { postsDispatch } = useContext(PostsContext);
-	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
+	const {
+		posts: { currentPost },
+		postsDispatch,
+	} = useContext(PostsContext);
+	const {
+		draggedPost: { post },
+		draggedPostDispatch,
+	} = useContext(DragContext);
+	const [updatePost, updatePostDispatch] = useReducer(
+		updateReducer,
+		initialUpdateState
+	);
+
+	useEffect(() => {
+		if (updatePost.updateNow === true && post.id !== "undefined") {
+			updatePostDispatch({
+				type: "UPDATING",
+			});
+
+			let url = `${routeBase}/update/${post.id}`;
+			let postData = {
+				params: filterUnchangedParams(updatePost.params, post),
+				unscheduled: updatePost.unscheduled,
+			};
+
+			if (isEmpty(postData)) {
+				return { data: "Update not necessary.", error: true };
+			}
+
+			const fetchData = async () => {
+				try {
+					const response = await fetch(url, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(postData),
+					});
+					// const data = await response.json(); // If you need to catch the response...
+					await response.json();
+
+					postsDispatch({
+						type: "REFETCH",
+					});
+					draggedPostDispatch({
+						type: "END",
+					});
+					updatePostDispatch({
+						type: "COMPLETE",
+					});
+				} catch (error) {
+					console.log(error.message);
+				}
+			};
+
+			fetchData();
+		}
+	}, [updatePost, draggedPostDispatch, post, postsDispatch]);
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
@@ -24,7 +80,10 @@ export default function PostList({ posts, className, allowDrag, date }) {
 					const listItems = e.currentTarget.childNodes;
 					let itemCount = listItems.length;
 
-					if (mouseY < listItems[0].offsetTop) {
+					if (
+						listItems.length === 0 ||
+						mouseY < listItems[0].offsetTop
+					) {
 						draggedTo = 0;
 					} else {
 						draggedTo = itemCount;
@@ -40,17 +99,24 @@ export default function PostList({ posts, className, allowDrag, date }) {
 	};
 
 	const handleDrop = () => {
-		updatePost(draggedPost.post, {
-			post_date: format(date, dateFormat.date),
+		updatePostDispatch({
+			type: "UPDATE",
+			params: {
+				post_date:
+					date === false
+						? format(post.post_date, dateFormat.date)
+						: format(date, dateFormat.date),
+			},
+			unscheduled: date === false ? true : false,
 		});
 
-		draggedPostDispatch({
-			type: "END",
-		});
-
-		postsDispatch({
-			type: "REFETCH",
-		});
+		if (currentPost.id === post.id) {
+			postsDispatch({
+				type: "UPDATE_CURRENTPOST_FIELD",
+				field: "post_date",
+				value: date,
+			});
+		}
 	};
 
 	const renderPostList = () => {

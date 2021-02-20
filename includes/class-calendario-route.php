@@ -74,7 +74,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_status' => 'any',
 			'inclusive'   => true,
 			'date_query'  => array(
-				'before' => isset( $body['end'] ) && $body['end'] ? $body['end'] : rhd_get_futuremost_date(),
+				'before' => isset( $body['end'] ) && $body['end'] ? $body['end'] : null,
 				'after'  => isset( $body['start'] ) && $body['start'] ? $body['start'] : null,
 			),
 			'meta_query'  => array(
@@ -91,7 +91,6 @@ class Calendario_Route extends WP_REST_Controller {
 		) );
 
 		$data = [];
-
 		foreach ( $items as $item ) {
 			$data[] = $this->prepare_item_for_response( $item, $request );
 		}
@@ -154,7 +153,6 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function update_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
-		// $unscheduled = isset( $item['unscheduled'] ) ? true : false;
 
 		// Update the post
 		$result = wp_update_post( $item );
@@ -514,26 +512,30 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|object $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
-		$params      = $request->get_params();
-		$newPostData = json_decode( $request->get_body(), true );
+		$params   = $request->get_params();
+		$postData = json_decode( $request->get_body(), true );
 
 		$item = [
 			'ID' => $params['ID'],
 		];
 
-		foreach ( $newPostData as $key => $value ) {
-			if ( $key === 'post_date' && $value !== false ) {
+		if ( $postData['unscheduled'] === true ) {
+			$item['meta_input'] = [
+				RHD_UNSCHEDULED_META_KEY => 1,
+			];
+		} else {
+			$item['meta_input'] = [
+				RHD_UNSCHEDULED_META_KEY => 0,
+			];
+		}
+
+		foreach ( $postData['params'] as $key => $value ) {
+			if ( $key === 'post_date' ) {
 				$date = rhd_wp_format_date( $value );
 
 				$item['post_date']     = $date['post_date'];
 				$item['post_date_gmt'] = $date['post_date_gmt'];
-				$item['meta_input']    = [
-					RHD_UNSCHEDULED_META_KEY => 0,
-				];
-			} elseif ( $key === 'post_date' && $value === false ) {
-				$item['meta_input'] = [
-					RHD_UNSCHEDULED_META_KEY => 1,
-				];
+
 			} else {
 				$item[$key] = $value;
 			}

@@ -1,12 +1,10 @@
 // TODO Refactor or subdivide this component further
-import React, { useState, useReducer, useContext, useEffect } from "react";
+import React, { useReducer, useContext, useEffect, useCallback } from "react";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
 import {
 	format,
 	isPast,
-	isBefore,
-	isAfter,
 	isToday,
 	addDays,
 	addMonths,
@@ -18,14 +16,16 @@ import {
 	isFirstDayOfMonth,
 } from "date-fns";
 
-import {
-	dateFormat,
-	// isEmptyPost,
-	routeBase,
-} from "../lib/utils";
+import { dateFormat, routeBase } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
+
+const initialDateRange = {
+	start: new Date(),
+	end: new Date(),
+	firstOfMonth: startOfMonth(new Date()),
+};
 
 function dateRangeReducer(state, action) {
 	switch (action.type) {
@@ -33,6 +33,7 @@ function dateRangeReducer(state, action) {
 			return {
 				...state,
 				start: action.start,
+				firstOfMonth: action.firstOfMonth,
 			};
 
 		case "END":
@@ -41,6 +42,27 @@ function dateRangeReducer(state, action) {
 				end: action.end,
 			};
 
+		case "NEXT_MONTH":
+			let nextMonth = startOfMonth(addMonths(state.firstOfMonth, 1));
+
+			return {
+				...state,
+				start: startOfWeek(nextMonth),
+				firstOfMonth: nextMonth,
+			};
+
+		case "PREV_MONTH":
+			let prevMonth = startOfMonth(subMonths(state.firstOfMonth, 1));
+
+			return {
+				...state,
+				start: startOfWeek(prevMonth),
+				firstOfMonth: prevMonth,
+			};
+
+		case "RESET":
+			return initialDateRange;
+
 		default:
 			return state;
 	}
@@ -48,14 +70,13 @@ function dateRangeReducer(state, action) {
 
 export default function Calendar() {
 	const {
-		posts: { refetch },
+		posts: { scheduled, refetch },
 		postsDispatch,
 	} = useContext(PostsContext);
-	const [dateRange, dateRangeDispatch] = useReducer(dateRangeReducer, {
-		start: new Date(),
-		end: new Date(),
-	});
-	const [posts, setPosts] = useState([]);
+	const [dateRange, dateRangeDispatch] = useReducer(
+		dateRangeReducer,
+		initialDateRange
+	);
 	const {
 		viewOptions: { monthCount },
 	} = useContext(ViewContext);
@@ -64,6 +85,7 @@ export default function Calendar() {
 		dateRangeDispatch({
 			type: "START",
 			start: startOfWeek(startOfMonth(new Date())),
+			firstOfMonth: startOfMonth(new Date()),
 		});
 	}, []);
 
@@ -77,7 +99,7 @@ export default function Calendar() {
 		// Set the fetch range
 		const firstOfViewMonth = startOfMonth(dateRange.start);
 		const lastOfViewMonth = endOfMonth(
-			addMonths(firstOfViewMonth, monthCount - 1)
+			addMonths(firstOfViewMonth, monthCount)
 		);
 		const endDate = endOfWeek(lastOfViewMonth);
 
@@ -97,7 +119,12 @@ export default function Calendar() {
 				try {
 					const res = await fetch(url);
 					const data = await res.json();
-					setPosts(data);
+
+					postsDispatch({
+						type: "SET",
+						posts: data,
+						unscheduled: false,
+					});
 				} catch (error) {
 					console.log("REST error", error.message);
 				}
@@ -105,24 +132,21 @@ export default function Calendar() {
 
 			fetchData();
 		}
+	}, [postsDispatch, dateRange.start, dateRange.end]);
 
-		return function cleanup() {
-			setPosts([]);
-		};
-	}, [dateRange.start, dateRange.end]);
-
-	const nextMonth = () =>
+	const nextMonth = () => {
 		dateRangeDispatch({
-			type: "START",
-			start: addMonths(dateRange.start, 1),
+			type: "NEXT_MONTH",
 		});
-	const prevMonth = () =>
-		dateRangeDispatch({
-			type: "START",
-			start: subMonths(dateRange.start, 1),
-		});
+	};
 
-	function renderHeader() {
+	const prevMonth = () => {
+		dateRangeDispatch({
+			type: "PREV_MONTH",
+		});
+	};
+
+	const renderCalendarHeader = () => {
 		return (
 			<div className="header row flex-middle">
 				<div className="col col__start">
@@ -131,19 +155,16 @@ export default function Calendar() {
 					</div>
 				</div>
 				<div className="col col__center">
-					<span>
-						{format(dateRange.start, dateFormat.monthName)}{" "}
-						{format(dateRange.start, dateFormat.year)}
-					</span>
+					<h3 className="viewTitle">Scheduled Posts</h3>
 				</div>
 				<div className="col col__end" onClick={nextMonth}>
 					<div className="icon">chevron_right</div>
 				</div>
 			</div>
 		);
-	}
+	};
 
-	function renderDays() {
+	const renderDaysHeaderRow = () => {
 		const days = [];
 
 		let startDate = startOfWeek(dateRange.start);
@@ -157,13 +178,9 @@ export default function Calendar() {
 		}
 
 		return <div className="days row">{days}</div>;
-	}
+	};
 
-	function renderCells() {
-		// TODO sometimes previous incomplete month shows wrong even/odd
-		//        (e.g. jan 31 as 1st day of the week of feb 1st, jan 31 and feb 1 are 'odd')
-		let isMonthEven = false;
-
+	const renderDays = useCallback(() => {
 		const rows = [];
 
 		let days = [];
@@ -177,9 +194,9 @@ export default function Calendar() {
 				const dayIsPast = isPast(day);
 
 				// even/odd month
-				if (dayIsFirstDay && !dayIsPast) {
-					isMonthEven = !isMonthEven;
-				}
+				// if (dayIsFirstDay) {
+				// 	isMonthEven = !isMonthEven;
+				// }
 
 				formattedDate = {
 					day: format(day, dateFormat.day),
@@ -189,21 +206,12 @@ export default function Calendar() {
 				var classes = [];
 				if (dayIsToday) {
 					classes.push("today");
-				} else {
-					classes.push(isMonthEven ? "even" : "odd");
 				}
+				// else {
+				// 	classes.push(isMonthEven ? "even" : "odd");
+				// }
 				if (dayIsPast && !dayIsToday) {
 					classes.push("past");
-				}
-
-				// Ranges
-				if (
-					isAfter(day, dateRange.last) ||
-					isBefore(day, dateRange.first)
-				) {
-					classes.push("outsideMonth");
-				} else {
-					classes.push("insideMonth");
 				}
 
 				days.push(
@@ -218,12 +226,13 @@ export default function Calendar() {
 								: ""
 						}
 					>
-						<DayPosts date={day} posts={posts} />
+						<DayPosts date={day} posts={scheduled} />
 					</Day>
 				);
 
 				day = addDays(day, 1);
 			}
+
 			rows.push(
 				<div className="row" key={day}>
 					{days}
@@ -232,13 +241,18 @@ export default function Calendar() {
 			days = [];
 		}
 		return <div className="body">{rows}</div>;
-	}
+	}, [dateRange.end, dateRange.start, scheduled]);
 
 	return (
-		<div className="view view__calendar">
-			{renderHeader()}
-			{renderDays()}
-			{renderCells()}
+		<div>
+			<div className="view view__calendar">
+				{renderCalendarHeader()}
+				{renderDaysHeaderRow()}
+				{renderDays()}
+			</div>
+			<div style={{ textAlign: "center" }}>
+				Maybe a big + to add a month?
+			</div>
 		</div>
 	);
 }

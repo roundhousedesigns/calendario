@@ -1,12 +1,14 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import PostList from "./PostList";
 import { routeBase } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
 export default function UnscheduledDrafts() {
-	const { posts: refetch, postsDispatch } = useContext(PostsContext);
-	const [posts, setPosts] = useState([]);
+	const {
+		posts: { unscheduled, refetch },
+		postsDispatch,
+	} = useContext(PostsContext);
 
 	useEffect(() => {
 		postsDispatch({
@@ -21,7 +23,12 @@ export default function UnscheduledDrafts() {
 			try {
 				const res = await fetch(url);
 				const data = await res.json();
-				setPosts(data);
+
+				postsDispatch({
+					type: "SET",
+					posts: data,
+					unscheduled: true,
+				});
 			} catch (error) {
 				console.log("REST error", error.message);
 			}
@@ -29,12 +36,19 @@ export default function UnscheduledDrafts() {
 
 		fetchData();
 
-		return function cleanup() {
-			setPosts([]);
-		};
-	}, [refetch]);
+		postsDispatch({
+			type: "CLEAR",
+			posts: [],
+			unscheduled: true,
+		});
+	}, [postsDispatch, refetch]);
 
 	return (
-		<PostList className="unscheduledDrafts" date={false} posts={posts} />
+		<PostList
+			className="unscheduledDrafts"
+			date={false}
+			posts={unscheduled}
+			allowDrag={true}
+		/>
 	);
 }

@@ -2,12 +2,15 @@ import React, { useContext } from "react";
 import SidebarInput from "./SidebarInput";
 
 import ViewContext from "../ViewContext";
+import PostsContext from "../PostsContext";
 
 export default function ViewOptions() {
 	const {
 		viewOptions: { viewMode, monthCount },
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
+
+	const { postsDispatch } = useContext(PostsContext);
 
 	const handleMonthCountChange = (e) => {
 		viewOptionsDispatch({
@@ -20,6 +23,12 @@ export default function ViewOptions() {
 		viewOptionsDispatch({
 			type: "UPDATE_OPTION",
 			viewMode: e.target.value,
+		});
+	};
+
+	const handleRefetch = (e) => {
+		postsDispatch({
+			type: "REFETCH",
 		});
 	};
 
@@ -60,6 +69,13 @@ export default function ViewOptions() {
 					/>
 				</SidebarInput>
 			) : null}
+			<SidebarInput
+				name="refetch"
+				label="Refetch Posts (not for production)"
+				inlineLabel={true}
+			>
+				<button onClick={handleRefetch}>Refetch</button>
+			</SidebarInput>
 		</div>
 	);
 }

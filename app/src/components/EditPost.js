@@ -1,11 +1,19 @@
 import React, { useContext, useEffect, useState, useReducer } from "react";
 import SidebarInput from "./SidebarInput";
+import { updateReducer, initialUpdateState } from "../lib/updatePost";
+import {
+	dateFormat,
+	isEmptyPost,
+	filterStatusList,
+	routeBase,
+	filterUnchangedParams,
+} from "../lib/utils";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
-import { dateFormat, isEmptyPost } from "../lib/utils";
-import { filterStatusList } from "../lib/utils";
+import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
+import DragContext from "../DragContext";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -15,9 +23,15 @@ function editPostReducer(state, action) {
 			return action.post;
 
 		case "EDIT":
+			const { field } = action;
+			var { value } = action;
+
+			if (field === "post_date") {
+				value = new Date(value);
+			}
 			return {
 				...state,
-				[action.field]: action.value,
+				[field]: value,
 			};
 
 		case "DATE_CHANGE":
@@ -31,13 +45,19 @@ function editPostReducer(state, action) {
 	}
 }
 
+// TODO Date/time display, add time picker
 export default function EditPost() {
 	const {
 		posts: { currentPost },
 		postsDispatch,
 	} = useContext(PostsContext);
+	const { draggedPostDispatch } = useContext(DragContext);
 	const [editMode, setEditMode] = useState(false);
 	const [editPost, editPostDispatch] = useReducer(editPostReducer, {});
+	const [updatePost, updatePostDispatch] = useReducer(
+		updateReducer,
+		initialUpdateState
+	);
 	const [date, setDate] = useState(new Date());
 	const [allowedStatuses, setAllowedStatuses] = useState({});
 
@@ -75,19 +95,76 @@ export default function EditPost() {
 
 	useEffect(() => {
 		// Handle changing post date (i.e. dragging on calendar) while in edit mode
-		if (
-			currentPost.post_date !== editPost.post_date &&
-			!isEmptyPost(currentPost)
-		) {
+		if (currentPost.post_date !== editPost.post_date) {
 			editPostDispatch({
 				type: "DATE_CHANGE",
 				newDate: currentPost.post_date,
 			});
 		}
-		// we don't want to re-fire when editPost.post_date changes, so leave it out of deps.
 		// TODO Figure out a `usePrevious` solution that doesn't require an eslint hack
+		//        (we don't want to re-fire when editPost.post_date changes, so leave it out of deps.
+		//        Also, apparently adding editPost.post_date also borks changing the date in the picker?)
 		//eslint-disable-next-line
 	}, [currentPost.post_date]);
+
+	// Handle post updating
+	useEffect(() => {
+		if (updatePost.updateNow === true && currentPost.id !== "undefined") {
+			updatePostDispatch({
+				type: "UPDATING",
+			});
+
+			let url = `${routeBase}/update/${currentPost.id}`;
+			let postData = {
+				params: filterUnchangedParams(updatePost.params, currentPost),
+				unscheduled: updatePost.unscheduled,
+			};
+
+			if (isEmpty(postData.params)) {
+				return { data: "Update not necessary.", error: true };
+			}
+
+			const fetchData = async () => {
+				try {
+					const response = await fetch(url, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(postData),
+					});
+					// const data = await response.json(); // If you need to catch the response...
+					await response.json();
+
+					draggedPostDispatch({
+						type: "END",
+					});
+					updatePostDispatch({
+						type: "COMPLETE",
+					});
+					postsDispatch({
+						type: "SET_CURRENTPOST",
+						post: editPost,
+						unscheduled: editPost.unscheduled,
+					});
+
+					postsDispatch({
+						type: "REFETCH",
+					});
+				} catch (error) {
+					console.log(error.message);
+				}
+			};
+
+			fetchData();
+		}
+	}, [
+		currentPost,
+		editPost,
+		draggedPostDispatch,
+		postsDispatch,
+		updatePost.params,
+		updatePost.updateNow,
+		updatePost.unscheduled,
+	]);
 
 	const editHandler = () => {
 		editPostDispatch({
@@ -98,12 +175,20 @@ export default function EditPost() {
 		setEditMode(true);
 	};
 
-	const saveHandler = () => {
-		// TODO call updatePost here and kill postsDispatch
-		postsDispatch({
-			type: "UPDATE_POST",
-			post: { ...editPost },
+	const handleSubmit = () => {
+		updatePostDispatch({
+			type: "UPDATE",
+			params: {
+				post_title: editPost.post_title,
+				post_date: format(
+					new Date(editPost.post_date),
+					dateFormat.date
+				),
+				post_status: editPost.post_status,
+			},
+			unscheduled: editPost.unscheduled,
 		});
+
 		setEditMode(false);
 	};
 
@@ -129,7 +214,7 @@ export default function EditPost() {
 		editPostDispatch({
 			type: "EDIT",
 			field: "post_date",
-			value: format(date, dateFormat.date),
+			value: date,
 		});
 	};
 
@@ -145,13 +230,27 @@ export default function EditPost() {
 		<div className="editPost">
 			{isEmptyPost(currentPost) ? (
 				<div>
-					<div className="editPost__buttons">
-						{editMode === true ? (
-							<div className="editPost__buttons__row">
-								{/* TODO Get keyboard ENTER to work as Save button */}
+					{editMode === false ? (
+						<div className="editPost__buttons__row">
+							<button
+								className="editPost__buttons__edit"
+								onClick={editHandler}
+							>
+								Edit Post
+							</button>
+						</div>
+					) : (
+						<div></div>
+					)}
+					<div className="editPost__editor">
+						{editMode ? (
+							<form
+								className="editPost__editor__form"
+								onSubmit={handleSubmit}
+							>
 								<button
+									type="submit"
 									className="editPost__buttons__save"
-									onClick={saveHandler}
 								>
 									Save
 								</button>
@@ -161,21 +260,6 @@ export default function EditPost() {
 								>
 									Cancel
 								</button>
-							</div>
-						) : (
-							<div>
-								<button
-									className="editPost__buttons__edit"
-									onClick={editHandler}
-								>
-									Edit Post
-								</button>
-							</div>
-						)}
-					</div>
-					<div className="editPost__editor">
-						{editMode ? (
-							<form className="editPost__editor__form">
 								<SidebarInput
 									name="post_title"
 									label="Post Title"
@@ -198,7 +282,8 @@ export default function EditPost() {
 										selected={date}
 										onChange={handleInputDateChange}
 										disabled={
-											isToday(date) || isPast(date)
+											isToday(currentPost.post_date) ||
+											isPast(currentPost.post_date)
 												? true
 												: false
 										}
@@ -220,7 +305,6 @@ export default function EditPost() {
 									name="post_thumb"
 									label="Post Title"
 								>
-									{/* <input name="postThumb-chooser"></input> */}
 									{/* TODO Featured image display/selection */}
 									<div className="postThumb">
 										Dreams: Choose/Replace Featured image
@@ -232,7 +316,12 @@ export default function EditPost() {
 							<div className="editPost__editor__display">
 								<div className="postData">
 									<p>{currentPost.post_title}</p>
-									<p>{currentPost.post_date}</p>
+									<p>
+										{format(
+											currentPost.post_date,
+											dateFormat.date
+										)}
+									</p>
 									<p>{currentPost.post_status}</p>
 								</div>
 								<div className="postThumb">

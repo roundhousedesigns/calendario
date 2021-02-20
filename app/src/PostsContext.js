@@ -12,10 +12,28 @@ export const initialPosts = {
 		unscheduled: null,
 	},
 	refetch: false,
+	unscheduled: [],
+	scheduled: [],
 };
 
 export function postsReducer(state, action) {
 	switch (action.type) {
+		case "SET":
+			let posts = action.posts;
+
+			// cast the date as a Date object
+			posts.forEach((post, index) => {
+				posts[index].post_date = new Date(post.post_date);
+			});
+
+			let postArea =
+				action.unscheduled === true ? "unscheduled" : "scheduled";
+
+			return {
+				...state,
+				[postArea]: posts,
+			};
+
 		case "REFETCH":
 			return {
 				...state,
@@ -31,7 +49,16 @@ export function postsReducer(state, action) {
 				},
 			};
 
-		// Not currently used but maybe...
+		case "UPDATE_CURRENTPOST_FIELD":
+			return {
+				...state,
+				currentPost: {
+					...state.currentPost,
+					[action.field]: action.value,
+				},
+			};
+
+		// TODO Is this necessary? Not currently used but maybe...
 		case "UNSET_CURRENTPOST":
 			return {
 				...state,

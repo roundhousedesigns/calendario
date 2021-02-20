@@ -202,12 +202,6 @@ body {
 
 	&__calendar {
 		.header {
-			text-transform: uppercase;
-			font-weight: 700;
-			font-size: 115%;
-			padding: 1.5em 0;
-			border-bottom: 1px solid var(--borderColor);
-
 			.icon {
 				cursor: pointer;
 				transition: 0.15s ease-out;
@@ -245,14 +239,12 @@ body {
 				overflow: hidden;
 				transition: 0.25s ease-out;
 
-				&.insideMonth {
-					&.odd {
-						background: var(--neutralColor);
-					}
+				&.odd {
+					background: var(--neutralColor);
+				}
 
-					&.even {
-						background: var(--neutralColor-dark);
-					}
+				&.even {
+					background: var(--neutralColor-dark);
 				}
 
 				&:last-child {
@@ -278,10 +270,6 @@ body {
 					top: 0.75em;
 					right: 0.75em;
 				}
-
-				.pastMark {
-					display: none;
-				}
 			}
 
 			.selected {
@@ -298,30 +286,18 @@ body {
 				background: rgba(252, 152, 2, 0.068);
 			}
 
-			.outsideMonth,
+			// .outsideMonth,
 			.past {
+				background: var(--neutralColor-dark);
+
 				.postList {
 					opacity: 0.4;
 				}
 			}
 
-			.outsideMonth {
-				background: rgba(141, 141, 141, 0.226);
-			}
-
-			.past {
-				.pastMark {
-					width: 100%;
-					height: 100%;
-					display: block;
-					z-index: 0;
-					background-color: var(--pastColor);
-					font-size: 100%;
-					position: absolute;
-					-webkit-clip-path: polygon(0 0, 0 15px, 15px 0);
-					clip-path: polygon(0 0, 0 15px, 15px 0);
-				}
-			}
+			// .outsideMonth {
+			// 	background: rgba(141, 141, 141, 0.226);
+			// }
 
 			.row {
 				border-bottom: 1px solid var(--borderColor);
@@ -355,8 +331,26 @@ body {
 	}
 
 	&__list {
-		padding: 1em;
 		height: 100%;
+
+		.postList {
+			padding: 1em;
+			margin: 0;
+		}
+	}
+
+	.header {
+		text-transform: uppercase;
+		font-weight: 700;
+		font-size: 115%;
+		padding: 1.5em 0;
+		border-bottom: 1px solid var(--borderColor);
+
+		.viewTitle {
+			margin: 0;
+			text-align: center;
+			font-size: 1.2rem;
+		}
 	}
 }
 

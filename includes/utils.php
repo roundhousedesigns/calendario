@@ -56,6 +56,7 @@ function rhd_get_status_color( $post_status ) {
  *
  * @return string|boolean The post date, or false if no posts found.
  */
+// TODO probably kill this...
 function rhd_get_futuremost_date() {
 	$posts = get_posts( array(
 		'post_status'    => array( 'any' ),
