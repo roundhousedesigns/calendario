@@ -14,29 +14,35 @@
 define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.1.0' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
 define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
+define( 'RHD_CALENDARIO_REST_VERSION', 'v1' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
 define( 'RHD_UNSCHEDULED_META_KEY', 'rhd_unscheduled' );
-define ( 'RHD_CALENDARIO_POST_STATUS_COLORS', array(
+define( 'RHD_CALENDARIO_POST_STATUS_COLORS', array(
 	'publish' => array(
-		'color' => 'blue',
-		'editable' => false
+		'name'            => 'Publish',
+		'backgroundColor' => 'cornflowerblue',
+		'color'           => 'white',
 	),
-	'future' => array(
-		'color' => 'green',
-		'editable' => true
+	'future'  => array(
+		'name'            => 'Future',
+		'backgroundColor' => 'lightseagreen',
+		'color'           => 'white',
 	),
-	'draft' => array(
-		'color' => 'gray',
-		'editable' => true
+	'draft'   => array(
+		'name'            => "Draft",
+		'backgroundColor' => 'silver',
+		'color'           => 'white',
 	),
 	'pending' => array(
-		'color' => 'purple',
-		'editable' => true
+		'name'            => 'Pending',
+		'backgroundColor' => 'lightcoral',
+		'color'           => 'white',
 	),
 	'private' => array(
-		'color' => 'red',
-		'editable' => true
-	)
+		'name'            => 'Private',
+		'backgroundColor' => 'maroon',
+		'color'           => 'white',
+	),
 ) );
 
 /**
@@ -138,9 +144,9 @@ class Calendario {
 		// Variables for app use - These variables will be available in window.rhdReactPlugin variable.
 		wp_localize_script( 'react-plugin-0', 'rhdReactPlugin',
 			array(
-				'appSelector' => $this->selector,
-				'restBase'    => get_rest_url( null, 'calendario/v1' ),
-				'postStatuses' => RHD_CALENDARIO_POST_STATUS_COLORS
+				'appSelector'  => $this->selector,
+				'restBase'     => get_rest_url( null, sprintf( 'calendario/%s/posts', RHD_CALENDARIO_REST_VERSION ) ),
+				'postStatuses' => RHD_CALENDARIO_POST_STATUS_COLORS,
 			)
 		);
 	}
