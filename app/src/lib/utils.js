@@ -1,7 +1,36 @@
 import { omit } from "lodash";
 
-// export const routeBase = window.rhdReactPlugin.restBase; // Live URL
-export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
+export const routeBase = window.rhdReactPlugin.restBase; // Live URL
+// export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
+
+export const postStatuses = window.rhdReactPlugin.postStatuses; // Live URL
+// export const postStatuses = {
+// 	publish: {
+// 		name: "Publish",
+// 		backgroundColor: "cornflowerblue",
+// 		color: "white",
+// 	},
+// 	draft: {
+// 		name: "Draft",
+// 		backgroundColor: "silver",
+// 		color: "white",
+// 	},
+// 	future: {
+// 		name: "Future",
+// 		backgroundColor: "lightseagreen",
+// 		color: "white",
+// 	},
+// 	pending: {
+// 		name: "Pending",
+// 		backgroundColor: "lightcoral",
+// 		color: "white",
+// 	},
+// 	private: {
+// 		name: "Private",
+// 		backgroundColor: "maroon",
+// 		color: "white",
+// 	},
+// };
 
 export const samplePosts = {
 	scheduled: [
@@ -44,34 +73,6 @@ export const samplePosts = {
 			post_date: "02-22-2021", // will be more accurate and have post time, as well
 		},
 	],
-};
-
-export const postStatuses = {
-	publish: {
-		name: "Publish",
-		backgroundColor: "cornflowerblue",
-		color: "white",
-	},
-	draft: {
-		name: "Draft",
-		backgroundColor: "silver",
-		color: "white",
-	},
-	future: {
-		name: "Future",
-		backgroundColor: "lightseagreen",
-		color: "white",
-	},
-	pending: {
-		name: "Pending",
-		backgroundColor: "lightcoral",
-		color: "white",
-	},
-	private: {
-		name: "Private",
-		backgroundColor: "maroon",
-		color: "white",
-	},
 };
 
 export const dateFormat = {
