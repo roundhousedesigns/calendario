@@ -1,16 +1,15 @@
 import React, { useContext, useEffect } from "react";
-import PostList from "./PostList";
-import { format } from "date-fns";
+import DayPosts from "./DayPosts";
+import { format, addDays, endOfDay, parseISO } from "date-fns";
 import { routeBase, dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
 export default function List() {
 	const {
-		posts: { scheduled, refetch },
+		posts: { scheduled, refetch, dateRange },
 		postsDispatch,
 	} = useContext(PostsContext);
-	// const [posts, setPosts] = useState([]);
 
 	useEffect(() => {
 		postsDispatch({
@@ -19,7 +18,7 @@ export default function List() {
 	}, [postsDispatch]);
 
 	useEffect(() => {
-		let startDate = format(new Date(), dateFormat.date);
+		let startDate = format(new Date(), dateFormat.date); // Start from today
 
 		let url = `${routeBase}/scheduled/${startDate}`;
 		const fetchData = async () => {
@@ -28,9 +27,10 @@ export default function List() {
 				const data = await res.json();
 
 				postsDispatch({
-					type: "SET",
-					posts: data,
-					unscheduled: false,
+					type: "SET_SCHEDULED",
+					posts: data.posts,
+					start: data.dateRange.start,
+					end: data.dateRange.end,
 				});
 			} catch (error) {
 				console.log("REST error", error.message);
@@ -40,17 +40,42 @@ export default function List() {
 		fetchData();
 	}, [postsDispatch, refetch]);
 
+	const renderDays = () => {
+		let days = [];
+		let day = parseISO(dateRange.start);
+
+		if (
+			dateRange.end !== "undefined" &&
+			dateRange.end !== null &&
+			dateRange.end
+		) {
+			while (endOfDay(day) <= endOfDay(new Date(dateRange.end))) {
+				days.push(
+					<DayPosts
+						key={day}
+						date={day}
+						posts={scheduled}
+						renderEmpty={false}
+						allowDrag={true}
+						allowDrop={false}
+						title={format(day, dateFormat.fullDate)}
+					/>
+				);
+
+				day = addDays(day, 1);
+			}
+		}
+
+		return days;
+	};
+
 	return (
 		<div className="view view__list">
 			<header className="header">
-				<h3 className="viewTitle">Upcoming Posts</h3>
+				<h3 className="viewTitle">Upcoming Posts </h3>
 			</header>
-			<PostList
-				className="listPosts"
-				posts={scheduled}
-				date={false}
-				allowDrag={false}
-			/>
+
+			{renderDays()}
 		</div>
 	);
 }

@@ -21,13 +21,13 @@ import { dateFormat, routeBase } from "../lib/utils";
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
-const initialDateRange = {
+const initialCalendarDates = {
 	start: new Date(),
 	end: new Date(),
 	firstOfMonth: startOfMonth(new Date()),
 };
 
-function dateRangeReducer(state, action) {
+function calendarDatesReducer(state, action) {
 	switch (action.type) {
 		case "START":
 			return {
@@ -61,7 +61,7 @@ function dateRangeReducer(state, action) {
 			};
 
 		case "RESET":
-			return initialDateRange;
+			return initialCalendarDates;
 
 		default:
 			return state;
@@ -73,18 +73,18 @@ export default function Calendar() {
 		posts: { scheduled, refetch },
 		postsDispatch,
 	} = useContext(PostsContext);
-	const [dateRange, dateRangeDispatch] = useReducer(
-		dateRangeReducer,
-		initialDateRange
+	const [calendarDates, calendarDatesDispatch] = useReducer(
+		calendarDatesReducer,
+		initialCalendarDates
 	);
 	const {
 		viewOptions: { monthCount },
 	} = useContext(ViewContext);
 
 	useEffect(() => {
-		dateRangeDispatch({
+		calendarDatesDispatch({
 			type: "START",
-			start: startOfWeek(startOfMonth(new Date())),
+			start: startOfWeek(startOfMonth(new Date())), // make this the first day viewed on the calendar, not necessarily always going to be 1st of month
 			firstOfMonth: startOfMonth(new Date()),
 		});
 	}, []);
@@ -97,23 +97,23 @@ export default function Calendar() {
 
 	useEffect(() => {
 		// Set the fetch range
-		const firstOfViewMonth = startOfMonth(dateRange.start);
+		const firstOfViewMonth = startOfMonth(calendarDates.start);
 		const lastOfViewMonth = endOfMonth(
 			addMonths(firstOfViewMonth, monthCount)
 		);
 		const endDate = endOfWeek(lastOfViewMonth);
 
-		// Calculate the end date whenever dateRange.start or monthCount updates!
-		dateRangeDispatch({
+		// Calculate the end date whenever calendarDates.start or monthCount updates!
+		calendarDatesDispatch({
 			type: "END",
 			end: endDate,
 		});
-	}, [refetch, dateRange.start, monthCount]);
+	}, [refetch, calendarDates.start, monthCount]);
 
 	useEffect(() => {
-		if (dateRange.start !== null && dateRange.end !== null) {
-			let startDate = format(dateRange.start, dateFormat.date);
-			let endDate = format(dateRange.end, dateFormat.date);
+		if (calendarDates.start !== null && calendarDates.end !== null) {
+			let startDate = format(calendarDates.start, dateFormat.date);
+			let endDate = format(calendarDates.end, dateFormat.date);
 			let url = `${routeBase}/scheduled/${startDate}/${endDate}`;
 			const fetchData = async () => {
 				try {
@@ -121,9 +121,10 @@ export default function Calendar() {
 					const data = await res.json();
 
 					postsDispatch({
-						type: "SET",
-						posts: data,
-						unscheduled: false,
+						type: "SET_SCHEDULED",
+						posts: data.posts,
+						start: data.dateRange.start,
+						end: data.dateRange.end,
 					});
 				} catch (error) {
 					console.log("REST error", error.message);
@@ -132,16 +133,16 @@ export default function Calendar() {
 
 			fetchData();
 		}
-	}, [postsDispatch, dateRange.start, dateRange.end]);
+	}, [postsDispatch, calendarDates.start, calendarDates.end]);
 
 	const nextMonth = () => {
-		dateRangeDispatch({
+		calendarDatesDispatch({
 			type: "NEXT_MONTH",
 		});
 	};
 
 	const prevMonth = () => {
-		dateRangeDispatch({
+		calendarDatesDispatch({
 			type: "PREV_MONTH",
 		});
 	};
@@ -167,7 +168,7 @@ export default function Calendar() {
 	const renderDaysHeaderRow = () => {
 		const days = [];
 
-		let startDate = startOfWeek(dateRange.start);
+		let startDate = startOfWeek(calendarDates.start);
 
 		for (let i = 0; i < 7; i++) {
 			days.push(
@@ -184,10 +185,10 @@ export default function Calendar() {
 		const rows = [];
 
 		let days = [];
-		let day = dateRange.start;
-		let formattedDate = {};
+		let day = calendarDates.start;
+		let formattedDay;
 
-		while (day <= dateRange.end) {
+		while (day <= calendarDates.end) {
 			for (let i = 0; i < 7; i++) {
 				const dayIsFirstDay = isFirstDayOfMonth(day);
 				const dayIsToday = isToday(day);
@@ -198,10 +199,7 @@ export default function Calendar() {
 				// 	isMonthEven = !isMonthEven;
 				// }
 
-				formattedDate = {
-					day: format(day, dateFormat.day),
-					date: format(day, dateFormat.date),
-				};
+				formattedDay = format(day, dateFormat.day);
 
 				var classes = [];
 				if (dayIsToday) {
@@ -210,6 +208,7 @@ export default function Calendar() {
 				// else {
 				// 	classes.push(isMonthEven ? "even" : "odd");
 				// }
+
 				if (dayIsPast && !dayIsToday) {
 					classes.push("past");
 				}
@@ -219,14 +218,19 @@ export default function Calendar() {
 						className={`col cell ${classes.join(" ")}`}
 						key={day}
 						day={day}
-						dayNumber={formattedDate.day}
+						dayNumber={formattedDay}
 						monthName={
 							dayIsFirstDay
 								? format(day, dateFormat.monthName)
 								: ""
 						}
 					>
-						<DayPosts date={day} posts={scheduled} />
+						<DayPosts
+							date={day}
+							posts={scheduled}
+							allowDrag={true}
+							renderEmpty={true}
+						/>
 					</Day>
 				);
 
@@ -241,7 +245,7 @@ export default function Calendar() {
 			days = [];
 		}
 		return <div className="body">{rows}</div>;
-	}, [dateRange.end, dateRange.start, scheduled]);
+	}, [calendarDates.end, calendarDates.start, scheduled]);
 
 	return (
 		<div>

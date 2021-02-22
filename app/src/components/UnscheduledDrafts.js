@@ -25,8 +25,8 @@ export default function UnscheduledDrafts() {
 				const data = await res.json();
 
 				postsDispatch({
-					type: "SET",
-					posts: data,
+					type: "SET_UNSCHEDULED",
+					posts: data.posts,
 					unscheduled: true,
 				});
 			} catch (error) {
@@ -35,12 +35,6 @@ export default function UnscheduledDrafts() {
 		};
 
 		fetchData();
-
-		postsDispatch({
-			type: "CLEAR",
-			posts: [],
-			unscheduled: true,
-		});
 	}, [postsDispatch, refetch]);
 
 	return (

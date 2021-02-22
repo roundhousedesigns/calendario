@@ -2,13 +2,19 @@ import React, { useContext, useEffect, useReducer } from "react";
 import Post from "./Post";
 import { dateFormat, routeBase, filterUnchangedParams } from "../lib/utils";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
-import { isToday, isPast, format } from "date-fns";
+import { format } from "date-fns";
 import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-export default function PostList({ posts, className, allowDrag, date }) {
+export default function PostList({
+	posts,
+	className,
+	allowDrag,
+	allowDrop,
+	date,
+}) {
 	const {
 		posts: { currentPost },
 		postsDispatch,
@@ -99,23 +105,25 @@ export default function PostList({ posts, className, allowDrag, date }) {
 	};
 
 	const handleDrop = () => {
-		updatePostDispatch({
-			type: "UPDATE",
-			params: {
-				post_date:
-					date === false
-						? format(post.post_date, dateFormat.date)
-						: format(date, dateFormat.date),
-			},
-			unscheduled: date === false ? true : false,
-		});
-
-		if (currentPost.id === post.id) {
-			postsDispatch({
-				type: "UPDATE_CURRENTPOST_FIELD",
-				field: "post_date",
-				value: date,
+		if (allowDrop !== false) {
+			updatePostDispatch({
+				type: "UPDATE",
+				params: {
+					post_date:
+						date === false
+							? format(post.post_date, dateFormat.date)
+							: format(date, dateFormat.date),
+				},
+				unscheduled: date === false ? true : false,
 			});
+
+			if (currentPost.id === post.id) {
+				postsDispatch({
+					type: "UPDATE_CURRENTPOST_FIELD",
+					field: "post_date",
+					value: date,
+				});
+			}
 		}
 	};
 
@@ -125,11 +133,17 @@ export default function PostList({ posts, className, allowDrag, date }) {
 			onDragOver: handleDragOver,
 		};
 
-		if (!isToday(date) && !isPast(date)) {
+		if (allowDrop !== false) {
 			listProps.onDrop = handleDrop;
 		} else {
 			listProps.className += " dropDisabled";
 		}
+
+		// if (!isToday(date) && !isPast(date)) {
+		// 	listProps.onDrop = handleDrop;
+		// } else {
+		// 	listProps.className += " dropDisabled";
+		// }
 
 		return (
 			<ul {...listProps}>

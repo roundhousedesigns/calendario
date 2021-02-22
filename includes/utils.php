@@ -1,4 +1,5 @@
 <?php
+$date_string_format = 'Y-m-d H:i:s';
 
 /**
  * Validates a date string.
@@ -18,20 +19,21 @@ function rhd_validate_date( $date, $format = 'Y-m-d' ) {
  * @param array Contains post_date and post_date_gmt date strings
  */
 function rhd_wp_format_date( $date_string ) {
+	global $date_string_format;
+
 	if ( ! is_string( $date_string ) ) {
 		return;
 	}
 
 	$from_format = 'Y-m-d';
-	$to_format   = 'Y-m-d H:i:s';
 
 	$date     = DateTime::createFromFormat( $from_format, $date_string );
 	$date_gmt = DateTime::createFromFormat( $from_format, $date_string );
 	$date_gmt->setTimezone( new DateTimeZone( 'GMT' ) );
 
 	$date_formatted = array(
-		'post_date'     => $date->format( $to_format ),
-		'post_date_gmt' => $date_gmt->format( $to_format ),
+		'post_date'     => $date->format( $date_string_format ),
+		'post_date_gmt' => $date_gmt->format( $date_string_format ),
 	);
 
 	return $date_formatted;
@@ -56,14 +58,33 @@ function rhd_get_status_color( $post_status ) {
  *
  * @return string|boolean The post date, or false if no posts found.
  */
-// TODO probably kill this...
 function rhd_get_futuremost_date() {
 	$posts = get_posts( array(
 		'post_status'    => array( 'any' ),
 		'posts_per_page' => 1,
 	) );
 
-	$date = $posts ? $posts[0]->post_date : false;
+	return $posts ? rhd_end_of_day( $posts[0]->post_date ) : false;
+}
 
-	return $date;
+/**
+ * Returns a formatted date set to the end of the requested day usable in WP_Query.
+ *
+ * @param DateTime|string $date The date to manipulate
+ * @return string The formatted date string
+ */
+function rhd_end_of_day( $date ) {
+	global $date_string_format;
+
+	if ( gettype( $date ) === 'string' ) {
+		$date_obj = new DateTime( $date );
+	} elseif ( ! is_a( $date, 'DateTime' ) ) {
+		$date_obj = $date;
+	} else {
+		return false;
+	}
+
+	$date_obj->setTime( 23, 59, 59 );
+
+	return $date_obj->format( $date_string_format );
 }

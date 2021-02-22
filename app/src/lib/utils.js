@@ -81,6 +81,7 @@ export const dateFormat = {
 	year: "yyyy",
 	dayName: "EEEE",
 	monthName: "MMMM",
+	fullDate: "EEEE,  MMMM dd, yyyy",
 };
 
 /**

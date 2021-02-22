@@ -70,12 +70,21 @@ class Calendario_Route extends WP_REST_Controller {
 	public function get_items( $request ) {
 		$body = $request->get_params();
 
+		$start = isset( $body['start'] ) && $body['start'] ? $body['start'] : null;
+		$end   = isset( $body['end'] ) && $body['end'] ? $body['end'] : rhd_get_futuremost_date();
+
+		// Force the date range to the beginning of the day 'start' and the end of day 'end'
+		$start = rhd_end_of_day( $start );
+		$end   = rhd_end_of_day( $end );
+
 		$items = get_posts( array(
 			'post_status' => 'any',
+			'orderby'     => 'date',
+			'order'       => 'ASC',
 			'inclusive'   => true,
 			'date_query'  => array(
-				'before' => isset( $body['end'] ) && $body['end'] ? $body['end'] : null,
-				'after'  => isset( $body['start'] ) && $body['start'] ? $body['start'] : null,
+				'before' => $end,
+				'after'  => $start,
 			),
 			'meta_query'  => array(
 				'relation' => 'OR',
@@ -90,9 +99,16 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		$data = [];
+		$data = [
+			'posts'     => [],
+			'dateRange' => [
+				'start' => $start,
+				'end'   => $end,
+			],
+		];
+
 		foreach ( $items as $item ) {
-			$data[] = $this->prepare_item_for_response( $item, $request );
+			$data['posts'][] = $this->prepare_item_for_response( $item, $request );
 		}
 
 		return new WP_REST_Response( $data, 200 );
@@ -120,9 +136,12 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_status'    => 'any',
 		) );
 
-		$data = [];
+		$data = [
+			'posts' => [],
+		];
+
 		foreach ( $items as $item ) {
-			$data[] = $this->prepare_item_for_response( $item, $request );
+			$data['posts'][] = $this->prepare_item_for_response( $item, $request );
 		}
 
 		return new WP_REST_Response( $data, 200 );

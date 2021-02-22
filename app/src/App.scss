@@ -332,9 +332,18 @@ body {
 
 	&__list {
 		height: 100%;
+		padding: 1em;
+
+		.listDay {
+			padding: 1em;
+
+			&__title {
+				margin: 0;
+			}
+		}
 
 		.postList {
-			padding: 1em;
+			padding: 0;
 			margin: 0;
 		}
 	}
@@ -388,7 +397,7 @@ body {
 
 .postList {
 	position: relative;
-	z-index: -1;
+	z-index: 0;
 	font-size: 80%;
 	line-height: 2;
 	list-style: none;
