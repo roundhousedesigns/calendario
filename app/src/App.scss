@@ -335,7 +335,7 @@ body {
 		padding: 1em;
 
 		.listDay {
-			padding: 1em;
+			padding: 1em 1em 0.5em 1em;
 
 			&__title {
 				margin: 0;
@@ -343,8 +343,11 @@ body {
 		}
 
 		.postList {
-			padding: 0;
+			padding: 0.25em 0.5em;
 			margin: 0;
+			min-height: 20px;
+			background: var(--borderColor);
+			border-radius: var(--borderRadius);
 		}
 	}
 

@@ -78,15 +78,16 @@ class Calendario_Route extends WP_REST_Controller {
 		$end   = rhd_end_of_day( $end );
 
 		$items = get_posts( array(
-			'post_status' => 'any',
-			'orderby'     => 'date',
-			'order'       => 'ASC',
-			'inclusive'   => true,
-			'date_query'  => array(
+			'posts_per_page' => -1,
+			'post_status'    => 'any',
+			'orderby'        => 'date',
+			'order'          => 'ASC',
+			'inclusive'      => true,
+			'date_query'     => array(
 				'before' => $end,
 				'after'  => $start,
 			),
-			'meta_query'  => array(
+			'meta_query'     => array(
 				'relation' => 'OR',
 				array(
 					'key'   => RHD_UNSCHEDULED_META_KEY,

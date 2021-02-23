@@ -18,7 +18,8 @@ export default function List() {
 	}, [postsDispatch]);
 
 	useEffect(() => {
-		let startDate = format(new Date(), dateFormat.date); // Start from today
+		let today = new Date();
+		let startDate = format(addDays(today, 1), dateFormat.date); // Start from tomorrow
 
 		let url = `${routeBase}/scheduled/${startDate}`;
 		const fetchData = async () => {
@@ -57,7 +58,7 @@ export default function List() {
 						posts={scheduled}
 						renderEmpty={false}
 						allowDrag={true}
-						allowDrop={false}
+						allowDrop={true} // TODO remove this prop probably from everywhere
 						title={format(day, dateFormat.fullDate)}
 					/>
 				);
