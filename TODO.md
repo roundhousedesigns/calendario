@@ -13,3 +13,5 @@
 
 -   List View
     -   Show all days even w/o posts attached, allow drag-n-drop in all
+    -   rather than show all future, use same Calendar range and allow add/subtract months!
+        -   Really, this means the Calendar component can have 2 render modes and use the same logic!
