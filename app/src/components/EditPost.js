@@ -235,17 +235,6 @@ export default function EditPost() {
 						className="editPost__editor__form"
 						onSubmit={handleSubmit}
 					>
-						<input
-							type="submit"
-							className="editPost__buttons__save"
-							value="Save"
-						/>
-						<input
-							type="button"
-							className="editPost__buttons__cancel"
-							onClick={cancelHandler}
-							value="Cancel"
-						/>
 						<SidebarInput name="post_title" label="Post Title">
 							<input
 								name="post_title"
@@ -285,6 +274,19 @@ export default function EditPost() {
 								Dreams: Choose/Replace Featured image here
 							</div>
 						</SidebarInput>
+						<div className="editPost__buttons">
+							<input
+								type="submit"
+								className="editPost__buttons__save"
+								value="Save"
+							/>
+							<input
+								type="button"
+								className="editPost__buttons__cancel"
+								onClick={cancelHandler}
+								value="Cancel"
+							/>
+						</div>
 					</form>
 				</div>
 			</div>
