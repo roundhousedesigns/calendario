@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useReducer } from "react";
 import Post from "./Post";
-import { dateFormat, routeBase, filterUnchangedParams } from "../lib/utils";
+import {
+	dateFormat,
+	routeBase,
+	filterUnchangedParams,
+	nonce,
+} from "../lib/utils";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import { format } from "date-fns";
 import { isEmpty } from "lodash";
@@ -48,7 +53,10 @@ export default function PostList({
 				try {
 					const response = await fetch(url, {
 						method: "POST",
-						headers: { "Content-Type": "application/json" },
+						headers: {
+							"Content-Type": "application/json",
+							"X-WP-Nonce": nonce,
+						},
 						body: JSON.stringify(postData),
 					});
 					// const data = await response.json(); // If you need to catch the response...

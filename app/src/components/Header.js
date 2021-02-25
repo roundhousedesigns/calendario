@@ -18,11 +18,7 @@ export default function Header() {
 					)}
 				</div>
 				<div className="bottom">
-					{renderWidget(
-						"Filter by Status (TODO)",
-						"statusFilters",
-						<StatusFilters />
-					)}
+					<StatusFilters />
 				</div>
 			</div>
 		</header>

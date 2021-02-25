@@ -628,10 +628,13 @@ class Calendario_Route extends WP_REST_Controller {
 		$post_date = new DateTime( $item->post_date );
 
 		return [
-			'id'          => $item->ID,
-			'post_title'  => $item->post_title,
-			'post_date'   => $post_date->format( 'Y-m-d H:i:s' ),
-			'post_status' => $item->post_status,
+			'id'           => $item->ID,
+			'post_title'   => $item->post_title,
+			'post_date'    => $post_date->format( 'Y-m-d H:i:s' ),
+			'post_status'  => $item->post_status,
+			'post_excerpt' => $item->post_excerpt,
+			'image'        => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),
+			'edit_link'    => get_edit_post_link( $item->ID ),
 		];
 	}
 

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import SidebarInput from "./SidebarInput";
+import Input from "./Input";
 
 import ViewContext from "../ViewContext";
 import PostsContext from "../PostsContext";
@@ -34,7 +34,7 @@ export default function ViewOptions() {
 
 	return (
 		<div className="viewOptions">
-			<SidebarInput name="viewMode" label="View Mode">
+			<Input name="viewMode" label="View Mode">
 				<div className="options">
 					<label htmlFor="calendar">Calendar</label>
 					<input
@@ -53,8 +53,8 @@ export default function ViewOptions() {
 						value="list"
 					/>
 				</div>
-			</SidebarInput>
-			<SidebarInput
+			</Input>
+			<Input
 				name="monthCount"
 				label="Months to view"
 				inlineLabel={true}
@@ -66,14 +66,14 @@ export default function ViewOptions() {
 					onChange={handleMonthCountChange}
 					className="mini"
 				/>
-			</SidebarInput>
-			<SidebarInput
+			</Input>
+			<Input
 				name="refetch"
 				label="Refetch Posts (not for production)"
 				inlineLabel={true}
 			>
 				<button onClick={handleRefetch}>Refetch</button>
-			</SidebarInput>
+			</Input>
 		</div>
 	);
 }

@@ -388,6 +388,7 @@ body {
 	.filters {
 		list-style: none;
 		padding: 0;
+		margin: 0;
 		line-height: 2;
 		display: flex;
 		justify-content: center;
@@ -396,7 +397,7 @@ body {
 			display: flex;
 			align-items: center;
 			flex-wrap: nowrap;
-			margin: 0 6px;
+			margin: 0 12px;
 
 			.dot {
 				flex: 0 0 1em;
@@ -477,14 +478,14 @@ body {
 		flex-wrap: nowrap;
 		justify-content: space-between;
 
-		&__form {
-			.postThumb {
+		.post_thumb {
+			width: 300px;
+			height: auto;
+
+			img {
 				width: 100%;
-				padding: 20px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				border: 1px solid var(--mainColor-light);
+				height: auto;
+				display: block;
 			}
 		}
 

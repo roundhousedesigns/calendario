@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { postStatuses } from "../lib/utils";
 import { isEmpty } from "lodash";
 import { isPast, isToday } from "date-fns";
+import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
@@ -101,7 +102,7 @@ export default function Post({ post, index, allowDrag, order }) {
 						color: colors.color,
 					}}
 				>
-					{post.post_title}
+					{decode(post.post_title, { scope: "strict" })}
 				</p>
 			</li>
 		);

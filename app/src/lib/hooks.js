@@ -1,10 +1,6 @@
-import {
-	useState,
-	useEffect /*useRef,*/ /*useReducer*/,
-	useContext,
-} from "react";
+import { useState, useEffect, useContext } from "react";
 import { format, isSameDay } from "date-fns";
-import { routeBase, dateFormat } from "../lib/utils";
+import { nonce, routeBase, dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
@@ -44,7 +40,11 @@ export const useFetchScheduledPosts = (start, end) => {
 
 			const fetchData = async () => {
 				try {
-					const res = await fetch(url);
+					const res = await fetch(url, {
+						headers: {
+							"X-WP-Nonce": nonce,
+						},
+					});
 					const data = await res.json();
 
 					postsDispatch({
@@ -61,4 +61,36 @@ export const useFetchScheduledPosts = (start, end) => {
 			fetchData();
 		}
 	}, [start, end, postsDispatch]);
+};
+
+export const useFetchUnscheduledPosts = () => {
+	const {
+		posts: { refetch },
+		postsDispatch,
+	} = useContext(PostsContext);
+
+	useEffect(() => {
+		let url = `${routeBase}/unscheduled`;
+
+		const fetchData = async () => {
+			try {
+				const res = await fetch(url, {
+					headers: {
+						"X-WP-Nonce": nonce,
+					},
+				});
+				const data = await res.json();
+
+				postsDispatch({
+					type: "SET_UNSCHEDULED",
+					posts: data.posts,
+					unscheduled: true,
+				});
+			} catch (error) {
+				console.log("REST error", error.message);
+			}
+		};
+
+		fetchData();
+	}, [postsDispatch, refetch]);
 };

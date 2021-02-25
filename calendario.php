@@ -145,6 +145,7 @@ class Calendario {
 		wp_localize_script( 'react-plugin-0', 'rhdReactPlugin',
 			array(
 				'appSelector'  => $this->selector,
+				'nonce'        => wp_create_nonce( 'wp_rest' ),
 				'restBase'     => get_rest_url( null, sprintf( 'calendario/%s/posts', RHD_CALENDARIO_REST_VERSION ) ),
 				'postStatuses' => RHD_CALENDARIO_POST_STATUS_COLORS,
 			)

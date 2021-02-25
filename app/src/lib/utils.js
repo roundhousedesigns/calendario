@@ -1,37 +1,39 @@
 import { omit } from "lodash";
 import Widget from "../components/Widget";
 
-// export const routeBase = window.rhdReactPlugin.restBase; // Live
-export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
+export const nonce = window.rhdReactPlugin.nonce; // Live
 
-// export const postStatuses = window.rhdReactPlugin.postStatuses; // Live
-export const postStatuses = {
-	publish: {
-		name: "Publish",
-		backgroundColor: "cornflowerblue",
-		color: "white",
-	},
-	draft: {
-		name: "Draft",
-		backgroundColor: "silver",
-		color: "white",
-	},
-	future: {
-		name: "Future",
-		backgroundColor: "lightseagreen",
-		color: "white",
-	},
-	pending: {
-		name: "Pending",
-		backgroundColor: "lightcoral",
-		color: "white",
-	},
-	private: {
-		name: "Private",
-		backgroundColor: "maroon",
-		color: "white",
-	},
-};
+export const routeBase = window.rhdReactPlugin.restBase; // Live
+// export const routeBase = "http://localhost/wp-json/calendario/v1/posts"; // Dev
+
+export const postStatuses = window.rhdReactPlugin.postStatuses; // Live
+// export const postStatuses = { // Dev
+// 	publish: {
+// 		name: "Publish",
+// 		backgroundColor: "cornflowerblue",
+// 		color: "white",
+// 	},
+// 	draft: {
+// 		name: "Draft",
+// 		backgroundColor: "silver",
+// 		color: "white",
+// 	},
+// 	future: {
+// 		name: "Future",
+// 		backgroundColor: "lightseagreen",
+// 		color: "white",
+// 	},
+// 	pending: {
+// 		name: "Pending",
+// 		backgroundColor: "lightcoral",
+// 		color: "white",
+// 	},
+// 	private: {
+// 		name: "Private",
+// 		backgroundColor: "maroon",
+// 		color: "white",
+// 	},
+// };
 
 export const samplePosts = {
 	scheduled: [
@@ -85,20 +87,8 @@ export const dateFormat = {
 	monthName: "MMMM",
 	monthShort: "MMM",
 	fullDate: "EEEE,  MMMM dd, yyyy",
+	daylessDate: "MMMM dd, yyyy",
 };
-
-/**
- * Tests if a post contains ANY empty data (is incomplete/empty post)
- *
- *
- * @param {object} post
- */
-//TODO Kill this, not used?
-// export function isEmptyPost(post) {
-// 	return Object.values(post).some(
-// 		(prop) => prop !== null && prop !== "" && prop !== undefined
-// 	);
-// }
 
 /**
  * Produces a filtered list of post status objects.

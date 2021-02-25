@@ -5,12 +5,12 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 // WP Dashboard admin rendering
-// const reactAppData = window.rhdReactPlugin || {};
-// const { appSelector } = reactAppData;
-// const appAnchorElement = document.querySelector(appSelector);
+const reactAppData = window.rhdReactPlugin || {};
+const { appSelector } = reactAppData;
+const appAnchorElement = document.querySelector(appSelector);
 
 // dev only
-const appAnchorElement = document.getElementById("root");
+// const appAnchorElement = document.getElementById("root");
 
 if (appAnchorElement) {
 	ReactDOM.render(

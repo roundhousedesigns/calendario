@@ -14,7 +14,6 @@ export default function DayPosts({
 	const dayPosts = useDayPosts(posts, date);
 
 	const renderPostList = () => {
-		// if ((dayPosts && dayPosts.length > 0) || renderEmpty === true) {
 		let listProps = {
 			className: "dayPosts", // make this a prop/change conditionally
 			date: date,
@@ -45,9 +44,6 @@ export default function DayPosts({
 		} else {
 			return renderList;
 		}
-		// } else {
-		// 	return null;
-		// }
 	};
 
 	return renderPostList();

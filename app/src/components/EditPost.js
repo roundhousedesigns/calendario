@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useReducer } from "react";
-import SidebarInput from "./SidebarInput";
+import Input from "./Input";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import {
 	dateFormat,
@@ -10,6 +10,7 @@ import {
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
 import { isEmpty } from "lodash";
+import { encode, decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
@@ -235,15 +236,17 @@ export default function EditPost() {
 						className="editPost__editor__form"
 						onSubmit={handleSubmit}
 					>
-						<SidebarInput name="post_title" label="Post Title">
+						<Input name="post_title" label="Post Title">
 							<input
 								name="post_title"
-								value={post.post_title}
+								value={decode(post.post_title, {
+									scope: "strict",
+								})}
 								onChange={handleInputChange}
 							/>
-						</SidebarInput>
+						</Input>
 						{post.unscheduled === false ? (
-							<SidebarInput name="post_date" label="Post Date">
+							<Input name="post_date" label="Post Date">
 								{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
 								<DatePicker
 									closeOnScroll={(e) => e.target === document}
@@ -257,9 +260,9 @@ export default function EditPost() {
 											: false
 									}
 								/>
-							</SidebarInput>
+							</Input>
 						) : null}
-						<SidebarInput name="post_status" label="Post Status">
+						<Input name="post_status" label="Post Status">
 							<select
 								name="post_status"
 								onChange={handleStatusChange}
@@ -267,13 +270,32 @@ export default function EditPost() {
 							>
 								{renderStatusOptions(allowedStatuses)}
 							</select>
-						</SidebarInput>
-						<SidebarInput name="post_thumb" label="Featured Image">
-							{/* TODO Featured image display/selection */}
-							<div className="postThumb">
-								Dreams: Choose/Replace Featured image here
-							</div>
-						</SidebarInput>
+						</Input>
+
+						<Input name="post_excerpt" label="Excerpt">
+							<textarea
+								name="post_excerpt"
+								onChange={handleInputChange}
+								rows={6}
+							>
+								{decode(post.post_excerpt, { scope: "strict" })}
+							</textarea>
+						</Input>
+
+						<div className="post_thumb">
+							{post.image ? (
+								<a
+									href={decode(post.edit_link)}
+									target="_blank"
+								>
+									<img
+										src={post.image}
+										alt={`${post.post_title}`}
+									/>
+								</a>
+							) : null}
+						</div>
+
 						<div className="editPost__buttons">
 							<input
 								type="submit"
