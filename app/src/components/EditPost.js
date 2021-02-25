@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useReducer } from "react";
-import Input from "./Input";
+import FieldGroup from "./FieldGroup";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import {
 	dateFormat,
@@ -10,7 +10,7 @@ import {
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
 import { isEmpty } from "lodash";
-import { encode, decode } from "html-entities";
+import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
@@ -185,6 +185,7 @@ export default function EditPost() {
 				post_title: post.post_title,
 				post_date: format(new Date(post.post_date), dateFormat.date),
 				post_status: post.post_status,
+				post_excerpt: post.post_excerpt,
 			},
 			unscheduled: post.unscheduled,
 		});
@@ -236,7 +237,7 @@ export default function EditPost() {
 						className="editPost__editor__form"
 						onSubmit={handleSubmit}
 					>
-						<Input name="post_title" label="Post Title">
+						<FieldGroup name="post_title" label="Post Title">
 							<input
 								name="post_title"
 								value={decode(post.post_title, {
@@ -244,9 +245,9 @@ export default function EditPost() {
 								})}
 								onChange={handleInputChange}
 							/>
-						</Input>
+						</FieldGroup>
 						{post.unscheduled === false ? (
-							<Input name="post_date" label="Post Date">
+							<FieldGroup name="post_date" label="Post Date">
 								{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
 								<DatePicker
 									closeOnScroll={(e) => e.target === document}
@@ -260,9 +261,9 @@ export default function EditPost() {
 											: false
 									}
 								/>
-							</Input>
+							</FieldGroup>
 						) : null}
-						<Input name="post_status" label="Post Status">
+						<FieldGroup name="post_status" label="Post Status">
 							<select
 								name="post_status"
 								onChange={handleStatusChange}
@@ -270,29 +271,37 @@ export default function EditPost() {
 							>
 								{renderStatusOptions(allowedStatuses)}
 							</select>
-						</Input>
+						</FieldGroup>
 
-						<Input name="post_excerpt" label="Excerpt">
+						<FieldGroup name="taxonomies" label="Categories & Tags">
+							<p>Coming soon</p>
+						</FieldGroup>
+
+						<FieldGroup name="post_excerpt" label="Excerpt">
 							<textarea
 								name="post_excerpt"
 								onChange={handleInputChange}
-								rows={6}
+								rows={4}
 							>
 								{decode(post.post_excerpt, { scope: "strict" })}
 							</textarea>
-						</Input>
+						</FieldGroup>
 
 						<div className="post_thumb">
 							{post.image ? (
-								<a
-									href={decode(post.edit_link)}
-									target="_blank"
-								>
-									<img
-										src={post.image}
-										alt={`${post.post_title}`}
-									/>
-								</a>
+								<div>
+									<span>Featured Image</span>
+									<a
+										href={decode(post.edit_link)}
+										target="_blank"
+										rel="noreferrer"
+									>
+										<img
+											src={post.image}
+											alt={`${post.post_title}`}
+										/>
+									</a>
+								</div>
 							) : null}
 						</div>
 

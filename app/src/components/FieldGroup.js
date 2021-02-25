@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Input({ name, label, inlineLabel, children }) {
+export default function FieldGroup({ name, label, inlineLabel, children }) {
 	const renderInput = () => {
 		return (
 			<div

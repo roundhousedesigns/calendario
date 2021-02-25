@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import Input from "./Input";
+import FieldGroup from "./FieldGroup";
 
 import ViewContext from "../ViewContext";
 import PostsContext from "../PostsContext";
@@ -34,7 +34,7 @@ export default function ViewOptions() {
 
 	return (
 		<div className="viewOptions">
-			<Input name="viewMode" label="View Mode">
+			<FieldGroup name="viewMode" label="View Mode">
 				<div className="options">
 					<label htmlFor="calendar">Calendar</label>
 					<input
@@ -53,8 +53,8 @@ export default function ViewOptions() {
 						value="list"
 					/>
 				</div>
-			</Input>
-			<Input
+			</FieldGroup>
+			<FieldGroup
 				name="monthCount"
 				label="Months to view"
 				inlineLabel={true}
@@ -66,14 +66,14 @@ export default function ViewOptions() {
 					onChange={handleMonthCountChange}
 					className="mini"
 				/>
-			</Input>
-			<Input
+			</FieldGroup>
+			<FieldGroup
 				name="refetch"
 				label="Refetch Posts (not for production)"
 				inlineLabel={true}
 			>
 				<button onClick={handleRefetch}>Refetch</button>
-			</Input>
+			</FieldGroup>
 		</div>
 	);
 }

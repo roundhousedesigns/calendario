@@ -23,9 +23,11 @@ The professional blogger's editorial calendar. In development...for the second t
 -   New Post button on hover on a calendar day
 -   Post Edit
     -   add cats, tags
-    -   add excerpts
+    -   fancy up the interface
+    -   ~~add excerpt~~
     -   ~~featured image show, but link to full Edit screen~~
 -   Jump to Today button
+-   Clicking outside Edit modal cancels operation
 -   Post order in Unscheduled
 -   Start month view on first day of current week
 -   Cache posts instead of always refetching
