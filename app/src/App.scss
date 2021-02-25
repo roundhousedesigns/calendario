@@ -16,6 +16,7 @@
 	--neutralColor-dark: rgb(247, 247, 247);
 	--borderRadius: 8px;
 	--pastColor: #654654a9;
+	--gridGap: 1em;
 }
 
 * {
@@ -34,8 +35,8 @@ body {
 
 .calendario {
 	display: grid;
-	gap: 1rem;
-	grid-template-columns: 2fr /*fit-content(45%)*/ 0.6667fr;
+	gap: var(--gridGap);
+	grid-template-columns: 3fr 1fr;
 	grid-template-areas:
 		"header header"
 		"main   sidebar";
@@ -50,18 +51,31 @@ body {
 		grid-area: header;
 		display: block;
 		width: 100%;
-		padding: 1.75em 22px;
 		border-bottom: 1px solid var(--borderColor);
 
-		&__inner {
-			display: flex;
-			flex-wrap: nowrap;
-			justify-content: space-between;
+		&__content {
+			display: grid;
+			grid-gap: var(--gridGap);
+			grid-template-columns: 3fr 1fr;
+			grid-template-areas: "left right";
 
-			div {
-				flex: 0 1 auto;
+			& > div {
+				padding: 12px;
+
+				&.left {
+					grid-area: "left";
+				}
+
+				&.right {
+					grid-area: "right";
+				}
 			}
 		}
+	}
+
+	&__main,
+	&__sidebar {
+		margin-bottom: 3em;
 	}
 
 	&__main {
@@ -74,22 +88,25 @@ body {
 		padding: 12px;
 		width: 100%;
 		border: 1px solid var(--borderColor);
+	}
+}
 
-		.widget {
-			width: 100%;
-			margin-bottom: 12px;
-			padding: 12px;
-			border: 1px solid var(--borderColor);
+.widget {
+	width: 100%;
+	padding: 12px;
+	border: 1px solid var(--borderColor);
 
-			.widgetTitle {
-				margin: 0 1em 0 0;
-				font-size: 1.2em;
-			}
+	&:not(:last-of-type) {
+		margin-bottom: 12px;
+	}
 
-			&__editPost {
-				min-height: 200px;
-			}
-		}
+	.widgetTitle {
+		margin: 0 1em 0 0;
+		font-size: 1.2em;
+	}
+
+	&__editPost {
+		min-height: 200px;
 	}
 }
 
@@ -173,7 +190,6 @@ body {
 
 .col {
 	flex-grow: 1;
-	flex-basis: 0;
 	max-width: 100%;
 
 	&__start {
@@ -200,28 +216,44 @@ body {
 	background: var(--neutralColor);
 	border: 1px solid var(--borderColor);
 
-	&__calendar {
-		.header {
-			.icon {
-				cursor: pointer;
-				transition: 0.15s ease-out;
+	.header {
+		text-transform: uppercase;
+		font-weight: 700;
+		font-size: 115%;
+		padding: 1.5em 0;
+		border-bottom: 1px solid var(--borderColor);
 
-				&:hover {
-					transform: scale(1.75);
-					transition: 0.25s ease-out;
-					color: var(--mainColor);
-				}
-
-				&:first-of-type {
-					margin-left: 1em;
-				}
-
-				&:last-of-type {
-					margin-right: 1em;
-				}
-			}
+		.viewTitle {
+			margin: 0;
+			text-align: center;
+			font-size: 1.2rem;
 		}
 
+		.viewRange {
+			font-size: 0.8em;
+		}
+
+		.icon {
+			cursor: pointer;
+			transition: 0.15s ease-out;
+
+			&:hover {
+				transform: scale(1.75);
+				transition: 0.25s ease-out;
+				color: var(--mainColor);
+			}
+
+			&:first-of-type {
+				margin-left: 1em;
+			}
+
+			&:last-of-type {
+				margin-right: 1em;
+			}
+		}
+	}
+
+	&__calendar {
 		.days {
 			text-transform: uppercase;
 			font-weight: 400;
@@ -234,10 +266,12 @@ body {
 		.body {
 			.cell {
 				position: relative;
-				height: 7em;
+				height: auto;
 				border-right: 1px solid var(--borderColor);
 				overflow: hidden;
 				transition: 0.25s ease-out;
+				display: flex;
+				flex-direction: column;
 
 				&.odd {
 					background: var(--neutralColor);
@@ -253,12 +287,12 @@ body {
 
 				.month,
 				.number {
-					position: absolute;
 					line-height: 1;
 					font-weight: 700;
 				}
 
 				.month {
+					position: absolute;
 					font-size: 120%;
 					text-transform: uppercase;
 					top: 0.45em;
@@ -266,9 +300,11 @@ body {
 				}
 
 				.number {
+					display: block;
 					font-size: 82.5%;
-					top: 0.75em;
-					right: 0.75em;
+					padding: 0.75em;
+					width: 100%;
+					text-align: right;
 				}
 			}
 
@@ -286,7 +322,6 @@ body {
 				background: rgba(252, 152, 2, 0.068);
 			}
 
-			// .outsideMonth,
 			.past {
 				background: var(--neutralColor-dark);
 
@@ -294,10 +329,6 @@ body {
 					opacity: 0.4;
 				}
 			}
-
-			// .outsideMonth {
-			// 	background: rgba(141, 141, 141, 0.226);
-			// }
 
 			.row {
 				border-bottom: 1px solid var(--borderColor);
@@ -332,7 +363,6 @@ body {
 
 	&__list {
 		height: 100%;
-		padding: 1em;
 
 		.listDay {
 			padding: 1em 1em 0.5em 1em;
@@ -348,20 +378,6 @@ body {
 			min-height: 20px;
 			background: var(--borderColor);
 			border-radius: var(--borderRadius);
-		}
-	}
-
-	.header {
-		text-transform: uppercase;
-		font-weight: 700;
-		font-size: 115%;
-		padding: 1.5em 0;
-		border-bottom: 1px solid var(--borderColor);
-
-		.viewTitle {
-			margin: 0;
-			text-align: center;
-			font-size: 1.2rem;
 		}
 	}
 }

@@ -54,21 +54,19 @@ export default function ViewOptions() {
 					/>
 				</div>
 			</SidebarInput>
-			{viewMode === "calendar" ? (
-				<SidebarInput
-					name="monthCount"
-					label="Months to view"
-					inlineLabel={true}
-				>
-					<input
-						type="number"
-						min={1}
-						value={monthCount}
-						onChange={handleMonthCountChange}
-						className="mini"
-					/>
-				</SidebarInput>
-			) : null}
+			<SidebarInput
+				name="monthCount"
+				label="Months to view"
+				inlineLabel={true}
+			>
+				<input
+					type="number"
+					min={1}
+					value={monthCount}
+					onChange={handleMonthCountChange}
+					className="mini"
+				/>
+			</SidebarInput>
 			<SidebarInput
 				name="refetch"
 				label="Refetch Posts (not for production)"

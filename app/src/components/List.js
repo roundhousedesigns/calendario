@@ -1,15 +1,76 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useReducer, useEffect } from "react";
+import CalendarListHeader from "./CalendarListHeader";
 import DayPosts from "./DayPosts";
-import { format, addDays, endOfDay, parseISO } from "date-fns";
-import { routeBase, dateFormat } from "../lib/utils";
+import {
+	format,
+	addMonths,
+	subMonths,
+	addDays,
+	endOfDay,
+	parseISO,
+} from "date-fns";
+
+import { dateFormat } from "../lib/utils";
+import { useFetchScheduledPosts } from "../lib/hooks";
 
 import PostsContext from "../PostsContext";
+import ViewContext from "../ViewContext";
+
+const initialListDates = {
+	start: new Date(),
+	end: new Date(),
+};
+
+function listDatesReducer(state, action) {
+	switch (action.type) {
+		case "SET":
+			return {
+				...state,
+				start: action.start,
+				end: action.end,
+			};
+
+		// case "END":
+		// 	return {
+		// 		...state,
+		// 		end: action.end,
+		// 	};
+
+		case "NEXT_MONTH":
+			return {
+				...state,
+				start: addMonths(state.start, 1),
+				end: addMonths(state.end, 1),
+			};
+
+		case "PREV_MONTH":
+			return {
+				...state,
+				start: subMonths(state.start, 1),
+				end: subMonths(state.end, 1),
+			};
+
+		case "RESET":
+			return initialListDates;
+
+		default:
+			return state;
+	}
+}
 
 export default function List() {
 	const {
 		posts: { scheduled, refetch, dateRange },
 		postsDispatch,
 	} = useContext(PostsContext);
+	const [listDates, listDatesDispatch] = useReducer(
+		listDatesReducer,
+		initialListDates
+	);
+	//TODO Maybe split this into a separate monthCount for list and calendar (currently shared value)?
+	const {
+		viewOptions: { monthCount },
+	} = useContext(ViewContext);
 
 	useEffect(() => {
 		postsDispatch({
@@ -18,28 +79,36 @@ export default function List() {
 	}, [postsDispatch]);
 
 	useEffect(() => {
+		// Set the fetch range
 		let today = new Date();
-		let startDate = format(addDays(today, 1), dateFormat.date); // Start from tomorrow
 
-		let url = `${routeBase}/scheduled/${startDate}`;
-		const fetchData = async () => {
-			try {
-				const res = await fetch(url);
-				const data = await res.json();
+		listDatesDispatch({
+			type: "SET",
+			start: today,
+			end: addMonths(today, monthCount),
+		});
+	}, [refetch, monthCount]);
 
-				postsDispatch({
-					type: "SET_SCHEDULED",
-					posts: data.posts,
-					start: data.dateRange.start,
-					end: data.dateRange.end,
-				});
-			} catch (error) {
-				console.log("REST error", error.message);
-			}
-		};
+	const renderCalendarHeader = () => {
+		return (
+			<CalendarListHeader
+				start={listDates.start}
+				end={listDates.end}
+				nextMonth={() =>
+					listDatesDispatch({
+						type: "NEXT_MONTH",
+					})
+				}
+				prevMonth={() =>
+					listDatesDispatch({
+						type: "PREV_MONTH",
+					})
+				}
+			/>
+		);
+	};
 
-		fetchData();
-	}, [postsDispatch, refetch]);
+	useFetchScheduledPosts(listDates.start, listDates.end);
 
 	const renderDays = () => {
 		let days = [];
@@ -58,7 +127,6 @@ export default function List() {
 						posts={scheduled}
 						renderEmpty={false}
 						allowDrag={true}
-						allowDrop={true} // TODO remove this prop probably from everywhere
 						title={format(day, dateFormat.fullDate)}
 					/>
 				);
@@ -72,10 +140,7 @@ export default function List() {
 
 	return (
 		<div className="view view__list">
-			<header className="header">
-				<h3 className="viewTitle">Upcoming Posts </h3>
-			</header>
-
+			{renderCalendarHeader()}
 			{renderDays()}
 		</div>
 	);

@@ -1,4 +1,5 @@
 import { omit } from "lodash";
+import Widget from "../components/Widget";
 
 // export const routeBase = window.rhdReactPlugin.restBase; // Live
 export const routeBase = "http://localhost/wp-json/calendario/v1/posts";
@@ -82,6 +83,7 @@ export const dateFormat = {
 	year: "yyyy",
 	dayName: "EEEE",
 	monthName: "MMMM",
+	monthShort: "MMM",
 	fullDate: "EEEE,  MMMM dd, yyyy",
 };
 
@@ -132,3 +134,11 @@ export function filterUnchangedParams(params, post) {
 
 	return params;
 }
+
+export const renderWidget = (title, className, children) => {
+	return (
+		<Widget title={title} className={`widget__${className}`}>
+			{children}
+		</Widget>
+	);
+};

@@ -1,6 +1,12 @@
-import { useState, useEffect /*useRef,*/ /*useReducer*/ } from "react";
-import { /*format,*/ isSameDay } from "date-fns";
-// import { routeBase, dateFormat } from "../lib/utils";
+import {
+	useState,
+	useEffect /*useRef,*/ /*useReducer*/,
+	useContext,
+} from "react";
+import { format, isSameDay } from "date-fns";
+import { routeBase, dateFormat } from "../lib/utils";
+
+import PostsContext from "../PostsContext";
 
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
@@ -27,74 +33,32 @@ export const useDayPosts = (posts, date) => {
 	return dayPosts;
 };
 
-// export const useFetchPosts = (
-// 	scheduled = false,
-// 	params = { start: null, end: null }
-// ) => {
-// 	// const cache = useRef({});
-// 	const postBase = scheduled === true ? "calendar" : "unscheduled";
-// 	const initialState = {
-// 		status: "idle",
-// 		error: null,
-// 		data: [],
-// 	};
-// 	const [state, dispatch] = useReducer((state, action) => {
-// 		switch (action.type) {
-// 			case "FETCHING":
-// 				return { ...state, status: "fetching" };
+export const useFetchScheduledPosts = (start, end) => {
+	const { postsDispatch } = useContext(PostsContext);
 
-// 			case "FETCHED":
-// 				return {
-// 					...state,
-// 					status: "fetched",
-// 					data: action.data,
-// 				};
+	useEffect(() => {
+		if (start !== null && end !== null) {
+			let startDate = format(start, dateFormat.date);
+			let endDate = format(end, dateFormat.date);
+			let url = `${routeBase}/scheduled/${startDate}/${endDate}`;
 
-// 			case "FETCH_ERROR":
-// 				return { ...state, status: "error", error: action.data };
+			const fetchData = async () => {
+				try {
+					const res = await fetch(url);
+					const data = await res.json();
 
-// 			default:
-// 				return state;
-// 		}
-// 	}, initialState);
-// 	let url = `${routeBase}/${postBase}`;
+					postsDispatch({
+						type: "SET_SCHEDULED",
+						posts: data.posts,
+						start: data.dateRange.start,
+						end: data.dateRange.end,
+					});
+				} catch (error) {
+					console.log("REST error", error.message);
+				}
+			};
 
-// 	if (scheduled === true) {
-// 		const startDate = format(params.start, dateFormat.date);
-// 		const endDate =
-// 			params.end !== null ? format(params.end, dateFormat.date) : null;
-
-// 		url = `${url}/${startDate}/${endDate}`;
-// 	}
-
-// 	useEffect(() => {
-// 		let cancelRequest = false;
-
-// 		const fetchData = async () => {
-// 			dispatch({ type: "FETCHING" });
-
-// 			// if (cache.current[url]) {
-// 			// const data = cache.current[url];
-// 			// dispatch({ type: "FETCHED", data: data });
-// 			// } else {
-// 			try {
-// 				const response = await fetch(url);
-// 				const data = await response.json();
-// 				// cache.current[url] = data; // set response in cache;
-// 				dispatch({ type: "FETCHED", data: data });
-// 			} catch (error) {
-// 				if (cancelRequest) return;
-// 				dispatch({ type: "FETCH_ERROR", data: error.message });
-// 			}
-// 			// }
-// 		};
-
-// 		fetchData();
-
-// 		return function cleanup() {
-// 			cancelRequest = true;
-// 		};
-// 	}, [url, postBase]);
-
-// 	return state;
-// };
+			fetchData();
+		}
+	}, [start, end, postsDispatch]);
+};

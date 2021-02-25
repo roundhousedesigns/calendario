@@ -543,6 +543,12 @@ class Calendario_Route extends WP_REST_Controller {
 			$item['meta_input'] = [
 				RHD_UNSCHEDULED_META_KEY => 1,
 			];
+
+			// Make sure post is either Draft or Private
+			$post_status = get_post_status( $item['ID'] );
+			if ( $post_status !== 'draft' && $post_status !== 'private' ) {
+				$item['post_status'] = 'draft';
+			}
 		} else {
 			$item['meta_input'] = [
 				RHD_UNSCHEDULED_META_KEY => 0,

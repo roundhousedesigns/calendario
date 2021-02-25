@@ -1,5 +1,7 @@
 import React from "react";
 
+// TODO rename this component since it'll be used not just in Sidebar anymore
+
 export default function SidebarInput({ name, label, inlineLabel, children }) {
 	const renderInput = () => {
 		return (

@@ -282,8 +282,12 @@ export default function EditPost() {
 										selected={date}
 										onChange={handleInputDateChange}
 										disabled={
-											isToday(currentPost.post_date) ||
-											isPast(currentPost.post_date)
+											(isToday(currentPost.post_date) ||
+												isPast(
+													currentPost.post_date
+												)) &&
+											currentPost.post_status ===
+												"publish"
 												? true
 												: false
 										}

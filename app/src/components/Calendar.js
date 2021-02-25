@@ -1,5 +1,6 @@
 // TODO Refactor or subdivide this component further
 import React, { useReducer, useContext, useEffect, useCallback } from "react";
+import CalendarListHeader from "./CalendarListHeader";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
 import {
@@ -17,6 +18,7 @@ import {
 } from "date-fns";
 
 import { dateFormat, routeBase } from "../lib/utils";
+import { useFetchScheduledPosts } from "../lib/hooks";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
@@ -82,18 +84,18 @@ export default function Calendar() {
 	} = useContext(ViewContext);
 
 	useEffect(() => {
+		postsDispatch({
+			type: "REFETCH",
+		});
+	}, [postsDispatch]);
+
+	useEffect(() => {
 		calendarDatesDispatch({
 			type: "START",
 			start: startOfWeek(startOfMonth(new Date())), // make this the first day viewed on the calendar, not necessarily always going to be 1st of month
 			firstOfMonth: startOfMonth(new Date()),
 		});
 	}, []);
-
-	useEffect(() => {
-		postsDispatch({
-			type: "REFETCH",
-		});
-	}, [postsDispatch]);
 
 	useEffect(() => {
 		// Set the fetch range
@@ -109,6 +111,8 @@ export default function Calendar() {
 			end: endDate,
 		});
 	}, [refetch, calendarDates.start, monthCount]);
+
+	useFetchScheduledPosts(calendarDates.start, calendarDates.end);
 
 	useEffect(() => {
 		if (calendarDates.start !== null && calendarDates.end !== null) {
@@ -135,33 +139,22 @@ export default function Calendar() {
 		}
 	}, [postsDispatch, calendarDates.start, calendarDates.end]);
 
-	const nextMonth = () => {
-		calendarDatesDispatch({
-			type: "NEXT_MONTH",
-		});
-	};
-
-	const prevMonth = () => {
-		calendarDatesDispatch({
-			type: "PREV_MONTH",
-		});
-	};
-
 	const renderCalendarHeader = () => {
 		return (
-			<div className="header row flex-middle">
-				<div className="col col__start">
-					<div className="icon" onClick={prevMonth}>
-						chevron_left
-					</div>
-				</div>
-				<div className="col col__center">
-					<h3 className="viewTitle">Scheduled Posts</h3>
-				</div>
-				<div className="col col__end" onClick={nextMonth}>
-					<div className="icon">chevron_right</div>
-				</div>
-			</div>
+			<CalendarListHeader
+				start={calendarDates.start}
+				end={calendarDates.end}
+				nextMonth={() =>
+					calendarDatesDispatch({
+						type: "NEXT_MONTH",
+					})
+				}
+				prevMonth={() =>
+					calendarDatesDispatch({
+						type: "PREV_MONTH",
+					})
+				}
+			/>
 		);
 	};
 
@@ -194,20 +187,12 @@ export default function Calendar() {
 				const dayIsToday = isToday(day);
 				const dayIsPast = isPast(day);
 
-				// even/odd month
-				// if (dayIsFirstDay) {
-				// 	isMonthEven = !isMonthEven;
-				// }
-
 				formattedDay = format(day, dateFormat.day);
 
 				var classes = [];
 				if (dayIsToday) {
 					classes.push("today");
 				}
-				// else {
-				// 	classes.push(isMonthEven ? "even" : "odd");
-				// }
 
 				if (dayIsPast && !dayIsToday) {
 					classes.push("past");
@@ -221,7 +206,7 @@ export default function Calendar() {
 						dayNumber={formattedDay}
 						monthName={
 							dayIsFirstDay
-								? format(day, dateFormat.monthName)
+								? format(day, dateFormat.monthShort)
 								: ""
 						}
 					>
@@ -248,15 +233,10 @@ export default function Calendar() {
 	}, [calendarDates.end, calendarDates.start, scheduled]);
 
 	return (
-		<div>
-			<div className="view view__calendar">
-				{renderCalendarHeader()}
-				{renderDaysHeaderRow()}
-				{renderDays()}
-			</div>
-			<div style={{ textAlign: "center" }}>
-				Maybe a big + to add a month?
-			</div>
+		<div className="view view__calendar">
+			{renderCalendarHeader()}
+			{renderDaysHeaderRow()}
+			{renderDays()}
 		</div>
 	);
 }

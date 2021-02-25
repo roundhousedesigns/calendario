@@ -1,27 +1,26 @@
 import React from "react";
+import ViewOptions from "./ViewOptions";
 import StatusFilters from "./StatusFilters";
+import { renderWidget } from "../lib/utils";
 
 export default function Header() {
 	return (
 		<header className="calendario__header">
-			<h1 className="page-title">Calendario II: The Datening</h1>
-			<div className="calendario__header__inner">
+			<div className="calendario__header__content">
 				<div className="left">
-					<p>
-						Drag posts back and forth from the{" "}
-						<strong>Calendar</strong> to the{" "}
-						<strong>Unscheduled Drafts</strong> area.
-					</p>
-					<p style={{ fontStyle: "italic", marginBottom: 0 }}>
-						Coming soon:
-					</p>
-					<ul style={{ margin: 0 }}>
-						<li>Show/hide statuses from filter menu</li>
-						<li>Improve DND UI</li>
-					</ul>
+					<h1 className="page-title">Calendario II: The Datening</h1>
 				</div>
-				<div className="calendario__header__right">
-					<StatusFilters />
+				<div className="right">
+					{renderWidget(
+						"View Options",
+						"viewOptions",
+						<ViewOptions />
+					)}
+					{renderWidget(
+						"Status Filters",
+						"statusFilters",
+						<StatusFilters />
+					)}
 				</div>
 			</div>
 		</header>
