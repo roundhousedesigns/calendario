@@ -57,17 +57,23 @@ body {
 			display: grid;
 			grid-gap: var(--gridGap);
 			grid-template-columns: 3fr 1fr;
-			grid-template-areas: "left right";
+			grid-template-areas:
+				"left right"
+				"bottom bottom";
 
 			& > div {
 				padding: 12px;
 
 				&.left {
-					grid-area: "left";
+					grid-area: left;
 				}
 
 				&.right {
-					grid-area: "right";
+					grid-area: right;
+				}
+
+				&.bottom {
+					grid-area: bottom;
 				}
 			}
 		}
@@ -103,10 +109,6 @@ body {
 	.widgetTitle {
 		margin: 0 1em 0 0;
 		font-size: 1.2em;
-	}
-
-	&__editPost {
-		min-height: 200px;
 	}
 }
 
@@ -387,12 +389,14 @@ body {
 		list-style: none;
 		padding: 0;
 		line-height: 2;
+		display: flex;
+		justify-content: center;
 
 		.filterItem {
 			display: flex;
 			align-items: center;
-			justify-content: space-between;
 			flex-wrap: nowrap;
+			margin: 0 6px;
 
 			.dot {
 				flex: 0 0 1em;
@@ -446,17 +450,33 @@ body {
 }
 
 .editPost {
-	display: flex;
-	flex-direction: column;
-	flex-wrap: nowrap;
-	justify-content: space-between;
-
-	&__buttons {
-		display: flex;
-		justify-content: space-between;
+	&__container {
+		width: 100%;
+		height: 100%;
+		background: transparentize($color: black, $amount: 0.5);
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 9999;
 	}
 
 	&__editor {
+		transform: translate(-50%, -50%);
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		background-color: var(--neutralColor);
+		display: block;
+		width: 50%;
+		height: auto;
+		padding: 22px;
+		border-radius: var(--borderRadius);
+		border: 1px solid var(--borderColor);
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		justify-content: space-between;
+
 		&__form {
 			.postThumb {
 				width: 100%;
@@ -466,6 +486,11 @@ body {
 				justify-content: center;
 				border: 1px solid var(--mainColor-light);
 			}
+		}
+
+		&__buttons {
+			display: flex;
+			justify-content: space-between;
 		}
 	}
 }

@@ -90,13 +90,15 @@ export const dateFormat = {
 /**
  * Tests if a post contains ANY empty data (is incomplete/empty post)
  *
+ *
  * @param {object} post
  */
-export function isEmptyPost(post) {
-	return Object.values(post).some(
-		(prop) => prop !== null && prop !== "" && prop !== undefined
-	);
-}
+//TODO Kill this, not used?
+// export function isEmptyPost(post) {
+// 	return Object.values(post).some(
+// 		(prop) => prop !== null && prop !== "" && prop !== undefined
+// 	);
+// }
 
 /**
  * Produces a filtered list of post status objects.

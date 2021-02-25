@@ -1,6 +1,5 @@
 import React from "react";
-import UnscheduledDrafts from "./UnscheduledDrafts";
-import EditPost from "./EditPost";
+import UnscheduledDrafts from "./UnscheduledDrafts"
 import { renderWidget } from "../lib/utils";
 
 export default function Sidebar() {
@@ -11,7 +10,6 @@ export default function Sidebar() {
 				"unscheduledDrafts",
 				<UnscheduledDrafts />
 			)}
-			{renderWidget("Post Area", "editPost", <EditPost />)}
 		</aside>
 	);
 }

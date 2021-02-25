@@ -20,9 +20,6 @@ The professional blogger's editorial calendar. In development...for the second t
         -   View (icon top left)
         -   Unschedule (icon somewhere)
         -   Delete (icon top right)
--   Click a post:
-    -   brings up quick edit modal
--   Post Area to Popup
 -   Mobile
     -   Unscheduled collapsible
 -   New Post button on hover on a calendar day
@@ -42,6 +39,7 @@ The professional blogger's editorial calendar. In development...for the second t
 -   ~~Moving to unscheduled drafts:~~
     -   ~~posts should become draft/private~~
 -   ~~Allow month cells to expand vertically~~
+-   ~~Post Area to Popup~~
 
 ## Don't Forget
 

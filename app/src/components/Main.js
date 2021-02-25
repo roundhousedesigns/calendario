@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import Calendar from "./Calendar";
 import List from "./List";
+import EditPost from "./EditPost";
 
 import ViewContext from "../ViewContext";
 
@@ -12,6 +13,7 @@ export default function Main() {
 	return (
 		<main className="calendario__main">
 			{viewMode === "calendar" ? <Calendar /> : <List />}
+			<EditPost />
 		</main>
 	);
 }

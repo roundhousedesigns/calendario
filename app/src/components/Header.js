@@ -16,8 +16,10 @@ export default function Header() {
 						"viewOptions",
 						<ViewOptions />
 					)}
+				</div>
+				<div className="bottom">
 					{renderWidget(
-						"Status Filters",
+						"Filter by Status (TODO)",
 						"statusFilters",
 						<StatusFilters />
 					)}
