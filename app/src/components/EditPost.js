@@ -118,8 +118,6 @@ export default function EditPost() {
 	// Handle post updating
 	useEffect(() => {
 		if (updatePost.updateNow === true && currentPost.id !== "undefined") {
-			console.log(currentPost);
-
 			updatePostDispatch({
 				type: "UPDATING",
 			});
@@ -189,7 +187,6 @@ export default function EditPost() {
 		const handleClickOutside = (e) => {
 			if (node.current && node.current.contains(e.target)) {
 				// inside click
-				console.log("inside");
 				return;
 			}
 

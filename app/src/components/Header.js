@@ -11,11 +11,7 @@ export default function Header() {
 					<h1 className="page-title">Calendario II: The Datening</h1>
 				</div>
 				<div className="right">
-					{renderWidget(
-						"View Options",
-						"viewOptions",
-						<ViewOptions />
-					)}
+					<ViewOptions />
 				</div>
 				<div className="bottom">
 					<StatusFilters />

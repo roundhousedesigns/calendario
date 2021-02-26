@@ -26,12 +26,6 @@ export default function ViewOptions() {
 		});
 	};
 
-	const handleRefetch = (e) => {
-		postsDispatch({
-			type: "REFETCH",
-		});
-	};
-
 	return (
 		<div className="viewOptions">
 			<FieldGroup name="viewMode" label="View Mode">
@@ -66,13 +60,6 @@ export default function ViewOptions() {
 					onChange={handleMonthCountChange}
 					className="mini"
 				/>
-			</FieldGroup>
-			<FieldGroup
-				name="refetch"
-				label="Refetch Posts (not for production)"
-				inlineLabel={true}
-			>
-				<button onClick={handleRefetch}>Refetch</button>
 			</FieldGroup>
 		</div>
 	);

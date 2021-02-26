@@ -29,11 +29,12 @@ The professional blogger's editorial calendar. In development...for the second t
 -   Jump to Today button
 -   Clicking outside Edit modal cancels operation
 -   Post order in Unscheduled
--   Start month view on first day of current week
 -   Cache posts instead of always refetching
+-   Abbreviate long titles?
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
+-   ~~Start month view on first day of current week~~
 -   ~~Fix special char display in posts~~
 -   ~~List View~~
     -   ~~rather than show all future, use same Calendar range and allow add/subtract months!~~
