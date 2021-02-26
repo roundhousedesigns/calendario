@@ -10,6 +10,22 @@ export default function Sidebar() {
 				"unscheduledDrafts",
 				<UnscheduledDrafts />
 			)}
+
+			{renderWidget(
+				"bugs + todo",
+				"dev",
+				<div>
+					<p>
+						GitHub:{" "}
+						<a
+							href="https://github.com/gaswirth/rhdwp-calendario"
+							target="_blank"
+						>
+							gaswirth/rhdwp-calendario
+						</a>
+					</p>
+				</div>
+			)}
 		</aside>
 	);
 }

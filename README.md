@@ -1,18 +1,17 @@
 # Calendario II: The Datening
 
-The professional blogger's editorial calendar. In development...for the second time.
+The professional blogger's editorial calendar. For the two-th time.
 
 ## Usage:
 
--   Run `yarn install` and `yarn start` inside the `app/` directory and visit `http://localhost:3000`.
-
-    OR
-
--   Enable plugin inside a WP installation and visit `Posts->Calendario` from the Dashboard and `yarn build`.
+-   Enable plugin inside a WP installation and visit `Posts->Calendario` from the Dashboard. Run `yarn build` to build, if necessary.
+-   ~~Run `yarn install` and `yarn start` inside the `app/` directory and visit `http://localhost:3000`~~
 
 ---
 
 ## Bugs
+
+-   Nothing atm...
 
 ## TODO
 
@@ -21,11 +20,12 @@ The professional blogger's editorial calendar. In development...for the second t
         -   Edit
         -   View (icon top left)
         -   Unschedule (icon somewhere)
-        -   Delete (icon top right)
+        -   Delete (icon top right) // MAYBE NOT
 -   Scroll within calendar and list views
 -   Post Edit
     -   add cats, tags
     -   fancy up the interface
+    -   ~~add delete~~
     -   ~~add excerpt~~
     -   ~~featured image show, but link to full Edit screen~~
 -   Post order in Unscheduled
