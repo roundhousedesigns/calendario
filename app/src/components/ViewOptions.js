@@ -10,8 +10,6 @@ export default function ViewOptions() {
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
 
-	const { postsDispatch } = useContext(PostsContext);
-
 	const handleMonthCountChange = (e) => {
 		viewOptionsDispatch({
 			type: "UPDATE_OPTION",
@@ -28,7 +26,7 @@ export default function ViewOptions() {
 
 	return (
 		<div className="viewOptions">
-			<FieldGroup name="viewMode" label="View Mode">
+			<FieldGroup name="viewMode">
 				<div className="options">
 					<label htmlFor="calendar">Calendar</label>
 					<input

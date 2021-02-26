@@ -1,1 +1,0 @@
-/*!isToday(date) && !isPast(date) &&*/

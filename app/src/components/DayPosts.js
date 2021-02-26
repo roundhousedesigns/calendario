@@ -36,10 +36,10 @@ export default function DayPosts({
 
 		if (title) {
 			return (
-				<div className="listDay">
+				<li className="listDay">
 					<h4 className="listDay__title">{title}</h4>
 					{renderList}
-				</div>
+				</li>
 			);
 		} else {
 			return renderList;

@@ -84,7 +84,9 @@ export default function List() {
 	return (
 		<div className="view view__list">
 			{renderCalendarHeader()}
-			{renderDays()}
+			<div className="view__list__days">
+				<ul>{renderDays()}</ul>
+			</div>
 		</div>
 	);
 }
