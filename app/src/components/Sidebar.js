@@ -1,5 +1,5 @@
 import React from "react";
-import UnscheduledDrafts from "./UnscheduledDrafts"
+import UnscheduledDrafts from "./UnscheduledDrafts";
 import { renderWidget } from "../lib/utils";
 
 export default function Sidebar() {

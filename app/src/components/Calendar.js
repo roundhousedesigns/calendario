@@ -4,8 +4,6 @@ import Day from "./Day";
 import DayPosts from "./DayPosts";
 import {
 	format,
-	isPast,
-	isToday,
 	addDays,
 	addMonths,
 	startOfWeek,
@@ -75,33 +73,17 @@ export default function Calendar() {
 
 		let days = [];
 		let day = viewRange.start;
-		let formattedDay;
 		let firstCalendarDay = true;
 
 		while (day <= viewRange.end) {
 			for (let i = 0; i < 7; i++) {
 				const dayIsFirstDay =
 					isFirstDayOfMonth(day) || firstCalendarDay;
-				const dayIsToday = isToday(day);
-				const dayIsPast = isPast(day);
-
-				formattedDay = format(day, dateFormat.day);
-
-				var classes = [];
-				if (dayIsToday) {
-					classes.push("today");
-				}
-
-				if (dayIsPast && !dayIsToday) {
-					classes.push("past");
-				}
 
 				days.push(
 					<Day
-						className={`col cell ${classes.join(" ")}`}
 						key={day}
 						day={day}
-						dayNumber={formattedDay}
 						monthName={
 							dayIsFirstDay
 								? format(day, dateFormat.monthShort)
@@ -131,11 +113,21 @@ export default function Calendar() {
 		return <div className="body">{rows}</div>;
 	}, [viewRange.end, viewRange.start, scheduled]);
 
+	const renderCalendar = () => {
+		return (
+			<>
+				{renderCalendarHeader()}
+				{renderDaysHeaderRow()}
+				{renderDays()}
+			</>
+		);
+	};
+
 	return (
 		<div className="view view__calendar">
-			{renderCalendarHeader()}
-			{renderDaysHeaderRow()}
-			{renderDays()}
+			{viewRange.start !== null && viewRange.end !== null
+				? renderCalendar()
+				: null}
 		</div>
 	);
 }

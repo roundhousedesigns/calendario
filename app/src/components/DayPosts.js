@@ -1,5 +1,6 @@
 import React from "react";
 import PostList from "./PostList";
+import NewPostButton from "./common/NewPostButton";
 import { useDayPosts } from "../lib/hooks";
 
 export default function DayPosts({ posts, date, allowDrag, allowDrop, title }) {
@@ -21,14 +22,19 @@ export default function DayPosts({ posts, date, allowDrag, allowDrop, title }) {
 		// Drop control
 		listProps.allowDrop = allowDrop !== false ? true : false;
 
-		const renderList = <PostList {...listProps} />;
+		const renderList = (
+			<>
+				<NewPostButton day={date} unscheduled={false} />
+				<PostList {...listProps} />
+			</>
+		);
 
 		if (title) {
 			return (
-				<li className="listDay">
-					<h4 className="listDay__title">{title}</h4>
+				<>
+					<h4 className="title">{title}</h4>
 					{renderList}
-				</li>
+				</>
 			);
 		} else {
 			return renderList;

@@ -1,13 +1,15 @@
 import { omit } from "lodash";
-import Widget from "../components/Widget";
+import Widget from "../components/common/Widget";
 
 export const nonce = window.rhdReactPlugin.nonce; // Live
+// export const nonce = null; //dev
 
 export const routeBase = window.rhdReactPlugin.restBase; // Live
 // export const routeBase = "http://localhost/wp-json/calendario/v1/posts"; // Dev
 
 export const postStatuses = window.rhdReactPlugin.postStatuses; // Live
-// export const postStatuses = { // Dev
+// Dev
+// export const postStatuses = {
 // 	publish: {
 // 		name: "Publish",
 // 		backgroundColor: "cornflowerblue",
@@ -37,7 +39,6 @@ export const postStatuses = window.rhdReactPlugin.postStatuses; // Live
 
 export const dateFormat = {
 	day: "d",
-	// date: "MM-dd-yyyy",
 	date: "yyyy-MM-dd",
 	year: "yyyy",
 	dayName: "EEEE",
@@ -90,4 +91,20 @@ export const renderWidget = (title, className, children) => {
 			{children}
 		</Widget>
 	);
+};
+
+export const fetchReducer = (state, action) => {
+	switch (action.type) {
+		case "FETCHING":
+			return { ...state, status: "fetching" };
+
+		case "FETCHED":
+			return { ...state, status: "fetched", data: action.data };
+
+		case "FETCH_ERROR":
+			return { ...state, status: "error", error: action.data };
+
+		default:
+			return state;
+	}
 };

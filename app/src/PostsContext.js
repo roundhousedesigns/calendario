@@ -67,6 +67,16 @@ export function postsReducer(state, action) {
 				},
 			};
 
+		case "NEW_POST":
+			return {
+				...state,
+				currentPost: {
+					id: 0,
+					post_date: action.post_date,
+					unscheduled: action.unscheduled,
+				},
+			};
+
 		case "UPDATE_CURRENTPOST_FIELD":
 			return {
 				...state,

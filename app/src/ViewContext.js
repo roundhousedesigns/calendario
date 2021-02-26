@@ -4,43 +4,6 @@ import { addMonths, subMonths } from "date-fns";
 const ViewContext = createContext({});
 export default ViewContext;
 
-// function viewRangeReducer(state, action) {
-// 	switch (action.type) {
-// 		case "SET":
-// 			return {
-// 				...state,
-// 				start: action.start,
-// 				end: action.end,
-// 			};
-
-// 		// case "END":
-// 		// 	return {
-// 		// 		...state,
-// 		// 		end: action.end,
-// 		// 	};
-
-// 		case "NEXT_MONTH":
-// 			return {
-// 				...state,
-// 				start: addMonths(state.start, 1),
-// 				end: addMonths(state.end, 1),
-// 			};
-
-// 		case "PREV_MONTH":
-// 			return {
-// 				...state,
-// 				start: subMonths(state.start, 1),
-// 				end: subMonths(state.end, 1),
-// 			};
-
-// 		case "RESET":
-// 			return initialViewRange;
-
-// 		default:
-// 			return state;
-// 	}
-// }
-
 export function viewReducer(state, action) {
 	switch (action.type) {
 		case "UPDATE_OPTION":
@@ -92,10 +55,10 @@ export function viewReducer(state, action) {
 }
 
 export const initialViewOptions = {
-	viewMode: "calendar",
+	viewMode: "",
 	monthCount: 1,
 	viewRange: {
-		start: new Date(),
-		end: new Date(),
+		start: null,
+		end: null,
 	},
 };

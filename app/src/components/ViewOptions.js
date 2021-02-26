@@ -1,13 +1,24 @@
 import React, { useContext } from "react";
-import FieldGroup from "./FieldGroup";
+import FieldGroup from "./common/FieldGroup";
+import { startOfToday, startOfDay, isSameWeek, addMonths } from "date-fns";
 
 import ViewContext from "../ViewContext";
 
 export default function ViewOptions() {
 	const {
-		viewOptions: { viewMode, monthCount },
+		viewOptions: { viewMode, monthCount, viewRange },
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
+
+	const handleToday = () => {
+		let today = startOfToday();
+
+		viewOptionsDispatch({
+			type: "SET_RANGE",
+			start: today,
+			end: addMonths(today, monthCount),
+		});
+	};
 
 	const handleMonthCountChange = (e) => {
 		viewOptionsDispatch({
@@ -25,31 +36,33 @@ export default function ViewOptions() {
 
 	return (
 		<div className="viewOptions">
-			<FieldGroup name="viewMode">
-				<div className="options">
-					<label htmlFor="calendar">Calendar</label>
-					<input
-						type="radio"
-						name="viewMode"
-						onChange={handleViewModeChange}
-						checked={viewMode === "calendar"}
-						value="calendar"
-					/>
-					<label htmlFor="list">List</label>
-					<input
-						type="radio"
-						name="viewMode"
-						onChange={handleViewModeChange}
-						checked={viewMode === "list"}
-						value="list"
-					/>
-				</div>
-			</FieldGroup>
-			<FieldGroup
-				name="monthCount"
-				label="Months to view"
-				inlineLabel={true}
+			<button
+				onClick={handleToday}
+				disabled={
+					startOfDay(viewRange.start) === startOfToday() ||
+					isSameWeek(viewRange.start, startOfToday())
+				}
 			>
+				Jump to Today
+			</button>
+			<FieldGroup name="viewMode">
+				<button
+					onClick={handleViewModeChange}
+					className={viewMode === "calendar" ? "active " : "inactive"}
+					value="calendar"
+				>
+					Calendar
+				</button>
+				<button
+					name="viewMode"
+					onClick={handleViewModeChange}
+					className={viewMode === "list" ? "active " : "inactive"}
+					value="list"
+				>
+					List
+				</button>
+			</FieldGroup>
+			<FieldGroup name="monthCount" label="Months" inlineLabel={true}>
 				<input
 					type="number"
 					min={1}

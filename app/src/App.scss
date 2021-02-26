@@ -35,8 +35,8 @@ body {
 
 .calendario {
 	display: grid;
-	gap: var(--gridGap);
-	grid-template-columns: 3fr 1fr;
+	grid-gap: var(--gridGap);
+	grid-template-columns: 3fr 300px;
 	grid-template-areas:
 		"header header"
 		"main   sidebar";
@@ -56,24 +56,34 @@ body {
 		&__content {
 			display: grid;
 			grid-gap: var(--gridGap);
-			grid-template-columns: 3fr 1fr;
+			grid-template-columns: 3fr 300px;
 			grid-template-areas:
-				"left right"
-				"bottom bottom";
+				"topleft topright"
+				"bottomleft bottomright";
 
 			& > div {
 				padding: 12px;
+				display: flex;
+				align-items: center;
 
-				&.left {
-					grid-area: left;
-				}
+				&.top {
+					&.left {
+						grid-area: topleft;
+					}
 
-				&.right {
-					grid-area: right;
+					&.right {
+						grid-area: topright;
+					}
 				}
 
 				&.bottom {
-					grid-area: bottom;
+					&.left {
+						grid-area: bottomleft;
+					}
+
+					&.right {
+						grid-area: bottomright;
+					}
 				}
 			}
 		}
@@ -94,6 +104,21 @@ body {
 		padding: 12px;
 		width: 100%;
 		border: 1px solid var(--borderColor);
+	}
+
+	button {
+		border-radius: var(--borderRadius);
+		border: 1px solid var(--borderColor);
+		outline: none;
+
+		&:not([disabled]) {
+			cursor: pointer;
+		}
+
+		&.icon {
+			border: none;
+			background-color: transparent;
+		}
 	}
 }
 
@@ -158,9 +183,15 @@ body {
 			}
 		}
 	}
+
+	& + .newPost {
+		text-align: center;
+		width: 100%;
+	}
 }
 
 .icon {
+	color: var(--textColor);
 	font-family: "Material Icons", serif;
 	font-style: normal;
 	display: inline-block;
@@ -238,10 +269,11 @@ body {
 		.icon {
 			cursor: pointer;
 			transition: 0.15s ease-out;
+			font-size: 1.4em;
 
 			&:hover {
-				transform: scale(1.75);
-				transition: 0.25s ease-out;
+				transform: scale(1.25);
+				transition: 0.15s ease-out;
 				color: var(--mainColor);
 			}
 
@@ -263,6 +295,23 @@ body {
 			font-size: 70%;
 			padding: 0.75em 0;
 			border-bottom: 1px solid var(--borderColor);
+		}
+
+		.day {
+			&:hover {
+				.newPost {
+					display: block;
+					cursor: pointer;
+				}
+			}
+
+			.newPost {
+				display: none;
+				padding-top: 0.42em;
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%);
+			}
 		}
 
 		.body {
@@ -372,8 +421,21 @@ body {
 		.listDay {
 			padding: 1em 1em 0.5em 1em;
 
-			&__title {
+			&:hover {
+				.newPost {
+					display: inline;
+				}
+			}
+
+			.title {
 				margin: 0;
+				display: inline;
+			}
+
+			.newPost {
+				position: relative;
+				bottom: 1.5px;
+				display: none;
 			}
 		}
 
@@ -385,6 +447,7 @@ body {
 			ul {
 				padding: 0;
 				margin: 0;
+				list-style: none;
 
 				.postList {
 					border-radius: var(--borderRadius);
@@ -400,14 +463,16 @@ body {
 .statusFilters {
 	.filters {
 		list-style: none;
-		padding: 0;
+		padding: 0 12px;
 		margin: 0;
 		line-height: 2;
 		display: flex;
-		justify-content: center;
+		flex-wrap: wrap;
+		justify-content: space-between;
 
 		.filterItem {
 			display: flex;
+			flex: 1;
 			align-items: center;
 			flex-wrap: nowrap;
 			margin: 0 12px;
@@ -493,6 +558,13 @@ body {
 		flex-wrap: nowrap;
 		justify-content: space-between;
 
+		.titleNew {
+			margin: 0;
+			text-transform: uppercase;
+			display: inline-block;
+			border-bottom: 1px solid var(--borderColor);
+		}
+
 		.fieldGroup {
 			&__post_excerpt,
 			&__post_title {
@@ -501,6 +573,27 @@ body {
 				input,
 				textarea {
 					width: 100%;
+				}
+			}
+
+			&__date {
+				display: flex;
+				align-items: flex-end;
+
+				.post_date {
+					margin-right: 1em;
+
+					&.inactive {
+						opacity: 0.5;
+						pointer-events: none;
+					}
+				}
+
+				.unscheduled {
+					input,
+					label {
+						display: inline;
+					}
 				}
 			}
 		}
@@ -564,13 +657,32 @@ body {
 		cursor: pointer;
 		padding: 2px 26px 2px 4px;
 	}
+}
 
-	&__viewMode {
-		.options {
-			label,
-			input {
-				display: inline-block;
+.viewOptions {
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	width: 100%;
+
+	.fieldGroup {
+		margin: 0;
+
+		label,
+		input {
+			display: inline-block;
+		}
+
+		button {
+			margin: 0 3px;
+
+			&.active {
+				background-color: var(--mainColor-light);
 			}
 		}
 	}
+}
+
+.newPost {
+	font-size: 1.2rem;
 }

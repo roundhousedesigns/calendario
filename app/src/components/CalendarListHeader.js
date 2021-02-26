@@ -7,15 +7,22 @@ import ViewContext from "../ViewContext";
 export default function CalendarListHeader({ start, end }) {
 	const { viewOptionsDispatch } = useContext(ViewContext);
 
+	const nextMonth = (e) => {
+		e.preventDefault();
+		viewOptionsDispatch({ type: "NEXT_MONTH" });
+	};
+
+	const prevMonth = (e) => {
+		e.preventDefault();
+		viewOptionsDispatch({ type: "PREV_MONTH" });
+	};
+
 	return (
 		<div className="header row flex-middle">
 			<div className="col col__start">
-				<div
-					className="icon"
-					onClick={() => viewOptionsDispatch({ type: "PREV_MONTH" })}
-				>
+				<button className="icon dateChevron" onClick={prevMonth}>
 					chevron_left
-				</div>
+				</button>
 			</div>
 			<div className="col col__center">
 				<h3 className="viewTitle">Scheduled Posts</h3>
@@ -24,15 +31,10 @@ export default function CalendarListHeader({ start, end }) {
 					dateFormat.daylessDate
 				)} \u2014 ${format(end, dateFormat.daylessDate)}`}</p>
 			</div>
-			<div
-				className="col col__end"
-				onClick={() =>
-					viewOptionsDispatch({
-						type: "NEXT_MONTH",
-					})
-				}
-			>
-				<div className="icon">chevron_right</div>
+			<div className="col col__end">
+				<button className="icon dateChevron" onClick={nextMonth}>
+					chevron_right
+				</button>
 			</div>
 		</div>
 	);

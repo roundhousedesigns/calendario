@@ -6,8 +6,9 @@ import {
 	addMonths,
 	addDays,
 	endOfDay,
-	parseISO,
 	startOfToday,
+	isToday,
+	isPast,
 } from "date-fns";
 
 import { dateFormat } from "../lib/utils";
@@ -18,7 +19,7 @@ import ViewContext from "../ViewContext";
 
 export default function List() {
 	const {
-		posts: { scheduled, refetch, dateRange },
+		posts: { scheduled, refetch },
 		postsDispatch,
 	} = useContext(PostsContext);
 
@@ -55,22 +56,27 @@ export default function List() {
 
 	const renderDays = () => {
 		let days = [];
-		let day = parseISO(dateRange.start);
+		let day = viewRange.start;
+		let classes = ["listDay"];
 
-		if (
-			dateRange.end !== "undefined" &&
-			dateRange.end !== null &&
-			dateRange.end
-		) {
-			while (endOfDay(day) <= endOfDay(new Date(dateRange.end))) {
+		if (viewRange.end !== "undefined" && viewRange.end !== null) {
+			while (endOfDay(day) <= endOfDay(viewRange.end)) {
+				if (isToday(day)) {
+					classes.push("today");
+				}
+				if (isPast(day) && !isToday(day)) {
+					classes.push("past");
+				}
 				days.push(
-					<DayPosts
-						key={day}
-						date={day}
-						posts={scheduled}
-						allowDrag={true}
-						title={format(day, dateFormat.fullDate)}
-					/>
+					<li key={day} className={classes.join(" ")}>
+						<DayPosts
+							date={day}
+							posts={scheduled}
+							allowDrag={true}
+							title={format(day, dateFormat.fullDate)}
+							newPostButton={true}
+						/>
+					</li>
 				);
 
 				day = addDays(day, 1);
@@ -80,12 +86,22 @@ export default function List() {
 		return days;
 	};
 
+	const renderList = () => {
+		return (
+			<>
+				{renderCalendarHeader()}
+				<div className="view__list__days">
+					<ul>{renderDays()}</ul>
+				</div>
+			</>
+		);
+	};
+
 	return (
 		<div className="view view__list">
-			{renderCalendarHeader()}
-			<div className="view__list__days">
-				<ul>{renderDays()}</ul>
-			</div>
+			{viewRange.start !== null && viewRange.end !== null
+				? renderList()
+				: null}
 		</div>
 	);
 }

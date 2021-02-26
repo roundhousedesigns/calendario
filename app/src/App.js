@@ -58,20 +58,22 @@ export default function App() {
 
 	return (
 		<div className={`calendario`}>
-			<ViewContext.Provider value={{ viewOptions, viewOptionsDispatch }}>
-				<PostsContext.Provider value={{ posts, postsDispatch }}>
-					<Header />
+			<Profiler id="Main" onRender={mainRenderCallback}>
+				<ViewContext.Provider
+					value={{ viewOptions, viewOptionsDispatch }}
+				>
+					<PostsContext.Provider value={{ posts, postsDispatch }}>
+						<Header />
 
-					<Profiler id="Main" onRender={mainRenderCallback}>
 						<DragContext.Provider
 							value={{ draggedPost, draggedPostDispatch }}
 						>
 							<Main />
 							<Sidebar />
 						</DragContext.Provider>
-					</Profiler>
-				</PostsContext.Provider>
-			</ViewContext.Provider>
+					</PostsContext.Provider>
+				</ViewContext.Provider>
+			</Profiler>
 		</div>
 	);
 }

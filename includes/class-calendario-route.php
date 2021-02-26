@@ -36,6 +36,15 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
+		register_rest_route( $namespace, '/' . $post_base . '/new', array(
+			array(
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => array( $this, 'create_item' ),
+				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+				'args'                => $this->get_endpoint_args_for_item_schema(),
+			),
+		) );
+
 		register_rest_route( $namespace, '/' . $post_base . '/updateUnscheduledDraftOrder/(?P<ids>.*?)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
@@ -74,7 +83,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$end   = isset( $body['end'] ) && $body['end'] ? $body['end'] : rhd_get_futuremost_date();
 
 		// Force the date range to the beginning of the day 'start' and the end of day 'end'
-		$start = rhd_end_of_day( $start );
+		$start = rhd_start_of_day( $start );
 		$end   = rhd_end_of_day( $end );
 
 		$items = get_posts( array(
@@ -176,6 +185,25 @@ class Calendario_Route extends WP_REST_Controller {
 
 		// Update the post
 		$result = wp_update_post( $item );
+
+		if ( $result !== false && ! is_wp_error( $result ) ) {
+			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
+		}
+
+		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), array( 'status' => 500 ) );
+	}
+
+	/**
+	 * Create a new item
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function create_item( $request ) {
+		$item = $this->prepare_item_for_database( $request );
+
+		// Update the post
+		$result = wp_insert_post( $item );
 
 		if ( $result !== false && ! is_wp_error( $result ) ) {
 			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );

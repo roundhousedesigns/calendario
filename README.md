@@ -14,9 +14,6 @@ The professional blogger's editorial calendar. In development...for the second t
 
 ## Bugs
 
--   List View: Can't drop on today's date
--   Past items can be dragged if coming from future. If they started in the past, they can't be dragged.
-
 ## TODO
 
 -   Hover a post:
@@ -25,21 +22,19 @@ The professional blogger's editorial calendar. In development...for the second t
         -   View (icon top left)
         -   Unschedule (icon somewhere)
         -   Delete (icon top right)
--   New Post button on hover on a calendar day
 -   Scroll within calendar and list views
 -   Post Edit
     -   add cats, tags
     -   fancy up the interface
     -   ~~add excerpt~~
     -   ~~featured image show, but link to full Edit screen~~
--   Jump to Today button
--   Clicking outside Edit modal cancels operation
 -   Post order in Unscheduled
--   Cache posts instead of always refetching
--   Abbreviate long titles?
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
+-   ~~Clicking outside Edit modal cancels operation~~
+-   ~~New Post button on hover on a calendar day~~
+-   ~~Jump to Today button~~
 -   ~~Start month view on first day of current week~~
 -   ~~Fix special char display in posts~~
 -   ~~List View~~
@@ -51,6 +46,11 @@ The professional blogger's editorial calendar. In development...for the second t
     -   ~~posts should become draft/private~~
 -   ~~Allow month cells to expand vertically~~
 -   ~~Post Area to Popup~~
+
+## Maybes
+
+-   Cache posts instead of always refetching?
+-   Abbreviate long titles?
 
 ## Questions
 

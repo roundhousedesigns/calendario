@@ -5,7 +5,7 @@ import React, {
 	useState,
 	useReducer,
 } from "react";
-import FieldGroup from "./FieldGroup";
+import FieldGroup from "./common/FieldGroup";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import {
 	dateFormat,
@@ -94,7 +94,7 @@ export default function EditPost() {
 			setDate(new Date(post.post_date));
 		}
 
-		return function cleanup() {
+		return () => {
 			setDate(new Date());
 		};
 	}, [post.post_date]);
@@ -122,7 +122,14 @@ export default function EditPost() {
 				type: "UPDATING",
 			});
 
-			let url = `${routeBase}/update/${currentPost.id}`;
+			// Check if this is a new post
+			let url;
+			if (currentPost.id === 0) {
+				url = `${routeBase}/new`;
+			} else {
+				url = `${routeBase}/update/${currentPost.id}`;
+			}
+
 			let postData = {
 				params: filterUnchangedParams(updatePost.params, currentPost),
 				unscheduled: updatePost.unscheduled,
@@ -175,7 +182,7 @@ export default function EditPost() {
 	]);
 
 	useEffect(() => {
-		if (currentPost.id && currentPost.id > 0) {
+		if (currentPost.id > 0 || currentPost.id === 0) {
 			editPostDispatch({
 				type: "SET",
 				post: currentPost,
@@ -205,7 +212,7 @@ export default function EditPost() {
 			document.removeEventListener("mousedown", handleClickOutside);
 		}
 
-		return function cleanup() {
+		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, [currentPost, postsDispatch]);
@@ -239,11 +246,11 @@ export default function EditPost() {
 		});
 	};
 
-	const handleStatusChange = (e) => {
+	const handleCheckboxToggle = (e) => {
 		editPostDispatch({
 			type: "EDIT",
 			field: e.target.name,
-			value: e.target.value,
+			value: !post[e.target.name],
 		});
 	};
 
@@ -267,6 +274,7 @@ export default function EditPost() {
 		<div className={`editPost`}>
 			<div className="editPost__container">
 				<div ref={node} className="editPost__editor">
+					{post.id === 0 ? <h3 className="titleNew">New Post</h3> : null}
 					<form
 						className="editPost__editor__form"
 						onSubmit={handleSubmit}
@@ -280,9 +288,16 @@ export default function EditPost() {
 								onChange={handleInputChange}
 							/>
 						</FieldGroup>
-						{post.unscheduled === false ? (
-							<FieldGroup name="post_date" label="Post Date">
-								{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
+						<FieldGroup name="date">
+							{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
+							<div
+								className={`fieldGroup__field post_date ${
+									post.unscheduled === true
+										? "inactive"
+										: "active"
+								}`}
+							>
+								<label htmlFor="post_date">Post Date</label>
 								<DatePicker
 									closeOnScroll={(e) => e.target === document}
 									selected={date}
@@ -296,12 +311,21 @@ export default function EditPost() {
 											: false
 									}
 								/>
-							</FieldGroup>
-						) : null}
+							</div>
+							<div className="fieldGroup__field unscheduled">
+								<input
+									type="checkbox"
+									name="unscheduled"
+									checked={post.unscheduled}
+									onChange={handleCheckboxToggle}
+								/>
+								<label htmlFor="unscheduled">Unscheduled</label>
+							</div>
+						</FieldGroup>
 						<FieldGroup name="post_status" label="Post Status">
 							<select
 								name="post_status"
-								onChange={handleStatusChange}
+								onChange={handleInputChange}
 								value={post.post_status}
 							>
 								{renderStatusOptions(allowedStatuses)}
@@ -317,9 +341,10 @@ export default function EditPost() {
 								name="post_excerpt"
 								onChange={handleInputChange}
 								rows={4}
-							>
-								{decode(post.post_excerpt, { scope: "strict" })}
-							</textarea>
+								value={decode(post.post_excerpt, {
+									scope: "strict",
+								})}
+							/>
 						</FieldGroup>
 
 						<div className="post_thumb">
@@ -344,7 +369,7 @@ export default function EditPost() {
 							<input
 								type="submit"
 								className="editPost__buttons__save"
-								value="Update"
+								value={post.id === 0 ? "Save" : "Update"}
 							/>
 							<input
 								type="button"
