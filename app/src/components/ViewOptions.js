@@ -1,6 +1,12 @@
 import React, { useContext } from "react";
 import FieldGroup from "./common/FieldGroup";
-import { startOfToday, startOfDay, isSameWeek, addMonths } from "date-fns";
+import {
+	startOfToday,
+	startOfDay,
+	startOfWeek,
+	isSameWeek,
+	addMonths,
+} from "date-fns";
 
 import ViewContext from "../ViewContext";
 
@@ -15,7 +21,7 @@ export default function ViewOptions() {
 
 		viewOptionsDispatch({
 			type: "SET_RANGE",
-			start: today,
+			start: viewMode === "calendar" ? startOfWeek(today) : today,
 			end: addMonths(today, monthCount),
 		});
 	};
