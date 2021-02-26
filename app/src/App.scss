@@ -612,6 +612,21 @@ body {
 
 	&__buttons {
 		margin-top: 12px;
+
+		&__delete {
+			&:not(.confirm) {
+				float: right;
+			}
+
+			&.confirm {
+				text-align: center;
+
+				p {
+					font-size: 1.2em;
+					margin: 0 0 6px;
+				}
+			}
+		}
 	}
 }
 

@@ -305,7 +305,7 @@ export default function EditPost() {
 						className="editPost__editor__form"
 						onSubmit={handleSubmit}
 					>
-						<FieldGroup name="post_title" label="Post Title">
+						<FieldGroup name="post_title" label="Title">
 							<input
 								name="post_title"
 								value={decode(post.post_title, {
@@ -348,7 +348,7 @@ export default function EditPost() {
 								<label htmlFor="unscheduled">Unscheduled</label>
 							</div>
 						</FieldGroup>
-						<FieldGroup name="post_status" label="Post Status">
+						<FieldGroup name="post_status" label="Status">
 							<select
 								name="post_status"
 								onChange={handleInputChange}
@@ -392,45 +392,49 @@ export default function EditPost() {
 						</div>
 
 						<div className="editPost__buttons">
-							<input
-								type="submit"
-								className="editPost__buttons__save"
-								value={post.id === 0 ? "Save" : "Update"}
-							/>
-							<input
-								type="button"
-								className="editPost__buttons__cancel"
-								onClick={cancelHandler}
-								value="Cancel"
-							/>
 							{deletePostClicked === true ? (
-								<>
-									<p>
-										Are you sure you want to move thist post
-										to the Trash?
+								<div className="editPost__buttons__delete confirm">
+									<p style={{ fontWeight: "bold" }}>
+										Are you sure you want to Trash this
+										post?
 									</p>
 									<input
 										type="button"
-										className="editPost__buttons__delete"
 										onClick={deleteHandler}
-										value="OK"
+										value="Yes"
+									/>
+									<input
+										type="button"
+										onClick={() =>
+											setDeletePostClicked(false)
+										}
+										value="No"
+									/>
+								</div>
+							) : (
+								<>
+									<input
+										type="submit"
+										className="editPost__buttons__save"
+										value={
+											post.id === 0 ? "Save" : "Update"
+										}
+									/>
+									<input
+										type="button"
+										className="editPost__buttons__cancel"
+										onClick={cancelHandler}
+										value="Cancel"
 									/>
 									<input
 										type="button"
 										className="editPost__buttons__delete"
 										onClick={() =>
-											setDeletePostClicked(false)
+											setDeletePostClicked(true)
 										}
-										value="Cancel"
+										value="Delete"
 									/>
 								</>
-							) : (
-								<input
-									type="button"
-									className="editPost__buttons__delete"
-									onClick={() => setDeletePostClicked(true)}
-									value="Delete"
-								/>
 							)}
 						</div>
 					</form>
