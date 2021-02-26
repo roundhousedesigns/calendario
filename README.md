@@ -45,6 +45,10 @@ The professional blogger's editorial calendar. In development...for the second t
 -   ~~Allow month cells to expand vertically~~
 -   ~~Post Area to Popup~~
 
+## Questions
+
+-   Do we actually want to block dragging/dropping on past dates + future? (currently allowed)
+
 ## Don't Forget
 
 -   Permissions checks: non-admins can only edit/delete their posts

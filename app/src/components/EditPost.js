@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState, useReducer } from "react";
+import React, {
+	useContext,
+	useRef,
+	useEffect,
+	useState,
+	useReducer,
+} from "react";
 import FieldGroup from "./FieldGroup";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import {
@@ -77,6 +83,7 @@ export default function EditPost() {
 		updateReducer,
 		initialUpdateState
 	);
+	const node = useRef();
 	const [date, setDate] = useState(new Date());
 	const [allowedStatuses, setAllowedStatuses] = useState({});
 
@@ -111,6 +118,8 @@ export default function EditPost() {
 	// Handle post updating
 	useEffect(() => {
 		if (updatePost.updateNow === true && currentPost.id !== "undefined") {
+			console.log(currentPost);
+
 			updatePostDispatch({
 				type: "UPDATING",
 			});
@@ -176,6 +185,34 @@ export default function EditPost() {
 		}
 	}, [currentPost.id, currentPost]);
 
+	useEffect(() => {
+		const handleClickOutside = (e) => {
+			if (node.current && node.current.contains(e.target)) {
+				// inside click
+				console.log("inside");
+				return;
+			}
+
+			// outside click
+			editPostDispatch({
+				type: "CLEAR",
+			});
+			postsDispatch({
+				type: "UNSET_CURRENTPOST",
+			});
+		};
+
+		if (!isEmpty(currentPost)) {
+			document.addEventListener("mousedown", handleClickOutside);
+		} else {
+			document.removeEventListener("mousedown", handleClickOutside);
+		}
+
+		return function cleanup() {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [currentPost, postsDispatch]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -229,10 +266,10 @@ export default function EditPost() {
 		));
 	};
 
-	return editMode === true ? (
+	return editMode ? (
 		<div className={`editPost`}>
 			<div className="editPost__container">
-				<div className="editPost__editor">
+				<div ref={node} className="editPost__editor">
 					<form
 						className="editPost__editor__form"
 						onSubmit={handleSubmit}
@@ -254,6 +291,7 @@ export default function EditPost() {
 									selected={date}
 									onChange={handleInputDateChange}
 									disabled={
+										currentPost.post_date &&
 										(isToday(currentPost.post_date) ||
 											isPast(currentPost.post_date)) &&
 										currentPost.post_status === "publish"
@@ -309,7 +347,7 @@ export default function EditPost() {
 							<input
 								type="submit"
 								className="editPost__buttons__save"
-								value="Save"
+								value="Update"
 							/>
 							<input
 								type="button"

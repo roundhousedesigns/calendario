@@ -26,7 +26,7 @@ export default function DayPosts({
 		}
 
 		// Drop control
-		if (!isToday(date) && !isPast(date) && allowDrop !== false) {
+		if (/*!isToday(date) && !isPast(date) &&*/ allowDrop !== false) {
 			listProps.allowDrop = true;
 		} else {
 			listProps.allowDrop = false;

@@ -76,7 +76,6 @@ export function postsReducer(state, action) {
 				},
 			};
 
-		// TODO Not currently used but maybe...
 		case "UNSET_CURRENTPOST":
 			return {
 				...state,

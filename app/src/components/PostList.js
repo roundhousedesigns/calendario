@@ -147,12 +147,6 @@ export default function PostList({
 			listProps.className += " dropDisabled";
 		}
 
-		// if (!isToday(date) && !isPast(date)) {
-		// 	listProps.onDrop = handleDrop;
-		// } else {
-		// 	listProps.className += " dropDisabled";
-		// }
-
 		return (
 			<ul {...listProps}>
 				{posts.map((post, index) => (
