@@ -15,6 +15,7 @@ The professional blogger's editorial calendar. In development...for the second t
 ## Bugs
 
 -   List View: Can't drop on today's date
+-   Past items can be dragged if coming from future. If they started in the past, they can't be dragged.
 
 ## TODO
 
