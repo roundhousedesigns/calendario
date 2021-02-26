@@ -16,20 +16,20 @@ export default function Sidebar() {
 				"dev",
 				<div>
 					<p>
+						<a
+							href="https://github.com/gaswirth/rhdwp-calendario/issues"
+							target="_blank"
+						>
+							Report issue/bug
+						</a>
+					</p>
+					<p>
 						GitHub:{" "}
 						<a
 							href="https://github.com/gaswirth/rhdwp-calendario"
 							target="_blank"
 						>
 							gaswirth/rhdwp-calendario
-						</a>
-					</p>
-					<p>
-						<a
-							href="https://github.com/gaswirth/rhdwp-calendario/issues"
-							target="_blank"
-						>
-							Report issue/bug
 						</a>
 					</p>
 				</div>
