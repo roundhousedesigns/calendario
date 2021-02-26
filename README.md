@@ -21,6 +21,7 @@ The professional blogger's editorial calendar. In development...for the second t
         -   Unschedule (icon somewhere)
         -   Delete (icon top right)
 -   New Post button on hover on a calendar day
+-   Scroll within calendar and list views
 -   Post Edit
     -   add cats, tags
     -   fancy up the interface
