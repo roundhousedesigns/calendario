@@ -15,6 +15,7 @@ The professional blogger's editorial calendar. For the two-th time.
 
 ## TODO
 
+-   MF drag and drop post order in Unscheduled
 -   Hover a post:
     -   Links
         -   Edit
@@ -28,7 +29,6 @@ The professional blogger's editorial calendar. For the two-th time.
     -   ~~add delete~~
     -   ~~add excerpt~~
     -   ~~featured image show, but link to full Edit screen~~
--   Post order in Unscheduled
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
