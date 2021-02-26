@@ -24,6 +24,14 @@ export default function Sidebar() {
 							gaswirth/rhdwp-calendario
 						</a>
 					</p>
+					<p>
+						<a
+							href="https://github.com/gaswirth/rhdwp-calendario/issues"
+							target="_blank"
+						>
+							Report issue/bug
+						</a>
+					</p>
 				</div>
 			)}
 		</aside>
