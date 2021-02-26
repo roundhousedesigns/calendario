@@ -274,7 +274,9 @@ export default function EditPost() {
 		<div className={`editPost`}>
 			<div className="editPost__container">
 				<div ref={node} className="editPost__editor">
-					{post.id === 0 ? <h3 className="titleNew">New Post</h3> : null}
+					<h3 className="title">
+						{post.id === 0 ? "New" : "Edit"} Post
+					</h3>
 					<form
 						className="editPost__editor__form"
 						onSubmit={handleSubmit}
