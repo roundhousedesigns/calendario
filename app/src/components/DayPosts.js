@@ -1,16 +1,8 @@
 import React from "react";
 import PostList from "./PostList";
 import { useDayPosts } from "../lib/hooks";
-import { isToday, isPast } from "date-fns";
 
-export default function DayPosts({
-	posts,
-	date,
-	allowDrag,
-	allowDrop,
-	title,
-	renderEmpty,
-}) {
+export default function DayPosts({ posts, date, allowDrag, allowDrop, title }) {
 	const dayPosts = useDayPosts(posts, date);
 
 	const renderPostList = () => {
@@ -18,6 +10,7 @@ export default function DayPosts({
 			className: "dayPosts", // make this a prop/change conditionally
 			date: date,
 			posts: dayPosts,
+			allowDrop: true,
 		};
 
 		// Drag control
@@ -26,11 +19,7 @@ export default function DayPosts({
 		}
 
 		// Drop control
-		if (/*!isToday(date) && !isPast(date) &&*/ allowDrop !== false) {
-			listProps.allowDrop = true;
-		} else {
-			listProps.allowDrop = false;
-		}
+		listProps.allowDrop = allowDrop !== false ? true : false;
 
 		const renderList = <PostList {...listProps} />;
 

@@ -12,7 +12,11 @@ The professional blogger's editorial calendar. In development...for the second t
 
 ---
 
-## TODO:
+## Bugs
+
+-   List View: Can't drop on today's date
+
+## TODO
 
 -   Hover a post:
     -   Links

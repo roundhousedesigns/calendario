@@ -15,7 +15,6 @@ export default function Post({ post, index, allowDrag, order }) {
 	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
 	const [colors, setColors] = useState({});
 	const [date, setDate] = useState(new Date());
-	// const node = useRef();
 
 	useEffect(() => {
 		setDate(new Date(post.post_date));
@@ -27,31 +26,6 @@ export default function Post({ post, index, allowDrag, order }) {
 			backgroundColor: postStatuses[post.post_status].backgroundColor,
 		});
 	}, [post.post_status]);
-
-	// useEffect(() => {
-	// 	const handleClickOutside = (e) => {
-	// 		// TODO figure out how to include editPost component also -- currentPost getting unset before submit
-	// 		if (node.current && node.current.contains(e.target)) {
-	// 			// inside click
-	// 			return;
-	// 		}
-
-	// 		// outside click
-	// 		postsDispatch({
-	// 			type: "UNSET_CURRENTPOST",
-	// 		});
-	// 	};
-
-	// 	if (!isEmpty(currentPost)) {
-	// 		document.addEventListener("mousedown", handleClickOutside);
-	// 	} else {
-	// 		document.removeEventListener("mousedown", handleClickOutside);
-	// 	}
-
-	// 	return function cleanup() {
-	// 		document.removeEventListener("mousedown", handleClickOutside);
-	// 	};
-	// }, [currentPost, postsDispatch]);
 
 	const handleDragStart = (e) => {
 		let draggingUnscheduled = e.currentTarget.parentNode.classList.contains(

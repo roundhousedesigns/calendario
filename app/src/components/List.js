@@ -68,7 +68,6 @@ export default function List() {
 						key={day}
 						date={day}
 						posts={scheduled}
-						renderEmpty={false}
 						allowDrag={true}
 						title={format(day, dateFormat.fullDate)}
 					/>

@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import FieldGroup from "./FieldGroup";
 
 import ViewContext from "../ViewContext";
-import PostsContext from "../PostsContext";
 
 export default function ViewOptions() {
 	const {

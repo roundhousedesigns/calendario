@@ -1,7 +1,6 @@
 import React from "react";
 import ViewOptions from "./ViewOptions";
 import StatusFilters from "./StatusFilters";
-import { renderWidget } from "../lib/utils";
 
 export default function Header() {
 	return (
