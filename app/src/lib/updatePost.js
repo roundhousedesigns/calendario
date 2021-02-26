@@ -1,5 +1,6 @@
 export const initialUpdateState = {
 	updateNow: false,
+	delete: false,
 	params: {},
 	unscheduled: false,
 };
@@ -17,6 +18,13 @@ export function updateReducer(state, action) {
 			return {
 				...state,
 				updateNow: false,
+			};
+
+		case "DELETE":
+			return {
+				delete: true,
+				updateNow: true,
+				params: action.params,
 			};
 
 		case "COMPLETE":

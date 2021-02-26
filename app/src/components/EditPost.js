@@ -86,6 +86,7 @@ export default function EditPost() {
 	const node = useRef();
 	const [date, setDate] = useState(new Date());
 	const [allowedStatuses, setAllowedStatuses] = useState({});
+	const [deletePostClicked, setDeletePostClicked] = useState(false);
 
 	const { post, editMode } = editPost;
 
@@ -115,7 +116,7 @@ export default function EditPost() {
 		setAllowedStatuses(statusList);
 	}, [date, post.unscheduled]);
 
-	// Handle post updating
+	// Update the post
 	useEffect(() => {
 		if (updatePost.updateNow === true && currentPost.id !== "undefined") {
 			updatePostDispatch({
@@ -123,11 +124,15 @@ export default function EditPost() {
 			});
 
 			// Check if this is a new post
-			let url;
-			if (currentPost.id === 0) {
-				url = `${routeBase}/new`;
+			let url = `${routeBase}/`;
+			if (updatePost.delete === true) {
+				url += `delete/${currentPost.id}`;
 			} else {
-				url = `${routeBase}/update/${currentPost.id}`;
+				if (currentPost.id === 0) {
+					url += "new";
+				} else {
+					url += `update/${currentPost.id}`;
+				}
 			}
 
 			let postData = {
@@ -152,9 +157,12 @@ export default function EditPost() {
 					draggedPostDispatch({
 						type: "END",
 					});
+
 					updatePostDispatch({
 						type: "COMPLETE",
 					});
+
+					// keep this?
 					postsDispatch({
 						type: "SET_CURRENTPOST",
 						post: post,
@@ -176,6 +184,7 @@ export default function EditPost() {
 		post,
 		draggedPostDispatch,
 		postsDispatch,
+		updatePost.delete,
 		updatePost.params,
 		updatePost.updateNow,
 		updatePost.unscheduled,
@@ -234,6 +243,21 @@ export default function EditPost() {
 		editPostDispatch({
 			type: "CLEAR",
 		});
+	};
+
+	const deleteHandler = () => {
+		updatePostDispatch({
+			type: "DELETE",
+			params: {
+				id: post.id,
+			},
+		});
+
+		editPostDispatch({
+			type: "CLEAR",
+		});
+
+		setDeletePostClicked(false);
 	};
 
 	const cancelHandler = () => editPostDispatch({ type: "CLEAR" });
@@ -379,6 +403,35 @@ export default function EditPost() {
 								onClick={cancelHandler}
 								value="Cancel"
 							/>
+							{deletePostClicked === true ? (
+								<>
+									<p>
+										Are you sure you want to move thist post
+										to the Trash?
+									</p>
+									<input
+										type="button"
+										className="editPost__buttons__delete"
+										onClick={deleteHandler}
+										value="OK"
+									/>
+									<input
+										type="button"
+										className="editPost__buttons__delete"
+										onClick={() =>
+											setDeletePostClicked(false)
+										}
+										value="Cancel"
+									/>
+								</>
+							) : (
+								<input
+									type="button"
+									className="editPost__buttons__delete"
+									onClick={() => setDeletePostClicked(true)}
+									value="Delete"
+								/>
+							)}
 						</div>
 					</form>
 				</div>

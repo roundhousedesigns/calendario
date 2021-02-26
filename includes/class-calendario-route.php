@@ -45,6 +45,15 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
+		register_rest_route( $namespace, '/' . $post_base . '/delete/(?P<ID>\d+)', array(
+			array(
+				'methods'             => WP_REST_Server::EDITABLE,
+				'callback'            => array( $this, 'delete_item' ),
+				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+				'args'                => $this->get_endpoint_args_for_item_schema(),
+			),
+		) );
+
 		register_rest_route( $namespace, '/' . $post_base . '/updateUnscheduledDraftOrder/(?P<ids>.*?)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
@@ -271,12 +280,13 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function delete_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
+		$id = $this->prepare_item_for_delete( $request );
 
-		// $deleted = slug_some_function_to_delete_item( $item );
-		// if ( $deleted ) {
-		// 	return new WP_REST_Response( true, 200 );
-		// }
+		$deleted = wp_delete_post( $id, false );
+
+		if ( $deleted ) {
+			return new WP_REST_Response( 'Post deleted.', 200 );
+		}
 
 		return new WP_Error( 'cant-delete', __( 'message', 'rhd' ), array( 'status' => 500 ) );
 	}
@@ -596,6 +606,18 @@ class Calendario_Route extends WP_REST_Controller {
 		}
 
 		return $item;
+	}
+
+	/**
+	 * Prepare the item for delete operation
+	 *
+	 * @param WP_REST_Request $request Request object
+	 * @return WP_Error|int Post ID to delete
+	 */
+	protected function prepare_item_for_delete( $request ) {
+		$params = $request->get_params();
+
+		return $params['ID'];
 	}
 
 	/**
