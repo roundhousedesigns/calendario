@@ -6,13 +6,13 @@ import { renderWidget } from "../lib/utils";
 export default function Sidebar() {
 	return (
 		<aside className="calendario__sidebar">
-			{renderWidget("", "viewOptions noBorder", <StatusFilters />)}
-
 			{renderWidget(
 				"Unscheduled Drafts",
 				"unscheduledDrafts",
 				<UnscheduledDrafts />
 			)}
+
+			{renderWidget("", "viewOptions noBorder", <StatusFilters />)}
 
 			{renderWidget(
 				"Calendario II: The Datening",
