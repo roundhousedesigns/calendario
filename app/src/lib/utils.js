@@ -1,41 +1,48 @@
 import { omit } from "lodash";
 import Widget from "../components/common/Widget";
 
-export const nonce = window.rhdReactPlugin.nonce; // Live
-// export const nonce = null; //dev
+export const DEBUG_MODE = true;
 
-export const routeBase = window.rhdReactPlugin.restBase; // Live
-// export const routeBase = "http://localhost/wp-json/calendario/v1/posts"; // Dev
-
-export const postStatuses = window.rhdReactPlugin.postStatuses; // Live
-// Dev
-// export const postStatuses = {
-// 	publish: {
-// 		name: "Publish",
-// 		backgroundColor: "cornflowerblue",
-// 		color: "white",
-// 	},
-// 	draft: {
-// 		name: "Draft",
-// 		backgroundColor: "silver",
-// 		color: "white",
-// 	},
-// 	future: {
-// 		name: "Future",
-// 		backgroundColor: "lightseagreen",
-// 		color: "white",
-// 	},
-// 	pending: {
-// 		name: "Pending",
-// 		backgroundColor: "lightcoral",
-// 		color: "white",
-// 	},
-// 	private: {
-// 		name: "Private",
-// 		backgroundColor: "maroon",
-// 		color: "white",
-// 	},
-// };
+// TODO DEV MODE
+export var nonce, routeBase, postStatuses;
+if (DEBUG_MODE === false) {
+	// WP mode
+	nonce = window.rhdReactPlugin.nonce; // Live
+	routeBase = window.rhdReactPlugin.restBase; // Live
+	postStatuses = window.rhdReactPlugin.postStatuses; // Live
+} else {
+	// non-WP mode
+	nonce = 0;
+	routeBase = "http://localhost/wp-json/calendario/v1/posts";
+	postStatuses = {
+		publish: {
+			name: "Publish",
+			backgroundColor: "cornflowerblue",
+			color: "white",
+		},
+		draft: {
+			name: "Draft",
+			backgroundColor: "silver",
+			color: "white",
+		},
+		future: {
+			name: "Future",
+			backgroundColor: "lightseagreen",
+			color: "white",
+		},
+		pending: {
+			name: "Pending",
+			backgroundColor: "lightcoral",
+			color: "white",
+		},
+		private: {
+			name: "Private",
+			backgroundColor: "maroon",
+			color: "white",
+		},
+	};
+}
+// ODOT
 
 export const dateFormat = {
 	day: "d",

@@ -13,6 +13,9 @@ import { isEmpty } from "lodash";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
+// TODO: DEV ONLY
+import { DEBUG_MODE } from "../lib/utils";
+
 export default function PostList({
 	posts,
 	className,
@@ -49,14 +52,20 @@ export default function PostList({
 				return { data: "Update not necessary.", error: true };
 			}
 
+			// TODO: DEV ONLY
+			var headers = {
+				"Content-Type": "application/json",
+			};
+			if (DEBUG_MODE === false) {
+				headers["X-WP-Nonce"] = nonce;
+			}
+			// ODOT
+
 			const fetchData = async () => {
 				try {
 					const response = await fetch(url, {
 						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-							"X-WP-Nonce": nonce,
-						},
+						headers,
 						body: JSON.stringify(postData),
 					});
 					// const data = await response.json(); // If you need to catch the response...

@@ -19,6 +19,7 @@ export default function Sidebar() {
 						<a
 							href="https://github.com/gaswirth/rhdwp-calendario/issues"
 							target="_blank"
+							rel="noreferrer"
 						>
 							Report issue/bug
 						</a>
@@ -28,6 +29,7 @@ export default function Sidebar() {
 						<a
 							href="https://github.com/gaswirth/rhdwp-calendario"
 							target="_blank"
+							rel="noreferrer"
 						>
 							gaswirth/rhdwp-calendario
 						</a>

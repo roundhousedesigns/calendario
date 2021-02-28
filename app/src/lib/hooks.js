@@ -4,6 +4,9 @@ import { nonce, routeBase, dateFormat } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
+// TODO: DEV MODE
+import { DEBUG_MODE } from "../lib/utils";
+
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
 		const stickyValue = window.localStorage.getItem(key);
@@ -38,12 +41,17 @@ export const useFetchScheduledPosts = (start, end) => {
 			let endDate = format(end, dateFormat.date);
 			let url = `${routeBase}/scheduled/${startDate}/${endDate}`;
 
+			// TODO: DEV MODE
+			var headers = {};
+			if (DEBUG_MODE === false) {
+				headers["X-WP-Nonce"] = nonce;
+			}
+			// ODOT
+
 			const fetchData = async () => {
 				try {
 					const res = await fetch(url, {
-						headers: {
-							"X-WP-Nonce": nonce,
-						},
+						headers,
 					});
 					const data = await res.json();
 
@@ -72,12 +80,17 @@ export const useFetchUnscheduledPosts = () => {
 	useEffect(() => {
 		let url = `${routeBase}/unscheduled`;
 
+		// TODO: DEV MODE
+		var headers = {};
+		if (DEBUG_MODE === false) {
+			headers["X-WP-Nonce"] = nonce;
+		}
+		// ODOT
+
 		const fetchData = async () => {
 			try {
 				const res = await fetch(url, {
-					headers: {
-						"X-WP-Nonce": nonce,
-					},
+					headers,
 				});
 				const data = await res.json();
 

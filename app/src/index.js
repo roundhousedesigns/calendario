@@ -4,13 +4,17 @@ import "./index.scss";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-// WP Dashboard admin rendering
-const reactAppData = window.rhdReactPlugin || {};
-const { appSelector } = reactAppData;
-const appAnchorElement = document.querySelector(appSelector);
+// DEV
+import { DEBUG_MODE } from "./lib/utils";
 
-// dev only
-// const appAnchorElement = document.getElementById("root");
+var reactAppData, appAnchorElement;
+if (DEBUG_MODE === false) {
+	reactAppData = window.rhdReactPlugin || {};
+	const { appSelector } = reactAppData;
+	appAnchorElement = document.querySelector(appSelector);
+} else {
+	appAnchorElement = document.getElementById("root");
+}
 
 if (appAnchorElement) {
 	ReactDOM.render(
