@@ -4,17 +4,20 @@ import "./index.scss";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-// DEV
+// TODO: DEV MODE
 import { DEBUG_MODE } from "./lib/utils";
 
 var reactAppData, appAnchorElement;
 if (DEBUG_MODE === false) {
+	// live values
 	reactAppData = window.rhdReactPlugin || {};
 	const { appSelector } = reactAppData;
 	appAnchorElement = document.querySelector(appSelector);
 } else {
+	// Dev
 	appAnchorElement = document.getElementById("root");
 }
+// ODOT
 
 if (appAnchorElement) {
 	ReactDOM.render(

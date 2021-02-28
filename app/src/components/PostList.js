@@ -13,7 +13,7 @@ import { isEmpty } from "lodash";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-// TODO: DEV ONLY
+// TODO: DEV MODE
 import { DEBUG_MODE } from "../lib/utils";
 
 export default function PostList({
@@ -52,7 +52,7 @@ export default function PostList({
 				return { data: "Update not necessary.", error: true };
 			}
 
-			// TODO: DEV ONLY
+			// TODO: DEV MODE
 			var headers = {
 				"Content-Type": "application/json",
 			};
