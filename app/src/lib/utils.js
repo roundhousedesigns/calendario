@@ -2,7 +2,7 @@ import { omit } from "lodash";
 import Widget from "../components/common/Widget";
 
 // TODO: DEV MODE
-export const DEBUG_MODE = true;
+export const DEBUG_MODE = true; // <----- DEV MODE TOGGLE
 export var nonce, routeBase, postStatuses;
 if (DEBUG_MODE === false) {
 	// WP mode

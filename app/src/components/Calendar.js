@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useCallback } from "react";
-import CalendarListHeader from "./CalendarListHeader";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
 import {
@@ -45,12 +44,6 @@ export default function Calendar() {
 	}, [refetch, monthCount, viewOptionsDispatch]);
 
 	useFetchScheduledPosts(viewRange.start, viewRange.end);
-
-	const renderCalendarHeader = () => {
-		return (
-			<CalendarListHeader start={viewRange.start} end={viewRange.end} />
-		);
-	};
 
 	const renderDaysHeaderRow = useCallback(() => {
 		const days = [];
@@ -116,7 +109,6 @@ export default function Calendar() {
 	const renderCalendar = () => {
 		return (
 			<>
-				{renderCalendarHeader()}
 				{renderDaysHeaderRow()}
 				{renderDays()}
 			</>

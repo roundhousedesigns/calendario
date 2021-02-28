@@ -1,20 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import ViewOptions from "./ViewOptions";
-import StatusFilters from "./StatusFilters";
+import CalendarListHeader from "./CalendarListHeader";
+
+import ViewContext from "../ViewContext";
 
 export default function Header() {
+	const {
+		viewOptions: { viewRange },
+	} = useContext(ViewContext);
+
 	return (
 		<header className="calendario__header">
 			<div className="calendario__header__content">
-				<div className="top left">
-					<h1 className="page-title">Calendario II: The Datening</h1>
+				<div className="left">
+					<CalendarListHeader
+						start={viewRange.start}
+						end={viewRange.end}
+					/>
 				</div>
-				<div className="top right"></div>
-				<div className="bottom left">
+				<div className="right">
 					<ViewOptions />
-				</div>
-				<div className="bottom right">
-					<StatusFilters />
 				</div>
 			</div>
 		</header>

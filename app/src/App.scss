@@ -57,32 +57,54 @@ body {
 			display: grid;
 			grid-gap: var(--gridGap);
 			grid-template-columns: 3fr 300px;
-			grid-template-areas:
-				"topleft topright"
-				"bottomleft bottomright";
+			grid-template-areas: "left right";
 
 			& > div {
-				padding: 12px;
+				padding: 6px 12px;
 				display: flex;
 				align-items: center;
 
-				&.top {
-					&.left {
-						grid-area: topleft;
-					}
-
-					&.right {
-						grid-area: topright;
-					}
+				&.right {
+					grid-area: right;
 				}
 
-				&.bottom {
-					&.left {
-						grid-area: bottomleft;
+				&.left {
+					grid-area: left;
+				}
+			}
+
+			.calendarListHeader {
+				text-transform: uppercase;
+				font-weight: 700;
+				font-size: 115%;
+
+				.viewTitle {
+					text-align: center;
+					font-size: 1.2rem;
+					margin-top: 0.5em;
+				}
+
+				.viewRange {
+					font-size: 0.8em;
+				}
+
+				.icon {
+					cursor: pointer;
+					transition: 0.15s ease-out;
+					font-size: 1.4em;
+
+					&:hover {
+						transform: scale(1.25);
+						transition: 0.15s ease-out;
+						color: var(--mainColor);
 					}
 
-					&.right {
-						grid-area: bottomright;
+					&:first-of-type {
+						margin-left: 1em;
+					}
+
+					&:last-of-type {
+						margin-right: 1em;
 					}
 				}
 			}
@@ -214,6 +236,7 @@ body {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
+	align-items: center;
 	width: 100%;
 }
 
@@ -248,44 +271,6 @@ body {
 	margin: 0;
 	background: var(--neutralColor);
 	border: 1px solid var(--borderColor);
-
-	.header {
-		text-transform: uppercase;
-		font-weight: 700;
-		font-size: 115%;
-		padding: 1.3em 0 0.6em;
-		border-bottom: 1px solid var(--borderColor);
-
-		.viewTitle {
-			margin: 0;
-			text-align: center;
-			font-size: 1.2rem;
-		}
-
-		.viewRange {
-			font-size: 0.8em;
-		}
-
-		.icon {
-			cursor: pointer;
-			transition: 0.15s ease-out;
-			font-size: 1.4em;
-
-			&:hover {
-				transform: scale(1.25);
-				transition: 0.15s ease-out;
-				color: var(--mainColor);
-			}
-
-			&:first-of-type {
-				margin-left: 1em;
-			}
-
-			&:last-of-type {
-				margin-right: 1em;
-			}
-		}
-	}
 
 	&__calendar {
 		.days {

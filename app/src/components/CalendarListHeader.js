@@ -18,7 +18,7 @@ export default function CalendarListHeader({ start, end }) {
 	};
 
 	return (
-		<div className="header row flex-middle">
+		<div className="calendarListHeader row flex-middle">
 			<div className="col col__start">
 				<button className="icon dateChevron" onClick={prevMonth}>
 					chevron_left
@@ -26,10 +26,14 @@ export default function CalendarListHeader({ start, end }) {
 			</div>
 			<div className="col col__center">
 				<h3 className="viewTitle">Scheduled Posts</h3>
-				<p className="viewRange">{`${format(
-					start,
-					dateFormat.daylessDate
-				)} \u2014 ${format(end, dateFormat.daylessDate)}`}</p>
+				<p className="viewRange">
+					{start && end
+						? `${format(
+								start,
+								dateFormat.daylessDate
+						  )} \u2014 ${format(end, dateFormat.daylessDate)}`
+						: null}
+				</p>
 			</div>
 			<div className="col col__end">
 				<button className="icon dateChevron" onClick={nextMonth}>

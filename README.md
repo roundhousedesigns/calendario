@@ -4,8 +4,19 @@ The professional blogger's editorial calendar. For the two-th time.
 
 ## Usage:
 
--   Enable plugin inside a WP installation and visit `Posts->Calendario` from the Dashboard. Run `yarn build` to build, if necessary.
--   ~~Run `yarn install` and `yarn start` inside the `app/` directory and visit `http://localhost:3000`~~
+Enable the plugin inside a WP installation and visit `Posts->Calendario` from the Dashboard.
+
+## Installation:
+
+### WP Dashboard
+
+-   set `DEBUG_MODE` in `app/lib/utils.js` to `false`
+-   `yarn build` inside `app/` directory
+
+### React development
+
+-   set `DEBUG_MODE` in `app/lib/utils.js` to `false`
+-   `yarn start` inside `app/` directory
 
 ---
 
