@@ -8,6 +8,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "array-move": "^3.0.1",
+    "cross-env": "^7.0.3",
     "html-entities": "^2.1.0",
     "node-sass": "4.14.1",
     "prop-types": "^15.7.2",
@@ -18,8 +19,8 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "cross-env REACT_APP_DEBUG_MODE=true react-scripts start",
+    "build": "cross-env REACT_APP_DEBUG_MODE=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

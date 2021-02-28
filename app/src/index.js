@@ -8,7 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 import { DEBUG_MODE } from "./lib/utils";
 
 var reactAppData, appAnchorElement;
-if (DEBUG_MODE === false) {
+if (DEBUG_MODE !== true) {
 	// live values
 	reactAppData = window.rhdReactPlugin || {};
 	const { appSelector } = reactAppData;

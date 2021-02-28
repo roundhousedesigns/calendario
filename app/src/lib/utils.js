@@ -2,9 +2,10 @@ import { omit } from "lodash";
 import Widget from "../components/common/Widget";
 
 // TODO: DEV MODE
-export const DEBUG_MODE = false; // <----- DEV MODE TOGGLE
+export const DEBUG_MODE =
+	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
 export var nonce, routeBase, postStatuses;
-if (DEBUG_MODE === false) {
+if (DEBUG_MODE !== true) {
 	// WP mode
 	nonce = window.rhdReactPlugin.nonce; // Live
 	routeBase = window.rhdReactPlugin.restBase; // Live

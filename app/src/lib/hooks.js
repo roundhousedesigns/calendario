@@ -43,7 +43,7 @@ export const useFetchScheduledPosts = (start, end) => {
 
 			// TODO: DEV MODE
 			var headers = {};
-			if (DEBUG_MODE === false) {
+			if (DEBUG_MODE !== true) {
 				headers["X-WP-Nonce"] = nonce;
 			}
 			// ODOT
@@ -82,7 +82,7 @@ export const useFetchUnscheduledPosts = () => {
 
 		// TODO: DEV MODE
 		var headers = {};
-		if (DEBUG_MODE === false) {
+		if (DEBUG_MODE !== true) {
 			headers["X-WP-Nonce"] = nonce;
 		}
 		// ODOT

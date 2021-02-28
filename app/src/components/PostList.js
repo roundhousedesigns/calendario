@@ -56,7 +56,7 @@ export default function PostList({
 			var headers = {
 				"Content-Type": "application/json",
 			};
-			if (DEBUG_MODE === false) {
+			if (DEBUG_MODE !== true) {
 				headers["X-WP-Nonce"] = nonce;
 			}
 			// ODOT

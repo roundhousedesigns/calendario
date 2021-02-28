@@ -236,7 +236,6 @@ body {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	align-items: center;
 	width: 100%;
 }
 
@@ -388,7 +387,7 @@ body {
 			flex-direction: column;
 			justify-content: flex-end;
 			padding: 3px;
-			margin: 2px;
+			margin: 0 2px;
 			list-style: none;
 			z-index: 999;
 
