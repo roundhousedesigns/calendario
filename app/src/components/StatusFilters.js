@@ -6,6 +6,9 @@ export default function StatusFilters() {
 
 	return (
 		<div className="statusFilters">
+			<p style={{ fontSize: "0.8em" }}>
+				You'll be able to click me one day...
+			</p>
 			<ul className="filters">
 				{keys.map((item, index) => {
 					const { color, backgroundColor, name } = postStatuses[item];
