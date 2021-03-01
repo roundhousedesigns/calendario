@@ -77,6 +77,7 @@ body {
 				text-transform: uppercase;
 				font-weight: 700;
 				font-size: 115%;
+				align-items: center;
 
 				.viewTitle {
 					text-align: center;
@@ -267,9 +268,20 @@ body {
 	display: block;
 	position: relative;
 	width: 100%;
+	height: 100%;
 	margin: 0;
 	background: var(--neutralColor);
 	border: 1px solid var(--borderColor);
+	overflow: auto;
+
+	&__calendar,
+	&__list {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
 
 	&__calendar {
 		.days {

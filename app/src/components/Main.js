@@ -12,7 +12,9 @@ export default function Main() {
 
 	return (
 		<main className="calendario__main">
-			{viewMode === "calendar" ? <Calendar /> : <List />}
+			<div className="view">
+				{viewMode === "calendar" ? <Calendar /> : <List />}
+			</div>
 			<EditPost />
 		</main>
 	);

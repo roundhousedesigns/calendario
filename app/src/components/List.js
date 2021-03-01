@@ -90,7 +90,7 @@ export default function List() {
 	};
 
 	return (
-		<div className="view view__list">
+		<div className="view__list">
 			{viewRange.start !== null && viewRange.end !== null
 				? renderList()
 				: null}

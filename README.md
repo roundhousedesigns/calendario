@@ -6,17 +6,12 @@ The professional blogger's editorial calendar. For the two-th time.
 
 Enable the plugin inside a WP installation and visit `Posts->Calendario` from the Dashboard.
 
-## Installation:
+## Quick start:
 
-### WP Dashboard
-
--   set `DEBUG_MODE` in `app/lib/utils.js` to `false`
--   `yarn build` inside `app/` directory
-
-### React development
-
--   set `DEBUG_MODE` in `app/lib/utils.js` to `false`
--   `yarn start` inside `app/` directory
+-   cd `app`
+    then
+-   React dev: `yarn start` (`localhost:3000`)
+-   Production URL: `/wp-admin/edit.php?page=calendario`
 
 ---
 
@@ -26,6 +21,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
+-   Load/fetch animations
 -   MF drag and drop post order in Unscheduled
 -   Hover a post:
     -   Links
@@ -33,7 +29,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
         -   View (icon top left)
         -   Unschedule (icon somewhere)
         -   Delete (icon top right) // MAYBE NOT
--   Scroll within calendar and list views
 -   Post Edit
     -   add cats, tags
     -   fancy up the interface
@@ -43,6 +38,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
+-   ~~Scroll within calendar and list views~~
 -   ~~Clicking outside Edit modal cancels operation~~
 -   ~~New Post button on hover on a calendar day~~
 -   ~~Jump to Today button~~

@@ -116,7 +116,7 @@ export default function Calendar() {
 	};
 
 	return (
-		<div className="view view__calendar">
+		<div className="view__calendar">
 			{viewRange.start !== null && viewRange.end !== null
 				? renderCalendar()
 				: null}
