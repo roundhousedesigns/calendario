@@ -99,19 +99,3 @@ export const renderWidget = (title, className, children) => {
 		</Widget>
 	);
 };
-
-export const fetchReducer = (state, action) => {
-	switch (action.type) {
-		case "FETCHING":
-			return { ...state, status: "fetching" };
-
-		case "FETCHED":
-			return { ...state, status: "fetched", data: action.data };
-
-		case "FETCH_ERROR":
-			return { ...state, status: "error", error: action.data };
-
-		default:
-			return state;
-	}
-};

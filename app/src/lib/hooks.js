@@ -34,6 +34,7 @@ export const useDayPosts = (posts, date) => {
 
 export const useFetchScheduledPosts = (start, end) => {
 	const { postsDispatch } = useContext(PostsContext);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		if (start !== null && end !== null) {
@@ -49,6 +50,8 @@ export const useFetchScheduledPosts = (start, end) => {
 			// ODOT
 
 			const fetchData = async () => {
+				setIsLoading(true);
+
 				try {
 					const res = await fetch(url, {
 						headers,
@@ -61,14 +64,23 @@ export const useFetchScheduledPosts = (start, end) => {
 						start: data.dateRange.start,
 						end: data.dateRange.end,
 					});
+
+					setIsLoading(false);
 				} catch (error) {
 					console.log("REST error", error.message);
+					setIsLoading(false);
 				}
 			};
 
 			fetchData();
+
+			return () => {
+				setIsLoading(false);
+			};
 		}
 	}, [start, end, postsDispatch]);
+
+	return isLoading;
 };
 
 export const useFetchUnscheduledPosts = () => {
@@ -76,6 +88,7 @@ export const useFetchUnscheduledPosts = () => {
 		posts: { refetch },
 		postsDispatch,
 	} = useContext(PostsContext);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		let url = `${routeBase}/unscheduled`;
@@ -88,6 +101,8 @@ export const useFetchUnscheduledPosts = () => {
 		// ODOT
 
 		const fetchData = async () => {
+			setIsLoading(true);
+
 			try {
 				const res = await fetch(url, {
 					headers,
@@ -99,11 +114,20 @@ export const useFetchUnscheduledPosts = () => {
 					posts: data.posts,
 					unscheduled: true,
 				});
+
+				setIsLoading(false);
 			} catch (error) {
 				console.log("REST error", error.message);
+				setIsLoading(false);
 			}
 		};
 
 		fetchData();
+
+		return () => {
+			setIsLoading(false);
+		};
 	}, [postsDispatch, refetch]);
+
+	return isLoading;
 };

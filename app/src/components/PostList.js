@@ -1,10 +1,12 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import Post from "./Post";
+import Loading from "./common/Loading";
 import {
 	dateFormat,
 	routeBase,
 	filterUnchangedParams,
 	nonce,
+	DEBUG_MODE,
 } from "../lib/utils";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import { format } from "date-fns";
@@ -13,15 +15,13 @@ import { isEmpty } from "lodash";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-// TODO: DEV MODE
-import { DEBUG_MODE } from "../lib/utils";
-
 export default function PostList({
 	posts,
 	className,
 	allowDrag,
 	allowDrop,
 	date,
+	loadingState,
 }) {
 	const {
 		posts: { currentPost },
@@ -35,6 +35,19 @@ export default function PostList({
 		updateReducer,
 		initialUpdateState
 	);
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		if (loadingState === undefined || loadingState === null) {
+			return;
+		}
+
+		setIsLoading(loadingState);
+
+		return () => {
+			setIsLoading(false);
+		};
+	}, [loadingState]);
 
 	useEffect(() => {
 		if (updatePost.updateNow === true && post.id !== "undefined") {
@@ -62,6 +75,8 @@ export default function PostList({
 			// ODOT
 
 			const fetchData = async () => {
+				setIsLoading(true);
+
 				try {
 					const response = await fetch(url, {
 						method: "POST",
@@ -80,8 +95,11 @@ export default function PostList({
 					updatePostDispatch({
 						type: "COMPLETE",
 					});
+
+					setIsLoading(false);
 				} catch (error) {
 					console.log(error.message);
+					setIsLoading(false);
 				}
 			};
 
@@ -157,17 +175,20 @@ export default function PostList({
 		}
 
 		return (
-			<ul {...listProps}>
-				{posts.map((post, index) => (
-					<Post
-						post={post}
-						order={posts}
-						key={post.id}
-						index={index}
-						allowDrag={allowDrag}
-					/>
-				))}
-			</ul>
+			<>
+				{isLoading ? <Loading /> : null}
+				<ul {...listProps}>
+					{posts.map((post, index) => (
+						<Post
+							post={post}
+							order={posts}
+							key={post.id}
+							index={index}
+							allowDrag={allowDrag}
+						/>
+					))}
+				</ul>
+			</>
 		);
 	};
 

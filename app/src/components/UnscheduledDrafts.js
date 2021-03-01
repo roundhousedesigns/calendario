@@ -17,7 +17,7 @@ export default function UnscheduledDrafts() {
 		});
 	}, [postsDispatch]);
 
-	useFetchUnscheduledPosts();
+	const isLoading = useFetchUnscheduledPosts();
 
 	return (
 		<>
@@ -26,6 +26,7 @@ export default function UnscheduledDrafts() {
 				date={false}
 				posts={unscheduled}
 				allowDrag={true}
+				loadingState={isLoading}
 			/>
 			<NewPostButton unscheduled={true} />
 		</>

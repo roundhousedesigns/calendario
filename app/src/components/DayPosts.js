@@ -3,7 +3,14 @@ import PostList from "./PostList";
 import NewPostButton from "./common/NewPostButton";
 import { useDayPosts } from "../lib/hooks";
 
-export default function DayPosts({ posts, date, allowDrag, allowDrop, title }) {
+export default function DayPosts({
+	posts,
+	date,
+	allowDrag,
+	allowDrop,
+	title,
+	loadingState,
+}) {
 	const dayPosts = useDayPosts(posts, date);
 
 	const renderPostList = () => {
@@ -12,6 +19,7 @@ export default function DayPosts({ posts, date, allowDrag, allowDrop, title }) {
 			date: date,
 			posts: dayPosts,
 			allowDrop: true,
+			loadingState,
 		};
 
 		// Drag control

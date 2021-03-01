@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useCallback } from "react";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
+import { dateFormat } from "../lib/utils";
 import {
 	format,
 	addDays,
@@ -11,7 +12,6 @@ import {
 	startOfToday,
 } from "date-fns";
 
-import { dateFormat } from "../lib/utils";
 import { useFetchScheduledPosts } from "../lib/hooks";
 
 import PostsContext from "../PostsContext";
@@ -43,7 +43,7 @@ export default function Calendar() {
 		});
 	}, [refetch, monthCount, viewOptionsDispatch]);
 
-	useFetchScheduledPosts(viewRange.start, viewRange.end);
+	const isLoading = useFetchScheduledPosts(viewRange.start, viewRange.end);
 
 	const renderDaysHeaderRow = useCallback(() => {
 		const days = [];
@@ -88,6 +88,7 @@ export default function Calendar() {
 							posts={scheduled}
 							allowDrag={true}
 							renderEmpty={true}
+							loadingState={isLoading}
 						/>
 					</Day>
 				);
@@ -104,7 +105,7 @@ export default function Calendar() {
 			days = [];
 		}
 		return <div className="body">{rows}</div>;
-	}, [viewRange.end, viewRange.start, scheduled]);
+	}, [viewRange.end, viewRange.start, scheduled, isLoading]);
 
 	const renderCalendar = () => {
 		return (
