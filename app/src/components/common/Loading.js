@@ -1,8 +1,8 @@
 import React from "react";
 
-export default function Loading() {
+export default function Loading({ className }) {
 	return (
-		<div className="loadingOverlay">
+		<div className={`loadingOverlay ${className}`}>
 			<div className="roller">
 				<div></div>
 				<div></div>

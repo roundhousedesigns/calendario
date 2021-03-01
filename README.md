@@ -31,7 +31,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
         -   Delete (icon top right) // MAYBE NOT
 -   Post Edit
     -   add cats, tags
-    -   fancy up the interface
     -   ~~add delete~~
     -   ~~add excerpt~~
     -   ~~featured image show, but link to full Edit screen~~

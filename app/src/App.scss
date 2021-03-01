@@ -43,13 +43,8 @@ body {
 		"header header"
 		"main   sidebar";
 
-	&__header,
-	&__main,
-	&__sidebar {
-		background: var(--neutralColor);
-	}
-
 	&__header {
+		background: var(--neutralColor);
 		grid-area: header;
 		display: block;
 		width: 100%;
@@ -126,10 +121,13 @@ body {
 
 	&__sidebar {
 		grid-area: sidebar;
-		padding: 12px;
-		margin-bottom: 3em;
 		width: 100%;
-		border: 1px solid var(--borderColor);
+
+		&__inner {
+			background-color: var(--neutralColor);
+			padding: 12px;
+			border: 1px solid var(--borderColor);
+		}
 	}
 
 	button {
@@ -274,9 +272,7 @@ body {
 	width: 100%;
 	height: 100%;
 	margin: 0;
-	background: var(--neutralColor);
-	border: 1px solid var(--borderColor);
-	overflow: auto;
+	overflow-y: auto;
 
 	&__calendar,
 	&__list {
@@ -284,10 +280,18 @@ body {
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100%;
+		background: var(--neutralColor);
+		border: 1px solid var(--borderColor);
 	}
 
 	&__calendar {
+		padding: 12px;
+
+		&__inner {
+			background-color: var(--neutralColor);
+			border: 1px solid var(--borderColor);
+		}
+
 		.days {
 			text-transform: uppercase;
 			font-weight: 400;
@@ -705,12 +709,20 @@ body {
 }
 
 .loadingOverlay {
+	background-color: transparentize($color: gray, $amount: 0.9);
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 9999;
+	transition: all 0.25s ease-out;
+	opacity: 0;
+	z-index: -1;
+
+	&.active {
+		opacity: 1;
+		z-index: 9999;
+	}
 
 	.roller {
 		display: inline-block;
@@ -732,7 +744,7 @@ body {
 				width: 7px;
 				height: 7px;
 				border-radius: 50%;
-				background: #dfc;
+				background: rgb(255, 185, 81);
 				margin: -4px 0 0 -4px;
 			}
 

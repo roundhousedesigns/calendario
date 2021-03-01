@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from "react";
 import DayPosts from "./DayPosts";
-import Loading from "./common/Loading";
 import { dateFormat } from "../lib/utils";
 import {
 	format,
@@ -46,7 +45,7 @@ export default function List() {
 		});
 	}, [refetch, monthCount, viewOptionsDispatch]);
 
-	const isLoading = useFetchScheduledPosts(viewRange.start, viewRange.end);
+	useFetchScheduledPosts(viewRange.start, viewRange.end);
 
 	const renderDays = () => {
 		let days = [];
@@ -92,7 +91,6 @@ export default function List() {
 
 	return (
 		<div className="view__list">
-			{isLoading ? <Loading /> : null}
 			{viewRange.start !== null && viewRange.end !== null
 				? renderList()
 				: null}

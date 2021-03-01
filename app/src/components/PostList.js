@@ -176,7 +176,7 @@ export default function PostList({
 
 		return (
 			<>
-				{isLoading ? <Loading /> : null}
+				<Loading className={isLoading ? "active" : null} />
 				<ul {...listProps}>
 					{posts.map((post, index) => (
 						<Post

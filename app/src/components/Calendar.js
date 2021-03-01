@@ -43,7 +43,7 @@ export default function Calendar() {
 		});
 	}, [refetch, monthCount, viewOptionsDispatch]);
 
-	const isLoading = useFetchScheduledPosts(viewRange.start, viewRange.end);
+	useFetchScheduledPosts(viewRange.start, viewRange.end);
 
 	const renderDaysHeaderRow = useCallback(() => {
 		const days = [];
@@ -88,7 +88,6 @@ export default function Calendar() {
 							posts={scheduled}
 							allowDrag={true}
 							renderEmpty={true}
-							loadingState={isLoading}
 						/>
 					</Day>
 				);
@@ -105,14 +104,14 @@ export default function Calendar() {
 			days = [];
 		}
 		return <div className="body">{rows}</div>;
-	}, [viewRange.end, viewRange.start, scheduled, isLoading]);
+	}, [viewRange.end, viewRange.start, scheduled]);
 
 	const renderCalendar = () => {
 		return (
-			<>
+			<div className="view__calendar__inner">
 				{renderDaysHeaderRow()}
 				{renderDays()}
-			</>
+			</div>
 		);
 	};
 
