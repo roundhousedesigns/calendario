@@ -17,7 +17,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## Bugs
 
--   Nothing atm...
+-   Tell me all the things
 
 ## TODO
 
