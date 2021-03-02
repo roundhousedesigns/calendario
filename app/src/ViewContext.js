@@ -42,13 +42,6 @@ export function viewReducer(state, action) {
 				},
 			};
 
-		// TODO see if RESET_VIEW is used...
-		case "RESET_VIEW":
-			return {
-				...state,
-				viewRange: initialViewOptions.viewRange,
-			};
-
 		default:
 			return state;
 	}

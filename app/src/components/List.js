@@ -22,7 +22,6 @@ export default function List() {
 		postsDispatch,
 	} = useContext(PostsContext);
 
-	//TODO Maybe split this into a separate monthCount for list and calendar (currently shared value)?
 	const {
 		viewOptions: { monthCount, viewRange },
 		viewOptionsDispatch,
