@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import QuickLinks from "./common/QuickLinks";
 import { postStatuses } from "../lib/utils";
 import { isEmpty } from "lodash";
 import { isPast, isToday } from "date-fns";
@@ -7,7 +8,7 @@ import { decode } from "html-entities";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-export default function Post({ post, index, allowDrag }) {
+export default function Post({ post, index, unscheduled, allowDrag }) {
 	const {
 		posts: { currentPost },
 		postsDispatch,
@@ -18,6 +19,7 @@ export default function Post({ post, index, allowDrag }) {
 	} = useContext(DragContext);
 	const [colors, setColors] = useState({});
 	const [date, setDate] = useState(new Date());
+	const [isHovered, setIsHovered] = useState(false);
 
 	useEffect(() => {
 		setDate(new Date(post.post_date));
@@ -49,6 +51,11 @@ export default function Post({ post, index, allowDrag }) {
 	const handleDragEnd = () => draggedPostDispatch({ type: "END" });
 
 	const handleClick = (e) => {
+		// Skip if clicking a QuickLink button
+		if (e.target.classList.contains("icon")) {
+			return;
+		}
+
 		let unscheduled =
 			e.target.classList.contains("unscheduledDrafts") ||
 			e.target.parentNode.classList.contains("unscheduledDrafts")
@@ -102,7 +109,14 @@ export default function Post({ post, index, allowDrag }) {
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
 				onClick={handleClick}
+				onMouseEnter={() => setIsHovered(true)}
+				onMouseLeave={() => setIsHovered(false)}
 			>
+				<QuickLinks
+					className={isHovered ? "visible" : "hidden"}
+					post={post}
+					unscheduled={unscheduled}
+				/>
 				<p
 					className="postData"
 					style={{

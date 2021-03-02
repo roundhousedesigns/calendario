@@ -21,12 +21,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   Hover a post:
-    -   Links
-        -   Edit
-        -   View (icon top left)
-        -   Unschedule (icon somewhere)
-        -   Delete (icon top right) // MAYBE NOT
 -   Post Edit
     -   add cats, tags
     -   ~~add delete~~
@@ -35,6 +29,11 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
+-   ~~Hover a post:~~
+    -   ~~Links~~
+        -   ~~Edit~~
+        -   ~~View~~
+        -   ~~Unschedule/Schedule~~
 -   ~~Load/fetch animations~~
 -   ~~drag and drop post order in Unscheduled~~
 -   ~~Scroll within calendar and list views~~

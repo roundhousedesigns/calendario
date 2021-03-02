@@ -162,7 +162,7 @@ export default function EditPost() {
 						type: "COMPLETE",
 					});
 
-					// keep this?
+					// TODO keep this?
 					postsDispatch({
 						type: "SET_CURRENTPOST",
 						post: post,

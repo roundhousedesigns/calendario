@@ -169,7 +169,6 @@ export default function PostList({
 							? format(post.post_date, dateFormat.date)
 							: format(date, dateFormat.date),
 				},
-				// unscheduled: date === false ? true : false,
 				unscheduled: overUnscheduled,
 			});
 
@@ -204,6 +203,7 @@ export default function PostList({
 							post={post}
 							key={post.id}
 							index={index}
+							unscheduled={date === false ? true : false}
 							allowDrag={allowDrag}
 						/>
 					))}

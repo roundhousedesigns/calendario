@@ -329,7 +329,7 @@ body {
 				height: auto;
 				min-height: 7em;
 				border-right: 1px solid var(--borderColor);
-				overflow: hidden;
+				// overflow: hidden;
 				transition: 0.25s ease-out;
 				display: flex;
 				flex-direction: column;
@@ -521,6 +521,7 @@ body {
 		cursor: pointer;
 		padding: 3px 0;
 		margin: 0;
+		position: relative;
 
 		.postData {
 			pointer-events: none;
@@ -634,6 +635,54 @@ body {
 					font-size: 1.2em;
 					margin: 0 0 6px;
 				}
+			}
+		}
+	}
+}
+
+.quickLinks {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	display: none;
+
+	&.visible {
+		display: block;
+	}
+
+	button,
+	a {
+		&.icon {
+			background-color: white;
+			border-radius: 50%;
+			border: 1px solid var(--textColor);
+			position: absolute;
+			padding: 3px;
+			margin: 0;
+			font-size: 0.9em;
+			z-index: 999;
+			text-decoration: none;
+
+			&:hover {
+				background-color: var(--mainColor-light);
+			}
+
+			&.top {
+				top: -5px;
+			}
+
+			&.right {
+				right: -8px;
+			}
+
+			&.bottom {
+				bottom: -5px;
+			}
+
+			&.left {
+				left: -8px;
 			}
 		}
 	}

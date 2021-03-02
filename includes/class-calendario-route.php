@@ -54,15 +54,6 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $post_base . '/updateUnscheduledDraftOrder/(?P<ids>.*?)', array(
-			array(
-				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'update_unscheduled_post_order' ),
-				'permission_callback' => array( $this, 'update_item_permissions_check' ),
-				'args'                => $this->get_endpoint_args_for_item_schema(),
-			),
-		) );
-
 		register_rest_route( $namespace, '/' . $user_base . '/(?P<option>[\w]+)/(?P<value>[\w]+)', array(
 			array(
 				'methods'             => WP_REST_Server::READABLE,
