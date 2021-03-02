@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import QuickLinks from "./common/QuickLinks";
+import PostLinks from "./PostLinks";
 import { postStatuses } from "../lib/utils";
 import { isEmpty } from "lodash";
 import { isPast, isToday } from "date-fns";
@@ -112,7 +112,7 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
 			>
-				<QuickLinks
+				<PostLinks
 					className={isHovered && !isDragging ? "visible" : "hidden"}
 					post={post}
 					unscheduled={unscheduled}
