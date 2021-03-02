@@ -404,6 +404,7 @@ export default function EditPost() {
 										value="Yes"
 										autoFocus={true}
 									/>
+									{/* TODO bind ESC to cancel */}
 									<input
 										type="button"
 										onClick={() =>
