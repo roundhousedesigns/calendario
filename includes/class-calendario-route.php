@@ -701,6 +701,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_excerpt' => $item->post_excerpt,
 			'image'        => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),
 			'edit_link'    => get_edit_post_link( $item->ID ),
+			'view_link'    => get_the_permalink( $item->ID ),
 		];
 	}
 

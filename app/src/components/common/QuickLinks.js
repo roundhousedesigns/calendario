@@ -7,7 +7,7 @@ import { routeBase } from "../../lib/utils";
 import { decode } from "html-entities";
 
 export default function QuickLinks({ post, className, unscheduled }) {
-	const { id, edit_link } = post;
+	const { id, edit_link, view_link } = post;
 	const { postsDispatch } = useContext(PostsContext);
 	const [updatePost, updatePostDispatch] = useReducer(
 		updateReducer,
@@ -89,15 +89,20 @@ export default function QuickLinks({ post, className, unscheduled }) {
 		<div className={`quickLinks ${className}`}>
 			<a
 				className="icon top left quickLinks__view"
-				href={decode(edit_link)}
+				href={view_link}
 				target="_blank"
 				rel="noreferrer"
 			>
 				open_in_new
 			</a>
-			<button className="icon top right quickLinks__edit">
+			<a
+				className="icon top right quickLinks__edit"
+				href={decode(edit_link)}
+				target="_blank"
+				rel="noreferrer"
+			>
 				mode_edit
-			</button>
+			</a>
 			{unscheduled ? (
 				<button
 					className="icon quickLinks__schedule bottom right"

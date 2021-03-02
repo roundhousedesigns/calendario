@@ -113,7 +113,7 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 				onMouseLeave={() => setIsHovered(false)}
 			>
 				<QuickLinks
-					className={isHovered ? "visible" : "hidden"}
+					className={isHovered && !isDragging ? "visible" : "hidden"}
 					post={post}
 					unscheduled={unscheduled}
 				/>
