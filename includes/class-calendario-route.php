@@ -573,6 +573,8 @@ class Calendario_Route extends WP_REST_Controller {
 
 		$posts = $this->get_unscheduled_item_ids();
 
+		$newIndex = $newIndex === false ? count( $posts ) : $newIndex;
+
 		if ( $currentIndex === '' ) {
 			// newly unscheduled, insert at position
 			array_splice( $posts, $newIndex, 0, $id );
@@ -604,11 +606,8 @@ class Calendario_Route extends WP_REST_Controller {
 		];
 
 		if ( $postData['unscheduled'] === true ) {
-			$this->reorder_unscheduled_post( $params['ID'], $postData['draggedTo'] );
-
-			// $item['meta_input'] = [
-			// 	RHD_UNSCHEDULED_INDEX => $postData['draggedTo'],
-			// ];
+			$draggedTo = isset( $postData['draggedTo'] ) ? $postData['draggedTo'] : false;
+			$this->reorder_unscheduled_post( $params['ID'], $draggedTo );
 
 			// Make sure post is either Draft or Private
 			$post_status = get_post_status( $item['ID'] );

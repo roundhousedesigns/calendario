@@ -49,7 +49,7 @@ export default function PostList({
 		};
 	}, [loadingState]);
 
-	// DND update trigger!
+	// Fire the update!
 	useEffect(() => {
 		if (updatePost.updateNow === true && post.id !== "undefined") {
 			updatePostDispatch({
@@ -118,11 +118,6 @@ export default function PostList({
 		if (allowDrag === false) return;
 
 		if (e.currentTarget.classList.contains("unscheduledDrafts")) {
-			// let overNow =
-			// 	draggedFrom === false
-			// 		? Number(e.target.dataset.index) + 1
-			// 		: Number(e.target.dataset.index);
-
 			let overNow = Number(e.target.dataset.index);
 
 			let draggedOver = false;
