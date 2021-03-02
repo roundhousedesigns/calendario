@@ -628,6 +628,12 @@ body {
 				float: right;
 			}
 
+			input {
+				&:focus {
+					outline: 1px solid var(--mainColor-light);
+				}
+			}
+
 			&.confirm {
 				text-align: center;
 

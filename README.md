@@ -60,6 +60,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 ## Questions
 
 -   Do we actually want to block dragging/dropping on past dates + future? (currently allowed)
+-   "Delete" quicklink? dangerous? useful?
 
 ## Don't Forget
 

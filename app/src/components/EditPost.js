@@ -402,6 +402,7 @@ export default function EditPost() {
 										type="button"
 										onClick={deleteHandler}
 										value="Yes"
+										autoFocus={true}
 									/>
 									<input
 										type="button"
