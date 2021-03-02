@@ -5,6 +5,18 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
+.dropAreaProps {
+	content: "\0a00";
+	font-size: 0.5em;
+	opacity: 0;
+	text-transform: uppercase;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 :root {
 	--mainColor: #1a8fff;
 	--mainColor-light: #53cbf1;
@@ -157,7 +169,7 @@ body {
 	}
 
 	.widgetTitle {
-		margin: 0 1em 0 0;
+		margin: 0 0 1em;
 		font-size: 1.2em;
 	}
 }
@@ -171,7 +183,8 @@ body {
 		background-color: var(--borderColor);
 		height: 100%;
 		border-radius: var(--borderRadius);
-		padding: 22px 6px;
+		padding: 24px 6px;
+		margin: 0;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
@@ -185,26 +198,18 @@ body {
 				position: relative;
 				transition: all 0.15s ease;
 
-				&::before {
-					content: "\0a00";
-					font-size: 0.5em;
-					opacity: 0;
-					text-transform: uppercase;
-					width: 100%;
-					height: 100%;
-					display: flex;
-					justify-content: center;
-					align-items: center;
-					// color: var(--mainColor);
-					// border: 2px dashed var(--mainColor);
-					// border-radius: var(--borderRadius);
-					// background-color: var(--textColor-light);
-					// position: absolute;
+				&.fromBelow,
+				&.fromNowhere {
+					&::before {
+						@extend .dropAreaProps;
+					}
 				}
 
-				// & ~ .post {
-				// 	transform: translateY(32px);
-				// }
+				&.fromAbove {
+					&::after {
+						@extend .dropAreaProps;
+					}
+				}
 			}
 		}
 	}

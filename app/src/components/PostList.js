@@ -28,7 +28,7 @@ export default function PostList({
 		postsDispatch,
 	} = useContext(PostsContext);
 	const {
-		draggedPost: { post },
+		draggedPost: { post, draggedTo, draggedFrom, overUnscheduled },
 		draggedPostDispatch,
 	} = useContext(DragContext);
 	const [updatePost, updatePostDispatch] = useReducer(
@@ -49,6 +49,7 @@ export default function PostList({
 		};
 	}, [loadingState]);
 
+	// DND update trigger!
 	useEffect(() => {
 		if (updatePost.updateNow === true && post.id !== "undefined") {
 			updatePostDispatch({
@@ -60,6 +61,10 @@ export default function PostList({
 				params: filterUnchangedParams(updatePost.params, post),
 				unscheduled: updatePost.unscheduled,
 			};
+
+			if (draggedTo !== null) {
+				postData.draggedTo = draggedTo;
+			}
 
 			if (isEmpty(postData)) {
 				return { data: "Update not necessary.", error: true };
@@ -105,19 +110,32 @@ export default function PostList({
 
 			fetchData();
 		}
-	}, [updatePost, draggedPostDispatch, post, postsDispatch]);
+	}, [updatePost, draggedTo, draggedPostDispatch, post, postsDispatch]);
 
 	const handleDragOver = (e) => {
 		e.preventDefault();
 
-		if (allowDrag !== false) {
-			if (e.currentTarget.classList.contains("unscheduledDrafts")) {
-				let draggedTo = e.target.dataset.index
-					? Number(e.target.dataset.index)
-					: false;
+		if (allowDrag === false) return;
 
-				if (draggedTo === false) {
-					let mouseY = e.pageY - e.currentTarget.offsetTop;
+		if (e.currentTarget.classList.contains("unscheduledDrafts")) {
+			// let overNow =
+			// 	draggedFrom === false
+			// 		? Number(e.target.dataset.index) + 1
+			// 		: Number(e.target.dataset.index);
+
+			let overNow = Number(e.target.dataset.index);
+
+			let draggedOver = false;
+			if (draggedFrom === overNow) {
+				return;
+			} else {
+				draggedOver = Number.isNaN(overNow) ? false : overNow;
+			}
+
+			if (draggedOver !== draggedTo) {
+				if (draggedOver === false) {
+					let targetRect = e.currentTarget.getBoundingClientRect();
+					let mouseY = e.clientY - targetRect.top;
 					const listItems = e.currentTarget.childNodes;
 					let itemCount = listItems.length;
 
@@ -125,17 +143,24 @@ export default function PostList({
 						listItems.length === 0 ||
 						mouseY < listItems[0].offsetTop
 					) {
-						draggedTo = 0;
+						draggedOver = 0;
+					} else if (mouseY >= listItems[itemCount - 1].offsetTop) {
+						draggedOver = itemCount;
 					} else {
-						draggedTo = itemCount;
+						draggedOver = itemCount - 1;
 					}
 				}
 
 				draggedPostDispatch({
 					type: "DRAGGING_OVER_UNSCHEDULED",
-					draggedTo: draggedTo,
+					draggedOver,
 				});
 			}
+		} else if (overUnscheduled === true) {
+			// Only update if necessary
+			draggedPostDispatch({
+				type: "DRAGGING_OVER_SCHEDULED",
+			});
 		}
 	};
 
@@ -149,7 +174,8 @@ export default function PostList({
 							? format(post.post_date, dateFormat.date)
 							: format(date, dateFormat.date),
 				},
-				unscheduled: date === false ? true : false,
+				// unscheduled: date === false ? true : false,
+				unscheduled: overUnscheduled,
 			});
 
 			if (currentPost.id === post.id) {
@@ -181,7 +207,6 @@ export default function PostList({
 					{posts.map((post, index) => (
 						<Post
 							post={post}
-							order={posts}
 							key={post.id}
 							index={index}
 							allowDrag={allowDrag}

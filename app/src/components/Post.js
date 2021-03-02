@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, /*useRef,*/ useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { postStatuses } from "../lib/utils";
 import { isEmpty } from "lodash";
 import { isPast, isToday } from "date-fns";
@@ -7,12 +7,15 @@ import { decode } from "html-entities";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-export default function Post({ post, index, allowDrag, order }) {
+export default function Post({ post, index, allowDrag }) {
 	const {
 		posts: { currentPost },
 		postsDispatch,
 	} = useContext(PostsContext);
-	const { draggedPost, draggedPostDispatch } = useContext(DragContext);
+	const {
+		draggedPost: { isDragging, draggedFrom, draggedTo },
+		draggedPostDispatch,
+	} = useContext(DragContext);
 	const [colors, setColors] = useState({});
 	const [date, setDate] = useState(new Date());
 
@@ -40,7 +43,6 @@ export default function Post({ post, index, allowDrag, order }) {
 			draggedFrom: draggingUnscheduled
 				? Number(e.currentTarget.dataset.index)
 				: false,
-			originalUnscheduledOrder: order,
 		});
 	};
 
@@ -65,15 +67,20 @@ export default function Post({ post, index, allowDrag, order }) {
 			"post",
 			`post-id-${post.id} status__${post.post_status}`,
 		];
-		if (draggedPost.isDragging) {
-			if (
-				draggedPost.draggedTo === Number(index) &&
-				draggedPost.draggedTo !== draggedPost.draggedFrom
-			) {
+		if (isDragging) {
+			if (draggedTo === Number(index)) {
 				classes.push("dropArea");
+
+				if (draggedFrom === false) {
+					classes.push("fromNowhere");
+				} else if (draggedFrom < draggedTo) {
+					classes.push("fromAbove");
+				} else if (draggedFrom > draggedTo) {
+					classes.push("fromBelow");
+				}
 			}
 
-			if (draggedPost.draggedFrom === Number(index)) {
+			if (draggedFrom === Number(index)) {
 				classes.push("dragging");
 			}
 		}
@@ -84,7 +91,7 @@ export default function Post({ post, index, allowDrag, order }) {
 
 		return (
 			<li
-				// ref={node}
+				id={post.id}
 				className={classes.join(" ")}
 				data-index={index}
 				draggable={

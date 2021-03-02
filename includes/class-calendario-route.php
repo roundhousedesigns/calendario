@@ -106,13 +106,8 @@ class Calendario_Route extends WP_REST_Controller {
 				'after'  => $start,
 			),
 			'meta_query'     => array(
-				'relation' => 'OR',
 				array(
-					'key'   => RHD_UNSCHEDULED_META_KEY,
-					'value' => 0,
-				),
-				array(
-					'key'     => RHD_UNSCHEDULED_META_KEY,
+					'key'     => RHD_UNSCHEDULED_INDEX,
 					'compare' => 'NOT EXISTS',
 				),
 			),
@@ -140,20 +135,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_unscheduled_items( $request ) {
-		$items = get_posts( array(
-			'meta_query'     => array(
-				array(
-					'key'     => RHD_UNSCHEDULED_META_KEY,
-					'compare' => '=',
-					'value'   => 1,
-				),
-			),
-			'orderby'        => 'meta_value_num',
-			'order'          => 'ASC',
-			'meta_key'       => RHD_UNSCHEDULED_META_KEY,
-			'posts_per_page' => -1,
-			'post_status'    => 'any',
-		) );
+		$items = $this->query_unscheduled_items();
 
 		$data = [
 			'posts' => [],
@@ -167,21 +149,41 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get one item from the collection
+	 * Runs the query for all unscheduled posts
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
+	 * @return array The queried posts.
 	 */
-	// public function get_item( $request ) {
-	// 	$data = $this->prepare_item_for_response( $item, $request );
+	protected function query_unscheduled_items() {
+		return get_posts( array(
+			'meta_query'     => array(
+				array(
+					'key'     => RHD_UNSCHEDULED_INDEX,
+					'compare' => 'EXISTS',
+				),
+			),
+			'orderby'        => 'meta_value_num',
+			'order'          => 'ASC',
+			'meta_key'       => RHD_UNSCHEDULED_INDEX,
+			'posts_per_page' => -1,
+			'post_status'    => 'any',
+		) );
+	}
 
-	// 	//return a response or error based on some conditional
-	// 	if ( 1 == 1 ) {
-	// 		return new WP_REST_Response( $data, 200 );
-	// 	} else {
-	// 		return new WP_Error( 'code', __( 'message', 'rhd' ) );
-	// 	}
-	// }
+	/**
+	 * Creates an array of unscheduled post IDs
+	 *
+	 * @return array The queried post IDs.
+	 */
+	protected function get_unscheduled_item_ids() {
+		$posts = $this->query_unscheduled_items();
+
+		$ids = [];
+		foreach ( $posts as $post ) {
+			$ids[] = $post->ID;
+		}
+
+		return $ids;
+	}
 
 	/**
 	 * Update one item from the collection
@@ -231,7 +233,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$items = $this->prepare_unscheduled_items_for_database( $request );
 
 		for ( $i = 0; $i < count( $items ); $i++ ) {
-			$result = update_post_meta( $items[$i], RHD_UNSCHEDULED_META_KEY, $i );
+			$result = update_post_meta( $items[$i], RHD_UNSCHEDULED_INDEX, $i );
 		}
 
 		return new WP_REST_Response( 'Unscheduled Draft order updated.', 200 );
@@ -563,6 +565,30 @@ class Calendario_Route extends WP_REST_Controller {
 		return $this->create_item_permissions_check( $request );
 	}
 
+	protected function reorder_unscheduled_post( $id, $newIndex ) {
+		$currentIndex = get_post_meta( $id, RHD_UNSCHEDULED_INDEX, true );
+		if ( $currentIndex === $newIndex ) {
+			return;
+		}
+
+		$posts = $this->get_unscheduled_item_ids();
+
+		if ( $currentIndex === '' ) {
+			// newly unscheduled, insert at position
+			array_splice( $posts, $newIndex, 0, $id );
+		} else {
+			$old = array_splice( $posts, $currentIndex, 1 );
+			array_splice( $posts, $newIndex, 0, $old );
+			// reordering
+		}
+
+		$i = 0;
+		foreach ( $posts as $id ) {
+			update_post_meta( $id, RHD_UNSCHEDULED_INDEX, $i );
+			$i++;
+		}
+	}
+
 	/**
 	 * Prepare the item for create or update operation
 	 *
@@ -578,9 +604,11 @@ class Calendario_Route extends WP_REST_Controller {
 		];
 
 		if ( $postData['unscheduled'] === true ) {
-			$item['meta_input'] = [
-				RHD_UNSCHEDULED_META_KEY => 1,
-			];
+			$this->reorder_unscheduled_post( $params['ID'], $postData['draggedTo'] );
+
+			// $item['meta_input'] = [
+			// 	RHD_UNSCHEDULED_INDEX => $postData['draggedTo'],
+			// ];
 
 			// Make sure post is either Draft or Private
 			$post_status = get_post_status( $item['ID'] );
@@ -588,9 +616,7 @@ class Calendario_Route extends WP_REST_Controller {
 				$item['post_status'] = 'draft';
 			}
 		} else {
-			$item['meta_input'] = [
-				RHD_UNSCHEDULED_META_KEY => 0,
-			];
+			delete_post_meta( $params['ID'], RHD_UNSCHEDULED_INDEX );
 		}
 
 		foreach ( $postData['params'] as $key => $value ) {
