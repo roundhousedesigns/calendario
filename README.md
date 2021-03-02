@@ -21,8 +21,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   Load/fetch animations
--   MF drag and drop post order in Unscheduled
 -   Hover a post:
     -   Links
         -   Edit
@@ -37,6 +35,8 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
+-   ~~Load/fetch animations~~
+-   ~~drag and drop post order in Unscheduled~~
 -   ~~Scroll within calendar and list views~~
 -   ~~Clicking outside Edit modal cancels operation~~
 -   ~~New Post button on hover on a calendar day~~
