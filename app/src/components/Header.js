@@ -17,9 +17,10 @@ export default function Header() {
 						start={viewRange.start}
 						end={viewRange.end}
 					/>
+					<ViewOptions />
 				</div>
 				<div className="right">
-					<ViewOptions />
+					Logos! Titles! Adventures!
 				</div>
 			</div>
 		</header>

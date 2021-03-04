@@ -128,6 +128,15 @@ body {
 
 				&.left {
 					grid-area: left;
+					flex-direction: column;
+
+					& > div {
+						flex-basis: 100%;
+					}
+
+					.viewOptions {
+						margin-bottom: 1em;
+					}
 				}
 			}
 
@@ -825,10 +834,27 @@ body {
 		}
 
 		button {
-			margin: 0 3px;
-
 			&.active {
-				background-color: var(--mainColor-light);
+				background-color: var(--textColor);
+				color: var(--neutralColor);
+			}
+		}
+
+		&__viewMode {
+			button {
+				border-color: var(--textColor-light);
+
+				&:first-child {
+					border-top-right-radius: 0;
+					border-bottom-right-radius: 0;
+					border-right: none;
+				}
+
+				&:last-child {
+					border-top-left-radius: 0;
+					border-bottom-left-radius: 0;
+					border-left: none;
+				}
 			}
 		}
 	}
