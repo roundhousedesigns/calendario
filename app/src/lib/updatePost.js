@@ -1,6 +1,6 @@
 export const initialUpdateState = {
 	updateNow: false,
-	delete: false,
+	trash: false,
 	params: {},
 	unscheduled: false,
 };
@@ -20,9 +20,9 @@ export function updateReducer(state, action) {
 				updateNow: false,
 			};
 
-		case "DELETE":
+		case "TRASH":
 			return {
-				delete: true,
+				trash: true,
 				updateNow: true,
 				params: action.params,
 			};

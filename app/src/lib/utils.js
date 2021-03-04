@@ -16,7 +16,7 @@ if (DEBUG_MODE !== true) {
 	routeBase = "http://localhost/wp-json/calendario/v1/posts";
 	postStatuses = {
 		publish: {
-			name: "Publish",
+			name: "Published",
 			backgroundColor: "cornflowerblue",
 			color: "white",
 		},
@@ -26,12 +26,12 @@ if (DEBUG_MODE !== true) {
 			color: "white",
 		},
 		future: {
-			name: "Future",
+			name: "Scheduled",
 			backgroundColor: "lightseagreen",
 			color: "white",
 		},
 		pending: {
-			name: "Pending",
+			name: "Pending Review",
 			backgroundColor: "lightcoral",
 			color: "white",
 		},

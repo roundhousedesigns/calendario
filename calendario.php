@@ -19,12 +19,12 @@ define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-m
 define( 'RHD_UNSCHEDULED_INDEX', 'rhd_unscheduled' );
 define( 'RHD_CALENDARIO_POST_STATUS_COLORS', array(
 	'publish' => array(
-		'name'            => 'Publish',
+		'name'            => 'Published',
 		'backgroundColor' => 'cornflowerblue',
 		'color'           => 'white',
 	),
 	'future'  => array(
-		'name'            => 'Future',
+		'name'            => 'Scheduled',
 		'backgroundColor' => 'lightseagreen',
 		'color'           => 'white',
 	),
@@ -34,7 +34,7 @@ define( 'RHD_CALENDARIO_POST_STATUS_COLORS', array(
 		'color'           => 'white',
 	),
 	'pending' => array(
-		'name'            => 'Pending',
+		'name'            => 'Pending Review',
 		'backgroundColor' => 'lightcoral',
 		'color'           => 'white',
 	),

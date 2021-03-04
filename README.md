@@ -22,18 +22,23 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 ## TODO
 
 -   Post Edit
+    -   Dismiss button
     -   add cats, tags
     -   ~~add delete~~
     -   ~~add excerpt~~
     -   ~~featured image show, but link to full Edit screen~~
+-   Go to date (datepicker control for view)
+-   Trash area (show only when posts are in trash)?
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
+-   ~~Toggle post status visibility~~
 -   ~~Hover a post:~~
     -   ~~Links~~
         -   ~~Edit~~
         -   ~~View~~
         -   ~~Unschedule/Schedule~~
+        -   ~~Trash~~
 -   ~~Load/fetch animations~~
 -   ~~drag and drop post order in Unscheduled~~
 -   ~~Scroll within calendar and list views~~
@@ -54,7 +59,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## Maybes
 
--   Cache posts instead of always refetching?
 -   Abbreviate long titles?
 
 ## Questions

@@ -131,3 +131,52 @@ export const useFetchUnscheduledPosts = () => {
 
 	return isLoading;
 };
+
+export const useFetchTrashedPosts = () => {
+	const {
+		posts: { refetch },
+		postsDispatch,
+	} = useContext(PostsContext);
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		let url = `${routeBase}/trashed`;
+
+		// TODO: DEV MODE
+		var headers = {};
+		if (DEBUG_MODE !== true) {
+			headers["X-WP-Nonce"] = nonce;
+		}
+		// ODOT
+
+		const fetchData = async () => {
+			setIsLoading(true);
+
+			try {
+				const res = await fetch(url, {
+					headers,
+				});
+				const data = await res.json();
+
+				postsDispatch({
+					type: "SET_UNSCHEDULED",
+					posts: data.posts,
+					unscheduled: true,
+				});
+
+				setIsLoading(false);
+			} catch (error) {
+				console.log("REST error", error.message);
+				setIsLoading(false);
+			}
+		};
+
+		fetchData();
+
+		return () => {
+			setIsLoading(false);
+		};
+	}, [postsDispatch, refetch]);
+
+	return isLoading;
+};

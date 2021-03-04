@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import { addMonths, subMonths } from "date-fns";
+import { postStatuses } from "./lib/utils";
 
 const ViewContext = createContext({});
 export default ViewContext;
@@ -42,9 +43,24 @@ export function viewReducer(state, action) {
 				},
 			};
 
+		case "TOGGLE_STATUS":
+			console.log(state.statuses);
+			return {
+				...state,
+				statuses: {
+					...state.statuses,
+					[action.status]: !state.statuses[action.status],
+				},
+			};
+
 		default:
 			return state;
 	}
+}
+
+var statuses = {};
+for (const status in postStatuses) {
+	statuses[status] = true;
 }
 
 export const initialViewOptions = {
@@ -54,4 +70,5 @@ export const initialViewOptions = {
 		start: null,
 		end: null,
 	},
+	statuses,
 };

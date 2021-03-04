@@ -35,6 +35,55 @@
 	box-sizing: border-box;
 }
 
+@mixin postLinksGrid {
+	button,
+	a {
+		&.icon {
+			position: absolute;
+
+			&.top {
+				top: -5px;
+			}
+
+			&.right {
+				right: -8px;
+			}
+
+			&.bottom {
+				bottom: -5px;
+			}
+
+			&.left {
+				left: -8px;
+			}
+		}
+	}
+}
+
+@mixin postLinksList {
+	align-items: center;
+	justify-content: flex-end;
+	right: -11px;
+	top: -11px;
+	left: initial;
+	width: auto;
+	height: auto;
+
+	&.visible {
+		display: flex;
+	}
+
+	button,
+	a {
+		&.icon {
+			top: initial;
+			right: initial;
+			bottom: initial;
+			left: initial;
+		}
+	}
+}
+
 body {
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 	font-size: 1em;
@@ -212,6 +261,10 @@ body {
 				}
 			}
 		}
+	}
+
+	.postLinks {
+		@include postLinksList;
 	}
 
 	& + .newPost {
@@ -422,6 +475,10 @@ body {
 				}
 			}
 		}
+
+		.postLinks {
+			@include postLinksGrid;
+		}
 	}
 
 	&__list {
@@ -432,7 +489,7 @@ body {
 
 			&:hover {
 				.newPost {
-					display: inline;
+					opacity: 1;
 				}
 			}
 
@@ -444,7 +501,7 @@ body {
 			.newPost {
 				position: relative;
 				bottom: 1.5px;
-				display: none;
+				opacity: 0;
 			}
 		}
 
@@ -466,13 +523,17 @@ body {
 				}
 			}
 		}
+
+		.postLinks {
+			@include postLinksList;
+		}
 	}
 }
 
 .statusFilters {
 	.filters {
 		list-style: none;
-		padding: 0 12px;
+		padding: 0;
 		margin: 0;
 		line-height: 2;
 		display: flex;
@@ -482,16 +543,18 @@ body {
 		.filterItem {
 			display: flex;
 			flex: 1;
+			line-height: 1.1;
 			align-items: center;
 			flex-wrap: nowrap;
-			margin: 0 12px;
+			margin: 6px 12px;
 
 			.dot {
-				flex: 0 0 1em;
-				height: 1em;
-				width: 1em;
 				display: inline-block;
+				flex: 0 0 1.2rem;
+				height: 1.2rem;
 				border-radius: 50%;
+				border-width: 3px;
+				border-style: solid;
 				margin-right: 8px;
 			}
 
@@ -560,6 +623,8 @@ body {
 		width: 50%;
 		min-width: 300px;
 		height: auto;
+		max-height: 90%;
+		overflow: auto;
 		padding: 22px;
 		border-radius: var(--borderRadius);
 		border: 1px solid var(--borderColor);
@@ -596,6 +661,10 @@ body {
 					&.inactive {
 						opacity: 0.5;
 						pointer-events: none;
+						
+						input {
+							color: transparent;
+						}
 					}
 				}
 
@@ -623,7 +692,7 @@ body {
 	&__buttons {
 		margin-top: 12px;
 
-		&__delete {
+		&__trash {
 			&:not(.confirm) {
 				float: right;
 			}
@@ -664,33 +733,22 @@ body {
 			background-color: white;
 			border-radius: 50%;
 			border: 1px solid var(--textColor);
-			position: absolute;
 			padding: 3px;
 			margin: 0;
-			font-size: 0.9em;
+			font-size: 1rem;
 			z-index: 999;
 			text-decoration: none;
-			transition: all 0.1s ease-out;
+			transition: all 0.1s ease;
 
 			&:hover {
-				background-color: var(--textColor);
-				color: var(--neutralColor);
+				color: black;
+				transform: scale(1.15);
 			}
 
-			&.top {
-				top: -5px;
-			}
-
-			&.right {
-				right: -8px;
-			}
-
-			&.bottom {
-				bottom: -5px;
-			}
-
-			&.left {
-				left: -8px;
+			&__trash {
+				&:hover {
+					color: red;
+				}
 			}
 		}
 	}

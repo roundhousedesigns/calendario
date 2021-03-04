@@ -18,6 +18,7 @@ export const initialPosts = {
 	},
 	unscheduled: [],
 	scheduled: [],
+	trashed: [],
 };
 
 export function postsReducer(state, action) {
@@ -50,6 +51,19 @@ export function postsReducer(state, action) {
 			return {
 				...state,
 				unscheduled: unscheduledPosts,
+			};
+
+		case "SET_TRASHED":
+			let trashedPosts = action.posts;
+
+			// cast the date as a Date object
+			trashedPosts.forEach((post, index) => {
+				trashedPosts[index].post_date = new Date(post.post_date);
+			});
+
+			return {
+				...state,
+				trashed: trashedPosts,
 			};
 
 		case "REFETCH":

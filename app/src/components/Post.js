@@ -7,6 +7,7 @@ import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
+import ViewContext from "../ViewContext";
 
 export default function Post({ post, index, unscheduled, allowDrag }) {
 	const {
@@ -17,6 +18,9 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		draggedPost: { isDragging, draggedFrom, draggedTo },
 		draggedPostDispatch,
 	} = useContext(DragContext);
+	const {
+		viewOptions: { statuses },
+	} = useContext(ViewContext);
 	const [colors, setColors] = useState({});
 	const [date, setDate] = useState(new Date());
 	const [isHovered, setIsHovered] = useState(false);
@@ -65,7 +69,7 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		postsDispatch({
 			type: "SET_CURRENTPOST",
 			post: post,
-			unscheduled: unscheduled,
+			unscheduled,
 		});
 	};
 
@@ -100,6 +104,13 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 			<li
 				id={post.id}
 				className={classes.join(" ")}
+				style={
+					unscheduled === false && statuses[post.post_status] === true
+						? { visibility: "visible" }
+						: unscheduled === true
+						? { visibility: "visible" }
+						: { visibility: "hidden" }
+				}
 				data-index={index}
 				draggable={
 					allowDrag === true || (!isToday(date) && !isPast(date))

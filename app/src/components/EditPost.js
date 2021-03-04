@@ -86,7 +86,8 @@ export default function EditPost() {
 	const node = useRef();
 	const [date, setDate] = useState(new Date());
 	const [allowedStatuses, setAllowedStatuses] = useState({});
-	const [deletePostClicked, setDeletePostClicked] = useState(false);
+	const [datePickerDisabled, setDatePickerDisabled] = useState(false);
+	const [trashPostClicked, setTrashPostClicked] = useState(false);
 
 	const { post, editMode } = editPost;
 
@@ -116,6 +117,17 @@ export default function EditPost() {
 		setAllowedStatuses(statusList);
 	}, [date, post.unscheduled]);
 
+	useEffect(() => {
+		setDatePickerDisabled(
+			currentPost.post_date &&
+				(isToday(currentPost.post_date) ||
+					isPast(currentPost.post_date)) &&
+				currentPost.post_status === "publish"
+				? true
+				: false
+		);
+	}, [currentPost.post_date, currentPost.post_status]);
+
 	// Update the post
 	useEffect(() => {
 		if (updatePost.updateNow === true && currentPost.id !== "undefined") {
@@ -125,8 +137,8 @@ export default function EditPost() {
 
 			// Check if this is a new post
 			let url = `${routeBase}/`;
-			if (updatePost.delete === true) {
-				url += `delete/${currentPost.id}`;
+			if (updatePost.trash === true) {
+				url += `trash/${currentPost.id}`;
 			} else {
 				if (currentPost.id === 0) {
 					url += "new";
@@ -184,7 +196,7 @@ export default function EditPost() {
 		post,
 		draggedPostDispatch,
 		postsDispatch,
-		updatePost.delete,
+		updatePost.trash,
 		updatePost.params,
 		updatePost.updateNow,
 		updatePost.unscheduled,
@@ -245,9 +257,9 @@ export default function EditPost() {
 		});
 	};
 
-	const deleteHandler = () => {
+	const trashHandler = () => {
 		updatePostDispatch({
-			type: "DELETE",
+			type: "TRASH",
 			params: {
 				id: post.id,
 			},
@@ -257,7 +269,7 @@ export default function EditPost() {
 			type: "CLEAR",
 		});
 
-		setDeletePostClicked(false);
+		setTrashPostClicked(false);
 	};
 
 	const cancelHandler = () => editPostDispatch({ type: "CLEAR" });
@@ -279,6 +291,9 @@ export default function EditPost() {
 	};
 
 	const handleInputDateChange = (date) => {
+		if (date === null) {
+			date = new Date();
+		}
 		editPostDispatch({
 			type: "EDIT",
 			field: "post_date",
@@ -328,14 +343,7 @@ export default function EditPost() {
 									closeOnScroll={(e) => e.target === document}
 									selected={date}
 									onChange={handleInputDateChange}
-									disabled={
-										currentPost.post_date &&
-										(isToday(currentPost.post_date) ||
-											isPast(currentPost.post_date)) &&
-										currentPost.post_status === "publish"
-											? true
-											: false
-									}
+									disabled={datePickerDisabled}
 								/>
 							</div>
 							<div className="fieldGroup__field unscheduled">
@@ -392,15 +400,15 @@ export default function EditPost() {
 						</div>
 
 						<div className="editPost__buttons">
-							{deletePostClicked === true ? (
-								<div className="editPost__buttons__delete confirm">
+							{trashPostClicked === true ? (
+								<div className="editPost__buttons__trash confirm">
 									<p style={{ fontWeight: "bold" }}>
 										Are you sure you want to Trash this
 										post?
 									</p>
 									<input
 										type="button"
-										onClick={deleteHandler}
+										onClick={trashHandler}
 										value="Yes"
 										autoFocus={true}
 									/>
@@ -408,7 +416,7 @@ export default function EditPost() {
 									<input
 										type="button"
 										onClick={() =>
-											setDeletePostClicked(false)
+											setTrashPostClicked(false)
 										}
 										value="No"
 									/>
@@ -430,9 +438,9 @@ export default function EditPost() {
 									/>
 									<input
 										type="button"
-										className="editPost__buttons__delete"
+										className="editPost__buttons__trash"
 										onClick={() =>
-											setDeletePostClicked(true)
+											setTrashPostClicked(true)
 										}
 										value="Delete"
 									/>

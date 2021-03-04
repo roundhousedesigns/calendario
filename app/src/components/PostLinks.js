@@ -22,8 +22,8 @@ export default function PostLinks({ post, className, unscheduled }) {
 			});
 
 			let url = `${routeBase}/`;
-			if (updatePost.delete === true) {
-				url += `delete/${id}`;
+			if (updatePost.trash === true) {
+				url += `trash/${id}`;
 			} else {
 				url += `update/${id}`;
 			}
@@ -59,7 +59,7 @@ export default function PostLinks({ post, className, unscheduled }) {
 	}, [
 		id,
 		postsDispatch,
-		updatePost.delete,
+		updatePost.trash,
 		updatePost.params,
 		updatePost.updateNow,
 		updatePost.unscheduled,
@@ -85,10 +85,19 @@ export default function PostLinks({ post, className, unscheduled }) {
 		});
 	};
 
+	const trashPost = () => {
+		updatePostDispatch({
+			type: "TRASH",
+			params: {
+				id: id,
+			},
+		});
+	};
+
 	return (
 		<div className={`postLinks ${className}`}>
 			<a
-				className="icon top left postLinks__view"
+				className="icon top left icon__view"
 				href={view_link}
 				target="_blank"
 				rel="noreferrer"
@@ -97,7 +106,7 @@ export default function PostLinks({ post, className, unscheduled }) {
 				open_in_new
 			</a>
 			<a
-				className="icon top right postLinks__edit"
+				className="icon top right icon__edit"
 				href={decode(edit_link)}
 				target="_blank"
 				rel="noreferrer"
@@ -107,7 +116,7 @@ export default function PostLinks({ post, className, unscheduled }) {
 			</a>
 			{unscheduled ? (
 				<button
-					className="icon postLinks__schedule bottom right"
+					className="icon icon__schedule bottom right"
 					onClick={schedulePost}
 					title="Schedule this post"
 				>
@@ -115,13 +124,18 @@ export default function PostLinks({ post, className, unscheduled }) {
 				</button>
 			) : (
 				<button
-					className="icon postLinks__unschedule bottom right"
+					className="icon icon__unschedule bottom right"
 					onClick={unschedulePost}
 					title="Unschedule this post"
 				>
-					event_busy
+					drafts
 				</button>
 			)}
+			<button
+				className="icon icon__trash bottom left"
+				onClick={trashPost}
+				title="Trash this post"
+			>delete_forever</button>
 		</div>
 	);
 }

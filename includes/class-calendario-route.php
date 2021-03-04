@@ -27,6 +27,14 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
+		register_rest_route( $namespace, '/' . $post_base . '/trashed', array(
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_trashed_items' ),
+				'permission_callback' => array( $this, 'get_items_permissions_check' ),
+			),
+		) );
+
 		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
@@ -45,10 +53,10 @@ class Calendario_Route extends WP_REST_Controller {
 			),
 		) );
 
-		register_rest_route( $namespace, '/' . $post_base . '/delete/(?P<ID>\d+)', array(
+		register_rest_route( $namespace, '/' . $post_base . '/trash/(?P<ID>\d+)', array(
 			array(
 				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'delete_item' ),
+				'callback'            => array( $this, 'trash_item' ),
 				'permission_callback' => array( $this, 'update_item_permissions_check' ),
 				'args'                => $this->get_endpoint_args_for_item_schema(),
 			),
@@ -127,6 +135,29 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function get_unscheduled_items( $request ) {
 		$items = $this->query_unscheduled_items();
+
+		$data = [
+			'posts' => [],
+		];
+
+		foreach ( $items as $item ) {
+			$data['posts'][] = $this->prepare_item_for_response( $item, $request );
+		}
+
+		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Get a collection of items
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_trashed_items( $request ) {
+		$items = get_posts( array(
+			'posts_per_page' => -1,
+			'post_status'    => 'trash',
+		) );
 
 		$data = [
 			'posts' => [],
@@ -272,16 +303,16 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function delete_item( $request ) {
-		$id = $this->prepare_item_for_delete( $request );
+	public function trash_item( $request ) {
+		$id = $this->prepare_item_for_trash( $request );
 
-		$deleted = wp_delete_post( $id, false );
+		$trashed = wp_delete_post( $id, false );
 
-		if ( $deleted ) {
-			return new WP_REST_Response( 'Post deleted.', 200 );
+		if ( $trashed ) {
+			return new WP_REST_Response( 'Post trashed.', 200 );
 		}
 
-		return new WP_Error( 'cant-delete', __( 'message', 'rhd' ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-trash', __( 'message', 'rhd' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -547,12 +578,12 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Check if a given request has access to delete a specific item
+	 * Check if a given request has access to trash a specific item
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|bool
 	 */
-	public function delete_item_permissions_check( $request ) {
+	public function trash_item_permissions_check( $request ) {
 		return $this->create_item_permissions_check( $request );
 	}
 
@@ -625,12 +656,12 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Prepare the item for delete operation
+	 * Prepare the item for trash operation
 	 *
 	 * @param WP_REST_Request $request Request object
-	 * @return WP_Error|int Post ID to delete
+	 * @return WP_Error|int Post ID to trash
 	 */
-	protected function prepare_item_for_delete( $request ) {
+	protected function prepare_item_for_trash( $request ) {
 		$params = $request->get_params();
 
 		return $params['ID'];
