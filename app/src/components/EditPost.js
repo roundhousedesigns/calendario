@@ -4,6 +4,7 @@ import React, {
 	useEffect,
 	useState,
 	useReducer,
+	useCallback,
 } from "react";
 import FieldGroup from "./common/FieldGroup";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
@@ -211,6 +212,15 @@ export default function EditPost() {
 		}
 	}, [currentPost.id, currentPost]);
 
+	const closeModal = useCallback(() => {
+		editPostDispatch({
+			type: "CLEAR",
+		});
+		postsDispatch({
+			type: "UNSET_CURRENTPOST",
+		});
+	}, [editPostDispatch, postsDispatch]);
+
 	useEffect(() => {
 		const handleClickOutside = (e) => {
 			if (node.current && node.current.contains(e.target)) {
@@ -219,12 +229,7 @@ export default function EditPost() {
 			}
 
 			// outside click
-			editPostDispatch({
-				type: "CLEAR",
-			});
-			postsDispatch({
-				type: "UNSET_CURRENTPOST",
-			});
+			closeModal();
 		};
 
 		if (!isEmpty(currentPost)) {
@@ -236,7 +241,7 @@ export default function EditPost() {
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [currentPost, postsDispatch]);
+	}, [currentPost, postsDispatch, closeModal]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -313,6 +318,9 @@ export default function EditPost() {
 		<div className={`editPost`}>
 			<div className="editPost__container">
 				<div ref={node} className="editPost__editor">
+					<button className="close icon" onClick={closeModal}>
+						highlight_off
+					</button>
 					<h3 className="title">
 						{post.id === 0 ? "New" : "Edit"} Post
 					</h3>

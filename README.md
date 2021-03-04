@@ -22,8 +22,8 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 ## TODO
 
 -   Post Edit
-    -   Dismiss button
     -   add cats, tags
+    -   ~~Dismiss button~~
     -   ~~add delete~~
     -   ~~add excerpt~~
     -   ~~featured image show, but link to full Edit screen~~
