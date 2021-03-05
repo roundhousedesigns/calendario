@@ -213,7 +213,9 @@ body {
 	button {
 		border-radius: var(--borderRadius);
 		border: 1px solid var(--borderColor);
+		font-size: 1em;
 		outline: none;
+		padding: 0.25em 0.5em;
 
 		&:not([disabled]) {
 			cursor: pointer;
@@ -558,11 +560,21 @@ body {
 	& > div {
 		&:not(:last-child) {
 			margin-bottom: 0.5em;
+			padding-bottom: 0.5em;
+			border-bottom: 1px dotted var(--textColor-light);
 		}
+	}
+
+	.dateOptions {
+		padding: 0.5em 0;
 	}
 
 	.fieldGroup {
 		margin: 0;
+
+		&:not(:last-child) {
+			margin-bottom: 0.5em;
+		}
 
 		label,
 		input {

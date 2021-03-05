@@ -45,15 +45,17 @@ export default function ViewOptions() {
 		<div className="viewOptions">
 			<StatusFilters />
 			<div className="dateOptions">
-				<button
-					onClick={handleToday}
-					disabled={
-						startOfDay(viewRange.start) === startOfToday() ||
-						isSameWeek(viewRange.start, startOfToday())
-					}
-				>
-					Jump to Today
-				</button>
+				<FieldGroup name="jumpToToday">
+					<button
+						onClick={handleToday}
+						disabled={
+							startOfDay(viewRange.start) === startOfToday() ||
+							isSameWeek(viewRange.start, startOfToday())
+						}
+					>
+						Jump to Today
+					</button>
+				</FieldGroup>
 				<FieldGroup name="viewMode">
 					<button
 						onClick={handleViewModeChange}
