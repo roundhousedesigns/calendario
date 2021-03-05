@@ -1,6 +1,6 @@
 import React from "react";
 import UnscheduledDrafts from "./UnscheduledDrafts";
-import StatusFilters from "./StatusFilters";
+import ViewOptions from "./ViewOptions";
 import { renderWidget } from "../lib/utils";
 
 export default function Sidebar() {
@@ -13,10 +13,10 @@ export default function Sidebar() {
 					<UnscheduledDrafts />
 				)}
 
-				{renderWidget("", "viewOptions noBorder", <StatusFilters />)}
+				{renderWidget("", "viewOptions noBorder", <ViewOptions />)}
 
 				{renderWidget(
-					"Calendario II: The Datening",
+					"Dev Links + Info",
 					"dev",
 					<>
 						<ul
@@ -41,7 +41,7 @@ export default function Sidebar() {
 									target="_blank"
 									rel="noreferrer"
 								>
-									Report a bug/issue
+									Report an issue
 								</a>
 							</li>
 							<li>

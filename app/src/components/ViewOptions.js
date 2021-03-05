@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import StatusFilters from "./StatusFilters";
 import FieldGroup from "./common/FieldGroup";
 import {
 	startOfToday,
@@ -42,41 +43,46 @@ export default function ViewOptions() {
 
 	return (
 		<div className="viewOptions">
-			<button
-				onClick={handleToday}
-				disabled={
-					startOfDay(viewRange.start) === startOfToday() ||
-					isSameWeek(viewRange.start, startOfToday())
-				}
-			>
-				Jump to Today
-			</button>
-			<FieldGroup name="viewMode">
+			<StatusFilters />
+			<div className="dateOptions">
 				<button
-					onClick={handleViewModeChange}
-					className={viewMode === "calendar" ? "active " : "inactive"}
-					value="calendar"
+					onClick={handleToday}
+					disabled={
+						startOfDay(viewRange.start) === startOfToday() ||
+						isSameWeek(viewRange.start, startOfToday())
+					}
 				>
-					Calendar
+					Jump to Today
 				</button>
-				<button
-					name="viewMode"
-					onClick={handleViewModeChange}
-					className={viewMode === "list" ? "active " : "inactive"}
-					value="list"
-				>
-					List
-				</button>
-			</FieldGroup>
-			<FieldGroup name="monthCount" label="Months" inlineLabel={true}>
-				<input
-					type="number"
-					min={1}
-					value={monthCount}
-					onChange={handleMonthCountChange}
-					className="mini"
-				/>
-			</FieldGroup>
+				<FieldGroup name="viewMode">
+					<button
+						onClick={handleViewModeChange}
+						className={
+							viewMode === "calendar" ? "active " : "inactive"
+						}
+						value="calendar"
+					>
+						Calendar
+					</button>
+					<button
+						name="viewMode"
+						onClick={handleViewModeChange}
+						className={viewMode === "list" ? "active " : "inactive"}
+						value="list"
+					>
+						List
+					</button>
+				</FieldGroup>
+				<FieldGroup name="monthCount" label="Months" inlineLabel={true}>
+					<input
+						type="number"
+						min={1}
+						value={monthCount}
+						onChange={handleMonthCountChange}
+						className="mini"
+					/>
+				</FieldGroup>
+			</div>
 		</div>
 	);
 }

@@ -104,6 +104,18 @@ body {
 		"header header"
 		"main   sidebar";
 
+	&__title {
+		text-align: right;
+		word-spacing: 100vw;
+		line-height: 1;
+		margin: 0.5rem 0;
+		text-transform: lowercase;
+
+		.line {
+			display: block;
+		}
+	}
+
 	&__header {
 		background: var(--neutralColor);
 		grid-area: header;
@@ -124,18 +136,15 @@ body {
 
 				&.right {
 					grid-area: right;
+					padding-right: 1rem;
 				}
-
+				
 				&.left {
 					grid-area: left;
 					flex-direction: column;
 
 					& > div {
 						flex-basis: 100%;
-					}
-
-					.viewOptions {
-						margin-bottom: 1em;
 					}
 				}
 			}
@@ -341,8 +350,7 @@ body {
 	margin: 0;
 	overflow-y: auto;
 
-	&__calendar,
-	&__list {
+	& > div {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -535,6 +543,48 @@ body {
 
 		.postLinks {
 			@include postLinksList;
+		}
+	}
+}
+
+.viewOptions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	width: 100%;
+
+	.fieldGroup {
+		margin: 0;
+
+		label,
+		input {
+			display: inline-block;
+		}
+
+		button {
+			&.active {
+				background-color: var(--textColor);
+				color: var(--neutralColor);
+			}
+		}
+
+		&__viewMode {
+			button {
+				border-color: var(--textColor-light);
+
+				&:first-child {
+					border-top-right-radius: 0;
+					border-bottom-right-radius: 0;
+					border-right: none;
+				}
+
+				&:last-child {
+					border-top-left-radius: 0;
+					border-bottom-left-radius: 0;
+					border-left: none;
+				}
+			}
 		}
 	}
 }
@@ -816,47 +866,6 @@ body {
 	select {
 		cursor: pointer;
 		padding: 2px 26px 2px 4px;
-	}
-}
-
-.viewOptions {
-	display: flex;
-	align-items: center;
-	justify-content: space-evenly;
-	width: 100%;
-
-	.fieldGroup {
-		margin: 0;
-
-		label,
-		input {
-			display: inline-block;
-		}
-
-		button {
-			&.active {
-				background-color: var(--textColor);
-				color: var(--neutralColor);
-			}
-		}
-
-		&__viewMode {
-			button {
-				border-color: var(--textColor-light);
-
-				&:first-child {
-					border-top-right-radius: 0;
-					border-bottom-right-radius: 0;
-					border-right: none;
-				}
-
-				&:last-child {
-					border-top-left-radius: 0;
-					border-bottom-left-radius: 0;
-					border-left: none;
-				}
-			}
-		}
 	}
 }
 

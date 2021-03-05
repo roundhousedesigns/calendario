@@ -16,7 +16,7 @@ import { useFetchScheduledPosts } from "../lib/hooks";
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
-export default function List() {
+export default function List({ className }) {
 	const {
 		posts: { scheduled, refetch },
 		postsDispatch,
@@ -89,7 +89,7 @@ export default function List() {
 	};
 
 	return (
-		<div className="view__list">
+		<div className={className}>
 			{viewRange.start !== null && viewRange.end !== null
 				? renderList()
 				: null}

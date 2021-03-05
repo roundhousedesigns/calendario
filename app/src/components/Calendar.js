@@ -17,7 +17,7 @@ import { useFetchScheduledPosts } from "../lib/hooks";
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
-export default function Calendar() {
+export default function Calendar({ className }) {
 	const {
 		posts: { scheduled, refetch },
 		postsDispatch,
@@ -116,7 +116,7 @@ export default function Calendar() {
 	};
 
 	return (
-		<div className="view__calendar">
+		<div className={className}>
 			{viewRange.start !== null && viewRange.end !== null
 				? renderCalendar()
 				: null}
