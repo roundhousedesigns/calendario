@@ -4,7 +4,7 @@ export default function FieldGroup({ name, label, inlineLabel, children }) {
 	const renderInput = () => {
 		return (
 			<div
-				className={`sidebarInput fieldGroup fieldGroup__${name} ${
+				className={`fieldGroup fieldGroup__${name} ${
 					inlineLabel ? "inlineLabel" : ""
 				}`}
 			>

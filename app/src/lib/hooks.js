@@ -6,6 +6,11 @@ import PostsContext from "../PostsContext";
 
 // TODO: DEV MODE
 import { DEBUG_MODE } from "../lib/utils";
+var headers = {};
+if (DEBUG_MODE !== true) {
+	headers["X-WP-Nonce"] = nonce;
+}
+// ODOT
 
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
@@ -33,7 +38,10 @@ export const useDayPosts = (posts, date) => {
 };
 
 export const useFetchScheduledPosts = (start, end) => {
-	const { postsDispatch } = useContext(PostsContext);
+	const {
+		posts: { refetch },
+		postsDispatch,
+	} = useContext(PostsContext);
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
@@ -41,13 +49,6 @@ export const useFetchScheduledPosts = (start, end) => {
 			let startDate = format(start, dateFormat.date);
 			let endDate = format(end, dateFormat.date);
 			let url = `${routeBase}/scheduled/${startDate}/${endDate}`;
-
-			// TODO: DEV MODE
-			var headers = {};
-			if (DEBUG_MODE !== true) {
-				headers["X-WP-Nonce"] = nonce;
-			}
-			// ODOT
 
 			const fetchData = async () => {
 				setIsLoading(true);
@@ -78,7 +79,7 @@ export const useFetchScheduledPosts = (start, end) => {
 				setIsLoading(false);
 			};
 		}
-	}, [start, end, postsDispatch]);
+	}, [start, end, refetch, postsDispatch]);
 
 	return isLoading;
 };
@@ -93,13 +94,6 @@ export const useFetchUnscheduledPosts = () => {
 	useEffect(() => {
 		let url = `${routeBase}/unscheduled`;
 
-		// TODO: DEV MODE
-		var headers = {};
-		if (DEBUG_MODE !== true) {
-			headers["X-WP-Nonce"] = nonce;
-		}
-		// ODOT
-
 		const fetchData = async () => {
 			setIsLoading(true);
 
@@ -132,51 +126,44 @@ export const useFetchUnscheduledPosts = () => {
 	return isLoading;
 };
 
-export const useFetchTrashedPosts = () => {
-	const {
-		posts: { refetch },
-		postsDispatch,
-	} = useContext(PostsContext);
-	const [isLoading, setIsLoading] = useState(false);
+// export const useFetchTrashedPosts = () => {
+// 	const {
+// 		posts: { refetch },
+// 		postsDispatch,
+// 	} = useContext(PostsContext);
+// 	const [isLoading, setIsLoading] = useState(false);
 
-	useEffect(() => {
-		let url = `${routeBase}/trashed`;
+// 	useEffect(() => {
+// 		let url = `${routeBase}/trashed`;
 
-		// TODO: DEV MODE
-		var headers = {};
-		if (DEBUG_MODE !== true) {
-			headers["X-WP-Nonce"] = nonce;
-		}
-		// ODOT
+// 		const fetchData = async () => {
+// 			setIsLoading(true);
 
-		const fetchData = async () => {
-			setIsLoading(true);
+// 			try {
+// 				const res = await fetch(url, {
+// 					headers,
+// 				});
+// 				const data = await res.json();
 
-			try {
-				const res = await fetch(url, {
-					headers,
-				});
-				const data = await res.json();
+// 				postsDispatch({
+// 					type: "SET_UNSCHEDULED",
+// 					posts: data.posts,
+// 					unscheduled: true,
+// 				});
 
-				postsDispatch({
-					type: "SET_UNSCHEDULED",
-					posts: data.posts,
-					unscheduled: true,
-				});
+// 				setIsLoading(false);
+// 			} catch (error) {
+// 				console.log("REST error", error.message);
+// 				setIsLoading(false);
+// 			}
+// 		};
 
-				setIsLoading(false);
-			} catch (error) {
-				console.log("REST error", error.message);
-				setIsLoading(false);
-			}
-		};
+// 		fetchData();
 
-		fetchData();
+// 		return () => {
+// 			setIsLoading(false);
+// 		};
+// 	}, [postsDispatch, refetch]);
 
-		return () => {
-			setIsLoading(false);
-		};
-	}, [postsDispatch, refetch]);
-
-	return isLoading;
-};
+// 	return isLoading;
+// };

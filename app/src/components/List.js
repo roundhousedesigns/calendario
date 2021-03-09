@@ -1,15 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import DayPosts from "./DayPosts";
 import { dateFormat } from "../lib/utils";
-import {
-	format,
-	addMonths,
-	addDays,
-	endOfDay,
-	startOfToday,
-	isToday,
-	isPast,
-} from "date-fns";
+import { format, addDays, endOfDay, isToday, isPast } from "date-fns";
 
 import { useFetchScheduledPosts } from "../lib/hooks";
 
@@ -18,13 +10,14 @@ import ViewContext from "../ViewContext";
 
 export default function List({ className }) {
 	const {
-		posts: { scheduled, refetch },
+		posts: { scheduled },
 		postsDispatch,
 	} = useContext(PostsContext);
 
 	const {
-		viewOptions: { monthCount, viewRange },
-		viewOptionsDispatch,
+		viewOptions: {
+			viewRange: { start, end },
+		},
 	} = useContext(ViewContext);
 
 	useEffect(() => {
@@ -33,26 +26,15 @@ export default function List({ className }) {
 		});
 	}, [postsDispatch]);
 
-	useEffect(() => {
-		// Set the fetch range
-		let today = startOfToday();
-
-		viewOptionsDispatch({
-			type: "SET_RANGE",
-			start: today,
-			end: addMonths(today, monthCount),
-		});
-	}, [refetch, monthCount, viewOptionsDispatch]);
-
-	useFetchScheduledPosts(viewRange.start, viewRange.end);
+	useFetchScheduledPosts(start, end);
 
 	const renderDays = () => {
 		let days = [];
-		let day = viewRange.start;
+		let day = start;
 		let classes = ["listDay"];
 
-		if (viewRange.end !== "undefined" && viewRange.end !== null) {
-			while (endOfDay(day) <= endOfDay(viewRange.end)) {
+		if (end !== "undefined" && end !== null) {
+			while (endOfDay(day) <= endOfDay(end)) {
 				if (isToday(day)) {
 					classes.push("today");
 				}
@@ -90,9 +72,7 @@ export default function List({ className }) {
 
 	return (
 		<div className={className}>
-			{viewRange.start !== null && viewRange.end !== null
-				? renderList()
-				: null}
+			{start !== null && end !== null ? renderList() : null}
 		</div>
 	);
 }

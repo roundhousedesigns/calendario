@@ -1,6 +1,6 @@
 import React from "react";
 import UnscheduledDrafts from "./UnscheduledDrafts";
-import ViewOptions from "./ViewOptions";
+import StatusFilters from "./StatusFilters";
 import { renderWidget } from "../lib/utils";
 
 export default function Sidebar() {
@@ -13,7 +13,7 @@ export default function Sidebar() {
 					<UnscheduledDrafts />
 				)}
 
-				{renderWidget("", "viewOptions noBorder", <ViewOptions />)}
+				{renderWidget("", "statusFilters", <StatusFilters />)}
 
 				{renderWidget(
 					"Dev Links + Info",

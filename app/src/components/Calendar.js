@@ -5,11 +5,8 @@ import { dateFormat } from "../lib/utils";
 import {
 	format,
 	addDays,
-	addMonths,
 	startOfWeek,
-	endOfWeek,
 	isFirstDayOfMonth,
-	startOfToday,
 } from "date-fns";
 
 import { useFetchScheduledPosts } from "../lib/hooks";
@@ -19,12 +16,11 @@ import ViewContext from "../ViewContext";
 
 export default function Calendar({ className }) {
 	const {
-		posts: { scheduled, refetch },
+		posts: { scheduled },
 		postsDispatch,
 	} = useContext(PostsContext);
 	const {
-		viewOptions: { monthCount, viewRange },
-		viewOptionsDispatch,
+		viewOptions: { viewRange },
 	} = useContext(ViewContext);
 
 	useEffect(() => {
@@ -32,16 +28,6 @@ export default function Calendar({ className }) {
 			type: "REFETCH",
 		});
 	}, [postsDispatch]);
-
-	useEffect(() => {
-		let today = startOfToday();
-
-		viewOptionsDispatch({
-			type: "SET_RANGE",
-			start: startOfWeek(today),
-			end: endOfWeek(addMonths(today, monthCount)),
-		});
-	}, [refetch, monthCount, viewOptionsDispatch]);
 
 	useFetchScheduledPosts(viewRange.start, viewRange.end);
 

@@ -133,7 +133,7 @@ body {
 			& > div {
 				padding: 6px 12px;
 				display: flex;
-				align-items: center;
+				align-self: center;
 
 				&.right {
 					grid-area: right;
@@ -153,7 +153,6 @@ body {
 			.calendarListHeader {
 				text-transform: uppercase;
 				font-weight: 700;
-				font-size: 115%;
 				align-items: center;
 
 				.viewTitle {
@@ -168,22 +167,7 @@ body {
 
 				.icon {
 					cursor: pointer;
-					transition: 0.15s ease-out;
-					font-size: 1.4em;
-
-					&:hover {
-						transform: scale(1.25);
-						transition: 0.15s ease-out;
-						color: var(--mainColor);
-					}
-
-					&:first-of-type {
-						margin-left: 1em;
-					}
-
-					&:last-of-type {
-						margin-right: 1em;
-					}
+					font-size: 1.2rem;
 				}
 			}
 		}
@@ -211,8 +195,11 @@ body {
 	}
 
 	button {
-		border-radius: var(--borderRadius);
-		border: 1px solid var(--borderColor);
+		&:not(.react-calendar__tile) {
+			border-radius: var(--borderRadius);
+		}
+
+		border: none;
 		font-size: 1em;
 		outline: none;
 		padding: 0.25em 0.5em;
@@ -222,7 +209,6 @@ body {
 		}
 
 		&.icon {
-			border: none;
 			background-color: transparent;
 		}
 	}
@@ -335,8 +321,25 @@ body {
 	}
 
 	&__center {
+		padding: 4px;
+		border-radius: var(--borderRadius);
+		display: flex;
+		align-items: center;
 		justify-content: center;
 		text-align: center;
+		flex-wrap: wrap;
+
+		& > div {
+			flex: 0 1 auto;
+		}
+
+		.viewOptions {
+			margin-left: 2rem;
+
+			button {
+				border: 1px solid var(--textColor-light);
+			}
+		}
 	}
 
 	&__end {
@@ -555,7 +558,6 @@ body {
 	align-items: center;
 	flex-wrap: wrap;
 	justify-content: space-evenly;
-	width: 100%;
 
 	& > div {
 		&:not(:last-child) {
@@ -563,10 +565,6 @@ body {
 			padding-bottom: 0.5em;
 			border-bottom: 1px dotted var(--textColor-light);
 		}
-	}
-
-	.dateOptions {
-		padding: 0.5em 0;
 	}
 
 	.fieldGroup {
@@ -589,6 +587,8 @@ body {
 		}
 
 		&__viewMode {
+			font-size: 1rem;
+
 			button {
 				border-color: var(--textColor-light);
 
@@ -629,7 +629,7 @@ body {
 			.dot {
 				display: inline-block;
 				flex: 0 0 1.2rem;
-				height: 1.2rem;
+				height: 1.4rem;
 				border-radius: 50%;
 				border-width: 3px;
 				border-style: solid;
@@ -1014,5 +1014,16 @@ body {
 		100% {
 			transform: rotate(360deg);
 		}
+	}
+}
+
+.react-daterange-picker {
+	&__wrapper {
+		border: none;
+		padding: 4px;
+	}
+
+	&__button {
+		border: none;
 	}
 }

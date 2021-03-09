@@ -23,16 +23,15 @@ export default function App() {
 	const [view, setView] = useStickyState(
 		{
 			viewMode: "calendar",
-			monthCount: 1,
+			// TODO add/save user filtered statuses here?
 		},
 		"viewOptions"
 	);
 
 	useEffect(() => {
-		// Update the context just initially
+		// Update the context initially
 		viewOptionsDispatch({
-			type: "UPDATE_OPTION",
-			monthCount: view.monthCount,
+			type: "UPDATE",
 			viewMode: view.viewMode,
 		});
 		//eslint-disable-next-line
@@ -42,9 +41,8 @@ export default function App() {
 		// Store the values if it's updated elsewhere
 		setView({
 			viewMode: viewOptions.viewMode,
-			monthCount: viewOptions.monthCount,
 		});
-	}, [setView, viewOptions.viewMode, viewOptions.monthCount]);
+	}, [setView, viewOptions.viewMode]);
 
 	function mainRenderCallback(
 		id,
