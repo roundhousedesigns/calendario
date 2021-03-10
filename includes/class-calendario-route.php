@@ -1,7 +1,7 @@
 <?php
 class Calendario_Route extends WP_REST_Controller {
 	function __construct() {
-		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'rest_api_init', [$this, 'register_routes'] );
 	}
 
 	public function register_routes() {
@@ -10,72 +10,72 @@ class Calendario_Route extends WP_REST_Controller {
 		$post_base = 'posts';
 		$user_base = 'user';
 
-		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)(/(?P<end>.*))?', array(
-			array(
+		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)(/(?P<end>.*))?', [
+			[
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_items' ),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
-				'args'                => array( $this->get_range_endpoint_args() ),
-			),
-		) );
+				'callback'            => [$this, 'get_items'],
+				'permission_callback' => [$this, 'get_items_permissions_check'],
+				'args'                => [$this->get_range_endpoint_args()],
+			],
+		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/unscheduled', array(
-			array(
+		register_rest_route( $namespace, '/' . $post_base . '/unscheduled', [
+			[
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_unscheduled_items' ),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
-			),
-		) );
+				'callback'            => [$this, 'get_unscheduled_items'],
+				'permission_callback' => [$this, 'get_items_permissions_check'],
+			],
+		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/trashed', array(
-			array(
+		register_rest_route( $namespace, '/' . $post_base . '/trashed', [
+			[
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_trashed_items' ),
-				'permission_callback' => array( $this, 'get_items_permissions_check' ),
-			),
-		) );
+				'callback'            => [$this, 'get_trashed_items'],
+				'permission_callback' => [$this, 'get_items_permissions_check'],
+			],
+		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)', array(
-			array(
+		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)', [
+			[
 				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'update_item' ),
-				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+				'callback'            => [$this, 'update_item'],
+				'permission_callback' => [$this, 'update_item_permissions_check'],
 				'args'                => $this->get_endpoint_args_for_item_schema(),
-			),
-		) );
+			],
+		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/new', array(
-			array(
+		register_rest_route( $namespace, '/' . $post_base . '/new', [
+			[
 				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'create_item' ),
-				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+				'callback'            => [$this, 'create_item'],
+				'permission_callback' => [$this, 'update_item_permissions_check'],
 				'args'                => $this->get_endpoint_args_for_item_schema(),
-			),
-		) );
+			],
+		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/trash/(?P<ID>\d+)', array(
-			array(
+		register_rest_route( $namespace, '/' . $post_base . '/trash/(?P<ID>\d+)', [
+			[
 				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'trash_item' ),
-				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+				'callback'            => [$this, 'trash_item'],
+				'permission_callback' => [$this, 'update_item_permissions_check'],
 				'args'                => $this->get_endpoint_args_for_item_schema(),
-			),
-		) );
+			],
+		] );
 
-		register_rest_route( $namespace, '/' . $user_base . '/(?P<option>[\w]+)/(?P<value>[\w]+)', array(
-			array(
+		register_rest_route( $namespace, '/' . $user_base . '/(?P<option>[\w]+)/(?P<value>[\w]+)', [
+			[
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => array( $this, 'get_user_option' ),
-				'permission_callback' => array( $this, 'user_permissions_check' ),
-				'args'                => array( $this->get_user_option_endpoint_args() ),
-			),
-			array(
+				'callback'            => [$this, 'get_user_option'],
+				'permission_callback' => [$this, 'user_permissions_check'],
+				'args'                => [$this->get_user_option_endpoint_args()],
+			],
+			[
 				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => array( $this, 'update_user_option' ),
-				'permission_callback' => array( $this, 'user_permissions_check' ),
-				'args'                => array( $this->get_user_option_endpoint_args() ),
-			),
-		) );
+				'callback'            => [$this, 'update_user_option'],
+				'permission_callback' => [$this, 'user_permissions_check'],
+				'args'                => [$this->get_user_option_endpoint_args()],
+			],
+		] );
 	}
 
 	/**
@@ -94,23 +94,23 @@ class Calendario_Route extends WP_REST_Controller {
 		$start = rhd_start_of_day( $start );
 		$end   = rhd_end_of_day( $end );
 
-		$items = get_posts( array(
+		$items = get_posts( [
 			'posts_per_page' => -1,
 			'post_status'    => 'any',
 			'orderby'        => 'date',
 			'order'          => 'ASC',
 			'inclusive'      => true,
-			'date_query'     => array(
+			'date_query'     => [
 				'before' => $end,
 				'after'  => $start,
-			),
-			'meta_query'     => array(
-				array(
+			],
+			'meta_query'     => [
+				[
 					'key'     => RHD_UNSCHEDULED_INDEX,
 					'compare' => 'NOT EXISTS',
-				),
-			),
-		) );
+				],
+			],
+		] );
 
 		$data = [
 			'posts'     => [],
@@ -154,10 +154,10 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_trashed_items( $request ) {
-		$items = get_posts( array(
+		$items = get_posts( [
 			'posts_per_page' => -1,
 			'post_status'    => 'trash',
-		) );
+		] );
 
 		$data = [
 			'posts' => [],
@@ -176,19 +176,19 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return array The queried posts.
 	 */
 	protected function query_unscheduled_items() {
-		return get_posts( array(
-			'meta_query'     => array(
-				array(
+		return get_posts( [
+			'meta_query'     => [
+				[
 					'key'     => RHD_UNSCHEDULED_INDEX,
 					'compare' => 'EXISTS',
-				),
-			),
+				],
+			],
 			'orderby'        => 'meta_value_num',
 			'order'          => 'ASC',
 			'meta_key'       => RHD_UNSCHEDULED_INDEX,
 			'posts_per_page' => -1,
 			'post_status'    => 'any',
-		) );
+		] );
 	}
 
 	/**
@@ -219,11 +219,11 @@ class Calendario_Route extends WP_REST_Controller {
 		// Update the post
 		$result = wp_update_post( $item );
 
-		if ( $result !== false && ! is_wp_error( $result ) ) {
+		if ( $result !== false && !is_wp_error( $result ) ) {
 			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), ['status' => 500] );
 	}
 
 	/**
@@ -238,11 +238,11 @@ class Calendario_Route extends WP_REST_Controller {
 		// Update the post
 		$result = wp_insert_post( $item );
 
-		if ( $result !== false && ! is_wp_error( $result ) ) {
+		if ( $result !== false && !is_wp_error( $result ) ) {
 			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), ['status' => 500] );
 	}
 
 	/**
@@ -294,7 +294,7 @@ class Calendario_Route extends WP_REST_Controller {
 			return new WP_REST_Response( 'Option updated.', 200 );
 		}
 
-		return new WP_Error( 'user-not-updated', __( 'message', 'rhd' ), array( 'status' => 200 ) );
+		return new WP_Error( 'user-not-updated', __( 'message', 'rhd' ), ['status' => 200] );
 	}
 
 	/**
@@ -312,7 +312,7 @@ class Calendario_Route extends WP_REST_Controller {
 			return new WP_REST_Response( 'Post trashed.', 200 );
 		}
 
-		return new WP_Error( 'cant-trash', __( 'message', 'rhd' ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-trash', __( 'message', 'rhd' ), ['status' => 500] );
 	}
 
 	/**
@@ -353,73 +353,73 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return array $args
 	 */
 	public function get_range_endpoint_args() {
-		return array(
-			'start' => array(
+		return [
+			'start' => [
 				'description'       => esc_html__( 'Start date', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_date_string' ),
-				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'validate_callback' => [$this, 'validate_date_string'],
+				'sanitize_callback' => [$this, 'sanitize_string'],
 				'required'          => true,
-			),
-			'end'   => array(
+			],
+			'end'   => [
 				'description'       => esc_html__( 'End date', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_date_string' ),
-				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'validate_callback' => [$this, 'validate_date_string'],
+				'sanitize_callback' => [$this, 'sanitize_string'],
 				'required'          => false,
-			),
-		);
+			],
+		];
 	}
 
 	public function get_user_option_endpoint_args() {
-		return array(
-			'option' => array(
+		return [
+			'option' => [
 				'description'       => esc_html__( 'User option name', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_string' ),
-				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'validate_callback' => [$this, 'validate_string'],
+				'sanitize_callback' => [$this, 'sanitize_string'],
 				'required'          => true,
-			),
-			'value'  => array(
+			],
+			'value'  => [
 				'description'       => esc_html__( 'User option value', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_string' ),
-				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'validate_callback' => [$this, 'validate_string'],
+				'sanitize_callback' => [$this, 'sanitize_string'],
 				'required'          => false,
-			),
-		);
+			],
+		];
 	}
 
 	/**
 	 * Get endpoint args.
 	 */
 	public function get_item_endpoint_args() {
-		return array(
-			'ID'          => array(
+		return [
+			'ID'          => [
 				'description'       => esc_html__( 'Post ID', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_integer' ),
+				'validate_callback' => [$this, 'validate_integer'],
 				'sanitize_callback' => 'absint',
 				'required'          => true,
-			),
+			],
 
-			'post_date'   => array(
+			'post_date'   => [
 				'description'       => esc_html__( 'New post date', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_date_string' ),
-				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'validate_callback' => [$this, 'validate_date_string'],
+				'sanitize_callback' => [$this, 'sanitize_string'],
 				'required'          => true,
-			),
+			],
 
-			'post_status' => array(
+			'post_status' => [
 				'description'       => esc_html__( 'New post status', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_string' ),
-				'sanitize_callback' => array( $this, 'sanitize_string' ),
+				'validate_callback' => [$this, 'validate_string'],
+				'sanitize_callback' => [$this, 'sanitize_string'],
 				'required'          => false,
 				'default'           => '',
-			),
-		);
+			],
+		];
 	}
 
 	/**
@@ -428,14 +428,14 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return array
 	 */
 	public function get_update_item_endpoint_args() {
-		return array(
-			'ID' => array(
+		return [
+			'ID' => [
 				'description'       => esc_html__( 'Post ID', 'rhd' ),
 				'type'              => 'string',
-				'validate_callback' => array( $this, 'validate_integer' ),
+				'validate_callback' => [$this, 'validate_integer'],
 				'sanitize_callback' => 'absint',
 				'required'          => true,
-			),
+			],
 
 			// 'post_date'   => array(
 			// 	'description'       => esc_html__( 'New post date', 'rhd' ),
@@ -453,7 +453,7 @@ class Calendario_Route extends WP_REST_Controller {
 			// 	'required'          => false,
 			// 	'default'           => '',
 			// ),
-		);
+		];
 	}
 
 	/**
@@ -470,11 +470,11 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( isset( $atts['args'][$param] ) ) {
 			$arg = $atts['args'][$param];
 
-			if ( 'string' === $arg['type'] && ! is_string( $value ) ) {
-				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), array( 'status' => 400 ) );
+			if ( 'string' === $arg['type'] && !is_string( $value ) ) {
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
 			}
 		} else {
-			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), array( 'status' => 400 ) );
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), ['status' => 400] );
 		}
 
 		return true;
@@ -494,11 +494,11 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( isset( $atts['args'][$param] ) ) {
 			$arg = $atts['args'][$param];
 
-			if ( 'integer' === $arg['type'] && ! is_int( $value ) ) {
-				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), array( 'status' => 400 ) );
+			if ( 'integer' === $arg['type'] && !is_int( $value ) ) {
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
 			}
 		} else {
-			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), array( 'status' => 400 ) );
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), ['status' => 400] );
 		}
 
 		return true;
@@ -518,13 +518,13 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( isset( $atts['args'][$param] ) ) {
 			$arg = $atts['args'][$param];
 
-			if ( 'string' === $arg['type'] && ! is_string( $value ) ) {
-				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), array( 'status' => 400 ) );
+			if ( 'string' === $arg['type'] && !is_string( $value ) ) {
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
 			} elseif ( rhd_validate_date( $value ) === false ) {
-				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not a valid date.', 'rhd' ), $param ), array( 'status' => 400 ) );
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not a valid date.', 'rhd' ), $param ), ['status' => 400] );
 			}
 		} else {
-			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), array( 'status' => 400 ) );
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), ['status' => 400] );
 		}
 
 		return true;
@@ -548,11 +548,11 @@ class Calendario_Route extends WP_REST_Controller {
 				return sanitize_text_field( $value );
 			}
 		} else {
-			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not registered as a request argument.', 'rhd' ), $param ), array( 'status' => 400 ) );
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not registered as a request argument.', 'rhd' ), $param ), ['status' => 400] );
 		}
 
 		// If we got this far then something went wrong don't use user input.
-		return new WP_Error( 'rest_api_sad', esc_html__( 'Something went terribly wrong.', 'rhd' ), array( 'status' => 500 ) );
+		return new WP_Error( 'rest_api_sad', esc_html__( 'Something went terribly wrong.', 'rhd' ), ['status' => 500] );
 	}
 
 	/**
@@ -691,11 +691,11 @@ class Calendario_Route extends WP_REST_Controller {
 		$user_id = 1;
 		// $user_id = get_current_user_id();
 
-		return array(
+		return [
 			'user_id' => $user_id,
 			'option'  => $params['option'],
 			'value'   => $params['value'],
-		);
+		];
 	}
 
 	/**
@@ -708,10 +708,10 @@ class Calendario_Route extends WP_REST_Controller {
 		$user_id = 1;
 		// $user_id = get_current_user_id();
 
-		return array(
+		return [
 			'user_id' => $user_id,
 			'option'  => $option,
-		);
+		];
 	}
 
 	/**
@@ -727,7 +727,8 @@ class Calendario_Route extends WP_REST_Controller {
 		return [
 			'id'           => $item->ID,
 			'post_title'   => $item->post_title,
-			'post_date'    => $post_date->format( 'Y-m-d H:i:s' ),
+			// 'post_date'    => $post_date->format( 'Y-m-d H:i:s' ),
+			'post_date'    => $post_date->format( 'c' ),
 			'post_status'  => $item->post_status,
 			'post_excerpt' => $item->post_excerpt,
 			'image'        => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),
@@ -742,24 +743,24 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return array
 	 */
 	public function get_collection_params() {
-		return array(
-			'page'     => array(
+		return [
+			'page'     => [
 				'description'       => 'Current page of the collection.',
 				'type'              => 'integer',
 				'default'           => 1,
 				'sanitize_callback' => 'absint',
-			),
-			'per_page' => array(
+			],
+			'per_page' => [
 				'description'       => 'Maximum number of items to be returned in result set.',
 				'type'              => 'integer',
 				'default'           => 10,
 				'sanitize_callback' => 'absint',
-			),
-			'search'   => array(
+			],
+			'search'   => [
 				'description'       => 'Limit results to those matching a string.',
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
-			),
-		);
+			],
+		];
 	}
 }

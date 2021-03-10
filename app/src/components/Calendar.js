@@ -2,12 +2,7 @@ import React, { useContext, useEffect, useCallback } from "react";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
 import { dateFormat } from "../lib/utils";
-import {
-	format,
-	addDays,
-	startOfWeek,
-	isFirstDayOfMonth,
-} from "date-fns";
+import { format, addDays, startOfWeek, isFirstDayOfMonth } from "date-fns";
 
 import { useFetchScheduledPosts } from "../lib/hooks";
 
