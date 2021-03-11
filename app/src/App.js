@@ -43,7 +43,10 @@ export default function App() {
 				viewOptions.viewRange.end
 			)
 		) {
-			mainRef.current.scrollTop = todayRef.current.offsetTop;
+			mainRef.current.scroll({
+				top: todayRef.current.offsetTop,
+				behavior: "smooth",
+			});
 		} else {
 			viewOptionsDispatch({
 				type: "SET_RANGE_START",
