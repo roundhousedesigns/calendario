@@ -308,6 +308,11 @@ body {
 	flex-grow: 1;
 	max-width: 100%;
 
+	&__start,
+	&__end {
+		flex: 0 0 50px;
+	}
+
 	&__start {
 		justify-content: flex-start;
 		text-align: left;
@@ -318,7 +323,7 @@ body {
 		border-radius: var(--borderRadius);
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: space-evenly;
 		text-align: center;
 		flex-wrap: nowrap;
 
@@ -354,6 +359,10 @@ body {
 					z-index: 100 !important;
 				}
 			}
+		}
+
+		.toToday {
+			margin-right: 2rem;
 		}
 
 		.viewOptions {
@@ -575,56 +584,53 @@ body {
 	}
 }
 
-.viewOptions {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	justify-content: space-evenly;
-
-	& > div {
-		&:not(:last-child) {
-			margin-bottom: 0.5em;
-			padding-bottom: 0.5em;
-			border-bottom: 1px dotted var(--textColor-light);
-		}
-	}
-
-	.fieldGroup {
-		margin: 0;
-
-		&:not(:last-child) {
-			margin-bottom: 0.5em;
-		}
-
-		label,
-		input {
-			display: inline-block;
-		}
+.mainViewOptions {
+	.viewMode,
+	.toToday {
+		font-size: 1rem;
 
 		button {
+			border-color: var(--textColor-light);
+			margin: 0;
+
 			&.active {
 				background-color: var(--textColor);
 				color: var(--neutralColor);
 			}
 		}
+	}
 
-		&__viewMode {
-			font-size: 1rem;
+	.toToday {
+		button {
+			border: 1px solid var(--textColor-light);
+		}
+	}
 
-			button {
-				border-color: var(--textColor-light);
+	.viewOptions {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		justify-content: space-evenly;
 
-				&:first-child {
-					border-top-right-radius: 0;
-					border-bottom-right-radius: 0;
-					border-right: none;
-				}
+		& > div {
+			&:not(:last-child) {
+				margin-bottom: 0.5em;
+				padding-bottom: 0.5em;
+				border-bottom: 1px dotted var(--textColor-light);
+			}
+		}
 
-				&:last-child {
-					border-top-left-radius: 0;
-					border-bottom-left-radius: 0;
-					border-left: none;
-				}
+		button {
+			&:first-child {
+				border-top-right-radius: 0;
+				border-bottom-right-radius: 0;
+				border-right: none;
+			}
+
+			&:last-child {
+				border-top-left-radius: 0;
+				border-bottom-left-radius: 0;
+				border-left: none;
 			}
 		}
 	}

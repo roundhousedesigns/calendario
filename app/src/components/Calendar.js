@@ -2,14 +2,20 @@ import React, { useContext, useEffect, useCallback } from "react";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
 import { dateFormat } from "../lib/utils";
-import { format, addDays, startOfWeek, isFirstDayOfMonth } from "date-fns";
+import {
+	format,
+	addDays,
+	startOfWeek,
+	isFirstDayOfMonth,
+	isToday,
+} from "date-fns";
 
 import { useFetchScheduledPosts } from "../lib/hooks";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
-export default function Calendar({ className }) {
+export default function Calendar({ className, todayRef }) {
 	const {
 		posts: { scheduled },
 		postsDispatch,
@@ -57,6 +63,7 @@ export default function Calendar({ className }) {
 				days.push(
 					<Day
 						key={day}
+						ref={isToday(day) ? todayRef : null}
 						day={day}
 						monthName={
 							dayIsFirstDay
@@ -85,7 +92,7 @@ export default function Calendar({ className }) {
 			days = [];
 		}
 		return <div className="body">{rows}</div>;
-	}, [viewRange.end, viewRange.start, scheduled]);
+	}, [viewRange.end, viewRange.start, scheduled, todayRef]);
 
 	const renderCalendar = () => {
 		return (

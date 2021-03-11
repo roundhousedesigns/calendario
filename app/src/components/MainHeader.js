@@ -6,12 +6,14 @@ import { addDays, startOfToday, startOfMonth, endOfMonth } from "date-fns";
 import ViewContext from "../ViewContext";
 import { dateFormat } from "../lib/utils";
 
-export default function MainHeader() {
+export default function MainHeader({ handleTodayClick }) {
 	const {
 		viewOptions: { viewRange },
 		viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
+
+	const today = startOfToday();
 
 	const DateInput = forwardRef(({ value, onClick }, ref) => (
 		<button className="viewRange__input" onClick={onClick} ref={ref}>
@@ -22,8 +24,6 @@ export default function MainHeader() {
 	useEffect(() => {
 		// set a sensible default range
 		if (!viewRange.start && !viewRange.end) {
-			let today = startOfToday();
-
 			viewOptionsDispatch({
 				type: "SET_RANGE",
 				start: viewMode === "calendar" ? startOfMonth(today) : today,
@@ -31,7 +31,7 @@ export default function MainHeader() {
 					viewMode === "calendar" ? endOfMonth() : addDays(today, 30),
 			});
 		}
-	}, [viewRange.start, viewRange.end, viewMode, viewOptionsDispatch]);
+	}, [today, viewRange.start, viewRange.end, viewMode, viewOptionsDispatch]);
 
 	const nextMonth = (e) => {
 		e.preventDefault();
@@ -46,11 +46,24 @@ export default function MainHeader() {
 	return (
 		<div className="calendarListHeader row flex-middle">
 			<div className="col col__start">
-				<button className="icon dateChevron" onClick={prevMonth}>
+				<button
+					className="icon dateChevron"
+					onClick={prevMonth}
+					title="Previous Month"
+				>
 					chevron_left
 				</button>
 			</div>
-			<div className="col col__center">
+			<div className="col col__center mainViewOptions">
+				<div className="toToday">
+					<button
+						className="icon today"
+						onClick={handleTodayClick}
+						title="Jump to Today"
+					>
+						today
+					</button>
+				</div>
 				<div className="viewRange">
 					<DatePicker
 						dateFormat={dateFormat.daylessDate}
@@ -89,7 +102,11 @@ export default function MainHeader() {
 				<ViewOptions />
 			</div>
 			<div className="col col__end">
-				<button className="icon dateChevron" onClick={nextMonth}>
+				<button
+					className="icon dateChevron"
+					onClick={nextMonth}
+					title="Next Month"
+				>
 					chevron_right
 				</button>
 			</div>

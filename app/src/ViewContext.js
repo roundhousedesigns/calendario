@@ -34,7 +34,7 @@ export function viewReducer(state, action) {
 			};
 
 		case "SET_RANGE_START":
-			// TODO this controls range start (and adjusts end keeping existing length)
+			// TODO combine this with _END case
 			return {
 				...state,
 				viewRange: {
@@ -47,7 +47,6 @@ export function viewReducer(state, action) {
 			};
 
 		case "SET_RANGE_END":
-			// TODO this controls range length (doesn't affect start)
 			return {
 				...state,
 				viewRange: {

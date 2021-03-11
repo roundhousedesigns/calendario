@@ -1,8 +1,9 @@
-import React, { useEffect, useReducer, Profiler } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Sidebar from "./components/Sidebar";
 import { useStickyState } from "./lib/hooks";
+import { dateIsBetween } from "./lib/utils";
 
 import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
 import DragContext, { dragReducer, initialDrag } from "./DragContext";
@@ -29,6 +30,28 @@ export default function App() {
 		"viewOptions"
 	);
 
+	const todayRef = useRef();
+	const mainRef = useRef();
+
+	function handleTodayClick() {
+		const today = new Date();
+
+		if (
+			dateIsBetween(
+				today,
+				viewOptions.viewRange.start,
+				viewOptions.viewRange.end
+			)
+		) {
+			mainRef.current.scrollTop = todayRef.current.offsetTop;
+		} else {
+			viewOptionsDispatch({
+				type: "SET_RANGE_START",
+				date: today,
+			});
+		}
+	}
+
 	useEffect(() => {
 		// Update the context initially
 		viewOptionsDispatch({
@@ -45,34 +68,20 @@ export default function App() {
 		});
 	}, [setView, viewOptions.viewMode]);
 
-	function mainRenderCallback(
-		id,
-		phase,
-		actualDuration,
-		baseDuration,
-		startTime,
-		commitTime,
-		interactions
-	) {}
-
 	return (
 		<div className={`calendario`}>
-			<Profiler id="Main" onRender={mainRenderCallback}>
-				<ViewContext.Provider
-					value={{ viewOptions, viewOptionsDispatch }}
-				>
-					<PostsContext.Provider value={{ posts, postsDispatch }}>
-						<Header />
+			<ViewContext.Provider value={{ viewOptions, viewOptionsDispatch }}>
+				<PostsContext.Provider value={{ posts, postsDispatch }}>
+					<Header handleTodayClick={handleTodayClick} />
 
-						<DragContext.Provider
-							value={{ draggedPost, draggedPostDispatch }}
-						>
-							<Main />
-							<Sidebar />
-						</DragContext.Provider>
-					</PostsContext.Provider>
-				</ViewContext.Provider>
-			</Profiler>
+					<DragContext.Provider
+						value={{ draggedPost, draggedPostDispatch }}
+					>
+						<Main ref={mainRef} todayRef={todayRef} />
+						<Sidebar />
+					</DragContext.Provider>
+				</PostsContext.Provider>
+			</ViewContext.Provider>
 		</div>
 	);
 }

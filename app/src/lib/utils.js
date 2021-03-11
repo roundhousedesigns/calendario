@@ -75,9 +75,10 @@ export function filterStatusList(exclude = []) {
 }
 
 /**
+ * Filters unchanged values from a post object.
  *
  * @param {object} params  Key/value post parameters to update
- * @param {*} post The post to check against
+ * @param {object} post The post to check against
  * @returns {object} The filtered params object
  */
 export function filterUnchangedParams(params, post) {
@@ -92,6 +93,14 @@ export function filterUnchangedParams(params, post) {
 	return params;
 }
 
+/**
+ * Renders a styled Widget.
+ *
+ * @param {string} title
+ * @param {string} className
+ * @param {*} children
+ * @returns
+ */
 export const renderWidget = (title, className, children) => {
 	return (
 		<Widget title={title} className={`widget__${className}`}>
@@ -99,3 +108,13 @@ export const renderWidget = (title, className, children) => {
 		</Widget>
 	);
 };
+
+/**
+ *
+ * @param {Date} date The target date
+ * @param {*} min Start of the range
+ * @param {*} max End of the range
+ * @returns
+ */
+export const dateIsBetween = (date, min, max) =>
+	date.getTime() >= min.getTime() && date.getTime() <= max.getTime();

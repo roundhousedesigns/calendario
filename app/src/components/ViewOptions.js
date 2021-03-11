@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import FieldGroup from "./common/FieldGroup";
 
 import ViewContext from "../ViewContext";
 
@@ -18,18 +17,7 @@ export default function ViewOptions() {
 
 	return (
 		<div className="viewOptions">
-			{/* <FieldGroup name="jumpToToday">
-					<button
-						onClick={handleToday}
-						disabled={
-							startOfDay(start) === startOfToday() ||
-							isSameWeek(start, startOfToday())
-						}
-					>
-						Jump to Today
-					</button>
-				</FieldGroup> */}
-			<FieldGroup name="viewMode">
+			<div className="viewMode">
 				<button
 					onClick={handleViewModeChange}
 					className={`icon ${
@@ -51,7 +39,7 @@ export default function ViewOptions() {
 				>
 					view_list
 				</button>
-			</FieldGroup>
+			</div>
 		</div>
 	);
 }
