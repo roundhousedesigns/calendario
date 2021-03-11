@@ -1,31 +1,27 @@
-import { useContext, useEffect } from "react";
+import { forwardRef, useContext, useEffect } from "react";
 import ViewOptions from "./ViewOptions";
-import DateRangePicker from "@wojtekmaj/react-daterange-picker";
-import { dateFormat } from "../lib/utils";
-import {
-	addYears,
-	addDays,
-	startOfToday,
-	startOfMonth,
-	endOfMonth,
-} from "date-fns";
+import DatePicker from "react-datepicker";
+import { addDays, startOfToday, startOfMonth, endOfMonth } from "date-fns";
 
 import ViewContext from "../ViewContext";
-
-import "react-calendar/dist/Calendar.css";
+import { dateFormat } from "../lib/utils";
 
 export default function MainHeader() {
 	const {
-		viewOptions: {
-			viewRange: { start, end },
-		},
+		viewOptions: { viewRange },
 		viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
 
+	const DateInput = forwardRef(({ value, onClick }, ref) => (
+		<button className="viewRange__input" onClick={onClick} ref={ref}>
+			{value}
+		</button>
+	));
+
 	useEffect(() => {
 		// set a sensible default range
-		if (!start && !end) {
+		if (!viewRange.start && !viewRange.end) {
 			let today = startOfToday();
 
 			viewOptionsDispatch({
@@ -35,34 +31,67 @@ export default function MainHeader() {
 					viewMode === "calendar" ? endOfMonth() : addDays(today, 30),
 			});
 		}
-	}, [end, start, viewMode, viewOptionsDispatch]);
+	}, [viewRange.start, viewRange.end, viewMode, viewOptionsDispatch]);
 
-	const handleChangeDateRange = (dates) => {
-		viewOptionsDispatch({
-			type: "SET_RANGE",
-			start: dates[0],
-			end: dates[1],
-		});
+	const nextMonth = (e) => {
+		e.preventDefault();
+		viewOptionsDispatch({ type: "NEXT_MONTH" });
+	};
+
+	const prevMonth = (e) => {
+		e.preventDefault();
+		viewOptionsDispatch({ type: "PREV_MONTH" });
 	};
 
 	return (
 		<div className="calendarListHeader row flex-middle">
+			<div className="col col__start">
+				<button className="icon dateChevron" onClick={prevMonth}>
+					chevron_left
+				</button>
+			</div>
 			<div className="col col__center">
-				{/* <h3 className="viewTitle">Scheduled Posts</h3> */}
-				<DateRangePicker
-					value={[start, end]}
-					onChange={handleChangeDateRange}
-					// calendarIcon={<span className="icon">date_range</span>}
-					clearIcon={null}
-					format={dateFormat.daylessDate}
-					required={true}
-					// minDetail={"month"}
-					// maxDetail={"month"}
-					maxDate={addYears(new Date(), 3)}
-					showLeadingZeros={false}
-					disableCalendar={true}
-				/>
+				<div className="viewRange">
+					<DatePicker
+						dateFormat={dateFormat.daylessDate}
+						selected={viewRange.start}
+						onChange={(date) =>
+							viewOptionsDispatch({
+								type: `SET_RANGE_START`,
+								date,
+							})
+						}
+						customInput={<DateInput />}
+						selectsStart
+						startDate={viewRange.start}
+						endDate={viewRange.end}
+						closeOnScroll={(e) => e.target === document}
+					/>
+					{" to "}
+					<DatePicker
+						dateFormat={dateFormat.daylessDate}
+						selected={viewRange.end}
+						onChange={(date) =>
+							viewOptionsDispatch({
+								type: `SET_RANGE_END`,
+								date,
+							})
+						}
+						customInput={<DateInput />}
+						selectsEnd
+						startDate={viewRange.start}
+						endDate={viewRange.end}
+						minDate={viewRange.start}
+						monthsShown={2}
+						closeOnScroll={(e) => e.target === document}
+					/>
+				</div>
 				<ViewOptions />
+			</div>
+			<div className="col col__end">
+				<button className="icon dateChevron" onClick={nextMonth}>
+					chevron_right
+				</button>
 			</div>
 		</div>
 	);

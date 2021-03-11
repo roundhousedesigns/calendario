@@ -22,8 +22,6 @@ import { decode } from "html-entities";
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 
-import "react-datepicker/dist/react-datepicker.css";
-
 const initialEditPost = {
 	post: {},
 	editMode: false,
@@ -222,6 +220,8 @@ export default function EditPost() {
 	}, [editPostDispatch, postsDispatch]);
 
 	useEffect(() => {
+		if (editMode === false) return;
+
 		const handleClickOutside = (e) => {
 			if (node.current && node.current.contains(e.target)) {
 				// inside click
@@ -241,7 +241,7 @@ export default function EditPost() {
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [currentPost, postsDispatch, closeModal]);
+	}, [editMode, currentPost, postsDispatch, closeModal]);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();

@@ -9,6 +9,7 @@ import DragContext, { dragReducer, initialDrag } from "./DragContext";
 import ViewContext, { viewReducer, initialViewOptions } from "./ViewContext";
 
 import "./App.scss";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function App() {
 	const [posts, postsDispatch] = useReducer(postsReducer, initialPosts);

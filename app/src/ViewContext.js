@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { startOfWeek, endOfWeek } from "date-fns";
+import { addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns";
 import { postStatuses } from "./lib/utils";
 
 const ViewContext = createContext({});
@@ -30,6 +30,50 @@ export function viewReducer(state, action) {
 				viewRange: {
 					start: range.start,
 					end: range.end,
+				},
+			};
+
+		case "SET_RANGE_START":
+			// TODO this controls range start (and adjusts end keeping existing length)
+			return {
+				...state,
+				viewRange: {
+					...state.viewRange,
+					start:
+						state.viewMode !== "list"
+							? startOfWeek(action.date)
+							: action.date,
+				},
+			};
+
+		case "SET_RANGE_END":
+			// TODO this controls range length (doesn't affect start)
+			return {
+				...state,
+				viewRange: {
+					...state.viewRange,
+					end:
+						state.viewMode !== "list"
+							? endOfWeek(action.date)
+							: action.date,
+				},
+			};
+
+		case "NEXT_MONTH":
+			return {
+				...state,
+				viewRange: {
+					start: addMonths(state.viewRange.start, 1),
+					end: addMonths(state.viewRange.end, 1),
+				},
+			};
+
+		case "PREV_MONTH":
+			return {
+				...state,
+				viewRange: {
+					start: subMonths(state.viewRange.start, 1),
+					end: subMonths(state.viewRange.end, 1),
 				},
 			};
 
