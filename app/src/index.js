@@ -20,12 +20,15 @@ if (DEBUG_MODE !== true) {
 // ODOT
 
 if (appAnchorElement) {
+	console.log('yes', appAnchorElement);
 	ReactDOM.render(
 		<React.StrictMode>
 			<App />
 		</React.StrictMode>,
 		appAnchorElement
 	);
+} else {
+	console.log('no', appAnchorElement);
 }
 
 // If you want to start measuring performance in your app, pass a function

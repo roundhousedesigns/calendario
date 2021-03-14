@@ -12,7 +12,9 @@
 
 // Setting react app path constants.
 define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.3.0' );
-define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
+// define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
+// define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', 'https://calendario.roundhouse-designs.com' );
+define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', 'https://efe35bc7.rhdwp-calendario.pages.dev' );
 define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
 define( 'RHD_CALENDARIO_REST_VERSION', 'v1' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
