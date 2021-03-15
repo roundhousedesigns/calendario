@@ -35,55 +35,6 @@
 	box-sizing: border-box;
 }
 
-@mixin postLinksGrid {
-	button,
-	a {
-		&.icon {
-			position: absolute;
-
-			&.top {
-				top: -5px;
-			}
-
-			&.right {
-				right: -8px;
-			}
-
-			&.bottom {
-				bottom: -5px;
-			}
-
-			&.left {
-				left: -8px;
-			}
-		}
-	}
-}
-
-@mixin postLinksList {
-	align-items: center;
-	justify-content: flex-end;
-	right: -11px;
-	top: -11px;
-	left: initial;
-	width: auto;
-	height: auto;
-
-	&.visible {
-		display: flex;
-	}
-
-	button,
-	a {
-		&.icon {
-			top: initial;
-			right: initial;
-			bottom: initial;
-			left: initial;
-		}
-	}
-}
-
 body {
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 	font-size: 1em;
@@ -185,14 +136,8 @@ body {
 	}
 
 	button {
-		&:not(.react-calendar__tile) {
-			border-radius: var(--borderRadius);
-		}
-
-		&:not(.react-datepicker__navigation) {
-			border: none;
-		}
-
+		border: none;
+		border-radius: var(--borderRadius);
 		font-size: 1em;
 		outline: none;
 		padding: 0.25em 0.5em;
@@ -203,6 +148,28 @@ body {
 
 		&.icon {
 			background-color: transparent;
+		}
+	}
+
+	.react-datepicker-wrapper {
+		.react-datepicker-popper {
+			z-index: 100 !important;
+		}
+	}
+
+	.react-datepicker {
+		&__navigation {
+			border-radius: 0;
+			padding: initial;
+			border: 0.45rem solid transparent;
+
+			&--next {
+				border-left-color: #ccc;
+			}
+
+			&--previous {
+				border-right-color: #ccc;
+			}
 		}
 	}
 }
@@ -261,10 +228,6 @@ body {
 				}
 			}
 		}
-	}
-
-	.postLinks {
-		@include postLinksList;
 	}
 
 	& + .newPost {
@@ -339,25 +302,21 @@ body {
 
 			&__input {
 				background-color: transparent;
-				border-bottom: 2px dotted var(--textColor-light) !important;
-				border-radius: 0 !important;
+				border-bottom: 2px dotted var(--textColor-light);
+				border-radius: 0;
 				color: var(--textColor);
 				font-size: 1.2em;
 
 				&:hover,
 				&:active,
 				&:focus {
-					border-bottom-color: var(--textColor) !important;
+					border-bottom-color: var(--textColor);
 					color: var(--textColor);
 				}
 			}
 
 			& > .react-datepicker-wrapper {
 				flex: 1;
-
-				.react-datepicker-popper {
-					z-index: 100 !important;
-				}
 			}
 		}
 
@@ -529,10 +488,6 @@ body {
 				}
 			}
 		}
-
-		.postLinks {
-			@include postLinksGrid;
-		}
 	}
 
 	&__list {
@@ -576,10 +531,6 @@ body {
 					margin: 0;
 				}
 			}
-		}
-
-		.postLinks {
-			@include postLinksList;
 		}
 	}
 }
@@ -652,7 +603,7 @@ body {
 			line-height: 1.1;
 			align-items: center;
 			flex-wrap: nowrap;
-			margin: 6px 12px;
+			margin: 3px 0;
 
 			.dot {
 				display: inline-block;
@@ -693,6 +644,57 @@ body {
 		padding: 3px 0;
 		margin: 0;
 		position: relative;
+
+		.postLinks {
+			position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+			padding: 0 2px;
+			opacity: 0;
+			z-index: -1;
+			transition: opacity 0.1s ease-out;
+
+			&.disabled {
+				display: none;
+			}
+
+			button,
+			a {
+				&.icon {
+					background-color: var(--neutralColor);
+					border-radius: 50%;
+					border: 1px solid var(--textColor);
+					padding: 3px;
+					margin: 0 0.5px;
+					font-size: 0.9rem;
+					text-decoration: none;
+					// transition: color 0.1s, background-color 0.1s;
+
+					&:hover {
+						color: black;
+						background-color: var(--neutralColor-dark);
+					}
+
+					&__trash {
+						&:hover {
+							color: red;
+						}
+					}
+				}
+			}
+		}
+
+		&:hover {
+			.postLinks {
+				opacity: 1;
+				z-index: initial;
+			}
+		}
 
 		.postData {
 			pointer-events: none;
@@ -827,44 +829,6 @@ body {
 				p {
 					font-size: 1.2em;
 					margin: 0 0 6px;
-				}
-			}
-		}
-	}
-}
-
-.postLinks {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	display: none;
-
-	&.visible {
-		display: block;
-	}
-
-	button,
-	a {
-		&.icon {
-			background-color: white;
-			border-radius: 50%;
-			border: 1px solid var(--textColor);
-			padding: 3px;
-			margin: 0;
-			font-size: 1rem;
-			text-decoration: none;
-			transition: all 0.1s ease;
-
-			&:hover {
-				color: black;
-				transform: scale(1.15);
-			}
-
-			&__trash {
-				&:hover {
-					color: red;
 				}
 			}
 		}
@@ -1043,12 +1007,5 @@ body {
 		100% {
 			transform: rotate(360deg);
 		}
-	}
-}
-
-.react-datepicker {
-	&__navigation {
-		border-radius: 0 !important;
-		padding: initial !important;
 	}
 }

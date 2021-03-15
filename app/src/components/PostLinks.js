@@ -96,24 +96,24 @@ export default function PostLinks({ post, className, unscheduled }) {
 
 	return (
 		<div className={`postLinks ${className}`}>
-			<a
+			<button
 				className="icon top left icon__view"
-				href={view_link}
+				onClick={() => (window.location.href = view_link)}
 				target="_blank"
 				rel="noreferrer"
 				title="View Post"
 			>
 				open_in_new
-			</a>
-			<a
+			</button>
+			<button
 				className="icon top right icon__edit"
-				href={decode(edit_link)}
+				onClick={() => (window.location.href = decode(edit_link))}
 				target="_blank"
 				rel="noreferrer"
 				title="Edit Post in a new tab"
 			>
 				mode_edit
-			</a>
+			</button>
 			{unscheduled ? (
 				<button
 					className="icon icon__schedule bottom right"
@@ -135,7 +135,9 @@ export default function PostLinks({ post, className, unscheduled }) {
 				className="icon icon__trash bottom left"
 				onClick={trashPost}
 				title="Trash this post"
-			>delete_forever</button>
+			>
+				delete_forever
+			</button>
 		</div>
 	);
 }
