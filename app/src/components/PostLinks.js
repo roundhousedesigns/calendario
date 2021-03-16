@@ -98,7 +98,7 @@ export default function PostLinks({ post, className, unscheduled }) {
 		<div className={`postLinks ${className}`}>
 			<button
 				className="icon top left icon__view"
-				onClick={() => (window.location.href = view_link)}
+				onClick={() => window.open(view_link, "_blank")}
 				target="_blank"
 				rel="noreferrer"
 				title="View Post"
@@ -107,7 +107,7 @@ export default function PostLinks({ post, className, unscheduled }) {
 			</button>
 			<button
 				className="icon top right icon__edit"
-				onClick={() => (window.location.href = decode(edit_link))}
+				onClick={() => window.open(decode(edit_link), "_blank")}
 				target="_blank"
 				rel="noreferrer"
 				title="Edit Post in a new tab"

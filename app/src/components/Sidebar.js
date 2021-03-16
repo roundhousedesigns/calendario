@@ -13,7 +13,7 @@ export default function Sidebar() {
 					<UnscheduledDrafts />
 				)}
 
-				{renderWidget("", "statusFilters", <StatusFilters />)}
+				{renderWidget("Filter by Status", "statusFilters", <StatusFilters />)}
 
 				{renderWidget(
 					"Dev Links + Info",
