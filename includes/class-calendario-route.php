@@ -219,7 +219,7 @@ class Calendario_Route extends WP_REST_Controller {
 		// Update the post
 		$result = wp_update_post( $item );
 
-		if ( $result !== false && !is_wp_error( $result ) ) {
+		if ( $result !== false && ! is_wp_error( $result ) ) {
 			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
 		}
 
@@ -238,7 +238,7 @@ class Calendario_Route extends WP_REST_Controller {
 		// Update the post
 		$result = wp_insert_post( $item );
 
-		if ( $result !== false && !is_wp_error( $result ) ) {
+		if ( $result !== false && ! is_wp_error( $result ) ) {
 			return new WP_REST_Response( 'Updated post ' . $item['ID'], 200 );
 		}
 
@@ -470,7 +470,7 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( isset( $atts['args'][$param] ) ) {
 			$arg = $atts['args'][$param];
 
-			if ( 'string' === $arg['type'] && !is_string( $value ) ) {
+			if ( 'string' === $arg['type'] && ! is_string( $value ) ) {
 				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
 			}
 		} else {
@@ -494,7 +494,7 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( isset( $atts['args'][$param] ) ) {
 			$arg = $atts['args'][$param];
 
-			if ( 'integer' === $arg['type'] && !is_int( $value ) ) {
+			if ( 'integer' === $arg['type'] && ! is_int( $value ) ) {
 				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
 			}
 		} else {
@@ -518,7 +518,7 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( isset( $atts['args'][$param] ) ) {
 			$arg = $atts['args'][$param];
 
-			if ( 'string' === $arg['type'] && !is_string( $value ) ) {
+			if ( 'string' === $arg['type'] && ! is_string( $value ) ) {
 				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
 			} elseif ( rhd_validate_date( $value ) === false ) {
 				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not a valid date.', 'rhd' ), $param ), ['status' => 400] );
@@ -727,7 +727,6 @@ class Calendario_Route extends WP_REST_Controller {
 		return [
 			'id'           => $item->ID,
 			'post_title'   => $item->post_title,
-			// 'post_date'    => $post_date->format( 'Y-m-d H:i:s' ),
 			'post_date'    => $post_date->format( 'c' ),
 			'post_status'  => $item->post_status,
 			'post_excerpt' => $item->post_excerpt,

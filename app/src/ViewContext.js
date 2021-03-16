@@ -34,7 +34,6 @@ export function viewReducer(state, action) {
 			};
 
 		case "SET_RANGE_START":
-			// TODO combine this with _END case
 			return {
 				...state,
 				viewRange: {

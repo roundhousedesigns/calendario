@@ -32,7 +32,7 @@ export default function Sidebar() {
 									target="_blank"
 									rel="noreferrer"
 								>
-									TODO/Readme
+									Readme
 								</a>
 							</li>
 							<li>

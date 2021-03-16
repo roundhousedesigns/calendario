@@ -35,7 +35,7 @@ export default function StatusFilters() {
 								style={
 									statuses[item] === true
 										? {
-												color, // TODO use it or lose it
+												color,
 												backgroundColor,
 												borderColor: backgroundColor,
 										  }
