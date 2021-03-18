@@ -1,4 +1,5 @@
 <?php
+// TODO make global?
 $date_string_format = 'Y-m-d H:i:s';
 
 /**
@@ -18,14 +19,14 @@ function rhd_validate_date( $date, $format = 'Y-m-d' ) {
  * @param string $date The date string to format
  * @param array Contains post_date and post_date_gmt date strings
  */
-function rhd_wp_format_date( $date_string ) {
+function rhd_wp_prepare_date( $date_string ) {
 	global $date_string_format;
 
 	if ( ! is_string( $date_string ) ) {
 		return;
 	}
 
-	$from_format = 'Y-m-d';
+	$from_format = 'Y-m-d g:i A';
 
 	$date     = DateTime::createFromFormat( $from_format, $date_string );
 	$date_gmt = DateTime::createFromFormat( $from_format, $date_string );

@@ -47,6 +47,7 @@ if (DEBUG_MODE !== true) {
 export const dateFormat = {
 	day: "d",
 	date: "yyyy-MM-dd",
+	dateTime: "yyyy-MM-dd h:mm aa",
 	year: "yyyy",
 	dayName: "EEEE",
 	monthName: "MMMM",

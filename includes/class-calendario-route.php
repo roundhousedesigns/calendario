@@ -627,7 +627,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'ID' => $params['ID'],
 		];
 
-		if ( $postData['unscheduled'] === true ) {
+		if ( isset( $postData['unscheduled'] ) && $postData['unscheduled'] === true ) {
 			$draggedTo = isset( $postData['draggedTo'] ) ? $postData['draggedTo'] : false;
 			$this->reorder_unscheduled_post( $params['ID'], $draggedTo );
 
@@ -642,7 +642,7 @@ class Calendario_Route extends WP_REST_Controller {
 
 		foreach ( $postData['params'] as $key => $value ) {
 			if ( $key === 'post_date' ) {
-				$date = rhd_wp_format_date( $value );
+				$date = rhd_wp_prepare_date( $value );
 
 				$item['post_date']     = $date['post_date'];
 				$item['post_date_gmt'] = $date['post_date_gmt'];
@@ -727,7 +727,7 @@ class Calendario_Route extends WP_REST_Controller {
 		return [
 			'id'           => $item->ID,
 			'post_title'   => $item->post_title,
-			'post_date'    => $post_date->format( 'c' ),
+			'post_date'    => $post_date->format( 'Y-m-d H:i:s' ),
 			'post_status'  => $item->post_status,
 			'post_excerpt' => $item->post_excerpt,
 			'image'        => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),

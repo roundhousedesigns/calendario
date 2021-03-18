@@ -42,20 +42,12 @@ function editPostReducer(state, action) {
 			if (field === "post_date") {
 				value = new Date(value);
 			}
+
 			return {
 				...state,
 				post: {
 					...state.post,
 					[field]: value,
-				},
-			};
-
-		case "DATE_CHANGE":
-			return {
-				...state,
-				post: {
-					...state.post,
-					post_date: action.newDate,
 				},
 			};
 
@@ -134,7 +126,7 @@ export default function EditPost() {
 				type: "UPDATING",
 			});
 
-			// Check if this is a new post
+			// Check if this is a new post and set the proper URL
 			let url = `${routeBase}/`;
 			if (updatePost.trash === true) {
 				url += `trash/${currentPost.id}`;
@@ -249,7 +241,10 @@ export default function EditPost() {
 			type: "UPDATE",
 			params: {
 				post_title: post.post_title,
-				post_date: format(new Date(post.post_date), dateFormat.date),
+				post_date: format(
+					new Date(post.post_date),
+					dateFormat.dateTime
+				),
 				post_status: post.post_status,
 				post_excerpt: post.post_excerpt,
 			},
@@ -276,7 +271,12 @@ export default function EditPost() {
 		setTrashPostClicked(false);
 	};
 
-	const cancelHandler = () => editPostDispatch({ type: "CLEAR" });
+	const cancelHandler = () => {
+		editPostDispatch({ type: "CLEAR" });
+		postsDispatch({
+			type: "UNSET_CURRENTPOST",
+		});
+	};
 
 	const handleInputChange = (e) => {
 		editPostDispatch({
@@ -298,6 +298,7 @@ export default function EditPost() {
 		if (date === null) {
 			date = new Date();
 		}
+
 		editPostDispatch({
 			type: "EDIT",
 			field: "post_date",
@@ -349,6 +350,9 @@ export default function EditPost() {
 								<DatePicker
 									closeOnScroll={(e) => e.target === document}
 									selected={date}
+									timeInputLabel="Time:"
+									showTimeInput
+									dateFormat={dateFormat.dateTime}
 									onChange={handleInputDateChange}
 									disabled={datePickerDisabled}
 								/>

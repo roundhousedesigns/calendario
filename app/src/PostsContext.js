@@ -19,6 +19,7 @@ export const initialPosts = {
 	unscheduled: [],
 	scheduled: [],
 	trashed: [],
+	locale: "",
 };
 
 export function postsReducer(state, action) {

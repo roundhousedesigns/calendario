@@ -9,7 +9,7 @@ import {
 	DEBUG_MODE,
 } from "../lib/utils";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
-import { format } from "date-fns";
+import { format, getHours, getMinutes, setHours, setMinutes } from "date-fns";
 import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
@@ -152,7 +152,6 @@ export default function PostList({
 				});
 			}
 		} else if (overUnscheduled === true) {
-			// Only update if necessary
 			draggedPostDispatch({
 				type: "DRAGGING_OVER_SCHEDULED",
 			});
@@ -161,13 +160,26 @@ export default function PostList({
 
 	const handleDrop = () => {
 		if (allowDrop !== false) {
+			let dropDate, time, post_date;
+
+			if (date === false) {
+				post_date = format(post.post_date, dateFormat.dateTime);
+			} else {
+				dropDate = date;
+				time = {
+					h: getHours(post.post_date),
+					m: getMinutes(post.post_date),
+				};
+				dropDate = setHours(dropDate, time.h);
+				dropDate = setMinutes(dropDate, time.m);
+
+				post_date = format(dropDate, dateFormat.dateTime);
+			}
+
 			updatePostDispatch({
 				type: "UPDATE",
 				params: {
-					post_date:
-						date === false
-							? format(post.post_date, dateFormat.date)
-							: format(date, dateFormat.date),
+					post_date,
 				},
 				unscheduled: overUnscheduled,
 			});
