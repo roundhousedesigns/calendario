@@ -102,6 +102,7 @@ export function postsReducer(state, action) {
 					id: 0,
 					post_date: action.post_date,
 					unscheduled: action.unscheduled,
+					taxonomies: {},
 				},
 			};
 

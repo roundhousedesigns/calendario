@@ -53,12 +53,14 @@ function editPostReducer(state, action) {
 
 		case "TOGGLE_TAXONOMY":
 			const term_id = parseInt(action.term_id);
-			const index = state.post.taxonomies[action.taxonomy].indexOf(
-				term_id
-			);
+			const index = state.post.taxonomies.hasOwnProperty(action.taxonomy)
+				? state.post.taxonomies[action.taxonomy].indexOf(term_id)
+				: false;
 			let termList =
 				index === -1
 					? [...state.post.taxonomies[action.taxonomy], term_id]
+					: index === false
+					? [term_id]
 					: [
 							...state.post.taxonomies[action.taxonomy].slice(
 								0,
@@ -430,9 +432,18 @@ export default function EditPost() {
 													onChange={
 														handleTermCheckboxChange
 													}
-													checked={post.taxonomies.category.includes(
-														term.term_id
-													)}
+													checked={
+														!isEmpty(
+															post.taxonomies
+														) &&
+														!isEmpty(
+															post.taxonomies
+																.category
+														) &&
+														post.taxonomies.category.includes(
+															term.term_id
+														)
+													}
 												/>
 												{decode(term.name, {
 													scope: "strict",
@@ -456,9 +467,18 @@ export default function EditPost() {
 													onChange={
 														handleTermCheckboxChange
 													}
-													checked={post.taxonomies.post_tag.includes(
-														term.term_id
-													)}
+													checked={
+														!isEmpty(
+															post.taxonomies
+														) &&
+														!isEmpty(
+															post.taxonomies
+																.post_tag
+														) &&
+														post.taxonomies.post_tag.includes(
+															term.term_id
+														)
+													}
 												/>
 												{decode(term.name, {
 													scope: "strict",

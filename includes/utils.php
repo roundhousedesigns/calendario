@@ -127,3 +127,24 @@ function rhd_get_term_ids( $post, $taxonomy ) {
 
 	return $ids;
 }
+
+/**
+ * Gets the number of Unscheduled Draft posts
+ *
+ * @return int The post count
+ */
+function rhd_unscheduled_draft_count() {
+	$p = get_posts( [
+		'posts_per_page' => -1,
+		'post_status'    => 'any',
+		'post_type'      => 'post',
+		'meta_query'     => [
+			[
+				'key'     => RHD_UNSCHEDULED_INDEX,
+				'compare' => 'EXISTS',
+			],
+		],
+	] );
+
+	return count( $p );
+}
