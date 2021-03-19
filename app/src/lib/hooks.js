@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
-import { format, isSameDay } from "date-fns";
 import { nonce, routeBase, dateFormat } from "../lib/utils";
+import { format, isSameDay } from "date-fns";
+import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
 
@@ -167,3 +168,54 @@ export const useFetchUnscheduledPosts = () => {
 
 // 	return isLoading;
 // };
+
+/**
+ *
+ * @param {string} name The taxonomy name (slug) to fetch
+ * @returns
+ */
+export const useFetchTaxonomyTerms = (name) => {
+	const {
+		posts: { taxonomies },
+		postsDispatch,
+	} = useContext(PostsContext);
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		// Only fetch categories if not already set
+		if (isEmpty(taxonomies[name])) {
+			let url = `${routeBase}/tax/${name}`;
+
+			const fetchData = async () => {
+				setIsLoading(true);
+
+				try {
+					const res = await fetch(url, {
+						headers,
+					});
+					const data = await res.json();
+
+					postsDispatch({
+						type: "SET_TAXONOMY_TERMS",
+						name,
+						taxonomy: data.taxonomy,
+						terms: data.terms,
+					});
+
+					setIsLoading(false);
+				} catch (error) {
+					console.log("REST error", error.message);
+					setIsLoading(false);
+				}
+			};
+
+			fetchData();
+
+			return () => {
+				setIsLoading(false);
+			};
+		}
+	}, [name, taxonomies, postsDispatch]);
+
+	return isLoading;
+};

@@ -19,6 +19,7 @@ export const initialPosts = {
 	unscheduled: [],
 	scheduled: [],
 	trashed: [],
+	taxonomies: {},
 	locale: "",
 };
 
@@ -71,6 +72,18 @@ export function postsReducer(state, action) {
 			return {
 				...state,
 				refetch: !state.refetch,
+			};
+
+		case "SET_TAXONOMY_TERMS":
+			return {
+				...state,
+				taxonomies: {
+					...state.taxonomies,
+					[action.name]: {
+						taxonomy: action.taxonomy,
+						terms: action.terms,
+					},
+				},
 			};
 
 		case "SET_CURRENTPOST":

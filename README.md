@@ -33,13 +33,14 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
     -   Like, do all things, but also...
         -   Unscheduled collapsible
 
-## Maybes
+## The Future
 
 -   Abbreviate long titles?
+-   Custom taxonomy support?
+-   CPT support?
 
 ## Questions
 
 ## Don't Forget
 
 -   Permissions checks: non-admins can only edit/delete their posts
--   Times and timezones, and the not-fucking-up thereof

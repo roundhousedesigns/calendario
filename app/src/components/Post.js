@@ -23,7 +23,6 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 	} = useContext(ViewContext);
 	const [colors, setColors] = useState({});
 	const [date, setDate] = useState(new Date());
-	// const [isHovered, setIsHovered] = useState(false);
 
 	useEffect(() => {
 		setDate(new Date(post.post_date));

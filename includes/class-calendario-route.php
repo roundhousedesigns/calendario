@@ -35,6 +35,14 @@ class Calendario_Route extends WP_REST_Controller {
 			],
 		] );
 
+		register_rest_route( $namespace, '/' . $post_base . '/tax/(?P<taxonomy>\w+)', [
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [$this, 'get_taxonomy_terms'],
+				'permission_callback' => [$this, 'get_items_permissions_check'],
+			],
+		] );
+
 		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)', [
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
@@ -171,6 +179,43 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get a collection of taxonomy terms
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_taxonomy_terms( $request ) {
+		$params = $request->get_params();
+		if ( isset( $params['taxonomy'] ) ) {
+			$tax = get_taxonomy( $params['taxonomy'] );
+
+			$terms = get_terms( array(
+				'taxonomy'   => $tax->name,
+				'hide_empty' => false,
+			) );
+
+			$data = [
+				'taxonomy' => [
+					'slug'          => $tax->name,
+					'name'          => $tax->labels->name,
+					'singular_name' => $tax->labels->singular_name,
+				],
+				'terms'    => [],
+			];
+
+			foreach ( $terms as $term ) {
+				$data['terms'][] = [
+					'term_id' => $term->term_id,
+					'name'    => $term->name,
+					'slug'    => $term->slug,
+				];
+			}
+		}
+
+		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
 	 * Runs the query for all unscheduled posts
 	 *
 	 * @return array The queried posts.
@@ -215,6 +260,21 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function update_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
+
+		// Update categories and tags ('tax_input' doesn't work without assign_terms privileges)
+		$tax_index  = array_search( 'tax_input', array_keys( $item ) );
+		$taxonomies = array_splice( $item, $tax_index, 1 );
+
+		if ( ! empty( $taxonomies['tax_input'] ) ) {
+			$result = [];
+			foreach ( $taxonomies['tax_input'] as $taxonomy => $terms ) {
+				$result = wp_set_object_terms( $item['ID'], $terms, $taxonomy, false );
+			}
+
+			if ( is_wp_error( $result ) ) {
+				return new WP_Error( 'cant-update-taxonomies', __( 'message', 'rhd' ), ['status' => 500] );
+			}
+		}
 
 		// Update the post
 		$result = wp_update_post( $item );
@@ -617,18 +677,17 @@ class Calendario_Route extends WP_REST_Controller {
 	 * Prepare the item for create or update operation
 	 *
 	 * @param WP_REST_Request $request Request object
-	 * @return WP_Error|object $prepared_item
+	 * @return WP_Error|array $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
-		$params   = $request->get_params();
-		$postData = json_decode( $request->get_body(), true );
+		$params = $request->get_params();
 
 		$item = [
 			'ID' => $params['ID'],
 		];
 
-		if ( isset( $postData['unscheduled'] ) && $postData['unscheduled'] === true ) {
-			$draggedTo = isset( $postData['draggedTo'] ) ? $postData['draggedTo'] : false;
+		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
+			$draggedTo = isset( $params['draggedTo'] ) ? $params['draggedTo'] : false;
 			$this->reorder_unscheduled_post( $params['ID'], $draggedTo );
 
 			// Make sure post is either Draft or Private
@@ -640,16 +699,15 @@ class Calendario_Route extends WP_REST_Controller {
 			delete_post_meta( $params['ID'], RHD_UNSCHEDULED_INDEX );
 		}
 
-		foreach ( $postData['params'] as $key => $value ) {
-			if ( $key === 'post_date' ) {
-				$date = rhd_wp_prepare_date( $value );
+		// Post Date
+		$date                  = rhd_wp_prepare_date( $params['params']['post_date'] );
+		$item['post_date']     = $date['post_date'];
+		$item['post_date_gmt'] = $date['post_date_gmt'];
 
-				$item['post_date']     = $date['post_date'];
-				$item['post_date_gmt'] = $date['post_date_gmt'];
-
-			} else {
-				$item[$key] = $value;
-			}
+		// Taxonomy terms
+		$item['tax_input'] = [];
+		foreach ( $params['params']['taxonomies'] as $taxonomy => $terms ) {
+			$item['tax_input'][$taxonomy] = $terms;
 		}
 
 		return $item;
@@ -733,6 +791,10 @@ class Calendario_Route extends WP_REST_Controller {
 			'image'        => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),
 			'edit_link'    => get_edit_post_link( $item->ID ),
 			'view_link'    => get_the_permalink( $item->ID ),
+			'taxonomies'   => [
+				'category' => rhd_get_term_ids( $item->ID, 'category' ),
+				'post_tag' => rhd_get_term_ids( $item->ID, 'post_tag' ),
+			],
 		];
 	}
 

@@ -51,6 +51,35 @@ function editPostReducer(state, action) {
 				},
 			};
 
+		case "TOGGLE_TAXONOMY":
+			const term_id = parseInt(action.term_id);
+			const index = state.post.taxonomies[action.taxonomy].indexOf(
+				term_id
+			);
+			let termList =
+				index === -1
+					? [...state.post.taxonomies[action.taxonomy], term_id]
+					: [
+							...state.post.taxonomies[action.taxonomy].slice(
+								0,
+								index
+							),
+							...state.post.taxonomies[action.taxonomy].slice(
+								index + 1
+							),
+					  ];
+
+			return {
+				...state,
+				post: {
+					...state.post,
+					taxonomies: {
+						...state.post.taxonomies,
+						[action.taxonomy]: termList,
+					},
+				},
+			};
+
 		case "CLEAR":
 			return initialEditPost;
 
@@ -59,10 +88,9 @@ function editPostReducer(state, action) {
 	}
 }
 
-// TODO Date/time display, add time picker
 export default function EditPost() {
 	const {
-		posts: { currentPost },
+		posts: { currentPost, taxonomies },
 		postsDispatch,
 	} = useContext(PostsContext);
 	const { draggedPostDispatch } = useContext(DragContext);
@@ -81,6 +109,11 @@ export default function EditPost() {
 	const [trashPostClicked, setTrashPostClicked] = useState(false);
 
 	const { post, editMode } = editPost;
+
+	// debug
+	useEffect(() => {
+		// console.log(post);
+	}, [post]);
 
 	useEffect(() => {
 		if (post.post_date && post.post_date !== "undefined") {
@@ -247,6 +280,7 @@ export default function EditPost() {
 				),
 				post_status: post.post_status,
 				post_excerpt: post.post_excerpt,
+				taxonomies: post.taxonomies,
 			},
 			unscheduled: post.unscheduled,
 		});
@@ -294,6 +328,14 @@ export default function EditPost() {
 		});
 	};
 
+	const handleTermCheckboxChange = (e) => {
+		editPostDispatch({
+			type: "TOGGLE_TAXONOMY",
+			taxonomy: e.target.name,
+			term_id: e.target.value,
+		});
+	};
+
 	const handleInputDateChange = (date) => {
 		if (date === null) {
 			date = new Date();
@@ -337,6 +379,7 @@ export default function EditPost() {
 								onChange={handleInputChange}
 							/>
 						</FieldGroup>
+
 						<FieldGroup name="date">
 							{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
 							<div
@@ -367,6 +410,7 @@ export default function EditPost() {
 								<label htmlFor="unscheduled">Unscheduled</label>
 							</div>
 						</FieldGroup>
+
 						<FieldGroup name="post_status" label="Status">
 							<select
 								name="post_status"
@@ -377,8 +421,58 @@ export default function EditPost() {
 							</select>
 						</FieldGroup>
 
-						<FieldGroup name="taxonomies" label="Categories & Tags">
-							<p>Coming soon</p>
+						<FieldGroup name="taxonomies">
+							<label htmlFor="category">
+								Categories
+								<fieldset name="category">
+									{taxonomies.category.terms.map(
+										(term, index) => (
+											<label key={index}>
+												<input
+													type="checkbox"
+													name="category"
+													value={term.term_id}
+													onChange={
+														handleTermCheckboxChange
+													}
+													checked={post.taxonomies.category.includes(
+														term.term_id
+													)}
+												/>
+												{decode(term.name, {
+													scope: "strict",
+												})}
+											</label>
+										)
+									)}
+								</fieldset>
+							</label>
+
+							<label htmlFor="post_tag">
+								Tags
+								<fieldset name="post_tag">
+									{taxonomies.post_tag.terms.map(
+										(term, index) => (
+											<label key={index}>
+												<input
+													type="checkbox"
+													name="post_tag"
+													value={term.term_id}
+													onChange={
+														handleTermCheckboxChange
+													}
+													checked={post.taxonomies.post_tag.includes(
+														term.term_id
+													)}
+												/>
+												{decode(term.name, {
+													scope: "strict",
+												})}
+											</label>
+										)
+									)}
+								</fieldset>
+							</label>
 						</FieldGroup>
 
 						<FieldGroup name="post_excerpt" label="Excerpt">

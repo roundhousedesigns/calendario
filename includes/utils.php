@@ -111,3 +111,19 @@ function rhd_end_of_day( $date ) {
 
 	return $date_obj->format( $date_string_format );
 }
+
+/**
+ * Get an array of term IDs attached to a post, by taxonomy
+ *
+ * @param int|WP_Post $post The post object or post ID
+ * @param string $taxonomy The taxonomy name (slug)
+ * @return array Array of term IDs
+ */
+function rhd_get_term_ids( $post, $taxonomy ) {
+	$ids = [];
+	if ( $terms = get_the_terms( $post, $taxonomy ) ) {
+		$ids = wp_list_pluck( $terms, 'term_id' );
+	}
+
+	return $ids;
+}

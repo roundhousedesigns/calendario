@@ -799,6 +799,29 @@ body {
 					}
 				}
 			}
+
+			&__taxonomies {
+				display: flex;
+				flex-wrap: nowrap;
+				justify-content: space-between;
+				
+				& > label {
+					flex-basis: 49%;
+
+					& > fieldset {
+						height: 300px;
+						overflow: auto;
+
+						input {
+							display: inline-block;
+						}
+
+						input {
+							margin-right: 0.5rem;
+						}
+					}
+				}
+			}
 		}
 
 		.post_thumb {

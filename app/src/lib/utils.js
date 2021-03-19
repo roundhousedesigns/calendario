@@ -85,8 +85,17 @@ export function filterStatusList(exclude = []) {
 export function filterUnchangedParams(params, post) {
 	if (params.length > 0) {
 		for (let key in params) {
-			if (params[key] === post[key]) {
-				params = omit(params, key);
+			if (Array.isArray(params[key])) {
+				if (
+					params[key].length === post[key].length &&
+					params[key].every(
+						(value, index) => value === post[key][index]
+					)
+				);
+			} else {
+				if (params[key] === post[key]) {
+					params = omit(params, key);
+				}
 			}
 		}
 	}
