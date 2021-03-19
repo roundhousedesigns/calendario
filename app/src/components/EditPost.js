@@ -112,7 +112,7 @@ export default function EditPost() {
 
 	// debug
 	useEffect(() => {
-		// console.log(post);
+		console.log(post);
 	}, [post]);
 
 	useEffect(() => {

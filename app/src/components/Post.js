@@ -59,12 +59,6 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 			return;
 		}
 
-		let unscheduled =
-			e.target.classList.contains("unscheduledDrafts") ||
-			e.target.parentNode.classList.contains("unscheduledDrafts")
-				? true
-				: false;
-
 		postsDispatch({
 			type: "SET_CURRENTPOST",
 			post: post,
