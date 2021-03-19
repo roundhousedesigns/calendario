@@ -110,11 +110,6 @@ export default function EditPost() {
 
 	const { post, editMode } = editPost;
 
-	// debug
-	useEffect(() => {
-		console.log(post);
-	}, [post]);
-
 	useEffect(() => {
 		if (post.post_date && post.post_date !== "undefined") {
 			setDate(new Date(post.post_date));
