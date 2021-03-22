@@ -3,10 +3,11 @@ import { updateReducer, initialUpdateState } from "../lib/updatePost";
 
 import PostsContext from "../PostsContext";
 
-import { routeBase } from "../lib/utils";
+import { wp } from "../lib/utils";
 import { decode } from "html-entities";
 
 export default function PostLinks({ post, className, unscheduled }) {
+	const { routeBase } = wp;
 	const { id, edit_link, view_link } = post;
 	const { postsDispatch } = useContext(PostsContext);
 	const [updatePost, updatePostDispatch] = useReducer(
@@ -58,6 +59,7 @@ export default function PostLinks({ post, className, unscheduled }) {
 		}
 	}, [
 		id,
+		routeBase,
 		postsDispatch,
 		updatePost.trash,
 		updatePost.params,

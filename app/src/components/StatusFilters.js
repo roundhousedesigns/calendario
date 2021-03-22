@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
-import { postStatuses } from "../lib/utils";
+import { wp } from "../lib/utils";
 
 import ViewContext from "../ViewContext";
 
 export default function StatusFilters() {
+	const { postStatuses } = wp;
 	const keys = Object.keys(postStatuses);
 	const {
 		viewOptions: { statuses },

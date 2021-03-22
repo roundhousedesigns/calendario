@@ -3,9 +3,8 @@ import Post from "./Post";
 import Loading from "./common/Loading";
 import {
 	dateFormat,
-	routeBase,
 	filterUnchangedParams,
-	nonce,
+	wp,
 	DEBUG_MODE,
 } from "../lib/utils";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
@@ -23,6 +22,7 @@ export default function PostList({
 	date,
 	loadingState,
 }) {
+	const { routeBase, nonce } = wp;
 	const {
 		posts: { currentPost },
 		postsDispatch,
@@ -110,7 +110,15 @@ export default function PostList({
 
 			fetchData();
 		}
-	}, [updatePost, draggedTo, draggedPostDispatch, post, postsDispatch]);
+	}, [
+		routeBase,
+		nonce,
+		updatePost,
+		draggedTo,
+		draggedPostDispatch,
+		post,
+		postsDispatch,
+	]);
 
 	const handleDragOver = (e) => {
 		e.preventDefault();

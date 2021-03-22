@@ -2,11 +2,12 @@ import React, { useContext, useEffect } from "react";
 import PostList from "./PostList";
 import NewPostButton from "./common/NewPostButton";
 import { useFetchUnscheduledPosts } from "../lib/hooks";
-import { trashUrl } from "../lib/utils";
+import { wp } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 
 export default function UnscheduledDrafts() {
+	const { trashUrl } = wp;
 	const {
 		posts: { unscheduled },
 		postsDispatch,

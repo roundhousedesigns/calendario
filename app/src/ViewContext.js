@@ -1,9 +1,28 @@
 import { createContext } from "react";
 import { addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns";
-import { postStatuses } from "./lib/utils";
+import { wp } from "./lib/utils";
+
+const { postStatuses } = wp;
 
 const ViewContext = createContext({});
 export default ViewContext;
+
+const initializeStatuses = () => {
+	var statuses = {};
+	for (const status in postStatuses) {
+		statuses[status] = true;
+	}
+	return statuses;
+};
+
+export const initialViewOptions = {
+	viewMode: "",
+	viewRange: {
+		start: null,
+		end: null,
+	},
+	statuses: initializeStatuses(),
+};
 
 export function viewReducer(state, action) {
 	switch (action.type) {
@@ -88,17 +107,3 @@ export function viewReducer(state, action) {
 			return state;
 	}
 }
-
-var statuses = {};
-for (const status in postStatuses) {
-	statuses[status] = true;
-}
-
-export const initialViewOptions = {
-	viewMode: "",
-	viewRange: {
-		start: null,
-		end: null,
-	},
-	statuses,
-};

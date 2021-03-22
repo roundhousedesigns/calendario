@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { nonce, routeBase, dateFormat } from "../lib/utils";
+import { wp, dateFormat } from "../lib/utils";
 import { format, isSameDay } from "date-fns";
 import { isEmpty } from "lodash";
 
@@ -7,6 +7,11 @@ import PostsContext from "../PostsContext";
 
 // TODO: DEV MODE
 import { DEBUG_MODE } from "../lib/utils";
+// ODOT
+
+const { routeBase, nonce } = wp;
+
+// TODO: DEV MODE
 var headers = {};
 if (DEBUG_MODE !== true) {
 	headers["X-WP-Nonce"] = nonce;
@@ -126,47 +131,6 @@ export const useFetchUnscheduledPosts = () => {
 
 	return isLoading;
 };
-
-// export const useFetchTrashedPosts = () => {
-// 	const {
-// 		posts: { refetch },
-// 		postsDispatch,
-// 	} = useContext(PostsContext);
-// 	const [isLoading, setIsLoading] = useState(false);
-
-// 	useEffect(() => {
-// 		let url = `${routeBase}/trashed`;
-
-// 		const fetchData = async () => {
-// 			setIsLoading(true);
-
-// 			try {
-// 				const res = await fetch(url, {
-// 					headers,
-// 				});
-// 				const data = await res.json();
-
-// 				postsDispatch({
-// 					type: "SET_TRASHED",
-// 					posts: data.posts,
-// 				});
-
-// 				setIsLoading(false);
-// 			} catch (error) {
-// 				console.log("REST error", error.message);
-// 				setIsLoading(false);
-// 			}
-// 		};
-
-// 		fetchData();
-
-// 		return () => {
-// 			setIsLoading(false);
-// 		};
-// 	}, [postsDispatch, refetch]);
-
-// 	return isLoading;
-// };
 
 /**
  *

@@ -11,7 +11,7 @@ import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import {
 	dateFormat,
 	filterStatusList,
-	routeBase,
+	wp,
 	filterUnchangedParams,
 } from "../lib/utils";
 import DatePicker from "react-datepicker";
@@ -91,6 +91,7 @@ function editPostReducer(state, action) {
 }
 
 export default function EditPost() {
+	const { routeBase } = wp;
 	const {
 		posts: { currentPost, taxonomies },
 		postsDispatch,
@@ -213,6 +214,7 @@ export default function EditPost() {
 		}
 	}, [
 		currentPost,
+		routeBase,
 		post,
 		draggedPostDispatch,
 		postsDispatch,

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import PostLinks from "./PostLinks";
-import { postStatuses } from "../lib/utils";
+import { wp } from "../lib/utils";
 import { isEmpty } from "lodash";
 import { isPast, isToday } from "date-fns";
 import { decode } from "html-entities";
@@ -10,6 +10,7 @@ import DragContext from "../DragContext";
 import ViewContext from "../ViewContext";
 
 export default function Post({ post, index, unscheduled, allowDrag }) {
+	const { postStatuses } = wp;
 	const {
 		posts: { currentPost },
 		postsDispatch,
@@ -33,7 +34,7 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 			color: postStatuses[post.post_status].color,
 			backgroundColor: postStatuses[post.post_status].backgroundColor,
 		});
-	}, [post.post_status]);
+	}, [post.post_status, postStatuses]);
 
 	const handleDragStart = (e) => {
 		let draggingUnscheduled = e.currentTarget.parentNode.classList.contains(
