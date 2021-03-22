@@ -153,9 +153,6 @@ body {
 					justify-content: flex-start;
 
 					.post {
-						// TODO custom cursor for dropzone hover
-						// cursor: move;
-
 						&.dropArea {
 							color: var(--neutralColor);
 							position: relative;
@@ -252,9 +249,6 @@ body {
 		justify-content: flex-start;
 
 		.post {
-			// TODO custom cursor for dropzone hover
-			// cursor: move;
-
 			&.dropArea {
 				color: var(--neutralColor);
 				position: relative;

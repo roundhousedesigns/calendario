@@ -70,14 +70,12 @@ export default function PostList({
 				return { data: "Update not necessary.", error: true };
 			}
 
-			// TODO: DEV MODE
 			var headers = {
 				"Content-Type": "application/json",
 			};
 			if (DEBUG_MODE !== true) {
 				headers["X-WP-Nonce"] = nonce;
 			}
-			// ODOT
 
 			const fetchData = async () => {
 				setIsLoading(true);

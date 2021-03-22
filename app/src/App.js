@@ -25,7 +25,6 @@ export default function App() {
 	const [view, setView] = useStickyState(
 		{
 			viewMode: "calendar",
-			// TODO add/save user filtered statuses here?
 		},
 		"viewOptions"
 	);

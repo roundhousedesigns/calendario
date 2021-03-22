@@ -4,7 +4,6 @@ import "./index.scss";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-// TODO: DEV MODE
 import { DEBUG_MODE } from "./lib/utils";
 
 var reactAppData, appAnchorElement;
@@ -17,7 +16,6 @@ if (DEBUG_MODE !== true) {
 	// Dev
 	appAnchorElement = document.getElementById("root");
 }
-// ODOT
 
 if (appAnchorElement) {
 	ReactDOM.render(

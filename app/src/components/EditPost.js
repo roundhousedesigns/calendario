@@ -381,7 +381,6 @@ export default function EditPost() {
 
 						<FieldGroup name="date_status">
 							<div className="fieldGroup__date">
-								{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
 								<div
 									className={`post_date ${
 										post.unscheduled === true

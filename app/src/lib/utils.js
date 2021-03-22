@@ -1,11 +1,9 @@
 import { omit } from "lodash";
 import Widget from "../components/common/Widget";
 
-// TODO: DEV MODE
 export const DEBUG_MODE =
 	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
 
-// export let nonce, routeBase, postStatuses, trashUrl;
 export const wp =
 	DEBUG_MODE !== true
 		? {

@@ -21,7 +21,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   Trash area (show only when posts are in trash)?
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible

@@ -5,18 +5,11 @@ import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
 
-// TODO: DEV MODE
 import { DEBUG_MODE } from "../lib/utils";
-// ODOT
 
 const { routeBase, nonce } = wp;
 
-// TODO: DEV MODE
-var headers = {};
-if (DEBUG_MODE !== true) {
-	headers["X-WP-Nonce"] = nonce;
-}
-// ODOT
+const headers = DEBUG_MODE !== true ? (headers["X-WP-Nonce"] = nonce) : {};
 
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
