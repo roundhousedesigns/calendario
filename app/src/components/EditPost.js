@@ -377,45 +377,51 @@ export default function EditPost() {
 							/>
 						</FieldGroup>
 
-						<FieldGroup name="date">
-							{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
-							<div
-								className={`fieldGroup__field post_date ${
-									post.unscheduled === true
-										? "inactive"
-										: "active"
-								}`}
-							>
-								<label htmlFor="post_date">Post Date</label>
-								<DatePicker
-									closeOnScroll={(e) => e.target === document}
-									selected={date}
-									timeInputLabel="Time:"
-									showTimeInput
-									dateFormat={dateFormat.dateTime}
-									onChange={handleInputDateChange}
-									disabled={datePickerDisabled}
-								/>
+						<FieldGroup name="date_status">
+							<div className="fieldGroup__date">
+								{/* TODO prompt to make scheduled when changing an Unscheduled Draft date? */}
+								<div
+									className={`post_date ${
+										post.unscheduled === true
+											? "inactive"
+											: "active"
+									}`}
+								>
+									<label htmlFor="post_date">Post Date</label>
+									<DatePicker
+										closeOnScroll={(e) =>
+											e.target === document
+										}
+										selected={date}
+										timeInputLabel="Time:"
+										showTimeInput
+										dateFormat={dateFormat.dateTime}
+										onChange={handleInputDateChange}
+										disabled={datePickerDisabled}
+									/>
+								</div>
+								<div className="unscheduled">
+									<input
+										type="checkbox"
+										name="unscheduled"
+										checked={post.unscheduled}
+										onChange={handleCheckboxToggle}
+									/>
+									<label htmlFor="unscheduled">
+										Unscheduled
+									</label>
+								</div>
 							</div>
-							<div className="fieldGroup__field unscheduled">
-								<input
-									type="checkbox"
-									name="unscheduled"
-									checked={post.unscheduled}
-									onChange={handleCheckboxToggle}
-								/>
-								<label htmlFor="unscheduled">Unscheduled</label>
+							<div className="fieldGroup__status">
+								<label htmlFor="post_status">Post Status</label>
+								<select
+									name="post_status"
+									onChange={handleInputChange}
+									value={post.post_status}
+								>
+									{renderStatusOptions(allowedStatuses)}
+								</select>
 							</div>
-						</FieldGroup>
-
-						<FieldGroup name="post_status" label="Status">
-							<select
-								name="post_status"
-								onChange={handleInputChange}
-								value={post.post_status}
-							>
-								{renderStatusOptions(allowedStatuses)}
-							</select>
 						</FieldGroup>
 
 						<FieldGroup name="taxonomies">

@@ -21,13 +21,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   Post Edit
-    -   add cats, tags
-    -   ~~Dismiss button~~
-    -   ~~add delete~~
-    -   ~~add excerpt~~
-    -   ~~featured image show, but link to full Edit screen~~
--   Go to date (datepicker control for view)
 -   Trash area (show only when posts are in trash)?
 -   Mobile
     -   Like, do all things, but also...

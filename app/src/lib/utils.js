@@ -4,12 +4,10 @@ import Widget from "../components/common/Widget";
 // TODO: DEV MODE
 export const DEBUG_MODE =
 	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
-export var nonce, routeBase, postStatuses;
+export var nonce, routeBase, postStatuses, trashUrl;
 if (DEBUG_MODE !== true) {
 	// WP mode
-	nonce = window.rhdReactPlugin.nonce; // Live
-	routeBase = window.rhdReactPlugin.restBase; // Live
-	postStatuses = window.rhdReactPlugin.postStatuses; // Live
+	({ nonce, trashUrl, routeBase, postStatuses } = window.rhdReactPlugin);
 } else {
 	// non-WP mode
 	nonce = 0;
@@ -41,6 +39,7 @@ if (DEBUG_MODE !== true) {
 			color: "white",
 		},
 	};
+	trashUrl = "";
 }
 // ODOT
 

@@ -55,25 +55,6 @@ export function postsReducer(state, action) {
 				unscheduled: unscheduledPosts,
 			};
 
-		case "SET_TRASHED":
-			let trashedPosts = action.posts;
-
-			// cast the date as a Date object
-			trashedPosts.forEach((post, index) => {
-				trashedPosts[index].post_date = new Date(post.post_date);
-			});
-
-			return {
-				...state,
-				trashed: trashedPosts,
-			};
-
-		case "REFETCH":
-			return {
-				...state,
-				refetch: !state.refetch,
-			};
-
 		case "SET_TAXONOMY_TERMS":
 			return {
 				...state,
@@ -93,6 +74,12 @@ export function postsReducer(state, action) {
 					...action.post,
 					unscheduled: action.unscheduled,
 				},
+			};
+
+		case "REFETCH":
+			return {
+				...state,
+				refetch: !state.refetch,
 			};
 
 		case "NEW_POST":

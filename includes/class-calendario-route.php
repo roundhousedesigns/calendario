@@ -27,14 +27,6 @@ class Calendario_Route extends WP_REST_Controller {
 			],
 		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/trashed', [
-			[
-				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => [$this, 'get_trashed_items'],
-				'permission_callback' => [$this, 'get_items_permissions_check'],
-			],
-		] );
-
 		register_rest_route( $namespace, '/' . $post_base . '/tax/(?P<taxonomy>\w+)', [
 			[
 				'methods'             => WP_REST_Server::READABLE,
@@ -156,29 +148,6 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get a collection of items
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_trashed_items( $request ) {
-		$items = get_posts( [
-			'posts_per_page' => -1,
-			'post_status'    => 'trash',
-		] );
-
-		$data = [
-			'posts' => [],
-		];
-
-		foreach ( $items as $item ) {
-			$data['posts'][] = $this->prepare_item_for_response( $item, $request );
-		}
-
-		return new WP_REST_Response( $data, 200 );
-	}
-
-	/**
 	 * Get a collection of taxonomy terms
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
@@ -232,7 +201,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'order'          => 'ASC',
 			'meta_key'       => RHD_UNSCHEDULED_INDEX,
 			'posts_per_page' => -1,
-			'post_status'    => 'any',
+			'post_status'    => array( 'private', 'draft' ),
 		] );
 	}
 
