@@ -7,7 +7,10 @@ export const DEBUG_MODE =
 export var nonce, routeBase, postStatuses, trashUrl;
 if (DEBUG_MODE !== true) {
 	// WP mode
-	({ nonce, trashUrl, routeBase, postStatuses } = window.rhdReactPlugin);
+	nonce = window.rhdReactPlugin.nonce;
+	routeBase = window.rhdReactPlugin.restBase;
+	postStatuses = window.rhdReactPlugin.postStatuses;
+	trashUrl = window.rhdReactPlugin.trashUrl;
 } else {
 	// non-WP mode
 	nonce = 0;

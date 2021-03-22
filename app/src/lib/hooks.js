@@ -127,46 +127,46 @@ export const useFetchUnscheduledPosts = () => {
 	return isLoading;
 };
 
-export const useFetchTrashedPosts = () => {
-	const {
-		posts: { refetch },
-		postsDispatch,
-	} = useContext(PostsContext);
-	const [isLoading, setIsLoading] = useState(false);
+// export const useFetchTrashedPosts = () => {
+// 	const {
+// 		posts: { refetch },
+// 		postsDispatch,
+// 	} = useContext(PostsContext);
+// 	const [isLoading, setIsLoading] = useState(false);
 
-	useEffect(() => {
-		let url = `${routeBase}/trashed`;
+// 	useEffect(() => {
+// 		let url = `${routeBase}/trashed`;
 
-		const fetchData = async () => {
-			setIsLoading(true);
+// 		const fetchData = async () => {
+// 			setIsLoading(true);
 
-			try {
-				const res = await fetch(url, {
-					headers,
-				});
-				const data = await res.json();
+// 			try {
+// 				const res = await fetch(url, {
+// 					headers,
+// 				});
+// 				const data = await res.json();
 
-				postsDispatch({
-					type: "SET_TRASHED",
-					posts: data.posts,
-				});
+// 				postsDispatch({
+// 					type: "SET_TRASHED",
+// 					posts: data.posts,
+// 				});
 
-				setIsLoading(false);
-			} catch (error) {
-				console.log("REST error", error.message);
-				setIsLoading(false);
-			}
-		};
+// 				setIsLoading(false);
+// 			} catch (error) {
+// 				console.log("REST error", error.message);
+// 				setIsLoading(false);
+// 			}
+// 		};
 
-		fetchData();
+// 		fetchData();
 
-		return () => {
-			setIsLoading(false);
-		};
-	}, [postsDispatch, refetch]);
+// 		return () => {
+// 			setIsLoading(false);
+// 		};
+// 	}, [postsDispatch, refetch]);
 
-	return isLoading;
-};
+// 	return isLoading;
+// };
 
 /**
  *

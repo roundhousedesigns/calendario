@@ -30,7 +30,12 @@ export default function UnscheduledDrafts() {
 				loadingState={isLoading}
 			/>
 			<NewPostButton unscheduled={true} />
-			<a className="trashLink" rel="noreferrer" href={`${trashUrl}`} target="_blank">
+			<a
+				className="trashLink"
+				rel="noreferrer"
+				href={`${trashUrl}`}
+				target="_blank"
+			>
 				Trashed Posts <span className="icon">open_in_new</span>
 			</a>
 		</>
