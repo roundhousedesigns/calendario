@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { wp, dateFormat } from "../lib/utils";
 import { format, isSameDay } from "date-fns";
 import { isEmpty } from "lodash";
@@ -9,7 +9,7 @@ import { DEBUG_MODE } from "../lib/utils";
 
 const { routeBase, nonce } = wp;
 
-const headers = DEBUG_MODE !== true ? (headers["X-WP-Nonce"] = nonce) : {};
+const headers = DEBUG_MODE !== true ? { "X-WP-Nonce": nonce } : {};
 
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
@@ -174,4 +174,27 @@ export const useFetchTaxonomyTerms = (name) => {
 	}, [name, taxonomies, postsDispatch]);
 
 	return isLoading;
+};
+
+export const useDimension = (ref) => {
+	const [dimensions, setdDimensions] = useState({ width: 0, height: 0 });
+	const resizeObserverRef = useRef(null);
+
+	useEffect(() => {
+		resizeObserverRef.current = new ResizeObserver((entries = []) => {
+			entries.forEach((entry) => {
+				const { width, height } = entry.contentRect;
+				setdDimensions({ width, height });
+			});
+		});
+
+		if (ref.current) resizeObserverRef.current.observe(ref.current);
+
+		return () => {
+			if (resizeObserverRef.current)
+				resizeObserverRef.current.disconnect();
+		};
+	}, [ref]);
+
+	return dimensions;
 };

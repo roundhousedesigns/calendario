@@ -146,7 +146,12 @@ class Calendario {
 		wp_localize_script( 'react-plugin-0', 'rhdReactPlugin',
 			array(
 				'appSelector'  => $this->selector,
-				'trashUrl'     => admin_url( 'edit.php?post_status=trash&post_type=post' ),
+				'wpLinks'      => [
+					'adminUrl' => admin_url(),
+					'postsUrl' => admin_url( 'edit.php?post_type=post' ),
+					'trashUrl' => admin_url( 'edit.php?post_status=trash&post_type=post' ),
+					'blogUrl'  => get_option( 'page_for_posts' ),
+				],
 				'nonce'        => wp_create_nonce( 'wp_rest' ),
 				'routeBase'    => get_rest_url( null, sprintf( 'calendario/%s/posts', RHD_CALENDARIO_REST_VERSION ) ),
 				'postStatuses' => RHD_CALENDARIO_POST_STATUS_COLORS,

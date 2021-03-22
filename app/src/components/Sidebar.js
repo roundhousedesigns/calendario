@@ -20,7 +20,7 @@ export default function Sidebar() {
 				)}
 
 				{renderWidget(
-					"Dev Links + Info",
+					"Development",
 					"dev",
 					<>
 						<ul
@@ -32,15 +32,6 @@ export default function Sidebar() {
 						>
 							<li>
 								<a
-									href="https://github.com/gaswirth/rhdwp-calendario#readme"
-									target="_blank"
-									rel="noreferrer"
-								>
-									Readme
-								</a>
-							</li>
-							<li>
-								<a
 									href="https://github.com/gaswirth/rhdwp-calendario/issues"
 									target="_blank"
 									rel="noreferrer"
@@ -49,13 +40,12 @@ export default function Sidebar() {
 								</a>
 							</li>
 							<li>
-								GitHub:{" "}
 								<a
-									href="https://github.com/gaswirth/rhdwp-calendario"
+									href="https://github.com/gaswirth/rhdwp-calendario#readme"
 									target="_blank"
 									rel="noreferrer"
 								>
-									gaswirth/rhdwp-calendario
+									Readme
 								</a>
 							</li>
 						</ul>

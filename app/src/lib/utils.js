@@ -39,24 +39,13 @@ export const wp =
 						color: "white",
 					},
 				},
-				trashUrl: "",
+				wpLinks: {
+					adminUrl: "",
+					postsUrl: "",
+					trashUrl: "",
+					blogUrl: "//localhost",
+				},
 		  };
-
-// if (DEBUG_MODE !== true) {
-// 	// WP mode
-// 	nonce = window.rhdReactPlugin.nonce;
-// 	routeBase = window.rhdReactPlugin.restBase;
-// 	postStatuses = window.rhdReactPlugin.postStatuses;
-// 	trashUrl = window.rhdReactPlugin.trashUrl;
-
-// 	wp =
-
-// 	console.log(wp);
-// } else {
-// 	// non-WP mode
-// 	wp = ;
-// }
-// ODOT
 
 export const dateFormat = {
 	day: "d",

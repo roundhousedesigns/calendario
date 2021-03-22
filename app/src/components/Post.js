@@ -1,6 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+// TODO uncomment useRef/useDimension etc for small-post hover menu handling
+import React, { useContext, useEffect, useState /* useRef */ } from "react";
 import PostLinks from "./PostLinks";
 import { wp } from "../lib/utils";
+// import { useDimension } from "../lib/hooks";
 import { isEmpty } from "lodash";
 import { isPast, isToday } from "date-fns";
 import { decode } from "html-entities";
@@ -22,8 +24,12 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 	const {
 		viewOptions: { statuses },
 	} = useContext(ViewContext);
-	const [colors, setColors] = useState({});
+	// const postRef = useRef(null);
+
 	const [date, setDate] = useState(new Date());
+	const [colors, setColors] = useState({ color: "", backgroundColor: "" });
+	// const { width, height } = useDimension(postRef);
+	const { color, backgroundColor } = colors;
 
 	useEffect(() => {
 		setDate(new Date(post.post_date));
@@ -96,6 +102,7 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 
 		return (
 			<li
+				// ref={postRef}
 				id={post.id}
 				className={classes.join(" ")}
 				style={
@@ -114,19 +121,19 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
 				onClick={handleClick}
-				// onMouseEnter={() => setIsHovered(true)}
-				// onMouseLeave={() => setIsHovered(false)}
 			>
 				<PostLinks
 					className={isDragging ? "disabled" : "active"}
 					post={post}
 					unscheduled={unscheduled}
+					// parentSize={{ width, height }}
+					// parentBg={backgroundColor}
 				/>
 				<p
 					className="postData"
 					style={{
-						backgroundColor: colors.backgroundColor,
-						color: colors.color,
+						backgroundColor: backgroundColor,
+						color: color,
 					}}
 				>
 					{decode(post.post_title, { scope: "strict" })}

@@ -6,7 +6,15 @@ import PostsContext from "../PostsContext";
 import { wp } from "../lib/utils";
 import { decode } from "html-entities";
 
-export default function PostLinks({ post, className, unscheduled }) {
+// const inlineLimit = 150;
+
+export default function PostLinks({
+	post,
+	className,
+	unscheduled,
+	// parentSize,
+	// parentBg,
+}) {
 	const { routeBase } = wp;
 	const { id, edit_link, view_link } = post;
 	const { postsDispatch } = useContext(PostsContext);
@@ -14,6 +22,7 @@ export default function PostLinks({ post, className, unscheduled }) {
 		updateReducer,
 		initialUpdateState
 	);
+	// const { width, height } = parentSize;
 
 	// Update the post
 	useEffect(() => {
@@ -97,7 +106,10 @@ export default function PostLinks({ post, className, unscheduled }) {
 	};
 
 	return (
-		<div className={`postLinks ${className}`}>
+		<div
+			className={`postLinks ${className}`}
+			// style={width >= inlineLimit ? {} : { backgroundColor: parentBg }}
+		>
 			<button
 				className="icon top left icon__view"
 				onClick={() => window.open(view_link, "_blank")}
