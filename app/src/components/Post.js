@@ -11,6 +11,8 @@ import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 import ViewContext from "../ViewContext";
 
+const initialColors = { color: "", backgroundColor: "" };
+
 export default function Post({ post, index, unscheduled, allowDrag }) {
 	const { postStatuses } = wp;
 	const {
@@ -27,12 +29,16 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 	// const postRef = useRef(null);
 
 	const [date, setDate] = useState(new Date());
-	const [colors, setColors] = useState({ color: "", backgroundColor: "" });
+	const [colors, setColors] = useState(initialColors);
 	// const { width, height } = useDimension(postRef);
 	const { color, backgroundColor } = colors;
 
 	useEffect(() => {
 		setDate(new Date(post.post_date));
+
+		return () => {
+			setDate(new Date());
+		};
 	}, [post.post_date]);
 
 	useEffect(() => {
@@ -40,6 +46,10 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 			color: postStatuses[post.post_status].color,
 			backgroundColor: postStatuses[post.post_status].backgroundColor,
 		});
+
+		return () => {
+			setColors(initialColors);
+		};
 	}, [post.post_status, postStatuses]);
 
 	const handleDragStart = (e) => {
