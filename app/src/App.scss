@@ -453,6 +453,13 @@ body {
 				}
 			}
 
+			&.dragOver {
+				background-color: transparentize(
+					$color: #53cbf1,
+					$amount: 0.75
+				);
+			}
+
 			.newPost {
 				display: none;
 				padding-top: 0.42em;

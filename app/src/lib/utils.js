@@ -1,5 +1,5 @@
-import { omit } from "lodash";
 import Widget from "../components/common/Widget";
+import { omit } from "lodash";
 
 export const DEBUG_MODE =
 	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
