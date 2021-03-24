@@ -33,8 +33,7 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 	}, [post.post_date]);
 
 	useEffect(() => {
-		console.log(postStatuses);
-		if (postStatuses === undefined) {
+		if (postStatuses === undefined || isEmpty(postStatuses)) {
 			return;
 		}
 
