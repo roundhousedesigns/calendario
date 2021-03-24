@@ -684,7 +684,7 @@ class Calendario_Route extends WP_REST_Controller {
 			delete_post_meta( $item['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
 		}
 
-		// Post dta
+		// Post data
 		if ( isset( $params['params'] ) ) {
 			$item_params = $this->prepare_item_params_for_database( $params['params'] );
 		}
