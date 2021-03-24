@@ -12,6 +12,13 @@ const { routeBase, nonce } = wp;
 
 const headers = DEBUG_MODE !== true ? { "X-WP-Nonce": nonce } : {};
 
+/**
+ * Uses localStorage to save view-specific user options.
+ *
+ * @param {any} defaultValue The default option value
+ * @param {string} key The option key
+ * @returns {[state, setter]} The useState state and setter
+ */
 export const useStickyState = (defaultValue, key) => {
 	const [value, setValue] = useState(() => {
 		const stickyValue = window.localStorage.getItem(key);
@@ -25,6 +32,13 @@ export const useStickyState = (defaultValue, key) => {
 	return [value, setValue];
 };
 
+/**
+ * Get posts for a specified calendar day.
+ *
+ * @param {array} posts The posts
+ * @param {Date} date The calendar day
+ * @returns {array} The calendar day's posts
+ */
 export const useDayPosts = (posts, date) => {
 	let dayPosts = [];
 	if (posts) {
@@ -38,6 +52,12 @@ export const useDayPosts = (posts, date) => {
 	return dayPosts;
 };
 
+/**
+ * Retrieves 'scheduled' posts from the server
+ * @param {Date} start The range's start
+ * @param {Date} end The range's end
+ * @returns {boolean} The current loading state
+ */
 export const useFetchScheduledPosts = (start, end) => {
 	const {
 		posts: { refetch },
@@ -85,6 +105,11 @@ export const useFetchScheduledPosts = (start, end) => {
 	return isLoading;
 };
 
+/**
+ * Retrieves 'unscheduled' posts from the server
+ *
+ * @returns {boolean} The current loading state
+ */
 export const useFetchUnscheduledPosts = () => {
 	const {
 		posts: { refetch },
@@ -127,6 +152,11 @@ export const useFetchUnscheduledPosts = () => {
 	return isLoading;
 };
 
+/**
+ * Retrieves the set of post statuses from the server
+ *
+ * @returns {boolean} The current loading state
+ */
 export const useFetchPostStatuses = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const { viewOptionsDispatch } = useContext(ViewContext);
@@ -166,9 +196,10 @@ export const useFetchPostStatuses = () => {
 };
 
 /**
+ * Retrieves all terms of a taxonomy
  *
  * @param {string} name The taxonomy name (slug) to fetch
- * @returns
+ * @returns {boolean} The current loading state
  */
 export const useFetchTaxonomyTerms = (name) => {
 	const {
@@ -216,6 +247,12 @@ export const useFetchTaxonomyTerms = (name) => {
 	return isLoading;
 };
 
+/**
+ * Retrieves 'scheduled' posts from the server
+ * @param {Object} ref The element's ref
+ * @param {Function} end The handler function
+ * @returns {void}
+ */
 export const useClickOutside = (ref, handler) => {
 	useEffect(() => {
 		let startedInside = false;

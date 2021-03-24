@@ -1,7 +1,4 @@
 <?php
-// TODO make global?
-$date_string_format = 'Y-m-d H:i:s';
-
 /**
  * Validates a date string.
  *
@@ -20,8 +17,6 @@ function rhd_validate_date( $date, $format = 'Y-m-d' ) {
  * @param array Contains post_date and post_date_gmt date strings
  */
 function rhd_wp_prepare_date( $date_string ) {
-	global $date_string_format;
-
 	if ( ! is_string( $date_string ) ) {
 		return;
 	}
@@ -33,8 +28,8 @@ function rhd_wp_prepare_date( $date_string ) {
 	$date_gmt->setTimezone( new DateTimeZone( 'GMT' ) );
 
 	$date_formatted = array(
-		'post_date'     => $date->format( $date_string_format ),
-		'post_date_gmt' => $date_gmt->format( $date_string_format ),
+		'post_date'     => $date->format( RHD_DATE_FORMAT ),
+		'post_date_gmt' => $date_gmt->format( RHD_DATE_FORMAT ),
 	);
 
 	return $date_formatted;
@@ -61,8 +56,6 @@ function rhd_get_futuremost_date() {
  * @return string The formatted date string
  */
 function rhd_start_of_day( $date ) {
-	global $date_string_format;
-
 	if ( gettype( $date ) === 'string' ) {
 		$date_obj = new DateTime( $date );
 	} elseif ( ! is_a( $date, 'DateTime' ) ) {
@@ -73,7 +66,7 @@ function rhd_start_of_day( $date ) {
 
 	$date_obj->setTime( 0, 0, 0 );
 
-	return $date_obj->format( $date_string_format );
+	return $date_obj->format( RHD_DATE_FORMAT );
 }
 
 /**
@@ -83,8 +76,6 @@ function rhd_start_of_day( $date ) {
  * @return string The formatted date string
  */
 function rhd_end_of_day( $date ) {
-	global $date_string_format;
-
 	if ( gettype( $date ) === 'string' ) {
 		$date_obj = new DateTime( $date );
 	} elseif ( ! is_a( $date, 'DateTime' ) ) {
@@ -95,7 +86,7 @@ function rhd_end_of_day( $date ) {
 
 	$date_obj->setTime( 23, 59, 59 );
 
-	return $date_obj->format( $date_string_format );
+	return $date_obj->format( RHD_DATE_FORMAT );
 }
 
 /**
@@ -126,7 +117,7 @@ function rhd_unscheduled_draft_count() {
 		'post_type'      => 'post',
 		'meta_query'     => [
 			[
-				'key'     => RHD_UNSCHEDULED_INDEX,
+				'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
 				'compare' => 'EXISTS',
 			],
 		],

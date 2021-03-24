@@ -17,8 +17,8 @@ define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build
 // define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
 define( 'RHD_CALENDARIO_REST_VERSION', 'v1' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
-// TODO change RHD_UNSCHEDULED_INDEX to RHD_UNSCHEDULED_INDEX_META_KEY
-define( 'RHD_UNSCHEDULED_INDEX', 'rhd_unscheduled' );
+define( 'RHD_DATE_FORMAT', 'Y-m-d H:i:s' );
+define( 'RHD_UNSCHEDULED_INDEX_META_KEY', 'rhd_unscheduled' );
 define( 'RHD_POST_STATUS_COLOR_OPTION_KEY', 'rhd_calendario_post_statuses' );
 define( 'RHD_POST_STATUSES', [
 	'publish' => [

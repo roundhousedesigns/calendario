@@ -106,7 +106,7 @@ class Calendario_Route extends WP_REST_Controller {
 			],
 			'meta_query'     => [
 				[
-					'key'     => RHD_UNSCHEDULED_INDEX,
+					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
 					'compare' => 'NOT EXISTS',
 				],
 			],
@@ -193,13 +193,13 @@ class Calendario_Route extends WP_REST_Controller {
 		return get_posts( [
 			'meta_query'     => [
 				[
-					'key'     => RHD_UNSCHEDULED_INDEX,
+					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
 					'compare' => 'EXISTS',
 				],
 			],
 			'orderby'        => 'meta_value_num',
 			'order'          => 'ASC',
-			'meta_key'       => RHD_UNSCHEDULED_INDEX,
+			'meta_key'       => RHD_UNSCHEDULED_INDEX_META_KEY,
 			'posts_per_page' => -1,
 			'post_status'    => array( 'private', 'draft' ),
 		] );
@@ -300,7 +300,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$items = $this->prepare_unscheduled_items_for_database( $request );
 
 		for ( $i = 0; $i < count( $items ); $i++ ) {
-			$result = update_post_meta( $items[$i], RHD_UNSCHEDULED_INDEX, $i );
+			$result = update_post_meta( $items[$i], RHD_UNSCHEDULED_INDEX_META_KEY, $i );
 		}
 
 		return new WP_REST_Response( 'Unscheduled Draft order updated.', 200 );
@@ -628,7 +628,7 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	protected function reorder_unscheduled_post( $id, $newIndex ) {
-		$currentIndex = get_post_meta( $id, RHD_UNSCHEDULED_INDEX, true );
+		$currentIndex = get_post_meta( $id, RHD_UNSCHEDULED_INDEX_META_KEY, true );
 		if ( $currentIndex === $newIndex ) {
 			return;
 		}
@@ -648,7 +648,7 @@ class Calendario_Route extends WP_REST_Controller {
 
 		$i = 0;
 		foreach ( $posts as $id ) {
-			update_post_meta( $id, RHD_UNSCHEDULED_INDEX, $i );
+			update_post_meta( $id, RHD_UNSCHEDULED_INDEX_META_KEY, $i );
 			$i++;
 		}
 	}
@@ -673,7 +673,7 @@ class Calendario_Route extends WP_REST_Controller {
 			if ( $item['ID'] === 0 ) {
 				// New post
 				$item['meta_input'] = [
-					RHD_UNSCHEDULED_INDEX => rhd_unscheduled_draft_count(),
+					RHD_UNSCHEDULED_INDEX_META_KEY => rhd_unscheduled_draft_count(),
 				];
 			} else {
 				$draggedTo = isset( $params['draggedTo'] ) ? $params['draggedTo'] : false;
@@ -687,7 +687,7 @@ class Calendario_Route extends WP_REST_Controller {
 			}
 
 		} else {
-			delete_post_meta( $params['ID'], RHD_UNSCHEDULED_INDEX );
+			delete_post_meta( $params['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
 		}
 
 		if ( isset( $params['params'] ) ) {

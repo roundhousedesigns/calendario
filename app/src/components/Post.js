@@ -128,7 +128,6 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 					className={isDragging ? "disabled" : "active"}
 					post={post}
 					unscheduled={unscheduled}
-					// TODO make sure PostLinks component doesn't accept parentBg (etc) props
 				/>
 				<p
 					className="postData"
