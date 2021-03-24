@@ -32,6 +32,22 @@ export default function App() {
 	const todayRef = useRef();
 	const mainRef = useRef();
 
+	useEffect(() => {
+		// Update the context initially
+		viewOptionsDispatch({
+			type: "UPDATE",
+			viewMode: view.viewMode,
+		});
+		//eslint-disable-next-line
+	}, []);
+
+	useEffect(() => {
+		// Store the values if it's updated elsewhere
+		setView({
+			viewMode: viewOptions.viewMode,
+		});
+	}, [setView, viewOptions.viewMode]);
+
 	function handleTodayClick() {
 		const today = new Date();
 
@@ -53,22 +69,6 @@ export default function App() {
 			});
 		}
 	}
-
-	useEffect(() => {
-		// Update the context initially
-		viewOptionsDispatch({
-			type: "UPDATE",
-			viewMode: view.viewMode,
-		});
-		//eslint-disable-next-line
-	}, []);
-
-	useEffect(() => {
-		// Store the values if it's updated elsewhere
-		setView({
-			viewMode: viewOptions.viewMode,
-		});
-	}, [setView, viewOptions.viewMode]);
 
 	return (
 		<div className={`calendario`}>

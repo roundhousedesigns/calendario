@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useCallback } from "react";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
+import { useFetchScheduledPosts } from "../lib/hooks";
 import { dateFormat } from "../lib/utils";
 import {
 	format,
@@ -10,7 +11,6 @@ import {
 	isToday,
 } from "date-fns";
 
-import { useFetchScheduledPosts } from "../lib/hooks";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";

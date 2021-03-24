@@ -5,10 +5,11 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	public function register_routes() {
-		$version   = '1';
-		$namespace = 'calendario/v' . $version;
-		$post_base = 'posts';
-		$user_base = 'user';
+		$version     = '1';
+		$namespace   = 'calendario/v' . $version;
+		$post_base   = 'posts';
+		$tax_base    = 'tax';
+		$status_base = 'statuses';
 
 		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)(/(?P<end>.*))?', [
 			[
@@ -27,11 +28,12 @@ class Calendario_Route extends WP_REST_Controller {
 			],
 		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/tax/(?P<taxonomy>\w+)', [
+		register_rest_route( $namespace, '/' . $tax_base . '/(?P<taxonomy>\w+)', [
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [$this, 'get_taxonomy_terms'],
 				'permission_callback' => [$this, 'get_items_permissions_check'],
+				'args'                => [$this->get_taxonomy_endpoint_args()],
 			],
 		] );
 
@@ -62,18 +64,16 @@ class Calendario_Route extends WP_REST_Controller {
 			],
 		] );
 
-		register_rest_route( $namespace, '/' . $user_base . '/(?P<option>[\w]+)/(?P<value>[\w]+)', [
+		register_rest_route( $namespace, '/' . $status_base, [
 			[
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => [$this, 'get_user_option'],
-				'permission_callback' => [$this, 'user_permissions_check'],
-				'args'                => [$this->get_user_option_endpoint_args()],
+				'callback'            => [$this, 'get_post_statuses'],
+				'permission_callback' => [$this, 'options_permissions_check'],
 			],
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
-				'callback'            => [$this, 'update_user_option'],
-				'permission_callback' => [$this, 'user_permissions_check'],
-				'args'                => [$this->get_user_option_endpoint_args()],
+				'callback'            => [$this, 'update_post_statuses'],
+				'permission_callback' => [$this, 'options_permissions_check'],
 			],
 		] );
 	}
@@ -307,39 +307,38 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Gets a user option using get_user_option().
+	 * Gets post status data.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|bool
 	 */
-	public function get_user_option( $request ) {
-		$item = $this->prepare_user_option_for_response( $request );
+	public function get_post_statuses( $request ) {
+		$statuses = rhd_prepare_post_statuses();
 
-		$value = get_user_option( $item['option'], $item['user_id'] );
-
-		if ( $value !== false ) {
-			return new WP_REST_Response( $value, 200 );
+		if ( $statuses ) {
+			return new WP_REST_Response( $statuses, 200 );
 		}
 
 		return new WP_REST_Response( false, 200 );
 	}
 
 	/**
-	 * Updates a user option in the database using update_user_option().
+	 * Updates an option in the database using update_option().
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|bool
 	 */
-	public function update_user_option( $request ) {
-		$item = $this->prepare_user_option_for_database( $request );
+	public function update_post_statuses( $request ) {
+		// $data = $this->prepare_post_statuses_for_database( $request );
+		$body = $request->get_params();
 
-		$result = update_user_option( $item['user_id'], $item['option'], $item['value'], false );
+		$result = update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $body );
 
 		if ( $result !== false ) {
-			return new WP_REST_Response( 'Option updated.', 200 );
+			return new WP_REST_Response( 'Post status colors updated.', 200 );
 		}
 
-		return new WP_Error( 'user-not-updated', __( 'message', 'rhd' ), ['status' => 200] );
+		return new WP_Error( 'colors-not-updated', __( 'message', 'rhd' ), ['status' => 200] );
 	}
 
 	/**
@@ -387,7 +386,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return bool
 	 */
-	public function user_permissions_check( $request ) {
+	public function options_permissions_check( $request ) {
 		return true;
 		// return is_user_logged_in() && 0 !== get_current_user_id();
 	}
@@ -416,17 +415,13 @@ class Calendario_Route extends WP_REST_Controller {
 		];
 	}
 
-	public function get_user_option_endpoint_args() {
+	/**
+	 * Get argument schema for taxonomy data.
+	 */
+	public function get_taxonomy_endpoint_args() {
 		return [
-			'option' => [
-				'description'       => esc_html__( 'User option name', 'rhd' ),
-				'type'              => 'string',
-				'validate_callback' => [$this, 'validate_string'],
-				'sanitize_callback' => [$this, 'sanitize_string'],
-				'required'          => true,
-			],
-			'value'  => [
-				'description'       => esc_html__( 'User option value', 'rhd' ),
+			'taxonomy' => [
+				'description'       => esc_html__( 'Taxonomy name', 'rhd' ),
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_string'],
 				'sanitize_callback' => [$this, 'sanitize_string'],
@@ -746,35 +741,11 @@ class Calendario_Route extends WP_REST_Controller {
 	/**
 	 * Prepare the item for updating a user option.
 	 */
-	public function prepare_user_option_for_database( $request ) {
-		$params = $request->get_params();
+	// public function prepare_post_statuses_for_database( $request ) {
+	// 	$params = $request->get_params();
 
-		// DEV
-		$user_id = 1;
-		// $user_id = get_current_user_id();
-
-		return [
-			'user_id' => $user_id,
-			'option'  => $params['option'],
-			'value'   => $params['value'],
-		];
-	}
-
-	/**
-	 * Prepares the item for returning a user option
-	 */
-	public function prepare_user_option_for_response( $request ) {
-		$option = $request->get_param( 'option' );
-
-		// DEV
-		$user_id = 1;
-		// $user_id = get_current_user_id();
-
-		return [
-			'user_id' => $user_id,
-			'option'  => $option,
-		];
-	}
+	// 	return $params['colors'];
+	// }
 
 	/**
 	 * Prepare the item for the REST response

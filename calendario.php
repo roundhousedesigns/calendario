@@ -17,34 +17,31 @@ define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build
 // define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
 define( 'RHD_CALENDARIO_REST_VERSION', 'v1' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
+// TODO change RHD_UNSCHEDULED_INDEX to RHD_UNSCHEDULED_INDEX_META_KEY
 define( 'RHD_UNSCHEDULED_INDEX', 'rhd_unscheduled' );
-define( 'RHD_CALENDARIO_POST_STATUS_COLORS', array(
-	'publish' => array(
-		'name'            => 'Published',
-		'backgroundColor' => 'cornflowerblue',
-		'color'           => 'white',
-	),
-	'future'  => array(
-		'name'            => 'Scheduled',
-		'backgroundColor' => 'lightseagreen',
-		'color'           => 'white',
-	),
-	'draft'   => array(
-		'name'            => "Draft",
-		'backgroundColor' => 'silver',
-		'color'           => 'white',
-	),
-	'pending' => array(
-		'name'            => 'Pending Review',
-		'backgroundColor' => 'lightcoral',
-		'color'           => 'white',
-	),
-	'private' => array(
-		'name'            => 'Private',
-		'backgroundColor' => 'maroon',
-		'color'           => 'white',
-	),
-) );
+define( 'RHD_POST_STATUS_COLOR_OPTION_KEY', 'rhd_calendario_post_statuses' );
+define( 'RHD_POST_STATUSES', [
+	'publish' => [
+		'name'  => 'Published',
+		'color' => 'cornflowerblue',
+	],
+	'future'  => [
+		'name'  => 'Scheduled',
+		'color' => 'lightseagreen',
+	],
+	'draft'   => [
+		'name'  => "Draft",
+		'color' => 'silver',
+	],
+	'pending' => [
+		'name'  => 'Pending Review',
+		'color' => 'lightcoral',
+	],
+	'private' => [
+		'name'  => 'Private',
+		'color' => 'maroon',
+	],
+] );
 
 /**
  * Functions
@@ -66,6 +63,24 @@ function rhd_load_plugin() {
 	new Calendario_Route();
 }
 add_action( 'init', 'rhd_load_plugin' );
+
+/**
+ * Activation hook
+ */
+function rhd_calendario_plugin_activation() {
+	// Check for saved post status colors, and set defaults if not present.
+	if ( false === ( $colors = get_option( 'rhd_calendario_post_status_colors' ) ) ) {
+		$statuses = RHD_POST_STATUSES;
+		$colors   = [];
+
+		foreach ( $statuses as $status => $props ) {
+			$colors[$status] = $props['color'];
+		}
+
+		update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $colors );
+	}
+}
+register_activation_hook( __FILE__, 'rhd_calendario_plugin_activation' );
 
 /**
  * Class Calendario.
@@ -139,23 +154,23 @@ class Calendario {
 		// Load js files.
 		foreach ( $js_files as $index => $js_file ) {
 			$handle = 'react-plugin-' . $index;
-			wp_enqueue_script( $handle, RHD_CALENDARIO_REACT_APP_BUILD . $js_file, array(), RHD_CALENDARIO_PLUGIN_VERSION, true );
+			wp_enqueue_script( $handle, RHD_CALENDARIO_REACT_APP_BUILD . $js_file, [], RHD_CALENDARIO_PLUGIN_VERSION, true );
 		}
 
 		// Variables for app use - These variables will be available in window.rhdReactPlugin variable.
 		wp_localize_script( 'react-plugin-0', 'rhdReactPlugin',
-			array(
-				'appSelector'  => $this->selector,
-				'wpLinks'      => [
+			[
+				'appSelector'         => $this->selector,
+				'wpLinks'             => [
 					'adminUrl' => admin_url(),
 					'postsUrl' => admin_url( 'edit.php?post_type=post' ),
 					'trashUrl' => admin_url( 'edit.php?post_status=trash&post_type=post' ),
 					'blogUrl'  => get_option( 'page_for_posts' ),
 				],
-				'nonce'        => wp_create_nonce( 'wp_rest' ),
-				'routeBase'    => get_rest_url( null, sprintf( 'calendario/%s/posts', RHD_CALENDARIO_REST_VERSION ) ),
-				'postStatuses' => RHD_CALENDARIO_POST_STATUS_COLORS,
-			)
+				'nonce'               => wp_create_nonce( 'wp_rest' ),
+				'routeBase'           => get_rest_url( null, sprintf( 'calendario/%s', RHD_CALENDARIO_REST_VERSION ) ),
+				'defaultStatusColors' => rhd_post_status_color_pairs(),
+			]
 		);
 	}
 
@@ -166,8 +181,8 @@ class Calendario {
 	 *
 	 * @return void
 	 */
-	function create_plugin_page() {
-		add_submenu_page( 'edit.php', 'Calendario', 'Calendario', 'manage_options', 'calendario', array( $this, 'calendario_page' ) );
+	public function create_plugin_page() {
+		add_submenu_page( 'edit.php', 'Calendario', 'Calendario', 'manage_options', 'calendario', [$this, 'calendario_page'] );
 	}
 
 	/**
@@ -206,4 +221,5 @@ class Calendario {
 
 		return $files_data->entrypoints;
 	}
+
 }

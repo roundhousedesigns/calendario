@@ -56,7 +56,7 @@ export default function PostList({
 				type: "UPDATING",
 			});
 
-			let url = `${routeBase}/update/${post.id}`;
+			let url = `${routeBase}/posts/update/${post.id}`;
 			let postData = {
 				params: filterUnchangedParams(updatePost.params, post),
 				unscheduled: updatePost.unscheduled,

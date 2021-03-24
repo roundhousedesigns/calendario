@@ -11,39 +11,19 @@ export const wp =
 		  }
 		: {
 				nonce: 0,
-				routeBase: "http://localhost/wp-json/calendario/v1/posts",
-				postStatuses: {
-					publish: {
-						name: "Published",
-						backgroundColor: "cornflowerblue",
-						color: "white",
-					},
-					draft: {
-						name: "Draft",
-						backgroundColor: "silver",
-						color: "white",
-					},
-					future: {
-						name: "Scheduled",
-						backgroundColor: "lightseagreen",
-						color: "white",
-					},
-					pending: {
-						name: "Pending Review",
-						backgroundColor: "lightcoral",
-						color: "white",
-					},
-					private: {
-						name: "Private",
-						backgroundColor: "maroon",
-						color: "white",
-					},
-				},
+				routeBase: "http://localhost/wp-json/calendario/v1",
 				wpLinks: {
 					adminUrl: "",
 					postsUrl: "",
 					trashUrl: "",
 					blogUrl: "//localhost",
+				},
+				defaultStatusColors: {
+					publish: "cornflowerblue",
+					future: "lightseagreen",
+					draft: "silver",
+					pending: "lightcoral",
+					private: "maroon",
 				},
 		  };
 
@@ -65,10 +45,10 @@ export const dateFormat = {
  * @param {array} exclude keys to exclude.
  * @return {object} The filtered postStatuses object.
  */
-export function filterStatusList(exclude = []) {
-	let filtered = wp.postStatuses;
+export function filterStatusList(statuses, exclude = []) {
+	let filtered = statuses;
 	if (exclude.length > 0) {
-		for (let key in wp.postStatuses) {
+		for (let key in filtered) {
 			if (exclude.includes(key)) {
 				filtered = omit(filtered, key);
 			}

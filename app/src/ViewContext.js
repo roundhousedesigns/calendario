@@ -1,19 +1,9 @@
 import { createContext } from "react";
-import { addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns";
 import { wp } from "./lib/utils";
-
-const { postStatuses } = wp;
+import { addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns";
 
 const ViewContext = createContext({});
 export default ViewContext;
-
-const initializeStatuses = () => {
-	var statuses = {};
-	for (const status in postStatuses) {
-		statuses[status] = true;
-	}
-	return statuses;
-};
 
 export const initialViewOptions = {
 	viewMode: "",
@@ -21,8 +11,10 @@ export const initialViewOptions = {
 		start: null,
 		end: null,
 	},
-	statuses: initializeStatuses(),
+	postStatuses: {},
 };
+
+const { defaultStatusColors } = wp;
 
 export function viewReducer(state, action) {
 	switch (action.type) {
@@ -94,13 +86,57 @@ export function viewReducer(state, action) {
 				},
 			};
 
-		case "TOGGLE_STATUS":
+		case "SET_POST_STATUSES":
+			let statuses = action.postStatuses;
+
+			// Don't overwrite visibility, if set
+			for (let status in statuses) {
+				statuses[status].visible =
+					"visible" in statuses[status]
+						? statuses[status].visible
+						: true;
+			}
+
 			return {
 				...state,
-				statuses: {
-					...state.statuses,
-					[action.status]: !state.statuses[action.status],
+				postStatuses: statuses,
+			};
+
+		case "TOGGLE_POST_STATUS":
+			return {
+				...state,
+				postStatuses: {
+					...state.postStatuses,
+					[action.postStatus]: {
+						...state.postStatuses[action.postStatus],
+						visible: !state.postStatuses[action.postStatus].visible,
+					},
 				},
+			};
+
+		case "SET_POST_STATUS_COLOR":
+			return {
+				...state,
+				postStatuses: {
+					...state.postStatuses,
+					[action.postStatus]: {
+						...state.postStatuses[action.postStatus],
+						color: action.color,
+					},
+				},
+			};
+
+		case "RESET_POST_STATUS_COLORS":
+			let reset = state.postStatuses;
+			let statusKeys = Object.keys(state.postStatuses);
+
+			for (let status of statusKeys) {
+				reset[status].color = defaultStatusColors[status];
+			}
+
+			return {
+				...state,
+				postStatuses: { ...reset },
 			};
 
 		default:

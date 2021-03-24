@@ -31,7 +31,7 @@ export default function PostLinks({
 				type: "UPDATING",
 			});
 
-			let url = `${routeBase}/`;
+			let url = `${routeBase}/posts/`;
 			if (updatePost.trash === true) {
 				url += `trash/${id}`;
 			} else {

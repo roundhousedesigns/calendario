@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import FieldGroup from "./common/FieldGroup";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
+import { useClickOutside } from "../lib/hooks";
 import {
 	dateFormat,
 	filterStatusList,
@@ -20,6 +21,7 @@ import { isEmpty } from "lodash";
 import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
+import ViewContext from "../ViewContext";
 import DragContext from "../DragContext";
 
 const initialEditPost = {
@@ -93,6 +95,9 @@ function editPostReducer(state, action) {
 export default function EditPost() {
 	const { routeBase } = wp;
 	const {
+		viewOptions: { postStatuses },
+	} = useContext(ViewContext);
+	const {
 		posts: { currentPost, taxonomies },
 		postsDispatch,
 	} = useContext(PostsContext);
@@ -134,14 +139,14 @@ export default function EditPost() {
 			exclude.push("future");
 		}
 
-		const statusList = filterStatusList(exclude);
+		const statusList = filterStatusList(postStatuses, exclude);
 
 		setAllowedStatuses(statusList);
 
 		return () => {
 			setAllowedStatuses({});
 		};
-	}, [date, post.unscheduled]);
+	}, [date, post.unscheduled, postStatuses]);
 
 	useEffect(() => {
 		setDatePickerDisabled(
@@ -166,7 +171,7 @@ export default function EditPost() {
 			});
 
 			// Check if this is a new post and set the proper URL
-			let url = `${routeBase}/`;
+			let url = `${routeBase}/posts/`;
 			if (updatePost.trash === true) {
 				url += `trash/${currentPost.id}`;
 			} else {
@@ -257,30 +262,6 @@ export default function EditPost() {
 		});
 	}, [editPostDispatch, postsDispatch]);
 
-	useEffect(() => {
-		if (editMode === false) return;
-
-		const handleClickOutside = (e) => {
-			if (node.current && node.current.contains(e.target)) {
-				// inside click
-				return;
-			}
-
-			// outside click
-			closeModal();
-		};
-
-		if (!isEmpty(currentPost)) {
-			document.addEventListener("mousedown", handleClickOutside);
-		} else {
-			document.removeEventListener("mousedown", handleClickOutside);
-		}
-
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, [editMode, currentPost, postsDispatch, closeModal]);
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
@@ -369,6 +350,8 @@ export default function EditPost() {
 			</option>
 		));
 	};
+
+	useClickOutside(node, closeModal);
 
 	return (
 		<div className={`editPost ${editMode ? "active" : "inactive"}`}>

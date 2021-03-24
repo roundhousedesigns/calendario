@@ -1,57 +1,97 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
+import ColorPickerPopover from "./common/ColorPickerPopover";
+import ToggleButton from "./common/ToggleButton";
 import { wp } from "../lib/utils";
+import { isEmpty } from "lodash";
 
 import ViewContext from "../ViewContext";
 
 export default function StatusFilters() {
-	const { postStatuses } = wp;
-	const keys = Object.keys(postStatuses);
+	const { routeBase } = wp;
+	const firstUpdate = useRef(true);
 	const {
-		viewOptions: { statuses },
+		viewOptions: { postStatuses },
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
+	const keys = Object.keys(postStatuses);
+
+	// Updates the server when the dispatch is updated (after debounce)
+	useEffect(() => {
+		if (isEmpty(postStatuses)) {
+			return;
+		}
+
+		if (firstUpdate.current === true) {
+			firstUpdate.current = false;
+			return;
+		}
+
+		// update server
+		let url = `${routeBase}/statuses`;
+
+		const fetchData = async () => {
+			let colors = {};
+			for (let status in postStatuses) {
+				colors[status] = postStatuses[status].color;
+			}
+
+			try {
+				const response = await fetch(url, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(colors),
+				});
+				// const data = await response.json(); // If you need to catch the response...
+				await response.json();
+
+				// do something else?
+			} catch (error) {
+				console.log(error.message);
+			}
+		};
+
+		fetchData();
+	}, [firstUpdate, routeBase, postStatuses]);
 
 	const toggleStatus = (e) => {
 		viewOptionsDispatch({
-			type: "TOGGLE_STATUS",
-			status: e.target.name,
+			type: "TOGGLE_POST_STATUS",
+			postStatus: e.target.name,
+		});
+	};
+
+	const handleResetColors = () => {
+		viewOptionsDispatch({
+			type: "RESET_POST_STATUS_COLORS",
 		});
 	};
 
 	return (
 		<div className="statusFilters">
 			<ul className="filters">
-				{keys.map((item, index) => {
-					const { color, backgroundColor, name } = postStatuses[item];
+				{keys.map((status, index) => {
+					const { color, name } = postStatuses[status];
 					return (
 						<li
-							className={`filterItem status__${item}`}
+							className={`filterItem status__${status}`}
 							key={index}
 						>
-							<button
-								className={`dot ${
-									statuses[item] ? "visible" : "hidden"
-								}`}
-								name={item}
-								style={
-									statuses[item] === true
-										? {
-												color,
-												backgroundColor,
-												borderColor: backgroundColor,
-										  }
-										: {
-												color,
-												borderColor: backgroundColor,
-										  }
-								}
-								onClick={toggleStatus}
-							/>
+							<ColorPickerPopover color={color} name={status} />
 							<span className="name">{name}</span>
+							<ToggleButton
+								selected={
+									postStatuses[status].visible ? true : false
+								}
+								toggleSelected={toggleStatus}
+								name={status}
+							/>
 						</li>
 					);
 				})}
 			</ul>
+			<button className="reset" onClick={handleResetColors}>
+				Reset Colors
+			</button>
 		</div>
 	);
 }

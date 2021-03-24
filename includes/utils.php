@@ -41,20 +41,6 @@ function rhd_wp_prepare_date( $date_string ) {
 }
 
 /**
- * Returns the proper color string associated with a post status.
- *
- * @param string $post_status a registered post status
- * @return string
- */
-function rhd_get_status_color( $post_status ) {
-	if ( isset( RHD_CALENDARIO_POST_STATUS_COLORS[$post_status] ) ) {
-		return RHD_CALENDARIO_POST_STATUS_COLORS[$post_status]['color'];
-	} else {
-		return RHD_CALENDARIO_POST_STATUS_COLORS['default']['color'];
-	}
-}
-
-/**
  * Get the furthest-future post date
  *
  * @return string|boolean The post date, or false if no posts found.
@@ -147,4 +133,35 @@ function rhd_unscheduled_draft_count() {
 	] );
 
 	return count( $p );
+}
+
+/**
+ * Gets post status => color pairs
+ *
+ * @return array $pairs The array of status/color pairs
+ */
+function rhd_post_status_color_pairs() {
+	$pairs = [];
+
+	foreach ( RHD_POST_STATUSES as $status => $props ) {
+		$pairs[$status] = $props['color'];
+	}
+
+	return $pairs;
+}
+
+/**
+ * Retrieves saved post status color values
+ *
+ * @return array $statuses The colors associated with each status ('status' => 'color')
+ */
+function rhd_prepare_post_statuses() {
+	$colors   = get_option( RHD_POST_STATUS_COLOR_OPTION_KEY );
+	$statuses = RHD_POST_STATUSES;
+
+	foreach ( $statuses as $status => $props ) {
+		$statuses[$status]['color'] = $colors[$status];
+	}
+
+	return $statuses;
 }

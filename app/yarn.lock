@@ -3418,6 +3418,11 @@ ci-info@^2.0.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
 
+ci-info@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.1.1.tgz#9a32fcefdf7bcdb6f0a7e1c0f8098ec57897b80a"
+  integrity sha512-kdRWLBIJwdsYJWYJFtAFFYxybguqeF91qpZaggjG5Nf8QKdizFG2hjqvaTXbxFIcYbSaD74KpAXv6BSm17DHEQ==
+
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/cipher-base/-/cipher-base-1.0.4.tgz#8760e4ecc272f4c363532f926d874aae2c1397de"
@@ -5987,6 +5992,11 @@ human-signals@^1.1.1:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-1.1.1.tgz#c5b1cd14f50aeae09ab6c59fe63ba3395fe4dfa3"
   integrity sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==
 
+husky@^5.2.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/husky/-/husky-5.2.0.tgz#fc5e1c2300d34855d47de4753607d00943fc0802"
+  integrity sha512-AM8T/auHXRBxlrfPVLKP6jt49GCM2Zz47m8G3FOMsLmTv8Dj/fKVWE0Rh2d4Qrvmy131xEsdQnb3OXRib67PGg==
+
 hyphenate-style-name@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.4.tgz#691879af8e220aea5750e8827db4ef62a54e361d"
@@ -6266,6 +6276,13 @@ is-ci@^2.0.0:
   integrity sha512-YfJT7rkpQB0updsdHLGWrvhBJfcfzNNawYDNIyQXJz0IViGf75O8EBPKSdvw2rF+LGCsX4FZ8tcr3b19LcZq4w==
   dependencies:
     ci-info "^2.0.0"
+
+is-ci@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/is-ci/-/is-ci-3.0.0.tgz#c7e7be3c9d8eef7d0fa144390bd1e4b88dc4c994"
+  integrity sha512-kDXyttuLeslKAHYL/K28F2YkM3x5jvFPEw3yXbRptXydjD9rpLEz+C5K5iutY9ZiUu6AP41JdvRQwF4Iqs4ZCQ==
+  dependencies:
+    ci-info "^3.1.1"
 
 is-color-stop@^1.0.0:
   version "1.1.0"
@@ -9651,6 +9668,11 @@ react-calendar@^3.3.1:
     merge-class-names "^1.1.1"
     prop-types "^15.6.0"
 
+react-colorful@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.0.1.tgz#50dcd10cd94bc0b2257492ca8785c53b07805faf"
+  integrity sha512-I/ctDkUZVCIKvIqBwqQWphPxDUJv8q1omKzQ3XJ6H3PhrxF/1t9olNVcTKBJSTKDACZJbyJ0cEAUi3rvAZWdSA==
+
 react-date-picker@^8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/react-date-picker/-/react-date-picker-8.1.0.tgz#1375ce1b923bbdfaea048ee64f08f4b8e5d29c1f"
@@ -11738,6 +11760,11 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-debounce@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/use-debounce/-/use-debounce-6.0.0.tgz#972300f9660ddd8fd12fa7cb78a17e0290a6a2c5"
+  integrity sha512-d4Sy6j8J0kkPXqIUGvIf829HCtyErxG8NMoFOJAvYSZP4Xuar7PURNt9LkvkGYoQw7i4iuez1jo957TL4m772g==
 
 use@^3.1.0:
   version "3.1.1"

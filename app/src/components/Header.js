@@ -1,7 +1,10 @@
 import React from "react";
 import MainHeader from "./MainHeader";
+import { useFetchPostStatuses } from "../lib/hooks";
 
 export default function Header({ handleTodayClick }) {
+	useFetchPostStatuses();
+
 	return (
 		<header className="calendario__header">
 			<div className="calendario__header__content">

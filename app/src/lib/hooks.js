@@ -4,6 +4,7 @@ import { format, isSameDay } from "date-fns";
 import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
+import ViewContext from "../ViewContext";
 
 import { DEBUG_MODE } from "../lib/utils";
 
@@ -48,7 +49,7 @@ export const useFetchScheduledPosts = (start, end) => {
 		if (start !== null && end !== null) {
 			let startDate = format(start, dateFormat.date);
 			let endDate = format(end, dateFormat.date);
-			let url = `${routeBase}/scheduled/${startDate}/${endDate}`;
+			let url = `${routeBase}/posts/scheduled/${startDate}/${endDate}`;
 
 			const fetchData = async () => {
 				setIsLoading(true);
@@ -92,7 +93,7 @@ export const useFetchUnscheduledPosts = () => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		let url = `${routeBase}/unscheduled`;
+		let url = `${routeBase}/posts/unscheduled`;
 
 		const fetchData = async () => {
 			setIsLoading(true);
@@ -122,6 +123,44 @@ export const useFetchUnscheduledPosts = () => {
 			setIsLoading(false);
 		};
 	}, [postsDispatch, refetch]);
+
+	return isLoading;
+};
+
+export const useFetchPostStatuses = () => {
+	const [isLoading, setIsLoading] = useState(false);
+	const { viewOptionsDispatch } = useContext(ViewContext);
+
+	useEffect(() => {
+		let url = `${routeBase}/statuses`;
+
+		const fetchData = async () => {
+			setIsLoading(true);
+
+			try {
+				const res = await fetch(url, {
+					headers,
+				});
+				const data = await res.json();
+
+				viewOptionsDispatch({
+					type: "SET_POST_STATUSES",
+					postStatuses: data,
+				});
+
+				setIsLoading(false);
+			} catch (error) {
+				console.log("REST error", error.message);
+				setIsLoading(false);
+			}
+		};
+
+		fetchData();
+
+		return () => {
+			setIsLoading(false);
+		};
+	}, [viewOptionsDispatch]);
 
 	return isLoading;
 };
@@ -177,25 +216,33 @@ export const useFetchTaxonomyTerms = (name) => {
 	return isLoading;
 };
 
-// export const useDimension = (ref) => {
-// 	const [dimensions, setdDimensions] = useState({ width: 0, height: 0 });
-// 	const resizeObserverRef = useRef(null);
+export const useClickOutside = (ref, handler) => {
+	useEffect(() => {
+		let startedInside = false;
+		let startedWhenMounted = false;
 
-// 	useEffect(() => {
-// 		resizeObserverRef.current = new ResizeObserver((entries = []) => {
-// 			entries.forEach((entry) => {
-// 				const { width, height } = entry.contentRect;
-// 				setdDimensions({ width, height });
-// 			});
-// 		});
+		const listener = (event) => {
+			// Do nothing if `mousedown` or `touchstart` started inside ref element
+			if (startedInside || !startedWhenMounted) return;
+			// Do nothing if clicking ref's element or descendent elements
+			if (!ref.current || ref.current.contains(event.target)) return;
 
-// 		if (ref.current) resizeObserverRef.current.observe(ref.current);
+			handler(event);
+		};
 
-// 		return () => {
-// 			if (resizeObserverRef.current)
-// 				resizeObserverRef.current.disconnect();
-// 		};
-// 	}, [ref]);
+		const validateEventStart = (event) => {
+			startedWhenMounted = ref.current;
+			startedInside = ref.current && ref.current.contains(event.target);
+		};
 
-// 	return dimensions;
-// };
+		document.addEventListener("mousedown", validateEventStart);
+		document.addEventListener("touchstart", validateEventStart);
+		document.addEventListener("click", listener);
+
+		return () => {
+			document.removeEventListener("mousedown", validateEventStart);
+			document.removeEventListener("touchstart", validateEventStart);
+			document.removeEventListener("click", listener);
+		};
+	}, [ref, handler]);
+};

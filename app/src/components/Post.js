@@ -1,8 +1,5 @@
-// TODO uncomment useRef/useDimension etc for small-post hover menu handling
-import React, { useContext, useEffect, useState /* useRef */ } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PostLinks from "./PostLinks";
-import { wp } from "../lib/utils";
-// import { useDimension } from "../lib/hooks";
 import { isEmpty } from "lodash";
 import { isPast, isToday } from "date-fns";
 import { decode } from "html-entities";
@@ -11,10 +8,7 @@ import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 import ViewContext from "../ViewContext";
 
-const initialColors = { color: "", backgroundColor: "" };
-
 export default function Post({ post, index, unscheduled, allowDrag }) {
-	const { postStatuses } = wp;
 	const {
 		posts: { currentPost },
 		postsDispatch,
@@ -24,14 +18,11 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		draggedPostDispatch,
 	} = useContext(DragContext);
 	const {
-		viewOptions: { statuses },
+		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
-	// const postRef = useRef(null);
 
 	const [date, setDate] = useState(new Date());
-	const [colors, setColors] = useState(initialColors);
-	// const { width, height } = useDimension(postRef);
-	const { color, backgroundColor } = colors;
+	const [color, setColor] = useState("");
 
 	useEffect(() => {
 		setDate(new Date(post.post_date));
@@ -42,13 +33,10 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 	}, [post.post_date]);
 
 	useEffect(() => {
-		setColors({
-			color: postStatuses[post.post_status].color,
-			backgroundColor: postStatuses[post.post_status].backgroundColor,
-		});
+		setColor(postStatuses[post.post_status].color);
 
 		return () => {
-			setColors(initialColors);
+			setColor("");
 		};
 	}, [post.post_status, postStatuses]);
 
@@ -112,11 +100,11 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 
 		return (
 			<li
-				// ref={postRef}
 				id={post.id}
 				className={classes.join(" ")}
 				style={
-					unscheduled === false && statuses[post.post_status] === true
+					unscheduled === false &&
+					postStatuses[post.post_status].visible === true
 						? { visibility: "visible" }
 						: unscheduled === true
 						? { visibility: "visible" }
@@ -136,14 +124,12 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 					className={isDragging ? "disabled" : "active"}
 					post={post}
 					unscheduled={unscheduled}
-					// parentSize={{ width, height }}
-					// parentBg={backgroundColor}
+					// TODO make sure PostLinks component doesn't accept parentBg (etc) props
 				/>
 				<p
 					className="postData"
 					style={{
-						backgroundColor: backgroundColor,
-						color: color,
+						backgroundColor: color,
 					}}
 				>
 					{decode(post.post_title, { scope: "strict" })}

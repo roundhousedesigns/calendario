@@ -14,7 +14,7 @@ export default function Sidebar() {
 				)}
 
 				{renderWidget(
-					"Filter by Status",
+					"Post Status",
 					"statusFilters",
 					<StatusFilters />
 				)}
