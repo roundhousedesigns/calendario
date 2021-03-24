@@ -228,7 +228,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
+		$item = $this->prepare_existing_item_for_database( $request );
 
 		if ( array_key_exists( 'tax_input', $item ) ) {
 			// Update categories and tags ('tax_input' doesn't work without assign_terms privileges)
@@ -264,7 +264,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
+		$item = $this->prepare_new_item_for_database( $request );
 
 		// Update categories and tags ('tax_input' doesn't work without assign_terms privileges)
 		$tax_index  = array_search( 'tax_input', array_keys( $item ) );
@@ -627,8 +627,9 @@ class Calendario_Route extends WP_REST_Controller {
 		return $this->create_item_permissions_check( $request );
 	}
 
-	protected function reorder_unscheduled_post( $id, $newIndex ) {
+	protected function reorder_unscheduled_posts( $id, $newIndex ) {
 		$currentIndex = get_post_meta( $id, RHD_UNSCHEDULED_INDEX_META_KEY, true );
+
 		if ( $currentIndex === $newIndex ) {
 			return;
 		}
@@ -659,19 +660,20 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Request object
 	 * @return WP_Error|array $prepared_item
 	 */
-	protected function prepare_item_for_database( $request ) {
+	protected function prepare_existing_item_for_database( $request ) {
 		$params = $request->get_params();
+		$item   = [];
+		if ( ! isset( $params['ID'] ) ) {
+			return;
+		}
 
-		$item = ['ID' => isset( $params['ID'] ) ? $params['ID'] : 0];
+		$item['ID'] = $params['ID'];
 
-		// Existing posts
-		$item = [
-			'ID' => isset( $params['ID'] ) ? $params['ID'] : 0,
-		];
-
+		// Handle unscheduled post order and statuses
 		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
-			$draggedTo = isset( $params['draggedTo'] ) ? $params['draggedTo'] : false;
-			$this->reorder_unscheduled_post( $params['ID'], $draggedTo );
+			if ( isset( $params['draggedTo'] ) ) {
+				$this->reorder_unscheduled_posts( $item['ID'], $params['draggedTo'] );
+			}
 
 			// Make sure post is either Draft or Private
 			$post_status = get_post_status( $item['ID'] );
@@ -679,29 +681,15 @@ class Calendario_Route extends WP_REST_Controller {
 				$item['post_status'] = 'draft';
 			}
 		} else {
-			delete_post_meta( $params['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
+			delete_post_meta( $item['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
 		}
 
+		// Post dta
 		if ( isset( $params['params'] ) ) {
-			foreach ( $params['params'] as $key => $value ) {
-				if ( $key === 'post_date' ) {
-					// Post Date
-					$date                  = rhd_wp_prepare_date( $params['params']['post_date'] );
-					$item['post_date']     = $date['post_date'];
-					$item['post_date_gmt'] = $date['post_date_gmt'];
-				} elseif ( $key === 'taxonomies' ) {
-					// Taxonomy terms
-					$item['tax_input'] = [];
-					foreach ( $params['params']['taxonomies'] as $taxonomy => $terms ) {
-						$item['tax_input'][$taxonomy] = $terms;
-					}
-				} else {
-					$item[$key] = $value;
-				}
-			}
+			$item_params = $this->prepare_item_params_for_database( $params['params'] );
 		}
 
-		return $item;
+		return array_merge( $item, $item_params );
 	}
 
 	/**
@@ -711,12 +699,60 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|array $prepared_item
 	 */
 	protected function prepare_new_item_for_database( $request ) {
+		$params = $request->get_params();
+		$item   = ['ID' => 0];
+
 		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
 			$item['meta_input'] = [
 				RHD_UNSCHEDULED_INDEX_META_KEY => rhd_unscheduled_draft_count(),
 			];
 		}
 
+		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
+			$this->reorder_unscheduled_posts( $item['ID'], false );
+
+			// Make sure post is either Draft or Private
+			$post_status = get_post_status( $item['ID'] );
+			if ( $post_status !== 'draft' && $post_status !== 'private' ) {
+				$item['post_status'] = 'draft';
+			}
+		}
+
+		// Post data
+		if ( isset( $params['params'] ) ) {
+			$item_params = $this->prepare_item_params_for_database( $params['params'] );
+		}
+
+		return array_merge( $item, $item_params );
+	}
+
+	/**
+	 * Processes post data for merging with wp_update_post/wp_insert_post args array.
+	 *
+	 * @param array $params The post params
+	 * @return array The processed params
+	 */
+	protected function prepare_item_params_for_database( $params ) {
+		$data = [];
+
+		foreach ( $params as $key => $value ) {
+			if ( $key === 'post_date' ) {
+				// Post Date
+				$post_date             = rhd_wp_prepare_date( $params['post_date'] );
+				$data['post_date']     = $post_date['post_date'];
+				$data['post_date_gmt'] = $post_date['post_date_gmt'];
+			} elseif ( $key === 'taxonomies' ) {
+				// Taxonomy terms
+				$data['tax_input'] = [];
+				foreach ( $params['taxonomies'] as $taxonomy => $terms ) {
+					$data['tax_input'][$taxonomy] = $terms;
+				}
+			} else {
+				$data[$key] = $value;
+			}
+		}
+
+		return $data;
 	}
 
 	/**
