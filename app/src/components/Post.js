@@ -33,6 +33,10 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 	}, [post.post_date]);
 
 	useEffect(() => {
+		if (postStatuses === undefined) {
+			return;
+		}
+
 		setColor(postStatuses[post.post_status].color);
 
 		return () => {
