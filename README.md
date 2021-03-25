@@ -2,6 +2,8 @@
 
 The professional blogger's editorial calendar. For the two-th time.
 
+[![CodeScene Code Health](https://codescene.io/projects/14313/status-badges/code-health)](https://codescene.io/projects/14313)
+
 ## Usage:
 
 Enable the plugin inside a WP installation and visit `Posts->Calendario` from the Dashboard.
