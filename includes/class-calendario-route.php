@@ -228,7 +228,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function update_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
+		$item = $this->prepare_existing_item_for_database( $request );
 
 		if ( array_key_exists( 'tax_input', $item ) ) {
 			// Update categories and tags ('tax_input' doesn't work without assign_terms privileges)
@@ -264,7 +264,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
-		$item = $this->prepare_item_for_database( $request );
+		$item = $this->prepare_new_item_for_database( $request );
 
 		// Update categories and tags ('tax_input' doesn't work without assign_terms privileges)
 		$tax_index  = array_search( 'tax_input', array_keys( $item ) );
@@ -288,22 +288,6 @@ class Calendario_Route extends WP_REST_Controller {
 		}
 
 		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), ['status' => 500] );
-	}
-
-	/**
-	 * Update all unscheduled items with new indices.
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function update_unscheduled_post_order( $request ) {
-		$items = $this->prepare_unscheduled_items_for_database( $request );
-
-		for ( $i = 0; $i < count( $items ); $i++ ) {
-			$result = update_post_meta( $items[$i], RHD_UNSCHEDULED_INDEX_META_KEY, $i );
-		}
-
-		return new WP_REST_Response( 'Unscheduled Draft order updated.', 200 );
 	}
 
 	/**
@@ -627,8 +611,13 @@ class Calendario_Route extends WP_REST_Controller {
 		return $this->create_item_permissions_check( $request );
 	}
 
-	protected function reorder_unscheduled_post( $id, $newIndex ) {
+	/**
+	 * Moves an unscheduled draft post to a new position in the list,
+	 *   or adds a post to the list at the desired position.
+	 */
+	protected function reorder_unscheduled_drafts( $id, $newIndex ) {
 		$currentIndex = get_post_meta( $id, RHD_UNSCHEDULED_INDEX_META_KEY, true );
+
 		if ( $currentIndex === $newIndex ) {
 			return;
 		}
@@ -637,13 +626,13 @@ class Calendario_Route extends WP_REST_Controller {
 
 		$newIndex = $newIndex === false ? count( $posts ) : $newIndex;
 
-		if ( $currentIndex === '' ) {
+		if ( ! $currentIndex || $currentIndex < 0 ) {
 			// newly unscheduled, insert at position
 			array_splice( $posts, $newIndex, 0, $id );
 		} else {
+			// reordering
 			$old = array_splice( $posts, $currentIndex, 1 );
 			array_splice( $posts, $newIndex, 0, $old );
-			// reordering
 		}
 
 		$i = 0;
@@ -654,62 +643,115 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
+	 * Adds a 'meta_input' to append this post to the unscheduled drafts list.
+	 *
+	 * @param array &$item The args array for wp_update_post/wp_insert_post
+	 * @return void
+	 */
+	protected function prepare_new_item_for_unscheduled( &$item ) {
+		$item['meta_input'] = [
+			RHD_UNSCHEDULED_INDEX_META_KEY => rhd_unscheduled_draft_count(),
+		];
+	}
+
+	/**
 	 * Prepare the item for create or update operation
 	 *
 	 * @param WP_REST_Request $request Request object
 	 * @return WP_Error|array $prepared_item
 	 */
-	protected function prepare_item_for_database( $request ) {
+	protected function prepare_existing_item_for_database( $request ) {
 		$params = $request->get_params();
-
-		$item = ['ID' => isset( $params['ID'] ) ? $params['ID'] : 0];
-
-		// Existing posts
-		$item = [
-			'ID' => isset( $params['ID'] ) ? $params['ID'] : 0,
-		];
-
-		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
-			if ( $item['ID'] === 0 ) {
-				// New post
-				$item['meta_input'] = [
-					RHD_UNSCHEDULED_INDEX_META_KEY => rhd_unscheduled_draft_count(),
-				];
-			} else {
-				$draggedTo = isset( $params['draggedTo'] ) ? $params['draggedTo'] : false;
-				$this->reorder_unscheduled_post( $params['ID'], $draggedTo );
-
-				// Make sure post is either Draft or Private
-				$post_status = get_post_status( $item['ID'] );
-				if ( $post_status !== 'draft' && $post_status !== 'private' ) {
-					$item['post_status'] = 'draft';
-				}
-			}
-
-		} else {
-			delete_post_meta( $params['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
+		$item   = [];
+		if ( ! isset( $params['ID'] ) ) {
+			return;
 		}
 
+		$item['ID'] = $params['ID'];
+
+		// Handle unscheduled post order and statuses
+		$this->prepare_scheduled_unscheduled( $item, $params );
+
+		// Post data
 		if ( isset( $params['params'] ) ) {
-			foreach ( $params['params'] as $key => $value ) {
-				if ( $key === 'post_date' ) {
-					// Post Date
-					$date                  = rhd_wp_prepare_date( $params['params']['post_date'] );
-					$item['post_date']     = $date['post_date'];
-					$item['post_date_gmt'] = $date['post_date_gmt'];
-				} elseif ( $key === 'taxonomies' ) {
-					// Taxonomy terms
-					$item['tax_input'] = [];
-					foreach ( $params['params']['taxonomies'] as $taxonomy => $terms ) {
-						$item['tax_input'][$taxonomy] = $terms;
-					}
-				} else {
-					$item[$key] = $value;
-				}
-			}
+			$this->prepare_item_params_for_database( $item, $params['params'] );
 		}
 
 		return $item;
+	}
+
+	/**
+	 * Prepare the item for create operation
+	 *
+	 * @param WP_REST_Request $request Request object
+	 * @return WP_Error|array $prepared_item
+	 */
+	protected function prepare_new_item_for_database( $request ) {
+		$params     = $request->get_params();
+		$item['ID'] = 0;
+
+		$this->prepare_scheduled_unscheduled( $item, $params );
+
+		// Post data
+		if ( isset( $params['params'] ) ) {
+			$this->prepare_item_params_for_database( $item, $params['params'] );
+		}
+
+		return $item;
+	}
+
+	/**
+	 * Reorders unscheduled posts and filters allowed post statuses.
+	 *
+	 * @param array &$item The args array for wp_update_post/wp_insert_post
+	 * @param array $params The post data
+	 * @return void
+	 */
+	protected function prepare_scheduled_unscheduled( &$item, $params ) {
+		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
+			error_log( '1' );
+			if ( isset( $params['draggedTo'] ) && $item['ID'] !== 0 ) {
+				error_log( '2' );
+				$this->reorder_unscheduled_drafts( $item['ID'], $params['draggedTo'] );
+			} else {
+				error_log( '3' );
+				$this->prepare_new_item_for_unscheduled( $item );
+			}
+
+			// Make sure post is either Draft or Private
+			$post_status = get_post_status( $item['ID'] );
+			if ( $post_status !== 'draft' && $post_status !== 'private' ) {
+				$item['post_status'] = 'draft';
+			}
+		} else {
+			delete_post_meta( $item['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
+		}
+	}
+
+	/**
+	 * Processes post data for merging with wp_update_post/wp_insert_post args array.
+	 *
+	 * @param array &$item The args array for wp_update_post/wp_insert_post
+	 * @param array $params The post params
+	 * @return void
+	 */
+	protected function prepare_item_params_for_database( &$item, $params ) {
+		foreach ( $params as $key => $value ) {
+			if ( $key === 'post_date' ) {
+				// Post Date
+				$post_date             = rhd_wp_prepare_date( $params['post_date'] );
+				$item['post_date']     = $post_date['post_date'];
+				$item['post_date_gmt'] = $post_date['post_date_gmt'];
+			} elseif ( $key === 'taxonomies' ) {
+				// Taxonomy terms
+				$item['tax_input'] = [];
+				foreach ( $params['taxonomies'] as $taxonomy => $terms ) {
+					$item['tax_input'][$taxonomy] = $terms;
+				}
+			} else {
+				$item[$key] = $value;
+			}
+		}
 	}
 
 	/**
@@ -722,20 +764,6 @@ class Calendario_Route extends WP_REST_Controller {
 		$params = $request->get_params();
 
 		return $params['ID'];
-	}
-
-	/**
-	 * Prepare post ids with their indexes for updating the database.
-	 */
-	protected function prepare_unscheduled_items_for_database( $request ) {
-		$ids = explode( ';', $request->get_param( 'ids' ) );
-
-		$posts = [];
-		foreach ( $ids as $id ) {
-			$posts[] = $id;
-		}
-
-		return $posts;
 	}
 
 	/**
