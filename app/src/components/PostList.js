@@ -121,45 +121,39 @@ export default function PostList({
 	const handleDragOver = (e) => {
 		e.preventDefault();
 
-		if (allowDrag === false) return;
+		if (
+			allowDrag === false ||
+			!e.currentTarget.classList.contains("unscheduledDrafts")
+		) {
+			return;
+		}
 
-		if (e.currentTarget.classList.contains("unscheduledDrafts")) {
-			let overNow = Number(e.target.dataset.index);
+		let overNow = Number(e.target.dataset.index);
+		if (draggedFrom === overNow) {
+			return;
+		}
 
-			let draggedOver = false;
-			if (draggedFrom === overNow) {
-				return;
-			} else {
-				draggedOver = Number.isNaN(overNow) ? false : overNow;
-			}
+		let draggedOver = Number.isNaN(overNow) ? false : overNow;
 
-			if (draggedOver !== draggedTo) {
-				if (draggedOver === false) {
-					let targetRect = e.currentTarget.getBoundingClientRect();
-					let mouseY = e.clientY - targetRect.top;
-					const listItems = e.currentTarget.childNodes;
-					let itemCount = listItems.length;
+		if (draggedOver !== draggedTo) {
+			if (draggedOver === false) {
+				let targetRect = e.currentTarget.getBoundingClientRect();
+				let mouseY = e.clientY - targetRect.top;
+				const listItems = e.currentTarget.childNodes;
+				let itemCount = listItems.length;
 
-					if (
-						listItems.length === 0 ||
-						mouseY < listItems[0].offsetTop
-					) {
-						draggedOver = 0;
-					} else if (mouseY >= listItems[itemCount - 1].offsetTop) {
-						draggedOver = itemCount;
-					} else {
-						draggedOver = itemCount - 1;
-					}
+				if (listItems.length === 0 || mouseY < listItems[0].offsetTop) {
+					draggedOver = 0;
+				} else if (mouseY >= listItems[itemCount - 1].offsetTop) {
+					draggedOver = itemCount;
+				} else {
+					draggedOver = itemCount - 1;
 				}
-
-				draggedPostDispatch({
-					type: "DRAGGING_OVER_UNSCHEDULED",
-					draggedOver,
-				});
 			}
-		} else if (overUnscheduled === true) {
+
 			draggedPostDispatch({
-				type: "DRAGGING_OVER_SCHEDULED",
+				type: "DRAGGING_OVER_UNSCHEDULED",
+				draggedOver,
 			});
 		}
 	};
