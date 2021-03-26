@@ -71,16 +71,18 @@ export default function ColorPickerPopover({ color, name }) {
 					/>
 
 					<div class="picker__swatches">
-						{presetStatusColors.map((color) => {
-							return (
-								<button
-									key={color}
-									className="picker__swatch"
-									style={{ background: color }}
-									onClick={() => setColorValue(color)}
-								/>
-							);
-						})}
+						{presetStatusColors === undefined
+							? null
+							: presetStatusColors.map((color) => {
+									return (
+										<button
+											key={color}
+											className="picker__swatch"
+											style={{ background: color }}
+											onClick={() => setColorValue(color)}
+										/>
+									);
+							  })}
 					</div>
 				</div>
 			)}
