@@ -23,7 +23,7 @@ define( 'RHD_POST_STATUS_COLOR_OPTION_KEY', 'rhd_calendario_post_statuses' );
 define( 'RHD_POST_STATUSES', [
 	'publish' => [
 		'name'  => 'Published',
-		'color' => 'cornflowerblue',
+		'color' => 'dodgerblue',
 	],
 	'future'  => [
 		'name'  => 'Scheduled',
@@ -31,16 +31,28 @@ define( 'RHD_POST_STATUSES', [
 	],
 	'draft'   => [
 		'name'  => "Draft",
-		'color' => 'silver',
+		'color' => 'darkgray',
 	],
 	'pending' => [
 		'name'  => 'Pending Review',
-		'color' => 'lightcoral',
+		'color' => 'orange',
 	],
 	'private' => [
 		'name'  => 'Private',
-		'color' => 'maroon',
+		'color' => 'firebrick',
 	],
+] );
+define( 'RHD_POST_STATUS_SWATCHES', [
+	"firebrick",
+	"orange",
+	"lightsalmon",
+	"lightseagreen",
+	"mediumspringgreen",
+	"skyblue",
+	"dodgerblue",
+	"darkorchid",
+	"violet",
+	"darkgray",
 ] );
 
 /**
@@ -169,7 +181,8 @@ class Calendario {
 				],
 				'nonce'               => wp_create_nonce( 'wp_rest' ),
 				'routeBase'           => get_rest_url( null, sprintf( 'calendario/%s', RHD_CALENDARIO_REST_VERSION ) ),
-				'defaultStatusColors' => rhd_post_status_color_pairs(),
+				'defaultStatusColors' => rhd_post_status_default_color_pairs(),
+				'presetStatusColors'  => RHD_POST_STATUS_SWATCHES,
 			]
 		);
 	}

@@ -19,12 +19,24 @@ export const wp =
 					blogUrl: "//localhost",
 				},
 				defaultStatusColors: {
-					publish: "cornflowerblue",
+					publish: "dodgerblue",
 					future: "lightseagreen",
-					draft: "silver",
-					pending: "lightcoral",
-					private: "maroon",
+					draft: "darkgray",
+					pending: "orange",
+					private: "firebrick",
 				},
+				presetStatusColors: [
+					"firebrick",
+					"orange",
+					"lightsalmon",
+					"lightseagreen",
+					"mediumspringgreen",
+					"skyblue",
+					"dodgerblue",
+					"darkorchid",
+					"violet",
+					"darkgray",
+				],
 		  };
 
 export const dateFormat = {

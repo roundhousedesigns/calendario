@@ -131,7 +131,7 @@ function rhd_unscheduled_draft_count() {
  *
  * @return array $pairs The array of status/color pairs
  */
-function rhd_post_status_color_pairs() {
+function rhd_post_status_default_color_pairs() {
 	$pairs = [];
 
 	foreach ( RHD_POST_STATUSES as $status => $props ) {

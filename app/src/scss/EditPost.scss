@@ -1,0 +1,175 @@
+.editPost {
+	transition: transform 0.25s ease-in-out;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	z-index: 999;
+
+	&.active {
+		transform: translateY(0);
+	}
+
+	&.inactive {
+		transform: translateY(-100%);
+	}
+
+	&__container {
+		width: 100%;
+		height: 100%;
+		background: transparentize($color: black, $amount: 0.85);
+		position: fixed;
+		top: 0;
+		left: 0;
+	}
+
+	&__editor {
+		transform: translate(-50%, -50%);
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		background-color: var(--neutralColor);
+		display: block;
+		width: 50%;
+		min-width: 300px;
+		height: 90%;
+		overflow: auto;
+		padding: 22px;
+		border-radius: var(--borderRadius);
+		border: 1px solid var(--borderColor);
+
+		.close {
+			position: absolute;
+			top: 0;
+			right: 0;
+			margin: 0;
+			padding: 0;
+			font-size: 24px;
+			color: var(--textColor);
+		}
+
+		.title {
+			margin: 0;
+			text-transform: uppercase;
+			display: inline-block;
+			border-bottom: 1px solid var(--borderColor);
+			width: 100%;
+		}
+
+		&__form {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+		}
+
+		.fieldGroup {
+			&__post_excerpt,
+			&__post_title {
+				width: 100%;
+
+				input,
+				textarea {
+					width: 100%;
+				}
+			}
+
+			&__date_status {
+				display: flex;
+				justify-content: space-between;
+			}
+
+			&__date {
+				display: flex;
+				align-items: flex-end;
+
+				.post_date {
+					margin-right: 1em;
+
+					&.inactive {
+						opacity: 0.5;
+						pointer-events: none;
+
+						input {
+							color: transparent;
+						}
+					}
+				}
+
+				.unscheduled {
+					input,
+					label {
+						display: inline-block;
+					}
+				}
+			}
+
+			&__status {
+				flex: 0 0 150px;
+
+				select {
+					width: 100%;
+				}
+			}
+
+			&__taxonomies {
+				display: flex;
+				flex-wrap: nowrap;
+				justify-content: space-between;
+				max-height: 300px;
+
+				& > label {
+					flex-basis: 49%;
+
+					& > fieldset {
+						height: 100%;
+						padding-right: 4px;
+						padding-left: 4px;
+						overflow: auto;
+
+						input {
+							display: inline-block;
+							margin-right: 0.5rem;
+						}
+					}
+				}
+			}
+		}
+
+		.post_thumb {
+			width: 200px;
+			height: auto;
+
+			img {
+				width: 100%;
+				height: auto;
+				display: block;
+			}
+		}
+	}
+
+	&__buttons {
+		margin-top: 12px;
+
+		&__trash {
+			&:not(.confirm) {
+				float: right;
+			}
+
+			input {
+				&:focus {
+					outline: 1px solid var(--mainColor-light);
+				}
+			}
+
+			&.confirm {
+				text-align: center;
+
+				p {
+					font-size: 1.2em;
+					margin: 0 0 6px;
+				}
+			}
+		}
+	}
+}

@@ -13,7 +13,7 @@ export default function Header({ handleTodayClick }) {
 				</div>
 				<div className="right">
 					<h1 className="calendario__title">
-						the editorial calendorial
+						editorial calendar.io
 					</h1>
 				</div>
 			</div>

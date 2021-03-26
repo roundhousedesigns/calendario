@@ -14,7 +14,6 @@ export function dragReducer(state, action) {
 			};
 
 		case "DRAGGING_OVER_UNSCHEDULED":
-			console.log("well");
 			return {
 				...state,
 				draggedTo: action.draggedOver,
