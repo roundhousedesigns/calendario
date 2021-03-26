@@ -5,6 +5,7 @@ import React, {
 	useRef,
 	useState,
 } from "react";
+import { wp } from "../../lib/utils";
 import { useClickOutside } from "../../lib/hooks";
 
 import ViewContext from "../../ViewContext";
@@ -13,6 +14,7 @@ import { useDebounce } from "use-debounce";
 import { HexColorPicker } from "react-colorful";
 
 export default function ColorPickerPopover({ color, name }) {
+	const { presetStatusColors } = wp;
 	const popover = useRef();
 	const previous = useRef(color);
 	const {
@@ -67,6 +69,19 @@ export default function ColorPickerPopover({ color, name }) {
 						onChange={setColorValue}
 						name={name}
 					/>
+
+					<div class="picker__swatches">
+						{presetStatusColors.map((color) => {
+							return (
+								<button
+									key={color}
+									className="picker__swatch"
+									style={{ background: color }}
+									onClick={() => setColorValue(color)}
+								/>
+							);
+						})}
+					</div>
 				</div>
 			)}
 		</div>

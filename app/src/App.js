@@ -9,7 +9,6 @@ import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
 import DragContext, { dragReducer, initialDrag } from "./DragContext";
 import ViewContext, { viewReducer, initialViewOptions } from "./ViewContext";
 
-import "./App.scss";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function App() {
@@ -79,8 +78,8 @@ export default function App() {
 					<DragContext.Provider
 						value={{ draggedPost, draggedPostDispatch }}
 					>
-						<Main ref={mainRef} todayRef={todayRef} />
 						<Sidebar />
+						<Main ref={mainRef} todayRef={todayRef} />
 					</DragContext.Provider>
 				</PostsContext.Provider>
 			</ViewContext.Provider>

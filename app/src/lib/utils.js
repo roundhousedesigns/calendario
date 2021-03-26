@@ -25,6 +25,13 @@ export const wp =
 					pending: "lightcoral",
 					private: "maroon",
 				},
+				presetStatusColors: [
+					"cornflowerblue",
+					"lightseagreen",
+					"silver",
+					"lightcoral",
+					"maroon",
+				],
 		  };
 
 export const dateFormat = {
