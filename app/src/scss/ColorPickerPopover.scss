@@ -31,7 +31,8 @@
 		outline: none;
 
 		&:hover {
-			border: var(--neutralColor-dark);
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1),
+				inset 0 0 0 1px rgba(0, 0, 0, 0.01);
 		}
 	}
 

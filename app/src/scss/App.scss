@@ -224,7 +224,6 @@ body {
 	}
 
 	button {
-		border: none;
 		border-radius: var(--borderRadius);
 		font-size: 1em;
 		outline: none;
@@ -233,6 +232,10 @@ body {
 
 		&:not([disabled]) {
 			cursor: pointer;
+		}
+
+		&:not(.picker__swatch) {
+			border: none;
 		}
 
 		&.icon {
