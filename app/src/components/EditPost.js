@@ -14,6 +14,7 @@ import {
 	filterStatusList,
 	wp,
 	filterUnchangedParams,
+	DEBUG_MODE,
 } from "../lib/utils";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
@@ -93,7 +94,7 @@ function editPostReducer(state, action) {
 }
 
 export default function EditPost() {
-	const { routeBase } = wp;
+	const { routeBase, user, nonce } = wp;
 	const {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
@@ -173,13 +174,20 @@ export default function EditPost() {
 			// Check if this is a new post and set the proper URL
 			let url = `${routeBase}/posts/`;
 			if (updatePost.trash === true) {
-				url += `trash/${currentPost.id}`;
+				url += `trash/${currentPost.id}/${user}`;
 			} else {
 				if (currentPost.id === 0) {
-					url += "new";
+					url += `new/${user}`;
 				} else {
-					url += `update/${currentPost.id}`;
+					url += `update/${currentPost.id}/${user}`;
 				}
+			}
+
+			let headers = {
+				"Content-Type": "application/json",
+			};
+			if (DEBUG_MODE !== true) {
+				headers["X-WP-Nonce"] = nonce;
 			}
 
 			let postData = {
@@ -195,7 +203,7 @@ export default function EditPost() {
 				try {
 					const response = await fetch(url, {
 						method: "POST",
-						headers: { "Content-Type": "application/json" },
+						headers,
 						body: JSON.stringify(postData),
 					});
 					// const data = await response.json(); // If you need to catch the response...
@@ -229,6 +237,8 @@ export default function EditPost() {
 		currentPost,
 		routeBase,
 		post,
+		user,
+		nonce,
 		draggedPostDispatch,
 		postsDispatch,
 		updatePost.trash,

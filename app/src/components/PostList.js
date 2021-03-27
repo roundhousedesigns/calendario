@@ -22,7 +22,7 @@ export default function PostList({
 	date,
 	loadingState,
 }) {
-	const { routeBase, nonce } = wp;
+	const { routeBase, user, nonce } = wp;
 	const {
 		posts: { currentPost },
 		postsDispatch,
@@ -56,7 +56,16 @@ export default function PostList({
 				type: "UPDATING",
 			});
 
-			let url = `${routeBase}/posts/update/${post.id}`;
+			let url = `${routeBase}/posts/update/${post.id}/${user}`;
+
+			let headers = {
+				"Content-Type": "application/json",
+			};
+
+			if (DEBUG_MODE !== true) {
+				headers["X-WP-Nonce"] = nonce;
+			}
+
 			let postData = {
 				params: filterUnchangedParams(updatePost.params, post),
 				unscheduled: updatePost.unscheduled,
@@ -68,13 +77,6 @@ export default function PostList({
 
 			if (isEmpty(postData)) {
 				return { data: "Update not necessary.", error: true };
-			}
-
-			var headers = {
-				"Content-Type": "application/json",
-			};
-			if (DEBUG_MODE !== true) {
-				headers["X-WP-Nonce"] = nonce;
 			}
 
 			const fetchData = async () => {
@@ -110,6 +112,7 @@ export default function PostList({
 		}
 	}, [
 		routeBase,
+		user,
 		nonce,
 		updatePost,
 		draggedTo,
