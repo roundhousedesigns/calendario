@@ -27,7 +27,7 @@ define( 'RHD_POST_STATUSES', [
 	],
 	'future'  => [
 		'name'  => 'Scheduled',
-		'color' => 'lightseagreen',
+		'color' => 'olivedrab',
 	],
 	'draft'   => [
 		'name'  => "Draft",
@@ -39,20 +39,20 @@ define( 'RHD_POST_STATUSES', [
 	],
 	'private' => [
 		'name'  => 'Private',
-		'color' => 'firebrick',
+		'color' => 'brown',
 	],
 ] );
 define( 'RHD_POST_STATUS_SWATCHES', [
-	"firebrick",
-	"orange",
-	"lightsalmon",
-	"lightseagreen",
-	"mediumspringgreen",
-	"skyblue",
-	"dodgerblue",
-	"darkorchid",
-	"violet",
 	"darkgray",
+	"violet",
+	"darkorchid",
+	"dodgerblue",
+	"skyblue",
+	"olivedrab",
+	"mediumseagreen",
+	"lightsalmon",
+	"orange",
+	"brown",
 ] );
 
 /**
