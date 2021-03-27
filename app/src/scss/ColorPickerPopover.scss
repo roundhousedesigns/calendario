@@ -1,17 +1,17 @@
 .swatch {
-	width: 28px;
-	height: 28px;
+	width: 22px;
+	height: 22px;
 	border-radius: 50%;
-	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-	border: 2px solid #fff;
 	cursor: pointer;
 }
 
 .picker {
-	background: #f0f0f4;
-	border-radius: 9px;
+	background: var(--neutralColor-dark);
+	border-radius: 50%;
 	position: relative;
 	margin-right: 12px;
+	padding: 2px;
+	border: 1px solid var(--textColor-light);
 
 	&__swatches {
 		display: flex;

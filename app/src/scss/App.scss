@@ -66,6 +66,14 @@ body {
 		}
 	}
 
+	&__logo {
+		float: left;
+		max-height: 80px;
+		width: auto;
+		display: block;
+		margin: 6px 12px;
+	}
+
 	&__header {
 		background: var(--neutralColor);
 		grid-area: header;
@@ -86,6 +94,7 @@ body {
 				padding: 6px 12px;
 				display: flex;
 				align-self: center;
+				align-items: center;
 
 				&.right {
 					@media (max-width: $mobileBreak) {
@@ -279,6 +288,21 @@ body {
 	.widgetTitle {
 		margin: 0 0 1em;
 		font-size: 1.2em;
+	}
+
+	&__support {
+		.rhdLogo {
+			display: block;
+			width: 100%;
+			max-width: 100px;
+			height: auto;
+			margin: 0 auto;
+
+			img {
+				width: 100%;
+				height: auto;
+			}
+		}
 	}
 }
 
@@ -712,7 +736,7 @@ body {
 			line-height: 1.2;
 			align-items: center;
 			flex-wrap: nowrap;
-			margin: 3px;
+			margin: 5px 3px;
 
 			.name {
 				flex: 1;

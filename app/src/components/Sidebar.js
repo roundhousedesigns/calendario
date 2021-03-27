@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import UnscheduledDrafts from "./UnscheduledDrafts";
 import StatusFilters from "./StatusFilters";
 import { renderWidget } from "../lib/utils";
+import { wp } from "../lib/utils";
 
 export default function Sidebar() {
+	const { pluginUrl } = wp;
+
+	useEffect(() => {
+		console.log(pluginUrl);
+	});
+
 	return (
 		<aside className="calendario__sidebar">
 			<div className="calendario__sidebar__inner">
@@ -20,44 +27,40 @@ export default function Sidebar() {
 				)}
 
 				{renderWidget(
-					"Development",
-					"dev",
+					"",
+					"support",
 					<>
-						<ul
-							style={{
-								marginLeft: 0,
-								paddingLeft: "24px",
-								listStylePosition: "outside",
-							}}
-						>
+						<ul className="docs">
 							<li>
 								<a
-									href="https://github.com/gaswirth/rhdwp-calendario/issues"
-									target="_blank"
+									href="https://github.com/gaswirth/rhdwp-calendario"
 									rel="noreferrer"
+									target="_blank"
 								>
-									Report an issue
+									Help + Documentation (dummy link)
 								</a>
 							</li>
 							<li>
 								<a
-									href="https://github.com/gaswirth/rhdwp-calendario#readme"
-									target="_blank"
+									href="https://github.com/gaswirth/rhdwp-calendario"
 									rel="noreferrer"
+									target="_blank"
 								>
-									Readme
+									Support (dummy link)
 								</a>
 							</li>
 						</ul>
-						<p style={{ fontSize: "0.7em" }}>
-							<a
-								href="https://roundhouse-designs.com"
-								target="_blank"
-								rel="noreferrer"
-							>
-								Roundhouse Designs
-							</a>
-						</p>
+						<a
+							className="rhdLogo"
+							href="https://roundhouse-designs.com"
+							target="_blank"
+							rel="noreferrer"
+						>
+							<img
+								src={`${pluginUrl}rhd-logo.png`}
+								alt="Roundhouse Designs logo"
+							/>
+						</a>
 					</>
 				)}
 			</div>

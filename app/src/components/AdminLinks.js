@@ -2,9 +2,7 @@ import React from "react";
 import { wp } from "../lib/utils";
 
 export default function AdminLinks() {
-	const {
-		wpLinks: { blogUrl, trashUrl },
-	} = wp;
+	const { blogUrl, trashUrl } = wp;
 
 	const renderLink = ([link, title, target]) => {
 		target = target ? target : "_self";

@@ -13,12 +13,11 @@ export const wp =
 				nonce: 0,
 				routeBase: "http://localhost/wp-json/calendario/v1",
 				user: 1,
-				wpLinks: {
-					adminUrl: "",
-					postsUrl: "",
-					trashUrl: "",
-					blogUrl: "//localhost",
-				},
+				adminUrl: "",
+				pluginUrl: "",
+				postsUrl: "",
+				trashUrl: "",
+				blogUrl: "//localhost",
 				defaultStatusColors: {
 					publish: "dodgerblue",
 					future: "olivedrab",
