@@ -14,7 +14,7 @@ class Calendario_Route extends WP_REST_Controller {
 		register_rest_route( $namespace, '/' . $post_base . '/scheduled/(?P<start>.*?)(/(?P<end>.*))?', [
 			[
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => [$this, 'get_items'],
+				'callback'            => [$this, 'get_scheduled_items'],
 				'permission_callback' => [$this, 'get_items_permissions_check'],
 				'args'                => [$this->get_range_endpoint_args()],
 			],
@@ -32,35 +32,35 @@ class Calendario_Route extends WP_REST_Controller {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [$this, 'get_taxonomy_terms'],
-				'permission_callback' => [$this, 'get_items_permissions_check'],
+				'permission_callback' => [$this, 'options_permissions_check'],
 				'args'                => [$this->get_taxonomy_endpoint_args()],
 			],
 		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)', [
+		register_rest_route( $namespace, '/' . $post_base . '/update/(?P<ID>\d+)/(?P<user_id>\d+)', [
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => [$this, 'update_item'],
 				'permission_callback' => [$this, 'update_item_permissions_check'],
-				'args'                => $this->get_endpoint_args_for_item_schema(),
+				'args'                => [$this->get_update_post_endpoint_args()],
 			],
 		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/new', [
+		register_rest_route( $namespace, '/' . $post_base . '/new/(?P<user_id>\d+)', [
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => [$this, 'create_item'],
-				'permission_callback' => [$this, 'update_item_permissions_check'],
-				'args'                => $this->get_endpoint_args_for_item_schema(),
+				'permission_callback' => [$this, 'create_item_permissions_check'],
+				'args'                => [$this->get_create_post_endpoint_args()],
 			],
 		] );
 
-		register_rest_route( $namespace, '/' . $post_base . '/trash/(?P<ID>\d+)', [
+		register_rest_route( $namespace, '/' . $post_base . '/trash/(?P<ID>\d+)/(?P<user_id>\d+)', [
 			[
 				'methods'             => WP_REST_Server::EDITABLE,
 				'callback'            => [$this, 'trash_item'],
-				'permission_callback' => [$this, 'update_item_permissions_check'],
-				'args'                => $this->get_endpoint_args_for_item_schema(),
+				'permission_callback' => [$this, 'trash_item_permissions_check'],
+				'args'                => [$this->get_update_post_endpoint_args()],
 			],
 		] );
 
@@ -84,7 +84,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|WP_REST_Response
 	 */
-	public function get_items( $request ) {
+	public function get_scheduled_items( $request ) {
 		$body = $request->get_params();
 
 		$start = isset( $body['start'] ) && $body['start'] ? $body['start'] : null;
@@ -365,14 +365,11 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Check if the user is logged in.
-	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return bool
 	 */
 	public function options_permissions_check( $request ) {
 		return true;
-		// return is_user_logged_in() && 0 !== get_current_user_id();
 	}
 
 	/**
@@ -394,7 +391,7 @@ class Calendario_Route extends WP_REST_Controller {
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_date_string'],
 				'sanitize_callback' => [$this, 'sanitize_string'],
-				'required'          => false,
+				'required'          => true,
 			],
 		];
 	}
@@ -409,7 +406,44 @@ class Calendario_Route extends WP_REST_Controller {
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_string'],
 				'sanitize_callback' => [$this, 'sanitize_string'],
-				'required'          => false,
+				'required'          => true,
+			],
+		];
+	}
+
+	/**
+	 * Get argument schema for update post data.
+	 */
+	public function get_update_post_endpoint_args() {
+		return [
+			'post_id' => [
+				'description'       => esc_html__( 'Post ID', 'rhd' ),
+				'type'              => 'int',
+				'validate_callback' => [$this, 'validate_integer'],
+				'sanitize_callback' => 'absint',
+				'required'          => true,
+			],
+			'user_id' => [
+				'description'       => esc_html__( 'User ID', 'rhd' ),
+				'type'              => 'int',
+				'validate_callback' => [$this, 'validate_integer'],
+				'sanitize_callback' => 'absint',
+				'required'          => true,
+			],
+		];
+	}
+
+	/**
+	 * Get argument schema for new post data.
+	 */
+	public function get_create_post_endpoint_args() {
+		return [
+			'user_id' => [
+				'description'       => esc_html__( 'User ID', 'rhd' ),
+				'type'              => 'int',
+				'validate_callback' => [$this, 'validate_integer'],
+				'sanitize_callback' => 'absint',
+				'required'          => true,
 			],
 		];
 	}
@@ -460,23 +494,6 @@ class Calendario_Route extends WP_REST_Controller {
 				'sanitize_callback' => 'absint',
 				'required'          => true,
 			],
-
-			// 'post_date'   => array(
-			// 	'description'       => esc_html__( 'New post date', 'rhd' ),
-			// 	'type'              => 'string',
-			// 	'validate_callback' => array( $this, 'validate_date_string' ),
-			// 	'sanitize_callback' => array( $this, 'sanitize_string' ),
-			// 	'required'          => true,
-			// ),
-
-			// 'unscheduled' => array(
-			// 	'description'       => esc_html__( 'If the incoming post was an unscheduled post.', 'rhd' ),
-			// 	'type'              => 'boolean',
-			// 	'validate_callback' => array( $this, 'validate_string' ),
-			// 	'sanitize_callback' => array( $this, 'sanitize_string' ),
-			// 	'required'          => false,
-			// 	'default'           => '',
-			// ),
 		];
 	}
 
@@ -586,8 +603,13 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function create_item_permissions_check( $request ) {
-		return true; // DEV ONLY; NO AUTHENTICATION
-		// return current_user_can( 'edit_others_posts' );
+		$params = $request->get_params();
+
+		if ( ! isset( $params['user_id'] ) ) {
+			return false;
+		}
+
+		return user_can( $params['user_id'], 'edit_others_posts' );
 	}
 
 	/**
@@ -597,8 +619,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function update_item_permissions_check( $request ) {
-		return true; // DEV ONLY; NO AUTHENTICATION
-		// return $this->create_item_permissions_check( $request );
+		return $this->create_item_permissions_check( $request );
 	}
 
 	/**
@@ -643,15 +664,13 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Adds a 'meta_input' to append this post to the unscheduled drafts list.
+	 * Adds a 'meta_input' array arg to append this post to the unscheduled drafts list.
 	 *
 	 * @param array &$item The args array for wp_update_post/wp_insert_post
 	 * @return void
 	 */
 	protected function prepare_new_item_for_unscheduled( &$item ) {
-		$item['meta_input'] = [
-			RHD_UNSCHEDULED_INDEX_META_KEY => rhd_unscheduled_draft_count(),
-		];
+		$item['meta_input'][RHD_UNSCHEDULED_INDEX_META_KEY] = rhd_unscheduled_draft_count();
 	}
 
 	/**
@@ -667,7 +686,12 @@ class Calendario_Route extends WP_REST_Controller {
 			return;
 		}
 
-		$item['ID'] = $params['ID'];
+		$item = [
+			'ID'         => $params['ID'],
+			'meta_input' => [
+				'_edit_last' => $params['user_id'],
+			],
+		];
 
 		// Handle unscheduled post order and statuses
 		$this->prepare_scheduled_unscheduled( $item, $params );
@@ -687,8 +711,8 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|array $prepared_item
 	 */
 	protected function prepare_new_item_for_database( $request ) {
-		$params     = $request->get_params();
-		$item['ID'] = 0;
+		$params = $request->get_params();
+		$item   = ['ID' => 0, 'user_id' => $params['user_id']];
 
 		$this->prepare_scheduled_unscheduled( $item, $params );
 
@@ -721,7 +745,7 @@ class Calendario_Route extends WP_REST_Controller {
 				$item['post_status'] = 'draft';
 			}
 		} else {
-			delete_post_meta( $item['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
+			$res = delete_post_meta( $item['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
 		}
 	}
 

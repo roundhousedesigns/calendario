@@ -12,6 +12,7 @@ export const wp =
 		: {
 				nonce: 0,
 				routeBase: "http://localhost/wp-json/calendario/v1",
+				user: 1,
 				wpLinks: {
 					adminUrl: "",
 					postsUrl: "",

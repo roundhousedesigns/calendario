@@ -7,7 +7,7 @@ import { wp } from "../lib/utils";
 import { decode } from "html-entities";
 
 export default function PostLinks({ post, className, unscheduled }) {
-	const { routeBase } = wp;
+	const { routeBase, user, nonce, DEBUG_MODE } = wp;
 	const { id, edit_link, view_link } = post;
 	const { postsDispatch } = useContext(PostsContext);
 	const [updatePost, updatePostDispatch] = useReducer(
@@ -24,9 +24,16 @@ export default function PostLinks({ post, className, unscheduled }) {
 
 			let url = `${routeBase}/posts/`;
 			if (updatePost.trash === true) {
-				url += `trash/${id}`;
+				url += `trash/${id}/${user}`;
 			} else {
-				url += `update/${id}`;
+				url += `update/${id}/${user}`;
+			}
+
+			let headers = {
+				"Content-Type": "application/json",
+			};
+			if (DEBUG_MODE !== true) {
+				headers["X-WP-Nonce"] = nonce;
 			}
 
 			let postData = {
@@ -37,7 +44,7 @@ export default function PostLinks({ post, className, unscheduled }) {
 				try {
 					const response = await fetch(url, {
 						method: "POST",
-						headers: { "Content-Type": "application/json" },
+						headers,
 						body: JSON.stringify(postData),
 					});
 					// const data = await response.json(); // If you need to catch the response...
@@ -59,12 +66,15 @@ export default function PostLinks({ post, className, unscheduled }) {
 		}
 	}, [
 		id,
+		user,
+		nonce,
 		routeBase,
 		postsDispatch,
 		updatePost.trash,
 		updatePost.params,
 		updatePost.updateNow,
 		updatePost.unscheduled,
+		DEBUG_MODE,
 	]);
 
 	const unschedulePost = (e) => {
