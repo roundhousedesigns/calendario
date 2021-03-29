@@ -17,12 +17,12 @@ export default function Header({ handleTodayClick }) {
 				<div className="right">
 					<h1 className="calendario__title">editorial calendar.io</h1>
 					<a
+						className="calendario__logo"
 						href="https://roundhouse-designs.com"
 						rel="noreferrer"
 						target="_blank"
 					>
 						<img
-							className="calendario__logo"
 							src={`${pluginUrl}rhd-logo.png`}
 							alt="Roundhouse Designs logo"
 						/>
