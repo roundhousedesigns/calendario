@@ -757,25 +757,44 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return void
 	 */
 	protected function prepare_item_params_for_database( &$item, $params ) {
-		// Post Date
+		$this->prepare_post_date_for_database( $item, $params );
+		$this->prepare_tax_input_for_database( $item, $params );
+
+		// Remaining params
+		$skip = ['post_date', 'taxonomies'];
+		foreach ( $params as $key => $value ) {
+			if ( ! isset( $item[$key] ) && ! in_array( $key, $skip ) ) {
+				$item[$key] = $value;
+			}
+		}
+	}
+
+	/**
+	 * Sets up the 'post_date' and 'post_date_gmt' params for storage
+	 *
+	 * @param array &$item The args array for wp_update_post/wp_insert_post
+	 * @param array $params The post params
+	 * @return void
+	 */
+	protected function prepare_post_date_for_database( &$item, $params ) {
 		if ( isset( $params['post_date'] ) ) {
 			$post_date             = rhd_wp_prepare_date( $params['post_date'] );
 			$item['post_date']     = $post_date['post_date'];
 			$item['post_date_gmt'] = $post_date['post_date_gmt'];
 		}
+	}
 
-		// Taxonomy terms
+	/**
+	 * Sets up the 'tax_input' param for storage
+	 *
+	 * @param array &$item The args array for wp_update_post/wp_insert_post
+	 * @param array $params The post params
+	 * @return void
+	 */
+	protected function prepare_tax_input_for_database( &$item, $params ) {
 		if ( isset( $params['taxonomies'] ) ) {
 			foreach ( $params['taxonomies'] as $taxonomy => $terms ) {
 				$item['tax_input'][$taxonomy] = $terms;
-			}
-		}
-
-		// Remaining params
-
-		foreach ( $params as $key => $value ) {
-			if ( ! isset( $item[$key] ) ) {
-				$item[$key] = $value;
 			}
 		}
 	}
