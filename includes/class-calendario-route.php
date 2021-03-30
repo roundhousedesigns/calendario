@@ -757,19 +757,24 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return void
 	 */
 	protected function prepare_item_params_for_database( &$item, $params ) {
+		// Post Date
+		if ( isset( $params['post_date'] ) ) {
+			$post_date             = rhd_wp_prepare_date( $params['post_date'] );
+			$item['post_date']     = $post_date['post_date'];
+			$item['post_date_gmt'] = $post_date['post_date_gmt'];
+		}
+
+		// Taxonomy terms
+		if ( isset( $params['taxonomies'] ) ) {
+			foreach ( $params['taxonomies'] as $taxonomy => $terms ) {
+				$item['tax_input'][$taxonomy] = $terms;
+			}
+		}
+
+		// Remaining params
+
 		foreach ( $params as $key => $value ) {
-			if ( $key === 'post_date' ) {
-				// Post Date
-				$post_date             = rhd_wp_prepare_date( $params['post_date'] );
-				$item['post_date']     = $post_date['post_date'];
-				$item['post_date_gmt'] = $post_date['post_date_gmt'];
-			} elseif ( $key === 'taxonomies' ) {
-				// Taxonomy terms
-				$item['tax_input'] = [];
-				foreach ( $params['taxonomies'] as $taxonomy => $terms ) {
-					$item['tax_input'][$taxonomy] = $terms;
-				}
-			} else {
+			if ( ! isset( $item[$key] ) ) {
 				$item[$key] = $value;
 			}
 		}
