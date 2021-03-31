@@ -9,12 +9,13 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 	const {
 		draggedPost: {
 			post: { post_date },
+			isUnscheduled,
 		},
 	} = useContext(DragContext);
 	var classes = ["day", "col", "cell"];
 
 	const handleDragOver = () => {
-		if (isSameDay(day, post_date)) {
+		if (!isUnscheduled && isSameDay(day, post_date)) {
 			return;
 		}
 
@@ -52,4 +53,5 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 
 	return renderDay();
 });
+
 export default Day;

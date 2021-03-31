@@ -755,7 +755,7 @@ class Calendario_Route extends WP_REST_Controller {
 				$item['post_status'] = 'draft';
 			}
 		} else {
-			$res = delete_post_meta( $item['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
+			delete_post_meta( $item['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
 		}
 	}
 

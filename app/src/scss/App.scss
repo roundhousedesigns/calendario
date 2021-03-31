@@ -518,6 +518,7 @@ body {
 			}
 
 			&.dragOver {
+				// TODO color var here
 				background-color: transparentize(
 					$color: #53cbf1,
 					$amount: 0.75
