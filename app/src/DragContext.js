@@ -20,6 +20,13 @@ export function dragReducer(state, action) {
 				overUnscheduled: true,
 			};
 
+		case "DRAGGING_OVER_CALENDAR":
+			return {
+				...state,
+				draggedTo: initialDrag.draggedTo,
+				overUnscheduled: false,
+			};
+
 		case "END": {
 			return initialDrag;
 		}

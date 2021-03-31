@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import UnscheduledDrafts from "./UnscheduledDrafts";
 import StatusFilters from "./StatusFilters";
 import { renderWidget } from "../lib/utils";
@@ -6,10 +6,6 @@ import { wp } from "../lib/utils";
 
 export default function Sidebar() {
 	const { pluginUrl } = wp;
-
-	useEffect(() => {
-		console.log(pluginUrl);
-	});
 
 	return (
 		<aside className="calendario__sidebar">

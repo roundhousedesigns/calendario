@@ -128,17 +128,20 @@ export default function PostList({
 			allowDrag === false ||
 			!e.currentTarget.classList.contains("unscheduledDrafts")
 		) {
-			return;
-		}
+			// Only dispatch if necessary
+			if (overUnscheduled === true) {
+				draggedPostDispatch({
+					type: "DRAGGING_OVER_CALENDAR",
+				});
+			}
+		} else {
+			let overNow = Number(e.target.dataset.index);
+			if (draggedFrom === overNow) {
+				return;
+			}
 
-		let overNow = Number(e.target.dataset.index);
-		if (draggedFrom === overNow) {
-			return;
-		}
+			let draggedOver = Number.isNaN(overNow) ? false : overNow;
 
-		let draggedOver = Number.isNaN(overNow) ? false : overNow;
-
-		if (draggedOver !== draggedTo) {
 			if (draggedOver === false) {
 				let targetRect = e.currentTarget.getBoundingClientRect();
 				let mouseY = e.clientY - targetRect.top;
@@ -154,10 +157,12 @@ export default function PostList({
 				}
 			}
 
-			draggedPostDispatch({
-				type: "DRAGGING_OVER_UNSCHEDULED",
-				draggedOver,
-			});
+			if (draggedOver !== draggedTo && draggedTo !== null) {
+				draggedPostDispatch({
+					type: "DRAGGING_OVER_UNSCHEDULED",
+					draggedOver,
+				});
+			}
 		}
 	};
 

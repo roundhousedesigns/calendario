@@ -54,6 +54,7 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		draggedPostDispatch({
 			type: "START",
 			post: post,
+			unscheduled,
 			draggedFrom: draggingUnscheduled
 				? Number(e.currentTarget.dataset.index)
 				: false,
