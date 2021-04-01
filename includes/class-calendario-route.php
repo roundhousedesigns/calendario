@@ -79,299 +79,13 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get a collection of items
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_scheduled_items( $request ) {
-		$body = $request->get_params();
-
-		$start = isset( $body['start'] ) && $body['start'] ? $body['start'] : null;
-		$end   = isset( $body['end'] ) && $body['end'] ? $body['end'] : rhd_get_futuremost_date();
-
-		// Force the date range to the beginning of the day 'start' and the end of day 'end'
-		$start = rhd_start_of_day( $start );
-		$end   = rhd_end_of_day( $end );
-
-		$items = get_posts( [
-			'posts_per_page' => -1,
-			'post_status'    => 'any',
-			'orderby'        => 'date',
-			'order'          => 'ASC',
-			'inclusive'      => true,
-			'date_query'     => [
-				'before' => $end,
-				'after'  => $start,
-			],
-			'meta_query'     => [
-				[
-					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
-					'compare' => 'NOT EXISTS',
-				],
-			],
-		] );
-
-		$data = [
-			'posts'     => [],
-			'dateRange' => [
-				'start' => $start,
-				'end'   => $end,
-			],
-		];
-
-		foreach ( $items as $item ) {
-			$data['posts'][] = $this->prepare_item_for_response( $item, $request );
-		}
-
-		return new WP_REST_Response( $data, 200 );
-	}
-
-	/**
-	 * Get a collection of items
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_unscheduled_items( $request ) {
-		$items = $this->query_unscheduled_items();
-
-		$data = [
-			'posts' => [],
-		];
-
-		foreach ( $items as $item ) {
-			$data['posts'][] = $this->prepare_item_for_response( $item, $request );
-		}
-
-		return new WP_REST_Response( $data, 200 );
-	}
-
-	/**
-	 * Get a collection of taxonomy terms
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function get_taxonomy_terms( $request ) {
-		$params = $request->get_params();
-		if ( isset( $params['taxonomy'] ) ) {
-			$tax = get_taxonomy( $params['taxonomy'] );
-
-			$terms = get_terms( array(
-				'taxonomy'   => $tax->name,
-				'hide_empty' => false,
-			) );
-
-			$data = [
-				'taxonomy' => [
-					'slug'          => $tax->name,
-					'name'          => $tax->labels->name,
-					'singular_name' => $tax->labels->singular_name,
-				],
-				'terms'    => [],
-			];
-
-			foreach ( $terms as $term ) {
-				$data['terms'][] = [
-					'term_id' => $term->term_id,
-					'name'    => $term->name,
-					'slug'    => $term->slug,
-				];
-			}
-		}
-
-		return new WP_REST_Response( $data, 200 );
-	}
-
-	/**
-	 * Runs the query for all unscheduled posts
-	 *
-	 * @return array The queried posts.
-	 */
-	protected function query_unscheduled_items() {
-		return get_posts( [
-			'meta_query'     => [
-				[
-					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
-					'compare' => 'EXISTS',
-				],
-			],
-			'orderby'        => 'meta_value_num',
-			'order'          => 'ASC',
-			'meta_key'       => RHD_UNSCHEDULED_INDEX_META_KEY,
-			'posts_per_page' => -1,
-			'post_status'    => array( 'private', 'draft' ),
-		] );
-	}
-
-	/**
-	 * Creates an array of unscheduled post IDs
-	 *
-	 * @return array The queried post IDs.
-	 */
-	protected function get_unscheduled_item_ids() {
-		$posts = $this->query_unscheduled_items();
-
-		$ids = [];
-		foreach ( $posts as $post ) {
-			$ids[] = $post->ID;
-		}
-
-		return $ids;
-	}
-
-	/**
-	 * Create or update one item from the collection
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function update_item( $request ) {
-		$item = $this->prepare_existing_item_for_database( $request );
-
-		$taxonomies = [];
-		if ( array_key_exists( 'tax_input', $item ) ) {
-			// Update categories and tags ('tax_input' doesn't work without assign_terms privileges)
-			$tax_index  = array_search( 'tax_input', array_keys( $item ) );
-			$taxonomies = $tax_index !== false ? array_splice( $item, $tax_index, 1 ) : [];
-		}
-
-		// Update the post
-		$result = wp_update_post( $item );
-
-		// Add taxonomy data and return success response
-		if ( $result !== false && ! is_wp_error( $result ) ) {
-			$this->update_post_taxonomy_terms( $result, $taxonomies );
-
-			return new WP_REST_Response( 'Updated post ' . $result, 200 );
-		}
-
-		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), ['status' => 500] );
-	}
-
-	/**
-	 * Create a new item
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function create_item( $request ) {
-		$item = $this->prepare_new_item_for_database( $request );
-
-		// Extract taxonomy params ('tax_input' doesn't work without assign_terms privileges)
-		$tax_index  = array_search( 'tax_input', array_keys( $item ) );
-		$taxonomies = $tax_index !== false ? array_splice( $item, $tax_index, 1 ) : [];
-
-		// Create the post
-		$result = wp_insert_post( $item );
-
-		// Add taxonomy data and return success response
-		if ( ! is_wp_error( $result ) && $result !== 0 ) {
-			$tax_result = $this->update_post_taxonomy_terms( $result, $taxonomies );
-
-			if ( ! is_wp_error( $tax_result ) ) {
-				return new WP_REST_Response( 'Updated post ' . $result, 200 );
-			}
-		}
-
-		// TODO meaningful error message for tax and/or wp_insert_post result
-		return new WP_Error( 'error-updating', __( 'message', 'rhd' ), ['status' => 500] );
-	}
-
-	/**
-	 * Updates post taxnomy terms
-	 *
-	 * @param int $id The post ID to update
-	 * @param array $taxonomies The taxonomy data
-	 * @return array|WP_Error The result of wp_set_object_terms() if true, WP_Error otherwise.
-	 */
-	protected function update_post_taxonomy_terms( $id, $taxonomies ) {
-		if ( empty( $taxonomies['tax_input'] ) || ! isset( $taxonomies['tax_input'] ) ) {
-			return;
-		}
-
-		foreach ( $taxonomies['tax_input'] as $taxonomy => $terms ) {
-			$result = wp_set_object_terms( $id, $terms, $taxonomy, false );
-		}
-
-		if ( is_wp_error( $result ) ) {
-			return new WP_Error( 'cant-update-taxonomies', __( 'message', 'rhd' ), ['status' => 500] );
-		}
-	}
-
-	/**
-	 * Gets post status data.
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|bool
-	 */
-	public function get_post_statuses( $request ) {
-		$statuses = rhd_prepare_post_statuses();
-
-		if ( $statuses ) {
-			return new WP_REST_Response( $statuses, 200 );
-		}
-
-		return new WP_REST_Response( false, 200 );
-	}
-
-	/**
-	 * Updates an option in the database using update_option().
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|bool
-	 */
-	public function update_post_statuses( $request ) {
-		// $data = $this->prepare_post_statuses_for_database( $request );
-		$body = $request->get_params();
-
-		$result = update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $body );
-
-		if ( $result !== false ) {
-			return new WP_REST_Response( 'Post status colors updated.', 200 );
-		}
-
-		return new WP_Error( 'colors-not-updated', __( 'message', 'rhd' ), ['status' => 200] );
-	}
-
-	/**
-	 * Delete one item from the collection
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function trash_item( $request ) {
-		$id = $this->prepare_item_for_trash( $request );
-
-		$trashed = wp_delete_post( $id, false );
-
-		if ( $trashed ) {
-			return new WP_REST_Response( 'Post trashed.', 200 );
-		}
-
-		return new WP_Error( 'cant-trash', __( 'message', 'rhd' ), ['status' => 500] );
-	}
-
-	/**
 	 * Check if a given request has access to get items
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|bool
 	 */
 	public function get_items_permissions_check( $request ) {
-		return true; /*<--use to make readable by all*/
-		// return current_user_can( 'edit_others_posts' );
-	}
-
-	/**
-	 * Check if a given request has access to get a specific item
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|bool
-	 */
-	public function get_item_permissions_check( $request ) {
-		return $this->get_items_permissions_check( $request );
+		return true;
 	}
 
 	/**
@@ -380,6 +94,42 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function options_permissions_check( $request ) {
 		return true;
+	}
+
+	/**
+	 * Check if a given request has access to create items
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|bool
+	 */
+	public function create_item_permissions_check( $request ) {
+		$params = $request->get_params();
+
+		if ( ! isset( $params['user_id'] ) ) {
+			return false;
+		}
+
+		return user_can( $params['user_id'], 'edit_others_posts' );
+	}
+
+	/**
+	 * Check if a given request has access to update a specific item
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|bool
+	 */
+	public function update_item_permissions_check( $request ) {
+		return $this->create_item_permissions_check( $request );
+	}
+
+	/**
+	 * Check if a given request has access to trash a specific item
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|bool
+	 */
+	public function trash_item_permissions_check( $request ) {
+		return $this->create_item_permissions_check( $request );
 	}
 
 	/**
@@ -607,39 +357,282 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Check if a given request has access to create items
+	 * Get a collection of items
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|bool
+	 * @return WP_Error|WP_REST_Response
 	 */
-	public function create_item_permissions_check( $request ) {
-		$params = $request->get_params();
+	public function get_scheduled_items( $request ) {
+		$body = $request->get_params();
 
-		if ( ! isset( $params['user_id'] ) ) {
-			return false;
+		$start = isset( $body['start'] ) && $body['start'] ? $body['start'] : null;
+		$end   = isset( $body['end'] ) && $body['end'] ? $body['end'] : rhd_get_futuremost_date();
+
+		// Force the date range to the beginning of the day 'start' and the end of day 'end'
+		$start = rhd_start_of_day( $start );
+		$end   = rhd_end_of_day( $end );
+
+		$items = get_posts( [
+			'posts_per_page' => -1,
+			'post_status'    => 'any',
+			'orderby'        => 'date',
+			'order'          => 'ASC',
+			'inclusive'      => true,
+			'date_query'     => [
+				'before' => $end,
+				'after'  => $start,
+			],
+			'meta_query'     => [
+				[
+					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
+					'compare' => 'NOT EXISTS',
+				],
+			],
+		] );
+
+		$data = [
+			'posts'     => [],
+			'dateRange' => [
+				'start' => $start,
+				'end'   => $end,
+			],
+		];
+
+		foreach ( $items as $item ) {
+			$data['posts'][] = $this->prepare_item_for_response( $item, $request );
 		}
 
-		return user_can( $params['user_id'], 'edit_others_posts' );
+		return new WP_REST_Response( $data, 200 );
 	}
 
 	/**
-	 * Check if a given request has access to update a specific item
+	 * Get a collection of items
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_unscheduled_items( $request ) {
+		$items = $this->query_unscheduled_items();
+
+		$data = [
+			'posts' => [],
+		];
+
+		foreach ( $items as $item ) {
+			$data['posts'][] = $this->prepare_item_for_response( $item, $request );
+		}
+
+		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Get a collection of taxonomy terms
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function get_taxonomy_terms( $request ) {
+		$params = $request->get_params();
+		if ( isset( $params['taxonomy'] ) ) {
+			$tax = get_taxonomy( $params['taxonomy'] );
+
+			$terms = get_terms( array(
+				'taxonomy'   => $tax->name,
+				'hide_empty' => false,
+			) );
+
+			$data = [
+				'taxonomy' => [
+					'slug'          => $tax->name,
+					'name'          => $tax->labels->name,
+					'singular_name' => $tax->labels->singular_name,
+				],
+				'terms'    => [],
+			];
+
+			foreach ( $terms as $term ) {
+				$data['terms'][] = [
+					'term_id' => $term->term_id,
+					'name'    => $term->name,
+					'slug'    => $term->slug,
+				];
+			}
+		}
+
+		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Runs the query for all unscheduled posts
+	 *
+	 * @return array The queried posts.
+	 */
+	protected function query_unscheduled_items() {
+		return get_posts( [
+			'meta_query'     => [
+				[
+					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
+					'compare' => 'EXISTS',
+				],
+			],
+			'orderby'        => 'meta_value_num',
+			'order'          => 'ASC',
+			'meta_key'       => RHD_UNSCHEDULED_INDEX_META_KEY,
+			'posts_per_page' => -1,
+			'post_status'    => array( 'private', 'draft' ),
+		] );
+	}
+
+	/**
+	 * Creates an array of unscheduled post IDs
+	 *
+	 * @return array The queried post IDs.
+	 */
+	protected function get_unscheduled_item_ids() {
+		$posts = $this->query_unscheduled_items();
+
+		$ids = [];
+		foreach ( $posts as $post ) {
+			$ids[] = $post->ID;
+		}
+
+		return $ids;
+	}
+
+	/**
+	 * Create or update one item from the collection
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function update_item( $request ) {
+		$item  = $this->prepare_existing_item_for_database( $request );
+		$terms = $this->extract_taxonomy_terms( $item );
+
+		// Update the post
+		$result = wp_update_post( $item );
+
+		// Add taxonomy data and return success response
+		if ( $result !== false && ! is_wp_error( $result ) ) {
+			$this->update_post_taxonomy_terms( $result, $terms );
+
+			return new WP_REST_Response( 'Updated post ' . $result, 200 );
+		}
+
+		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), ['status' => 500] );
+	}
+
+	/**
+	 * Create a new item
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function create_item( $request ) {
+		$item = $this->prepare_new_item_for_database( $request );
+
+		$taxonomies = $this->extract_taxonomy_terms( $item );
+
+		// Create the post
+		$result = wp_insert_post( $item );
+
+		// Add taxonomy data and return success response
+		if ( ! is_wp_error( $result ) && $result !== 0 ) {
+			$tax_result = $this->update_post_taxonomy_terms( $result, $taxonomies );
+
+			if ( ! is_wp_error( $tax_result ) ) {
+				return new WP_REST_Response( 'Updated post ' . $result, 200 );
+			}
+		}
+
+		// TODO meaningful error message for tax and/or wp_insert_post result
+		return new WP_Error( 'error-updating', __( 'message', 'rhd' ), ['status' => 500] );
+	}
+
+	/**
+	 * Updates post taxnomy terms
+	 *
+	 * @param int $id The post ID to update
+	 * @param array $taxonomies The taxonomy data
+	 * @return array|WP_Error The result of wp_set_object_terms() if true, WP_Error otherwise.
+	 */
+	protected function update_post_taxonomy_terms( $id, $taxonomies ) {
+		if ( empty( $taxonomies['tax_input'] ) || ! isset( $taxonomies['tax_input'] ) ) {
+			return;
+		}
+
+		foreach ( $taxonomies['tax_input'] as $taxonomy => $terms ) {
+			$result = wp_set_object_terms( $id, $terms, $taxonomy, false );
+		}
+
+		if ( is_wp_error( $result ) ) {
+			return new WP_Error( 'cant-update-taxonomies', __( 'message', 'rhd' ), ['status' => 500] );
+		}
+	}
+
+	/**
+	 * Gets post status data.
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|bool
 	 */
-	public function update_item_permissions_check( $request ) {
-		return $this->create_item_permissions_check( $request );
+	public function get_post_statuses( $request ) {
+		$statuses = rhd_prepare_post_statuses();
+
+		if ( $statuses ) {
+			return new WP_REST_Response( $statuses, 200 );
+		}
+
+		return new WP_REST_Response( false, 200 );
 	}
 
 	/**
-	 * Check if a given request has access to trash a specific item
+	 * Updates an option in the database using update_option().
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|bool
 	 */
-	public function trash_item_permissions_check( $request ) {
-		return $this->create_item_permissions_check( $request );
+	public function update_post_statuses( $request ) {
+		// $data = $this->prepare_post_statuses_for_database( $request );
+		$body = $request->get_params();
+
+		$result = update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $body );
+
+		if ( $result !== false ) {
+			return new WP_REST_Response( 'Post status colors updated.', 200 );
+		}
+
+		return new WP_Error( 'colors-not-updated', __( 'message', 'rhd' ), ['status' => 200] );
+	}
+
+	/**
+	 * Delete one item from the collection
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function trash_item( $request ) {
+		$id = $this->prepare_item_for_trash( $request );
+
+		$trashed = wp_delete_post( $id, false );
+
+		if ( $trashed ) {
+			return new WP_REST_Response( 'Post trashed.', 200 );
+		}
+
+		return new WP_Error( 'cant-trash', __( 'message', 'rhd' ), ['status' => 500] );
+	}
+
+	/**
+	 * Extracts the taxonomy terms from a prepared item.
+	 *
+	 * @param array &$item Post data being prepared for database storage.
+	 * @return array The taxonomy terms for use in wp_set_object_terms().
+	 */
+	protected function extract_taxonomy_terms( &$item ) {
+		$tax_index = array_search( 'tax_input', array_keys( $item ) );
+
+		return $tax_index !== false ? array_splice( $item, $tax_index, 1 ) : [];
 	}
 
 	/**
