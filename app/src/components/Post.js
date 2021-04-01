@@ -142,5 +142,5 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		);
 	};
 
-	return post && !isEmpty(postStatuses) ? renderPost() : null;
+	return !isEmpty(postStatuses) ? renderPost() : null;
 }
