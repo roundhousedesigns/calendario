@@ -1,10 +1,8 @@
 # Calendario II: The Datening
 
-[![DeepScan grade](https://deepscan.io/api/teams/13521/projects/16500/branches/356708/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=13521&pid=16500&bid=356708) [![CodeScene general](https://codescene.io/images/analyzed-by-codescene-badge.svg)](https://codescene.io/projects/14313)
+[![DeepScan grade](https://deepscan.io/api/teams/13521/projects/16500/branches/356708/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=13521&pid=16500&bid=356708) [![CodeScene Code Health](https://codescene.io/projects/14313/status-badges/code-health)](https://codescene.io/projects/14313)
 
 The professional blogger's editorial calendar. For the two-th time.
-
-[![CodeScene Code Health](https://codescene.io/projects/14313/status-badges/code-health)](https://codescene.io/projects/14313)
 
 ## Usage:
 
