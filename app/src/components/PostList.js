@@ -9,7 +9,7 @@ import {
 } from "../lib/utils";
 import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import { format, getHours, getMinutes, setHours, setMinutes } from "date-fns";
-import { isEmpty } from "lodash";
+// import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
@@ -75,9 +75,10 @@ export default function PostList({
 				postData.draggedTo = draggedTo;
 			}
 
-			if (isEmpty(postData)) {
-				return { data: "Update not necessary.", error: true };
-			}
+			// TODO DeepScan issue when uncommented
+			// if (isEmpty(postData)) {
+			// 	return { data: "Update not necessary.", error: true };
+			// }
 
 			const fetchData = async () => {
 				setIsLoading(true);

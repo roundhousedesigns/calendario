@@ -196,9 +196,10 @@ export default function EditPost() {
 				unscheduled: updatePost.unscheduled,
 			};
 
-			if (isEmpty(postData.params)) {
-				return { data: "Update not necessary.", error: true };
-			}
+			// TODO DeepScan issue when uncommented
+			// if (!isEmpty(postData.params)) {
+			// 	return { data: "Update not necessary.", error: true };
+			// }
 
 			const fetchData = async () => {
 				try {
