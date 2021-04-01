@@ -58,7 +58,7 @@ define( 'RHD_POST_STATUS_SWATCHES', [
 /**
  * Functions
  */
-include plugin_dir_path( __FILE__ ) . 'includes/utils.php';
+include plugin_dir_path( __FILE__ ) . 'includes/functions.php';
 
 /**
  * Endpoints

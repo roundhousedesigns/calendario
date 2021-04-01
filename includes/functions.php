@@ -142,6 +142,43 @@ function rhd_post_status_default_color_pairs() {
 }
 
 /**
+ * Runs the query for all unscheduled posts
+ *
+ * @return array The queried posts.
+ */
+function rhd_query_unscheduled_items() {
+	return get_posts( [
+		'meta_query'     => [
+			[
+				'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
+				'compare' => 'EXISTS',
+			],
+		],
+		'orderby'        => 'meta_value_num',
+		'order'          => 'ASC',
+		'meta_key'       => RHD_UNSCHEDULED_INDEX_META_KEY,
+		'posts_per_page' => -1,
+		'post_status'    => array( 'private', 'draft' ),
+	] );
+}
+
+/**
+ * Creates an array of unscheduled post IDs
+ *
+ * @return array The queried post IDs.
+ */
+function rhd_get_unscheduled_item_ids() {
+	$posts = rhd_query_unscheduled_items();
+
+	$ids = [];
+	foreach ( $posts as $post ) {
+		$ids[] = $post->ID;
+	}
+
+	return $ids;
+}
+
+/**
  * Retrieves saved post status color values
  *
  * @return array $statuses The colors associated with each status ('status' => 'color')
@@ -155,4 +192,16 @@ function rhd_prepare_post_statuses() {
 	}
 
 	return $statuses;
+}
+
+/**
+ * Extracts the taxonomy terms from a prepared item.
+ *
+ * @param array &$item Post data being prepared for database storage.
+ * @return array The taxonomy terms for use in wp_set_object_terms().
+ */
+function rhd_extract_item_taxonomy_terms( &$item ) {
+	$tax_index = array_search( 'tax_input', array_keys( $item ) );
+
+	return $tax_index !== false ? array_splice( $item, $tax_index, 1 ) : [];
 }
