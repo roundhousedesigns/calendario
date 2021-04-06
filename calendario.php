@@ -10,6 +10,44 @@
  * @package         calendario
  */
 
+if ( ! function_exists( 'rhd_cal' ) ) {
+	// Create a helper function for easy SDK access.
+	function rhd_cal() {
+		global $rhd_cal;
+
+		if ( ! isset( $rhd_cal ) ) {
+			// Include Freemius SDK.
+			require_once dirname( __FILE__ ) . '/freemius/start.php';
+
+			$rhd_cal = fs_dynamic_init( array(
+				'id'               => '8136',
+				'slug'             => 'calendario',
+				'type'             => 'plugin',
+				'public_key'       => 'pk_0ceb9fcfae9cbd708428cd6126d45',
+				'is_premium'       => false,
+				'has_addons'       => false,
+				'has_paid_plans'   => false,
+				'is_org_compliant' => false,
+				'menu'             => array(
+					'slug'    => 'calendario',
+					'account' => false,
+					'support' => false,
+					'parent'  => array(
+						'slug' => 'edit.php',
+					),
+				),
+			) );
+		}
+
+		return $rhd_cal;
+	}
+
+	// Init Freemius.
+	rhd_cal();
+	// Signal that SDK was initiated.
+	do_action( 'rhd_cal_loaded' );
+}
+
 // Setting react app path constants.
 define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.3.0' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
