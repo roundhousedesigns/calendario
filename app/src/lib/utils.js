@@ -77,6 +77,7 @@ export function filterStatusList(statuses, exclude = []) {
  * @param {object} post The post to check against
  * @returns {object} The filtered params object
  */
+// TODO bumpy road, clean it up
 export function filterUnchangedParams(params, post) {
 	if (params.length > 0) {
 		for (let key in params) {

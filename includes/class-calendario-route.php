@@ -412,7 +412,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_unscheduled_items( $request ) {
-		$items = $this->query_unscheduled_items();
+		$items = rhd_query_unscheduled_items();
 
 		$data = [
 			'posts' => [],
@@ -463,43 +463,6 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Runs the query for all unscheduled posts
-	 *
-	 * @return array The queried posts.
-	 */
-	protected function query_unscheduled_items() {
-		return get_posts( [
-			'meta_query'     => [
-				[
-					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
-					'compare' => 'EXISTS',
-				],
-			],
-			'orderby'        => 'meta_value_num',
-			'order'          => 'ASC',
-			'meta_key'       => RHD_UNSCHEDULED_INDEX_META_KEY,
-			'posts_per_page' => -1,
-			'post_status'    => array( 'private', 'draft' ),
-		] );
-	}
-
-	/**
-	 * Creates an array of unscheduled post IDs
-	 *
-	 * @return array The queried post IDs.
-	 */
-	protected function get_unscheduled_item_ids() {
-		$posts = $this->query_unscheduled_items();
-
-		$ids = [];
-		foreach ( $posts as $post ) {
-			$ids[] = $post->ID;
-		}
-
-		return $ids;
-	}
-
-	/**
 	 * Create or update one item from the collection
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
@@ -507,7 +470,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function update_item( $request ) {
 		$item  = $this->prepare_existing_item_for_database( $request );
-		$terms = $this->extract_taxonomy_terms( $item );
+		$terms = rhd_extract_item_taxonomy_terms( $item );
 
 		// Update the post
 		$result = wp_update_post( $item );
@@ -531,7 +494,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function create_item( $request ) {
 		$item = $this->prepare_new_item_for_database( $request );
 
-		$taxonomies = $this->extract_taxonomy_terms( $item );
+		$taxonomies = rhd_extract_item_taxonomy_terms( $item );
 
 		// Create the post
 		$result = wp_insert_post( $item );
@@ -547,6 +510,24 @@ class Calendario_Route extends WP_REST_Controller {
 
 		// TODO meaningful error message for tax and/or wp_insert_post result
 		return new WP_Error( 'error-updating', __( 'message', 'rhd' ), ['status' => 500] );
+	}
+
+	/**
+	 * Delete one item from the collection
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response
+	 */
+	public function trash_item( $request ) {
+		$id = $this->prepare_item_for_trash( $request );
+
+		$trashed = wp_delete_post( $id, false );
+
+		if ( $trashed ) {
+			return new WP_REST_Response( 'Post trashed.', 200 );
+		}
+
+		return new WP_Error( 'cant-trash', __( 'message', 'rhd' ), ['status' => 500] );
 	}
 
 	/**
@@ -606,38 +587,12 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Delete one item from the collection
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
-	 */
-	public function trash_item( $request ) {
-		$id = $this->prepare_item_for_trash( $request );
-
-		$trashed = wp_delete_post( $id, false );
-
-		if ( $trashed ) {
-			return new WP_REST_Response( 'Post trashed.', 200 );
-		}
-
-		return new WP_Error( 'cant-trash', __( 'message', 'rhd' ), ['status' => 500] );
-	}
-
-	/**
-	 * Extracts the taxonomy terms from a prepared item.
-	 *
-	 * @param array &$item Post data being prepared for database storage.
-	 * @return array The taxonomy terms for use in wp_set_object_terms().
-	 */
-	protected function extract_taxonomy_terms( &$item ) {
-		$tax_index = array_search( 'tax_input', array_keys( $item ) );
-
-		return $tax_index !== false ? array_splice( $item, $tax_index, 1 ) : [];
-	}
-
-	/**
 	 * Moves an unscheduled draft post to a new position in the list,
 	 *   or adds a post to the list at the desired position.
+	 *
+	 * @param int Post ID
+	 * @param int The new index for this post
+	 * @return void
 	 */
 	protected function reorder_unscheduled_drafts( $id, $newIndex ) {
 		$currentIndex = get_post_meta( $id, RHD_UNSCHEDULED_INDEX_META_KEY, true );
@@ -646,7 +601,7 @@ class Calendario_Route extends WP_REST_Controller {
 			return;
 		}
 
-		$posts = $this->get_unscheduled_item_ids();
+		$posts = rhd_get_unscheduled_item_ids();
 
 		$newIndex = $newIndex === false ? count( $posts ) : $newIndex;
 
@@ -836,33 +791,6 @@ class Calendario_Route extends WP_REST_Controller {
 			'taxonomies'   => [
 				'category' => rhd_get_term_ids( $item->ID, 'category' ),
 				'post_tag' => rhd_get_term_ids( $item->ID, 'post_tag' ),
-			],
-		];
-	}
-
-	/**
-	 * Get the query params for collections
-	 *
-	 * @return array
-	 */
-	public function get_collection_params() {
-		return [
-			'page'     => [
-				'description'       => 'Current page of the collection.',
-				'type'              => 'integer',
-				'default'           => 1,
-				'sanitize_callback' => 'absint',
-			],
-			'per_page' => [
-				'description'       => 'Maximum number of items to be returned in result set.',
-				'type'              => 'integer',
-				'default'           => 10,
-				'sanitize_callback' => 'absint',
-			],
-			'search'   => [
-				'description'       => 'Limit results to those matching a string.',
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
 			],
 		];
 	}

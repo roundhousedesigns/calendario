@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:     Calendario II: The Datening
- * Description:     The newer, fancier Calendario. IN DEVELOPMENT.
+ * Plugin Name:     Calendario
+ * Description:     The best editorial calendar for WordPress.
  * Author:          Roundhouse Designs
  * Author URI:      https://roundhouse-designs.com
  * Text Domain:     rhd
@@ -58,7 +58,7 @@ define( 'RHD_POST_STATUS_SWATCHES', [
 /**
  * Functions
  */
-include plugin_dir_path( __FILE__ ) . 'includes/utils.php';
+include plugin_dir_path( __FILE__ ) . 'includes/functions.php';
 
 /**
  * Endpoints
