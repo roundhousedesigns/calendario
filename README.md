@@ -23,6 +23,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
+-   react-beautiful-dnd
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
