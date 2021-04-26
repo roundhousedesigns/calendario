@@ -11,7 +11,6 @@ import {
 	isToday,
 } from "date-fns";
 
-
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
@@ -55,7 +54,7 @@ export default function Calendar({ className, todayRef }) {
 		let day = viewRange.start;
 		let firstCalendarDay = true;
 
-		while (day <= viewRange.end) {
+		while (day < viewRange.end) {
 			for (let i = 0; i < 7; i++) {
 				const dayIsFirstDay =
 					isFirstDayOfMonth(day) || firstCalendarDay;
