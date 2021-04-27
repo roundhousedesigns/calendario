@@ -614,10 +614,8 @@ class Calendario_Route extends WP_REST_Controller {
 			array_splice( $posts, $newIndex, 0, $old );
 		}
 
-		$i = 0;
-		foreach ( $posts as $id ) {
-			update_post_meta( $id, RHD_UNSCHEDULED_INDEX_META_KEY, $i );
-			$i++;
+		for ( $i = 0; $i < count( $posts ); $i++ ) {
+			$result = update_post_meta( $posts[$i], RHD_UNSCHEDULED_INDEX_META_KEY, $i );
 		}
 	}
 
