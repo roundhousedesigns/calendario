@@ -23,7 +23,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   react-beautiful-dnd
+-   fix unnecessary rerenders after drag operations (re-fetches, I think?)
 -   hide Reset Colors button if already at default
 -   Mobile
     -   Like, do all things, but also...
