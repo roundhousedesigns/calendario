@@ -24,6 +24,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 ## TODO
 
 -   react-beautiful-dnd
+-   hide Reset Colors button if already at default
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import PostList from "./PostList";
 import NewPostButton from "./common/NewPostButton";
-import { useDayPosts } from "../lib/hooks";
+import DragContext from "../DragContext";
+import { isDraggingUnscheduled } from "../lib/utils";
 
 export default function DayPosts({
 	posts,
@@ -11,14 +12,15 @@ export default function DayPosts({
 	title,
 	loadingState,
 }) {
-	const dayPosts = useDayPosts(posts, date);
+	const {
+		draggedPost: { isDragging },
+	} = useContext(DragContext);
 
 	const renderPostList = () => {
 		let listProps = {
-			className: "dayPosts", // make this a prop/change conditionally
+			className: "dayPosts", // TODO: make this a prop/change conditionally (what was this note?)
 			date: date,
-			posts: dayPosts,
-			allowDrop: true,
+			renderPosts: posts,
 			loadingState,
 		};
 
@@ -32,7 +34,9 @@ export default function DayPosts({
 
 		const renderList = (
 			<>
-				<NewPostButton day={date} unscheduled={false} />
+				{!isDragging ? (
+					<NewPostButton day={date} unscheduled={false} />
+				) : null}
 				<PostList {...listProps} />
 			</>
 		);

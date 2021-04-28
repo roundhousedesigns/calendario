@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import DayPosts from "./DayPosts";
-import { dateFormat } from "../lib/utils";
+import { dateFormat, dayKey } from "../lib/utils";
 import { format, addDays, endOfDay, isToday, isPast } from "date-fns";
 
 import { useFetchScheduledPosts } from "../lib/hooks";
@@ -41,11 +41,12 @@ export default function List({ className }) {
 				if (isPast(day) && !isToday(day)) {
 					classes.push("past");
 				}
+
 				days.push(
 					<li key={day} className={classes.join(" ")}>
 						<DayPosts
 							date={day}
-							posts={scheduled}
+							posts={scheduled[dayKey(day)]}
 							allowDrag={true}
 							title={format(day, dateFormat.fullDate)}
 							newPostButton={true}

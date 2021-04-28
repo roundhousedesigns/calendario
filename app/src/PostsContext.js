@@ -1,4 +1,7 @@
 import { createContext } from "react";
+import { dateFormat } from "./lib/utils";
+import { groupBy } from "lodash";
+import { format } from "date-fns";
 
 const PostsContext = createContext({});
 export default PostsContext;
@@ -31,15 +34,43 @@ export function postsReducer(state, action) {
 			// cast the date as a Date object
 			scheduledPosts.forEach((post, index) => {
 				scheduledPosts[index].post_date = new Date(post.post_date);
+				scheduledPosts[index].post_date_day = format(
+					scheduledPosts[index].post_date,
+					dateFormat.date
+				);
 			});
+
+			let scheduledByDate = groupBy(scheduledPosts, "post_date_day");
 
 			return {
 				...state,
 				dateRange: {
-					start: action.start,
-					end: action.end,
+					start: action.start ? action.start : state.dateRange.start,
+					end: action.end ? action.end : state.dateRange.end,
 				},
-				scheduled: scheduledPosts,
+				scheduled: scheduledByDate,
+			};
+
+		case "MOVE":
+			let scheduled = state.scheduled;
+			let unscheduled = state.unscheduled;
+
+			if (action.sourceId === "unscheduled") {
+				unscheduled = action.source;
+			} else {
+				scheduled[action.sourceId] = action.source;
+			}
+
+			if (action.destinationId === "unscheduled") {
+				unscheduled = action.destination;
+			} else {
+				scheduled[action.destinationId] = action.destination;
+			}
+
+			return {
+				...state,
+				unscheduled,
+				scheduled,
 			};
 
 		case "SET_UNSCHEDULED":

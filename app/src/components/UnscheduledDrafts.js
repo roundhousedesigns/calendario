@@ -25,8 +25,9 @@ export default function UnscheduledDrafts() {
 			<PostList
 				className="unscheduledDrafts"
 				date={false}
-				posts={unscheduled}
+				renderPosts={unscheduled}
 				allowDrag={true}
+				allowDrop={true}
 				loadingState={isLoading}
 			/>
 			<NewPostButton unscheduled={true} />

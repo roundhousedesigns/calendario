@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useCallback } from "react";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
 import { useFetchScheduledPosts } from "../lib/hooks";
-import { dateFormat } from "../lib/utils";
+import { dateFormat, dayKey } from "../lib/utils";
 import {
 	format,
 	addDays,
@@ -72,7 +72,7 @@ export default function Calendar({ className, todayRef }) {
 					>
 						<DayPosts
 							date={day}
-							posts={scheduled}
+							posts={scheduled[dayKey(day)]}
 							allowDrag={true}
 							renderEmpty={true}
 						/>

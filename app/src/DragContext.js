@@ -3,6 +3,14 @@ import { createContext } from "react";
 const DragContext = createContext(null);
 export default DragContext;
 
+export const initialDrag = {
+	post: {},
+	isDragging: false,
+	draggedFrom: null,
+	draggedTo: null,
+	overUnscheduled: false,
+};
+
 export function dragReducer(state, action) {
 	switch (action.type) {
 		case "START":
@@ -35,11 +43,3 @@ export function dragReducer(state, action) {
 			return state;
 	}
 }
-
-export const initialDrag = {
-	post: {},
-	isDragging: false,
-	draggedFrom: null,
-	draggedTo: null,
-	overUnscheduled: false,
-};

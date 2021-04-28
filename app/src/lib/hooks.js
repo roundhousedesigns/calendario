@@ -33,26 +33,6 @@ export const useStickyState = (defaultValue, key) => {
 };
 
 /**
- * Get posts for a specified calendar day.
- *
- * @param {array} posts The posts
- * @param {Date} date The calendar day
- * @returns {array} The calendar day's posts
- */
-export const useDayPosts = (posts, date) => {
-	let dayPosts = [];
-	if (posts) {
-		posts.forEach((post) => {
-			if (isSameDay(date, new Date(post.post_date))) {
-				dayPosts.push(post);
-			}
-		});
-	}
-
-	return dayPosts;
-};
-
-/**
  * Retrieves 'scheduled' posts from the server
  * @param {Date} start The range's start
  * @param {Date} end The range's end
@@ -132,7 +112,6 @@ export const useFetchUnscheduledPosts = () => {
 				postsDispatch({
 					type: "SET_UNSCHEDULED",
 					posts: data.posts,
-					unscheduled: true,
 				});
 
 				setIsLoading(false);

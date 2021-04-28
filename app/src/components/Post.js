@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import PostLinks from "./PostLinks";
+import { Draggable } from "react-beautiful-dnd";
 import { isEmpty } from "lodash";
 import { isPast, isToday } from "date-fns";
 import { decode } from "html-entities";
@@ -44,25 +45,6 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		};
 	}, [post.post_status, postStatuses]);
 
-	const handleDragStart = (e) => {
-		let draggingUnscheduled = e.currentTarget.parentNode.classList.contains(
-			"unscheduledDrafts"
-		)
-			? true
-			: false;
-
-		draggedPostDispatch({
-			type: "START",
-			post: post,
-			unscheduled,
-			draggedFrom: draggingUnscheduled
-				? Number(e.currentTarget.dataset.index)
-				: false,
-		});
-	};
-
-	const handleDragEnd = () => draggedPostDispatch({ type: "END" });
-
 	const handleClick = (e) => {
 		// Skip if clicking a QuickLink button
 		if (e.target.classList.contains("icon")) {
@@ -81,22 +63,32 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 			"post",
 			`post-id-${post.id} status__${post.post_status}`,
 		];
-		if (isDragging) {
-			if (draggedTo === Number(index)) {
-				classes.push("dropArea");
+		// if (isDragging) {
+		// 	if (draggedTo === Number(index)) {
+		// 		classes.push("dropArea");
 
-				if (draggedFrom === false) {
-					classes.push("fromNowhere");
-				} else if (draggedFrom < draggedTo) {
-					classes.push("fromAbove");
-				} else if (draggedFrom > draggedTo) {
-					classes.push("fromBelow");
-				}
-			}
+		// 		if (draggedFrom === false) {
+		// 			classes.push("fromNowhere");
+		// 		} else if (draggedFrom < draggedTo) {
+		// 			classes.push("fromAbove");
+		// 		} else if (draggedFrom > draggedTo) {
+		// 			classes.push("fromBelow");
+		// 		}
+		// 	}
 
-			if (draggedFrom === Number(index)) {
-				classes.push("dragging");
-			}
+		// 	if (draggedFrom === Number(index)) {
+		// 		classes.push("dragging");
+		// 	}
+		// }
+
+		if (
+			(unscheduled === false &&
+				postStatuses[post.post_status].visible === true) ||
+			unscheduled === true
+		) {
+			classes.push("visible");
+		} else {
+			classes.push("hidden");
 		}
 
 		if (!isEmpty(currentPost) && currentPost.id === post.id) {
@@ -104,41 +96,51 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		}
 
 		return (
-			<li
-				id={post.id}
-				className={classes.join(" ")}
-				style={
-					unscheduled === false &&
-					postStatuses[post.post_status].visible === true
-						? { visibility: "visible" }
-						: unscheduled === true
-						? { visibility: "visible" }
-						: { visibility: "hidden" }
-				}
-				data-index={index}
-				draggable={
-					allowDrag === true || (!isToday(date) && !isPast(date))
-						? true
-						: false
-				}
-				onDragStart={handleDragStart}
-				onDragEnd={handleDragEnd}
-				onClick={handleClick}
+			<Draggable
+				draggableId={`${post.id}`}
+				index={index}
+				// TODO: fix logic
+				// isDragDisabled={
+				// 	allowDrag === true || (!isToday(date) && !isPast(date))
+				// 		? true
+				// 		: false
+				// }
 			>
-				<PostLinks
-					className={isDragging ? "disabled" : "active"}
-					post={post}
-					unscheduled={unscheduled}
-				/>
-				<p
-					className="postData"
-					style={{
-						backgroundColor: color,
-					}}
-				>
-					{decode(post.post_title, { scope: "strict" })}
-				</p>
-			</li>
+				{(provided, snapshot) => (
+					<li
+						ref={provided.innerRef}
+						{...provided.draggableProps}
+						{...provided.dragHandleProps}
+						// id={post.id}
+						key={post.id}
+						className={classes.join(" ")}
+						data-index={index}
+						// draggable={
+						// allowDrag === true ||
+						// (!isToday(date) && !isPast(date))
+						// 	? true
+						// 	: false
+						// }
+						// onDragStart={handleDragStart}
+						// onDragEnd={handleDragEnd}
+						onClick={handleClick}
+					>
+						<PostLinks
+							className={isDragging ? "disabled" : "active"}
+							post={post}
+							unscheduled={unscheduled}
+						/>
+						<p
+							className="postData"
+							style={{
+								backgroundColor: color,
+							}}
+						>
+							{decode(post.post_title, { scope: "strict" })}
+						</p>
+					</li>
+				)}
+			</Draggable>
 		);
 	};
 
