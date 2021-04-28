@@ -1,19 +1,10 @@
-import React, { useContext, useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Post from "./Post";
 import Loading from "./common/Loading";
-import {
-	dateFormat,
-	filterUnchangedParams,
-	wp,
-	DEBUG_MODE,
-} from "../lib/utils";
-// import { updateReducer, initialUpdateState } from "../lib/updatePost";
+import { dateFormat } from "../lib/utils";
 import { Droppable } from "react-beautiful-dnd";
-import { format, getHours, getMinutes, setHours, setMinutes } from "date-fns";
+import { format } from "date-fns";
 import { isEmpty } from "lodash";
-
-import PostsContext from "../PostsContext";
-import DragContext from "../DragContext";
 
 export default function PostList({
 	renderPosts,
@@ -23,19 +14,6 @@ export default function PostList({
 	date,
 	loadingState,
 }) {
-	const { routeBase, user, nonce } = wp;
-	const {
-		posts: { currentPost },
-		postsDispatch,
-	} = useContext(PostsContext);
-	const {
-		draggedPost: { post, draggedTo, draggedFrom, overUnscheduled },
-		draggedPostDispatch,
-	} = useContext(DragContext);
-	// const [updatePost, updatePostDispatch] = useReducer(
-	// 	updateReducer,
-	// 	initialUpdateState
-	// );
 	const [isLoading, setIsLoading] = useState(false);
 	const droppableId =
 		date === false ? "unscheduled" : format(date, dateFormat.date);

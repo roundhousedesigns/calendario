@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import PostLinks from "./PostLinks";
 import { Draggable } from "react-beautiful-dnd";
 import { isEmpty } from "lodash";
-import { isPast, isToday } from "date-fns";
 import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
@@ -15,23 +14,22 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		postsDispatch,
 	} = useContext(PostsContext);
 	const {
-		draggedPost: { isDragging, draggedFrom, draggedTo },
-		draggedPostDispatch,
+		draggedPost: { isDragging },
 	} = useContext(DragContext);
 	const {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 
-	const [date, setDate] = useState(new Date());
+	// const [date, setDate] = useState(new Date());
 	const [color, setColor] = useState("");
 
-	useEffect(() => {
-		setDate(new Date(post.post_date));
+	// useEffect(() => {
+	// 	setDate(new Date(post.post_date));
 
-		return () => {
-			setDate(new Date());
-		};
-	}, [post.post_date]);
+	// 	return () => {
+	// 		setDate(new Date());
+	// 	};
+	// }, [post.post_date]);
 
 	useEffect(() => {
 		if (postStatuses === undefined || isEmpty(postStatuses)) {
@@ -63,23 +61,6 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 			"post",
 			`post-id-${post.id} status__${post.post_status}`,
 		];
-		// if (isDragging) {
-		// 	if (draggedTo === Number(index)) {
-		// 		classes.push("dropArea");
-
-		// 		if (draggedFrom === false) {
-		// 			classes.push("fromNowhere");
-		// 		} else if (draggedFrom < draggedTo) {
-		// 			classes.push("fromAbove");
-		// 		} else if (draggedFrom > draggedTo) {
-		// 			classes.push("fromBelow");
-		// 		}
-		// 	}
-
-		// 	if (draggedFrom === Number(index)) {
-		// 		classes.push("dragging");
-		// 	}
-		// }
 
 		if (
 			(unscheduled === false &&

@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext /* useRef */ } from "react";
 import { wp, dateFormat } from "../lib/utils";
-import { format, isSameDay } from "date-fns";
+import { format } from "date-fns";
 import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";

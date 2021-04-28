@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import PostList from "./PostList";
 import NewPostButton from "./common/NewPostButton";
 import DragContext from "../DragContext";
-import { isDraggingUnscheduled } from "../lib/utils";
 
 export default function DayPosts({
 	posts,
