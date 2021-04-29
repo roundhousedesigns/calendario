@@ -79,11 +79,6 @@ export default function Post({ post, index, unscheduled }) {
 						data-index={index}
 						onClick={handleClick}
 					>
-						<PostLinks
-							className={isDragging ? "disabled" : "active"}
-							post={post}
-							unscheduled={unscheduled}
-						/>
 						<p
 							className="postData"
 							style={{
@@ -91,6 +86,11 @@ export default function Post({ post, index, unscheduled }) {
 							}}
 						>
 							{decode(post.post_title, { scope: "strict" })}
+							<PostLinks
+								className={isDragging ? "disabled" : "active"}
+								post={post}
+								unscheduled={unscheduled}
+							/>
 						</p>
 					</li>
 				)}
