@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer, useRef } from "react";
+import React, { useEffect, /*useState,*/ useReducer, useRef } from "react";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Sidebar from "./components/Sidebar";
@@ -51,7 +51,7 @@ export default function App() {
 		},
 		"viewOptions"
 	);
-	const [isLoading, setIsLoading] = useState(false);
+	// const [isLoading, setIsLoading] = useState(false);
 
 	const todayRef = useRef();
 	const mainRef = useRef();
@@ -101,7 +101,7 @@ export default function App() {
 			}
 
 			const fetchData = async () => {
-				setIsLoading(true);
+				// setIsLoading(true);
 
 				try {
 					const response = await fetch(url, {
@@ -112,20 +112,18 @@ export default function App() {
 					// const data = await response.json(); // If you need to catch the response...
 					await response.json();
 
-					postsDispatch({
-						type: "REFETCH",
-					});
 					draggedPostDispatch({
 						type: "END",
 					});
+
 					updatePostDispatch({
 						type: "COMPLETE",
 					});
 
-					setIsLoading(false);
+					// setIsLoading(false);
 				} catch (error) {
 					console.log(error.message);
-					setIsLoading(false);
+					// setIsLoading(false);
 				}
 			};
 
@@ -249,13 +247,6 @@ export default function App() {
 			post_date = format(dropDate, dateFormat.dateTime);
 		}
 
-		let postToDispatch = {
-			type: "UPDATE",
-			post,
-			unscheduled: overUnscheduled,
-			params: { post_date },
-		};
-
 		if (overUnscheduled && source.droppableId === destination.droppableId) {
 			const items = reorderUnscheduled(
 				getList(source.droppableId),
@@ -284,13 +275,13 @@ export default function App() {
 			});
 		}
 
-		if (overUnscheduled) {
-			postToDispatch.draggedTo = destination.index;
-		}
-
 		// Run the update
 		updatePostDispatch({
-			...postToDispatch,
+			type: "UPDATE",
+			post,
+			unscheduled: overUnscheduled,
+			params: { post_date },
+			draggedTo: overUnscheduled ? destination.index : null,
 		});
 
 		// TODO investigate this

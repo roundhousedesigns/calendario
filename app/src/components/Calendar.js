@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useCallback } from "react";
+import React, { useContext, useCallback } from "react";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
 import { useFetchScheduledPosts } from "../lib/hooks";
@@ -17,17 +17,10 @@ import ViewContext from "../ViewContext";
 export default function Calendar({ className, todayRef }) {
 	const {
 		posts: { scheduled },
-		postsDispatch,
 	} = useContext(PostsContext);
 	const {
 		viewOptions: { viewRange },
 	} = useContext(ViewContext);
-
-	useEffect(() => {
-		postsDispatch({
-			type: "REFETCH",
-		});
-	}, [postsDispatch]);
 
 	useFetchScheduledPosts(viewRange.start, viewRange.end);
 

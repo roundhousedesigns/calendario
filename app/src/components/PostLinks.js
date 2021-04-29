@@ -53,10 +53,6 @@ export default function PostLinks({ post, className, unscheduled }) {
 					updatePostDispatch({
 						type: "COMPLETE",
 					});
-
-					postsDispatch({
-						type: "REFETCH",
-					});
 				} catch (error) {
 					console.log(error.message);
 				}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import DayPosts from "./DayPosts";
 import { dateFormat, dayKey } from "../lib/utils";
 import { format, addDays, endOfDay, isToday, isPast } from "date-fns";
@@ -11,7 +11,6 @@ import ViewContext from "../ViewContext";
 export default function List({ className }) {
 	const {
 		posts: { scheduled },
-		postsDispatch,
 	} = useContext(PostsContext);
 
 	const {
@@ -19,12 +18,6 @@ export default function List({ className }) {
 			viewRange: { start, end },
 		},
 	} = useContext(ViewContext);
-
-	useEffect(() => {
-		postsDispatch({
-			type: "REFETCH",
-		});
-	}, [postsDispatch]);
 
 	useFetchScheduledPosts(start, end);
 

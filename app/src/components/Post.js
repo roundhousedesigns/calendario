@@ -8,7 +8,7 @@ import PostsContext from "../PostsContext";
 import DragContext from "../DragContext";
 import ViewContext from "../ViewContext";
 
-export default function Post({ post, index, unscheduled, allowDrag }) {
+export default function Post({ post, index, unscheduled }) {
 	const {
 		posts: { currentPost },
 		postsDispatch,
@@ -20,16 +20,7 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 
-	// const [date, setDate] = useState(new Date());
 	const [color, setColor] = useState("");
-
-	// useEffect(() => {
-	// 	setDate(new Date(post.post_date));
-
-	// 	return () => {
-	// 		setDate(new Date());
-	// 	};
-	// }, [post.post_date]);
 
 	useEffect(() => {
 		if (postStatuses === undefined || isEmpty(postStatuses)) {
@@ -77,33 +68,15 @@ export default function Post({ post, index, unscheduled, allowDrag }) {
 		}
 
 		return (
-			<Draggable
-				draggableId={`${post.id}`}
-				index={index}
-				// TODO: fix logic
-				// isDragDisabled={
-				// 	allowDrag === true || (!isToday(date) && !isPast(date))
-				// 		? true
-				// 		: false
-				// }
-			>
+			<Draggable draggableId={`${post.id}`} index={index}>
 				{(provided, snapshot) => (
 					<li
 						ref={provided.innerRef}
 						{...provided.draggableProps}
 						{...provided.dragHandleProps}
-						// id={post.id}
 						key={post.id}
 						className={classes.join(" ")}
 						data-index={index}
-						// draggable={
-						// allowDrag === true ||
-						// (!isToday(date) && !isPast(date))
-						// 	? true
-						// 	: false
-						// }
-						// onDragStart={handleDragStart}
-						// onDragEnd={handleDragEnd}
 						onClick={handleClick}
 					>
 						<PostLinks

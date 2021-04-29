@@ -14,9 +14,7 @@ export function updateReducer(state, action) {
 				updateNow: true,
 				post: action.post,
 				params: action.params,
-				draggedTo: action.draggedTo
-					? action.draggedTo
-					: state.draggedTo,
+				draggedTo: action.draggedTo,
 				unscheduled: action.unscheduled,
 			};
 

@@ -51,6 +51,19 @@ export function postsReducer(state, action) {
 				scheduled: scheduledByDate,
 			};
 
+		case "SET_UNSCHEDULED":
+			let unscheduledPosts = action.posts;
+
+			// cast the date as a Date object
+			unscheduledPosts.forEach((post, index) => {
+				unscheduledPosts[index].post_date = new Date(post.post_date);
+			});
+
+			return {
+				...state,
+				unscheduled: unscheduledPosts,
+			};
+
 		case "MOVE":
 			let scheduled = state.scheduled;
 			let unscheduled = state.unscheduled;
@@ -71,19 +84,6 @@ export function postsReducer(state, action) {
 				...state,
 				unscheduled,
 				scheduled,
-			};
-
-		case "SET_UNSCHEDULED":
-			let unscheduledPosts = action.posts;
-
-			// cast the date as a Date object
-			unscheduledPosts.forEach((post, index) => {
-				unscheduledPosts[index].post_date = new Date(post.post_date);
-			});
-
-			return {
-				...state,
-				unscheduled: unscheduledPosts,
 			};
 
 		case "SET_TAXONOMY_TERMS":

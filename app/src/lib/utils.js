@@ -151,6 +151,24 @@ export const isOverUnscheduled = (item) =>
 	item.destination.droppableId === "unscheduled" ? true : false;
 
 /**
+ * Retrieves a list of posts.
+ *
+ * @param {string} id
+ * @param {array|object} posts All posts
+ * @returns {array} The posts list
+ */
+export const getPostList = (id, posts) => {
+	let list;
+	if (id === "unscheduled") {
+		list = posts.unscheduled;
+	} else {
+		list = posts.scheduled[id];
+	}
+
+	return list;
+};
+
+/**
  *
  * @param {*} list
  * @param {*} startIndex
