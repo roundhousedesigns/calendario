@@ -23,6 +23,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
+-   Change `draggedTo` var name to something clearer, like `destination` or something
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible

@@ -689,10 +689,10 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	protected function prepare_scheduled_unscheduled( &$item, $params ) {
 		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
-			if ( isset( $params['draggedTo'] ) && $item['ID'] !== 0 ) {
-				$this->reorder_unscheduled_drafts( $item['ID'], $params['draggedTo'] );
-			} else {
+			if ( $item['ID'] === 0 ) {
 				$this->prepare_new_item_for_unscheduled( $item );
+			} elseif ( isset( $params['draggedTo'] ) && $params['draggedTo'] !== 1 ) {
+				$this->reorder_unscheduled_drafts( $item['ID'], $params['draggedTo'] );
 			}
 
 			// Make sure post is either Draft or Private
