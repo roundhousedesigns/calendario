@@ -1,9 +1,14 @@
 .postList {
 	position: relative;
-	// z-index: 0; // react-beautiful-dnd issue
 	font-size: 80%;
 	line-height: 2;
 	list-style: none;
+	margin-bottom: $postLinks__height;
+	transition: all 0.1s ease-out;
+
+	&:hover {
+		margin-bottom: 0;
+	}
 
 	.post {
 		color: var(--neutralColor);
@@ -21,18 +26,14 @@
 		}
 
 		.postLinks {
-			position: absolute;
 			display: flex;
 			align-items: flex-end;
 			justify-content: center;
 			width: 100%;
-			height: 100%;
-			bottom: 6px;
-			left: 0;
+			height: 0;
 			padding: 0 2px;
-			opacity: 0;
-			z-index: -1;
-			transition: opacity 0.1s ease-out;
+			overflow: hidden;
+			transition: height 0.1s ease-out;
 
 			&.disabled {
 				display: none;
@@ -65,15 +66,14 @@
 
 		&:hover {
 			.postLinks {
-				opacity: 1;
-				z-index: initial;
+				height: $postLinks__height;
 			}
 		}
 
 		.postData {
 			pointer-events: none;
 			margin: 0;
-			padding: 4px 6px;
+			padding: 4px 0;
 			border: 2px solid transparent;
 			border-radius: var(--borderRadius);
 		}

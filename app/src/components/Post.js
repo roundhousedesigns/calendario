@@ -21,6 +21,7 @@ export default function Post({ post, index, unscheduled }) {
 	} = useContext(ViewContext);
 
 	const [color, setColor] = useState("");
+	// const [hovered, setHovered] = useState(false);
 
 	useEffect(() => {
 		if (postStatuses === undefined || isEmpty(postStatuses)) {
@@ -67,6 +68,10 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push("currentPost");
 		}
 
+		// if (hovered) {
+		// 	classes.push("hovered");
+		// }
+
 		return (
 			<Draggable draggableId={`${post.id}`} index={index}>
 				{(provided, snapshot) => (
@@ -78,6 +83,8 @@ export default function Post({ post, index, unscheduled }) {
 						className={classes.join(" ")}
 						data-index={index}
 						onClick={handleClick}
+						// onMouseEnter={() => setHovered(true)}
+						// onMouseLeave={() => setHovered(false)}
 					>
 						<p
 							className="postData"
