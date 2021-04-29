@@ -74,7 +74,7 @@ export default function App() {
 	}, [setView, viewOptions.viewMode]);
 
 	useEffect(() => {
-		const { post, draggedTo } = updatePost;
+		const { post, newIndex } = updatePost;
 		if (updatePost.updateNow === true && post.id !== "undefined") {
 			updatePostDispatch({
 				type: "UPDATING",
@@ -95,8 +95,8 @@ export default function App() {
 				unscheduled: updatePost.unscheduled,
 			};
 
-			if (draggedTo !== null) {
-				postData.draggedTo = draggedTo;
+			if (newIndex !== null) {
+				postData.newIndex = newIndex;
 			}
 
 			const fetchData = async () => {
@@ -184,7 +184,7 @@ export default function App() {
 		const post = postList.find((p) => {
 			return Number(item.draggableId) === Number(p.id);
 		});
-		let draggedFrom = isDraggingUnscheduled(item)
+		let currentIndex = isDraggingUnscheduled(item)
 			? item.source.draggableId
 			: false;
 
@@ -192,7 +192,7 @@ export default function App() {
 			type: "START",
 			post: post,
 			draggingUnscheduled,
-			draggedFrom,
+			currentIndex,
 		});
 	};
 
@@ -280,7 +280,7 @@ export default function App() {
 			post,
 			unscheduled: overUnscheduled,
 			params: { post_date },
-			draggedTo: overUnscheduled ? destination.index : null,
+			newIndex: overUnscheduled ? destination.index : null,
 		});
 
 		// TODO investigate this

@@ -3,7 +3,7 @@ export const initialUpdateState = {
 	trash: false,
 	post: {},
 	params: {},
-	draggedTo: null,
+	newIndex: null,
 	unscheduled: false,
 };
 
@@ -14,7 +14,7 @@ export function updateReducer(state, action) {
 				updateNow: true,
 				post: action.post,
 				params: action.params,
-				draggedTo: action.draggedTo,
+				newIndex: action.newIndex,
 				unscheduled: action.unscheduled,
 			};
 

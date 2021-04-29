@@ -6,8 +6,8 @@ export default DragContext;
 export const initialDrag = {
 	post: {},
 	isDragging: false,
-	draggedFrom: null,
-	draggedTo: null,
+	currentIndex: null,
+	newIndex: null,
 	overUnscheduled: false,
 };
 
@@ -17,21 +17,21 @@ export function dragReducer(state, action) {
 			return {
 				post: action.post,
 				isDragging: true,
-				draggedFrom:
-					action.draggedFrom >= 0 ? action.draggedFrom : false,
+				currentIndex:
+					action.currentIndex >= 0 ? action.currentIndex : false,
 			};
 
 		case "DRAGGING_OVER_UNSCHEDULED":
 			return {
 				...state,
-				draggedTo: action.draggedOver,
+				newIndex: action.draggedOver,
 				overUnscheduled: true,
 			};
 
 		case "DRAGGING_OVER_CALENDAR":
 			return {
 				...state,
-				draggedTo: initialDrag.draggedTo,
+				newIndex: initialDrag.newIndex,
 				overUnscheduled: false,
 			};
 
