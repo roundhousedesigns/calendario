@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext /* useRef */ } from "react";
 import { wp, dateFormat } from "../lib/utils";
-import { format, isSameDay } from "date-fns";
+import { format } from "date-fns";
 import { isEmpty } from "lodash";
 
 import PostsContext from "../PostsContext";
@@ -30,26 +30,6 @@ export const useStickyState = (defaultValue, key) => {
 	}, [key, value]);
 
 	return [value, setValue];
-};
-
-/**
- * Get posts for a specified calendar day.
- *
- * @param {array} posts The posts
- * @param {Date} date The calendar day
- * @returns {array} The calendar day's posts
- */
-export const useDayPosts = (posts, date) => {
-	let dayPosts = [];
-	if (posts) {
-		posts.forEach((post) => {
-			if (isSameDay(date, new Date(post.post_date))) {
-				dayPosts.push(post);
-			}
-		});
-	}
-
-	return dayPosts;
 };
 
 /**
@@ -132,7 +112,6 @@ export const useFetchUnscheduledPosts = () => {
 				postsDispatch({
 					type: "SET_UNSCHEDULED",
 					posts: data.posts,
-					unscheduled: true,
 				});
 
 				setIsLoading(false);

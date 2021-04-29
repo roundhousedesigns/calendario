@@ -1,7 +1,9 @@
 export const initialUpdateState = {
 	updateNow: false,
 	trash: false,
+	post: {},
 	params: {},
+	draggedTo: null,
 	unscheduled: false,
 };
 
@@ -10,7 +12,9 @@ export function updateReducer(state, action) {
 		case "UPDATE":
 			return {
 				updateNow: true,
+				post: action.post,
 				params: action.params,
+				draggedTo: action.draggedTo,
 				unscheduled: action.unscheduled,
 			};
 

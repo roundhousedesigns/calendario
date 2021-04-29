@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useCallback } from "react";
+import React, { useContext, useCallback } from "react";
 import Day from "./Day";
 import DayPosts from "./DayPosts";
 import { useFetchScheduledPosts } from "../lib/hooks";
-import { dateFormat } from "../lib/utils";
+import { dateFormat, dayKey } from "../lib/utils";
 import {
 	format,
 	addDays,
@@ -11,24 +11,16 @@ import {
 	isToday,
 } from "date-fns";
 
-
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
 export default function Calendar({ className, todayRef }) {
 	const {
 		posts: { scheduled },
-		postsDispatch,
 	} = useContext(PostsContext);
 	const {
 		viewOptions: { viewRange },
 	} = useContext(ViewContext);
-
-	useEffect(() => {
-		postsDispatch({
-			type: "REFETCH",
-		});
-	}, [postsDispatch]);
 
 	useFetchScheduledPosts(viewRange.start, viewRange.end);
 
@@ -55,7 +47,7 @@ export default function Calendar({ className, todayRef }) {
 		let day = viewRange.start;
 		let firstCalendarDay = true;
 
-		while (day <= viewRange.end) {
+		while (day < viewRange.end) {
 			for (let i = 0; i < 7; i++) {
 				const dayIsFirstDay =
 					isFirstDayOfMonth(day) || firstCalendarDay;
@@ -73,7 +65,7 @@ export default function Calendar({ className, todayRef }) {
 					>
 						<DayPosts
 							date={day}
-							posts={scheduled}
+							posts={scheduled[dayKey(day)]}
 							allowDrag={true}
 							renderEmpty={true}
 						/>

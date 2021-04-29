@@ -1,5 +1,6 @@
 import Widget from "../components/common/Widget";
-import { omit } from "lodash";
+import { omit, isEmpty } from "lodash";
+import { format } from "date-fns";
 
 export const DEBUG_MODE =
 	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
@@ -116,6 +117,14 @@ export const renderWidget = (title, className, children) => {
 };
 
 /**
+ * Retrieves a calendar day's key (format: yyyy-MM-dd)
+ *
+ * @param {Date}
+ * @returns {string}
+ */
+export const dayKey = (date) => format(date, dateFormat.date);
+
+/**
  *
  * @param {Date} date The target date
  * @param {*} min Start of the range
@@ -124,3 +133,82 @@ export const renderWidget = (title, className, children) => {
  */
 export const dateIsBetween = (date, min, max) =>
 	date.getTime() >= min.getTime() && date.getTime() <= max.getTime();
+
+/**
+ *
+ * @param {Post} item Dragged item // TODO figure out documenting this "Post" type for post arrays
+ * @returns {boolean} True if unscheduled, false otherwise
+ */
+export const isDraggingUnscheduled = (item) =>
+	item.source.droppableId === "unscheduled" ? true : false;
+
+/**
+ *
+ * @param {Post} item Dragged item // TODO figure out documenting this "Post" type for post arrays
+ * @returns {boolean} True if dragged item is over 'unscheduled' area, false otherwise
+ */
+export const isOverUnscheduled = (item) =>
+	item.destination.droppableId === "unscheduled" ? true : false;
+
+/**
+ * Retrieves a list of posts.
+ *
+ * @param {string} id
+ * @param {array|object} posts All posts
+ * @returns {array} The posts list
+ */
+export const getPostList = (id, posts) => {
+	let list;
+	if (id === "unscheduled") {
+		list = posts.unscheduled;
+	} else {
+		list = posts.scheduled[id];
+	}
+
+	return list;
+};
+
+/**
+ *
+ * @param {*} list
+ * @param {*} startIndex
+ * @param {*} endIndex
+ * @returns
+ */
+export const reorderUnscheduled = (list, startIndex, endIndex) => {
+	const result = Array.from(list);
+	const [removed] = result.splice(startIndex, 1);
+	result.splice(endIndex, 0, removed);
+
+	return result;
+};
+
+/**
+ *
+ * @param {*} source
+ * @param {*} destination
+ * @param {*} droppableSource
+ * @param {*} droppableDestination
+ * @returns
+ */
+export const moveItem = (
+	source,
+	destination,
+	droppableSource,
+	droppableDestination
+) => {
+	const sourceClone = Array.from(source);
+	const destClone = !isEmpty(destination) ? Array.from(destination) : [];
+	const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+	destClone.splice(droppableDestination.index, 0, removed);
+
+	const result = {
+		[droppableSource.droppableId]: sourceClone,
+		[droppableDestination.droppableId]: destClone,
+		sourceId: droppableSource.droppableId,
+		destinationId: droppableDestination.droppableId,
+	};
+
+	return result;
+};

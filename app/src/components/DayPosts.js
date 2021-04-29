@@ -1,39 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import PostList from "./PostList";
 import NewPostButton from "./common/NewPostButton";
-import { useDayPosts } from "../lib/hooks";
+import DragContext from "../DragContext";
 
-export default function DayPosts({
-	posts,
-	date,
-	allowDrag,
-	allowDrop,
-	title,
-	loadingState,
-}) {
-	const dayPosts = useDayPosts(posts, date);
+export default function DayPosts({ posts, date, title }) {
+	const {
+		draggedPost: { isDragging },
+	} = useContext(DragContext);
 
 	const renderPostList = () => {
-		let listProps = {
-			className: "dayPosts", // make this a prop/change conditionally
-			date: date,
-			posts: dayPosts,
-			allowDrop: true,
-			loadingState,
-		};
-
-		// Drag control
-		if (allowDrag !== "undefined" && allowDrag !== null) {
-			listProps.allowDrag = allowDrag;
-		}
-
-		// Drop control
-		listProps.allowDrop = allowDrop !== false ? true : false;
-
 		const renderList = (
 			<>
-				<NewPostButton day={date} unscheduled={false} />
-				<PostList {...listProps} />
+				{!isDragging ? (
+					<NewPostButton day={date} unscheduled={false} />
+				) : null}
+				<PostList
+					className="dayPosts"
+					date={date}
+					renderPosts={posts}
+				/>
 			</>
 		);
 

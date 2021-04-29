@@ -249,7 +249,7 @@ body {
 			cursor: pointer;
 		}
 
-		&:not(.picker__swatch) {
+		&:not(.picker__swatch):not(.react-datepicker__navigation) {
 			border: none;
 		}
 

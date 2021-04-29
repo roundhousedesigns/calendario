@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import PostList from "./PostList";
 import AdminLinks from "./AdminLinks";
 import NewPostButton from "./common/NewPostButton";
@@ -9,14 +9,7 @@ import PostsContext from "../PostsContext";
 export default function UnscheduledDrafts() {
 	const {
 		posts: { unscheduled },
-		postsDispatch,
 	} = useContext(PostsContext);
-
-	useEffect(() => {
-		postsDispatch({
-			type: "REFETCH",
-		});
-	}, [postsDispatch]);
 
 	const isLoading = useFetchUnscheduledPosts();
 
@@ -25,8 +18,7 @@ export default function UnscheduledDrafts() {
 			<PostList
 				className="unscheduledDrafts"
 				date={false}
-				posts={unscheduled}
-				allowDrag={true}
+				renderPosts={unscheduled}
 				loadingState={isLoading}
 			/>
 			<NewPostButton unscheduled={true} />
