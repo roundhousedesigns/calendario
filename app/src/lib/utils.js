@@ -1,6 +1,13 @@
 import Widget from "../components/common/Widget";
 import { omit, isEmpty, isEqual } from "lodash";
-import { format } from "date-fns";
+import {
+	format,
+	parseISO,
+	getHours,
+	getMinutes,
+	setHours,
+	setMinutes,
+} from "date-fns";
 
 export const DEBUG_MODE =
 	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
@@ -227,4 +234,34 @@ export const moveItem = (
 	};
 
 	return result;
+};
+
+/**
+ *
+ * @param {*} post_date
+ * @param {*} droppableId
+ * @param {*} overUnscheduled
+ * @returns
+ */
+export const draggedPostDate = (post_date, droppableId, overUnscheduled) => {
+	let date, formatted;
+
+	console.log(droppableId);
+
+	if (overUnscheduled === true) {
+		formatted = format(post_date, dateFormat.dateTime);
+	} else {
+		date = parseISO(droppableId);
+
+		const time = {
+			h: getHours(post_date),
+			m: getMinutes(post_date),
+		};
+		date = setHours(date, time.h);
+		date = setMinutes(date, time.m);
+
+		formatted = format(date, dateFormat.dateTime);
+	}
+
+	return { date, formatted };
 };

@@ -9,19 +9,11 @@ import {
 	isOverUnscheduled,
 	reorderUnscheduled,
 	moveItem,
-	dateFormat,
 	filterUnchangedParams,
 	wp,
+	draggedPostDate,
 	DEBUG_MODE,
 } from "./lib/utils";
-import {
-	format,
-	parseISO,
-	getHours,
-	getMinutes,
-	setHours,
-	setMinutes,
-} from "date-fns";
 import { DragDropContext } from "react-beautiful-dnd";
 
 import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
@@ -228,25 +220,17 @@ export default function App() {
 			return;
 		}
 
-		let dropDate, post_date;
 		let overUnscheduled =
 			destination.droppableId === "unscheduled" ? true : false;
-		if (overUnscheduled === true) {
-			post_date = format(post.post_date, dateFormat.dateTime);
-		} else {
-			dropDate = parseISO(destination.droppableId);
 
-			const time = {
-				h: getHours(post.post_date),
-				m: getMinutes(post.post_date),
-			};
-			dropDate = setHours(dropDate, time.h);
-			dropDate = setMinutes(dropDate, time.m);
-
-			post_date = format(dropDate, dateFormat.dateTime);
-		}
+		const post_date = draggedPostDate(
+			post.post_date,
+			destination.droppableId,
+			overUnscheduled
+		);
 
 		if (overUnscheduled && source.droppableId === destination.droppableId) {
+			// Reorder
 			const items = reorderUnscheduled(
 				getList(source.droppableId),
 				source.index,
@@ -258,6 +242,7 @@ export default function App() {
 				posts: items,
 			});
 		} else if (source.droppableId !== destination.droppableId) {
+			// Move
 			const result = moveItem(
 				getList(source.droppableId),
 				getList(destination.droppableId),
@@ -279,16 +264,16 @@ export default function App() {
 			type: "UPDATE",
 			post,
 			unscheduled: overUnscheduled,
-			params: { post_date },
+			params: { post_date: post_date.formatted },
 			newIndex: overUnscheduled ? destination.index : null,
 		});
 
-		// TODO investigate this
+		// If doing a post edit, save the post date
 		if (posts.currentPost.id === post.id) {
 			postsDispatch({
 				type: "UPDATE_CURRENTPOST_FIELD",
 				field: "post_date",
-				value: dropDate,
+				value: post_date.date,
 			});
 		}
 
