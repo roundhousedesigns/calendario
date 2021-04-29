@@ -23,8 +23,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   PostLinks persistent
--   hide Reset Colors button if already at default
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible

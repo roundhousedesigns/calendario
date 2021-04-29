@@ -11,7 +11,7 @@ export default function UnscheduledDrafts() {
 		posts: { unscheduled },
 	} = useContext(PostsContext);
 
-	const isLoading = useFetchUnscheduledPosts();
+	useFetchUnscheduledPosts();
 
 	return (
 		<>
@@ -19,7 +19,6 @@ export default function UnscheduledDrafts() {
 				className="unscheduledDrafts"
 				date={false}
 				renderPosts={unscheduled}
-				loadingState={isLoading}
 			/>
 			<NewPostButton unscheduled={true} />
 			<AdminLinks />

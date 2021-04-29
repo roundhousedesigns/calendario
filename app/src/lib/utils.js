@@ -1,16 +1,13 @@
 import Widget from "../components/common/Widget";
-import { omit, isEmpty } from "lodash";
+import { omit, isEmpty, isEqual } from "lodash";
 import { format } from "date-fns";
 
 export const DEBUG_MODE =
 	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
 
 export const wp =
-	DEBUG_MODE !== true
+	DEBUG_MODE === true
 		? {
-				...window.rhdReactPlugin,
-		  }
-		: {
 				nonce: 0,
 				routeBase: "http://localhost/wp-json/calendario/v1",
 				user: 1,
@@ -38,6 +35,9 @@ export const wp =
 					"orange",
 					"brown",
 				],
+		  }
+		: {
+				...window.rhdReactPlugin,
 		  };
 
 export const dateFormat = {
@@ -69,6 +69,22 @@ export function filterStatusList(statuses, exclude = []) {
 	}
 
 	return filtered;
+}
+
+/**
+ * Checks whether or not the user has customized the color palette.
+ *
+ * @param {Object} statuses
+ * @returns {boolean}
+ */
+export function haveColorsChanged(statuses) {
+	const { defaultStatusColors } = wp;
+	let currentStatusColors = {};
+	for (const status in statuses) {
+		currentStatusColors[status] = statuses[status].color;
+	}
+
+	return !isEqual(defaultStatusColors, currentStatusColors);
 }
 
 /**

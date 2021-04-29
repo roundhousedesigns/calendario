@@ -2,11 +2,10 @@ import { useState, useEffect, useContext /* useRef */ } from "react";
 import { wp, dateFormat } from "../lib/utils";
 import { format } from "date-fns";
 import { isEmpty } from "lodash";
+import { DEBUG_MODE } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
-
-import { DEBUG_MODE } from "../lib/utils";
 
 const { routeBase, nonce } = wp;
 
@@ -15,7 +14,7 @@ const headers = DEBUG_MODE !== true ? { "X-WP-Nonce": nonce } : {};
 /**
  * Uses localStorage to save view-specific user options.
  *
- * @param {any} defaultValue The default option value
+ * @param {*} defaultValue The default option value
  * @param {string} key The option key
  * @returns {[state, setter]} The useState state and setter
  */

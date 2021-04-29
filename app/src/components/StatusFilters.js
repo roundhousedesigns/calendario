@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ColorPickerPopover from "./common/ColorPickerPopover";
 import ToggleButton from "./common/ToggleButton";
-import { wp } from "../lib/utils";
+import { wp, haveColorsChanged } from "../lib/utils";
 import { isEmpty } from "lodash";
 
 import ViewContext from "../ViewContext";
@@ -14,6 +14,12 @@ export default function StatusFilters() {
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
 	const keys = Object.keys(postStatuses);
+	const [colorsChanged, setColorsChanged] = useState(false);
+
+	// Maintain state for color defaults
+	useEffect(() => {
+		setColorsChanged(haveColorsChanged(postStatuses));
+	}, [postStatuses]);
 
 	// Updates the server when the dispatch is updated (after debounce)
 	useEffect(() => {
@@ -89,9 +95,11 @@ export default function StatusFilters() {
 					);
 				})}
 			</ul>
-			<button className="reset" onClick={handleResetColors}>
-				Reset Colors
-			</button>
+			{colorsChanged ? (
+				<button className="reset" onClick={handleResetColors}>
+					Reset Colors
+				</button>
+			) : null}
 		</div>
 	);
 }

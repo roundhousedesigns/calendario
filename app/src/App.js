@@ -51,7 +51,6 @@ export default function App() {
 		},
 		"viewOptions"
 	);
-	// const [isLoading, setIsLoading] = useState(false);
 
 	const todayRef = useRef();
 	const mainRef = useRef();
@@ -258,7 +257,7 @@ export default function App() {
 				type: "SET_UNSCHEDULED",
 				posts: items,
 			});
-		} else {
+		} else if (source.droppableId !== destination.droppableId) {
 			const result = moveItem(
 				getList(source.droppableId),
 				getList(destination.droppableId),
