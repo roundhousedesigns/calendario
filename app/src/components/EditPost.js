@@ -90,7 +90,7 @@ export default function EditPost() {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 	const {
-		posts: { currentPost, taxonomies },
+		posts: { currentPost, taxonomies, unscheduled },
 		postsDispatch,
 	} = useContext(PostsContext);
 	const [editPost, editPostDispatch] = useReducer(
@@ -178,6 +178,11 @@ export default function EditPost() {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
+		// If unscheduled, get the current index to pass along
+		const index = post.unscheduled
+			? unscheduled.findIndex((item) => item.id === post.id)
+			: false;
+
 		postsDispatch({
 			type: "UPDATE",
 			post,
@@ -192,6 +197,7 @@ export default function EditPost() {
 				taxonomies: post.taxonomies,
 			},
 			unscheduled: post.unscheduled,
+			newIndex: index,
 		});
 
 		postsDispatch({

@@ -10,7 +10,6 @@ import {
 	reorderUnscheduled,
 	getPostList,
 	moveItem,
-	filterUnchangedParams,
 	wp,
 	draggedPostDate,
 	DEBUG_MODE,
@@ -74,7 +73,7 @@ export default function App() {
 				trash,
 			},
 		} = posts;
-		
+
 		if (updateNow === true && post.id !== "undefined") {
 			postsDispatch({
 				type: "UPDATING",
@@ -102,10 +101,7 @@ export default function App() {
 			}
 
 			let postData = {
-				// TODO decide if `filterUnchangedParams` is even necessary
-				params: isEmpty(params)
-					? {}
-					: filterUnchangedParams(params, post),
+				params: !isEmpty(params) ? params : {},
 				unscheduled,
 			};
 

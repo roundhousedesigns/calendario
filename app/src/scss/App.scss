@@ -1,7 +1,6 @@
 /**
   * Style it up styley
   */
-
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
@@ -249,18 +248,12 @@ body {
 			cursor: pointer;
 		}
 
-		&:not(.picker__swatch):not(.react-datepicker__navigation) {
+		&:not(.picker__swatch):not(.react-datepicker__navigation):not(.todayButton):not(.viewMode__input):not(.postLink) {
 			border: none;
 		}
 
 		&.icon {
 			background-color: transparent;
-		}
-	}
-
-	.react-datepicker-wrapper {
-		.react-datepicker-popper {
-			z-index: 100 !important;
 		}
 	}
 
@@ -527,10 +520,13 @@ body {
 
 			.newPost {
 				display: none;
-				padding-top: 0.42em;
+				padding: 0;
+				margin-top: 8px;
 				position: absolute;
 				left: 50%;
 				transform: translateX(-50%);
+				transition: all 0.05s;
+				font-size: 1.2em;
 			}
 		}
 
@@ -623,9 +619,7 @@ body {
 			flex-direction: column;
 			justify-content: flex-start;
 			padding: 3px 0;
-			margin-top: 0;
-			margin-right: 2px;
-			margin-left: 2px;
+			margin: 0 2px;
 			list-style: none;
 
 			.post {

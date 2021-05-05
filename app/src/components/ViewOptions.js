@@ -20,7 +20,7 @@ export default function ViewOptions() {
 			<div className="viewMode">
 				<button
 					onClick={handleViewModeChange}
-					className={`icon ${
+					className={`icon viewMode__input ${
 						viewMode === "calendar" ? "active " : "inactive"
 					}`}
 					value="calendar"
@@ -31,7 +31,7 @@ export default function ViewOptions() {
 				<button
 					name="viewMode"
 					onClick={handleViewModeChange}
-					className={`icon ${
+					className={`icon viewMode__input ${
 						viewMode === "list" ? "active " : "inactive"
 					}`}
 					value="list"

@@ -695,12 +695,6 @@ class Calendario_Route extends WP_REST_Controller {
 				$newIndex = isset( $params['newIndex'] ) ? $params['newIndex'] : false;
 				$this->reorder_unscheduled_drafts( $item['ID'], $newIndex );
 			}
-
-			// Make sure post is either Draft or Private
-			$post_status = get_post_status( $item['ID'] );
-			if ( $post_status !== 'draft' && $post_status !== 'private' ) {
-				$item['post_status'] = 'draft';
-			}
 		} else {
 			delete_post_meta( $item['ID'], RHD_UNSCHEDULED_INDEX_META_KEY );
 		}
@@ -719,6 +713,7 @@ class Calendario_Route extends WP_REST_Controller {
 
 		// Remaining params
 		$skip = ['post_date', 'taxonomies'];
+
 		foreach ( $params as $key => $value ) {
 			if ( ! isset( $item[$key] ) && ! in_array( $key, $skip ) ) {
 				$item[$key] = $value;

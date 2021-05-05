@@ -1,21 +1,23 @@
 .postList {
 	position: relative;
-	font-size: 80%;
 	line-height: 2;
 	list-style: none;
 	margin-bottom: $postLinks__height;
 	transition: all 0.1s ease-out;
 
-	&:hover {
-		margin-bottom: 0;
-	}
+	// &:hover {
+	// 	padding-bottom: 0;
+	// }
 
 	.post {
+		background-color: var(--textColor-light);
+		border-radius: var(--borderRadius);
+		margin: 2px 0;
+		padding-bottom: 0;
 		color: var(--neutralColor);
 		cursor: pointer;
-		padding: 3px 0;
-		margin: 0;
 		position: relative;
+		transition: all 0.1s ease;
 
 		&.visible {
 			visibility: visible;
@@ -25,28 +27,50 @@
 			visibility: hidden;
 		}
 
+		&.hovered {
+			padding-bottom: $postLinks__height;
+
+			.postLinks {
+				z-index: 0;
+			}
+		}
+
+		&.notransition {
+			-webkit-transition: none;
+			-moz-transition: none;
+			-o-transition: none;
+			transition: none;
+		}
+
+		&.dragging {
+			padding-bottom: 0;
+		}
+
 		.postLinks {
 			display: flex;
-			align-items: flex-end;
+			align-items: center;
+			flex-wrap: wrap;
 			justify-content: center;
-			width: 100%;
-			height: 0;
-			padding: 0 2px;
+			width: 90%;
+			height: $postLinks__height;
+			padding-bottom: 1px;
+			margin: 0 auto;
 			overflow: hidden;
-			transition: height 0.1s ease-out;
+			position: absolute;
+			bottom: 0;
+			right: 50%;
+			transform: translateX(50%);
+			transition: height 0.05s;
+			z-index: -1;
 
-			&.disabled {
-				display: none;
-			}
-
-			button,
-			a {
+			button {
 				&.icon {
+					flex: 0;
 					background-color: var(--neutralColor);
 					border-radius: 50%;
 					border: 1px solid var(--textColor);
 					padding: 3px;
-					margin: 0 0.5px;
+					margin: 0;
 					font-size: 0.9rem;
 					text-decoration: none;
 
@@ -64,18 +88,15 @@
 			}
 		}
 
-		&:hover {
-			.postLinks {
-				height: $postLinks__height;
-			}
-		}
-
 		.postData {
 			pointer-events: none;
 			margin: 0;
-			padding: 4px 0;
+			padding: 4px;
 			border: 2px solid transparent;
 			border-radius: var(--borderRadius);
+			position: relative;
+			z-index: 1;
+			font-size: 90%;
 		}
 
 		&.currentPost {

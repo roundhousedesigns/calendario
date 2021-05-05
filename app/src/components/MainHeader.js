@@ -57,7 +57,7 @@ export default function MainHeader({ handleTodayClick }) {
 			<div className="col col__center mainViewOptions">
 				<div className="toToday">
 					<button
-						className="icon today"
+						className="icon today todayButton"
 						onClick={handleTodayClick}
 						title="Jump to Today"
 					>

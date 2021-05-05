@@ -19,8 +19,16 @@ export default function Post({ post, index, unscheduled }) {
 	const {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
-
 	const [color, setColor] = useState("");
+	const [isHovered, setIsHovered] = useState(false);
+	const [isMouseDown, setIsMouseDown] = useState(false);
+
+	// Make sure isMouseDown is false when dragging
+	useEffect(() => {
+		if (isDragging) {
+			setIsMouseDown(false);
+		}
+	}, [isDragging]);
 
 	useEffect(() => {
 		if (postStatuses === undefined || isEmpty(postStatuses)) {
@@ -47,6 +55,17 @@ export default function Post({ post, index, unscheduled }) {
 		});
 	};
 
+	const handleMouseDown = (e) => {
+		// Close the postLinks drawer if we're clicking or dragging, but not on the drawer itself
+		if (
+			!e.target.classList.contains("postLinks") &&
+			!e.target.classList.contains("postLink")
+		) {
+			setIsMouseDown(true);
+			setIsHovered(false);
+		}
+	};
+
 	const renderPost = () => {
 		let classes = [
 			"post",
@@ -67,6 +86,18 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push("currentPost");
 		}
 
+		if (isDragging) {
+			classes.push("dragging");
+		}
+
+		if (isHovered) {
+			classes.push("hovered");
+		}
+
+		if (isMouseDown) {
+			classes.push("notransition");
+		}
+
 		return (
 			<Draggable draggableId={`${post.id}`} index={index}>
 				{(provided, snapshot) => (
@@ -78,6 +109,9 @@ export default function Post({ post, index, unscheduled }) {
 						className={classes.join(" ")}
 						data-index={index}
 						onClick={handleClick}
+						onMouseDown={handleMouseDown}
+						onMouseEnter={() => setIsHovered(true)}
+						onMouseLeave={() => setIsHovered(false)}
 					>
 						<div
 							className="postData"
@@ -87,11 +121,7 @@ export default function Post({ post, index, unscheduled }) {
 						>
 							{decode(post.post_title, { scope: "strict" })}
 						</div>
-						<PostLinks
-							className={isDragging ? "disabled" : "active"}
-							post={post}
-							unscheduled={unscheduled}
-						/>
+						<PostLinks post={post} unscheduled={unscheduled} />
 					</li>
 				)}
 			</Draggable>

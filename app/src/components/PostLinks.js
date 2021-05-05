@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
+import PostLink from "./common/PostLink";
 import { getPostList, moveItem, dayKey } from "../lib/utils";
 import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
 
-export default function PostLinks({ post, className, unscheduled }) {
+export default function PostLinks({ post, unscheduled }) {
 	const { id, edit_link, view_link } = post;
 	const { posts, postsDispatch } = useContext(PostsContext);
 
@@ -82,49 +83,45 @@ export default function PostLinks({ post, className, unscheduled }) {
 	};
 
 	return (
-		<div className={`postLinks ${className}`}>
-			<button
-				className="icon top left icon__view"
+		<div className="postLinks">
+			<PostLink
+				icon="view"
+				title="View Post"
 				onClick={() => window.open(view_link, "_blank")}
 				target="_blank"
-				rel="noreferrer"
-				title="View Post"
 			>
 				open_in_new
-			</button>
-			<button
-				className="icon top right icon__edit"
-				onClick={() => window.open(decode(edit_link), "_blank")}
-				target="_blank"
-				rel="noreferrer"
+			</PostLink>
+			<PostLink
+				icon="edit"
 				title="Edit Post in a new tab"
+				onClick={() => window.open(decode(edit_link), "_blank")}
 			>
 				mode_edit
-			</button>
+			</PostLink>
+			{/* <PostLink icon="view" title="View Post" onClick={() => window.open(view_link, "_blank")} target="_blank">open_in_new</PostLink>
+			<PostLink icon="view" title="View Post" onClick={() => window.open(view_link, "_blank")} target="_blank">open_in_new</PostLink>
+			<PostLink icon="view" title="View Post" onClick={() => window.open(view_link, "_blank")} target="_blank">open_in_new</PostLink> */}
 			{unscheduled ? (
-				<button
-					className="icon icon__schedule bottom right"
-					onClick={schedulePost}
+				<PostLink
+					icon="schedule"
 					title="Schedule this post"
+					onClick={schedulePost}
 				>
 					event_available
-				</button>
+				</PostLink>
 			) : (
-				<button
-					className="icon icon__unschedule bottom right"
-					onClick={unschedulePost}
+				<PostLink
+					icon="unschedule"
 					title="Unschedule this post"
+					onClick={unschedulePost}
 				>
 					drafts
-				</button>
+				</PostLink>
 			)}
-			<button
-				className="icon icon__trash bottom left"
-				onClick={trashPost}
-				title="Trash this post"
-			>
+			<PostLink icon="trash" title="Trash this post" onClick={trashPost}>
 				delete_forever
-			</button>
+			</PostLink>
 		</div>
 	);
 }

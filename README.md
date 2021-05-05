@@ -19,7 +19,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## Bugs
 
--   New unscheduled post, status not saved
+-   Report some, por favor...
 
 ## TODO
 

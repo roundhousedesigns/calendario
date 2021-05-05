@@ -95,35 +95,6 @@ export function haveColorsChanged(statuses) {
 }
 
 /**
- * Filters unchanged values from a post object.
- *
- * @param {object} params  Key/value post parameters to update
- * @param {object} post The post to check against
- * @returns {object} The filtered params object
- */
-// TODO bumpy road, clean it up
-export function filterUnchangedParams(params, post) {
-	if (params.length > 0) {
-		for (let key in params) {
-			if (Array.isArray(params[key])) {
-				if (
-					params[key].length === post[key].length &&
-					params[key].every(
-						(value, index) => value === post[key][index]
-					)
-				);
-			} else {
-				if (params[key] === post[key]) {
-					params = omit(params, key);
-				}
-			}
-		}
-	}
-
-	return params;
-}
-
-/**
  * Renders a styled Widget.
  *
  * @param {string} title
