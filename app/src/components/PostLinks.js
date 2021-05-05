@@ -1,84 +1,38 @@
-import React, { useReducer, useEffect, useContext } from "react";
-import { updateReducer, initialUpdateState } from "../lib/updatePost";
+import React, { useContext } from "react";
+import { getPostList, moveItem, dayKey } from "../lib/utils";
+import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
 
-import { wp } from "../lib/utils";
-import { decode } from "html-entities";
-
 export default function PostLinks({ post, className, unscheduled }) {
-	const { routeBase, user, nonce, DEBUG_MODE } = wp;
 	const { id, edit_link, view_link } = post;
-	const { postsDispatch } = useContext(PostsContext);
-	const [updatePost, updatePostDispatch] = useReducer(
-		updateReducer,
-		initialUpdateState
-	);
-
-	// Update the post
-	useEffect(() => {
-		if (updatePost.updateNow === true && id !== "undefined") {
-			updatePostDispatch({
-				type: "UPDATING",
-			});
-
-			let url = `${routeBase}/posts/`;
-			if (updatePost.trash === true) {
-				url += `trash/${id}/${user}`;
-			} else {
-				url += `update/${id}/${user}`;
-			}
-
-			let headers = {
-				"Content-Type": "application/json",
-			};
-			if (DEBUG_MODE !== true) {
-				headers["X-WP-Nonce"] = nonce;
-			}
-
-			let postData = {
-				unscheduled: updatePost.unscheduled,
-			};
-
-			const fetchData = async () => {
-				try {
-					const response = await fetch(url, {
-						method: "POST",
-						headers,
-						body: JSON.stringify(postData),
-					});
-					// const data = await response.json(); // If you need to catch the response...
-					await response.json();
-
-					updatePostDispatch({
-						type: "COMPLETE",
-					});
-				} catch (error) {
-					console.log(error.message);
-				}
-			};
-
-			fetchData();
-		}
-	}, [
-		id,
-		user,
-		nonce,
-		routeBase,
-		postsDispatch,
-		updatePost.trash,
-		updatePost.params,
-		updatePost.updateNow,
-		updatePost.unscheduled,
-		DEBUG_MODE,
-	]);
+	const { posts, postsDispatch } = useContext(PostsContext);
 
 	const unschedulePost = (e) => {
 		e.preventDefault();
 
-		updatePostDispatch({
+		const { post_date } = post;
+		const sourceId = dayKey(post_date);
+		const destinationId = "unscheduled";
+
+		const result = moveItem(
+			getPostList(sourceId, posts),
+			getPostList(destinationId, posts),
+			{ droppableId: sourceId },
+			{ droppableId: destinationId }
+		);
+
+		postsDispatch({
+			type: "MOVE",
+			source: result[sourceId],
+			destination: result[destinationId],
+			sourceId,
+			destinationId,
+		});
+
+		postsDispatch({
 			type: "UPDATE",
-			params: {},
+			post,
 			unscheduled: true,
 		});
 	};
@@ -86,16 +40,41 @@ export default function PostLinks({ post, className, unscheduled }) {
 	const schedulePost = (e) => {
 		e.preventDefault();
 
-		updatePostDispatch({
+		const { id, post_date } = post;
+		const sourceId = "unscheduled";
+		const source = getPostList(sourceId, posts);
+		const destinationId = dayKey(post_date);
+		const destination = getPostList(destinationId, posts);
+
+		const result = moveItem(
+			source,
+			destination,
+			{
+				droppableId: sourceId,
+				index: source.findIndex((item) => item.id === id),
+			},
+			{ droppableId: destinationId }
+		);
+
+		postsDispatch({
+			type: "MOVE",
+			source: result[sourceId],
+			destination: result[destinationId],
+			sourceId,
+			destinationId,
+		});
+
+		postsDispatch({
 			type: "UPDATE",
-			params: {},
+			post,
 			unscheduled: false,
 		});
 	};
 
 	const trashPost = () => {
-		updatePostDispatch({
+		postsDispatch({
 			type: "TRASH",
+			post,
 			params: {
 				id: id,
 			},

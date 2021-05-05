@@ -691,8 +691,9 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
 			if ( $item['ID'] === 0 ) {
 				$this->prepare_new_item_for_unscheduled( $item );
-			} elseif ( isset( $params['newIndex'] ) ) {
-				$this->reorder_unscheduled_drafts( $item['ID'], $params['newIndex'] );
+			} else {
+				$newIndex = isset( $params['newIndex'] ) ? $params['newIndex'] : false;
+				$this->reorder_unscheduled_drafts( $item['ID'], $newIndex );
 			}
 
 			// Make sure post is either Draft or Private

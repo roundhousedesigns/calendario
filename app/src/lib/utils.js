@@ -193,9 +193,9 @@ export const getPostList = (id, posts) => {
 
 /**
  *
- * @param {*} list
- * @param {*} startIndex
- * @param {*} endIndex
+ * @param {object|array} list The post list
+ * @param {number} startIndex
+ * @param {number} endIndex
  * @returns
  */
 export const reorderUnscheduled = (list, startIndex, endIndex) => {
@@ -228,7 +228,14 @@ export const moveItem = (
 	const destClone = !isEmpty(destination) ? Array.from(destination) : [];
 	const [removed] = sourceClone.splice(droppableSource.index, 1);
 
-	destClone.splice(droppableDestination.index, 0, removed);
+	let destinationIndex =
+		droppableDestination.index !== undefined
+			? droppableDestination.index
+			: !isEmpty(destination)
+			? destination.length
+			: 0;
+
+	destClone.splice(destinationIndex, 0, removed);
 
 	const result = {
 		[droppableSource.droppableId]: sourceClone,

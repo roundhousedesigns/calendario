@@ -15,6 +15,7 @@ import {
 	draggedPostDate,
 	DEBUG_MODE,
 } from "./lib/utils";
+import { isEmpty } from "lodash";
 import { DragDropContext } from "react-beautiful-dnd";
 
 import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
@@ -61,6 +62,7 @@ export default function App() {
 		});
 	}, [setView, viewOptions.viewMode]);
 
+	// Send the update!
 	useEffect(() => {
 		const {
 			updatePost: {
@@ -72,6 +74,7 @@ export default function App() {
 				trash,
 			},
 		} = posts;
+		
 		if (updateNow === true && post.id !== "undefined") {
 			postsDispatch({
 				type: "UPDATING",
@@ -100,7 +103,9 @@ export default function App() {
 
 			let postData = {
 				// TODO decide if `filterUnchangedParams` is even necessary
-				params: filterUnchangedParams(params, post),
+				params: isEmpty(params)
+					? {}
+					: filterUnchangedParams(params, post),
 				unscheduled,
 			};
 

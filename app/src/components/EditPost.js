@@ -1,4 +1,3 @@
-// TODO CodeScene bumpy road cleanup
 import React, {
 	useContext,
 	useRef,
