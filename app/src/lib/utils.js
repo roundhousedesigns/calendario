@@ -208,10 +208,14 @@ export const reorderUnscheduled = (list, startIndex, endIndex) => {
 
 /**
  *
- * @param {*} source
- * @param {*} destination
- * @param {*} droppableSource
- * @param {*} droppableDestination
+ * @param {array} source
+ * @param {array} destination
+ * @param {object} droppableSource
+ * @param {string} droppableSource.droppableId List ID
+ * @param {number} [droppableSource.index = null] The starting index of the item to move
+ * @param {object} droppableDestination
+ * @param {string} droppableDestination.droppableId List ID
+ * @param {number} [droppableDestination.index = null] The ending index of the item to move
  * @returns
  */
 export const moveItem = (
@@ -238,15 +242,13 @@ export const moveItem = (
 
 /**
  *
- * @param {*} post_date
- * @param {*} droppableId
- * @param {*} overUnscheduled
+ * @param {Date} post_date
+ * @param {string} droppableId
+ * @param {boolean} overUnscheduled
  * @returns
  */
 export const draggedPostDate = (post_date, droppableId, overUnscheduled) => {
 	let date, formatted;
-
-	console.log(droppableId);
 
 	if (overUnscheduled === true) {
 		formatted = format(post_date, dateFormat.dateTime);
