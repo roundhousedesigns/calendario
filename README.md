@@ -23,10 +23,9 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   Evaluate need for `filterUnchangedParams()`
+-   Show/hide sidebar
 -   Mobile
-    -   Like, do all things, but also...
-        -   Unscheduled collapsible
+    -   Make it less terrible
 
 ## Proposed features
 
