@@ -605,7 +605,7 @@ class Calendario_Route extends WP_REST_Controller {
 
 		$newIndex = $newIndex === false ? count( $posts ) : $newIndex;
 
-		if ( ! $currentIndex || $currentIndex < 0 ) {
+		if ( $currentIndex === '' || $currentIndex < 0 ) {
 			// newly unscheduled, insert at position
 			array_splice( $posts, $newIndex, 0, $id );
 		} else {
@@ -691,7 +691,7 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
 			if ( $item['ID'] === 0 ) {
 				$this->prepare_new_item_for_unscheduled( $item );
-			} elseif ( isset( $params['newIndex'] ) && $params['newIndex'] !== 1 ) {
+			} elseif ( isset( $params['newIndex'] ) ) {
 				$this->reorder_unscheduled_drafts( $item['ID'], $params['newIndex'] );
 			}
 

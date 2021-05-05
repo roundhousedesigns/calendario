@@ -19,10 +19,11 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## Bugs
 
--   Bugs, get your bugs here...
+-   New unscheduled post, status not saved
 
 ## TODO
 
+-   Evaluate need for `filterUnchangedParams()`
 -   Mobile
     -   Like, do all things, but also...
         -   Unscheduled collapsible
