@@ -14,6 +14,14 @@ export const initialPosts = {
 		post_date: "",
 		unscheduled: null,
 	},
+	updatePost: {
+		updateNow: false,
+		trash: false,
+		post: {},
+		params: {},
+		newIndex: null,
+		unscheduled: false,
+	},
 	refetch: false,
 	dateRange: {
 		start: "",
@@ -137,6 +145,44 @@ export function postsReducer(state, action) {
 			return {
 				...state,
 				currentPost: initialPosts.currentPost,
+			};
+
+		case "UPDATE":
+			return {
+				...state,
+				updatePost: {
+					updateNow: true,
+					post: action.post,
+					params: action.params,
+					newIndex: action.newIndex,
+					unscheduled: action.unscheduled,
+				},
+			};
+
+		case "UPDATING":
+			return {
+				...state,
+				updatePost: {
+					...state.updatePost,
+					updateNow: false,
+				},
+			};
+
+		case "TRASH":
+			return {
+				...state,
+				updatePost: {
+					updateNow: true,
+					trash: true,
+					post: action.post,
+					params: action.params,
+				},
+			};
+
+		case "COMPLETE":
+			return {
+				...state,
+				updatePost: initialPosts.updatePost,
 			};
 
 		default:

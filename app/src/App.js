@@ -8,6 +8,7 @@ import {
 	isDraggingUnscheduled,
 	isOverUnscheduled,
 	reorderUnscheduled,
+	getPostList,
 	moveItem,
 	filterUnchangedParams,
 	wp,
@@ -17,7 +18,6 @@ import {
 import { DragDropContext } from "react-beautiful-dnd";
 
 import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
-import { updateReducer, initialUpdateState } from "./lib/updatePost";
 import DragContext, { dragReducer, initialDrag } from "./DragContext";
 import ViewContext, { viewReducer, initialViewOptions } from "./ViewContext";
 
@@ -32,10 +32,6 @@ export default function App() {
 	const [viewOptions, viewOptionsDispatch] = useReducer(
 		viewReducer,
 		initialViewOptions
-	);
-	const [updatePost, updatePostDispatch] = useReducer(
-		updateReducer,
-		initialUpdateState
 	);
 	const [view, setView] = useStickyState(
 		{
@@ -66,13 +62,33 @@ export default function App() {
 	}, [setView, viewOptions.viewMode]);
 
 	useEffect(() => {
-		const { post, newIndex } = updatePost;
-		if (updatePost.updateNow === true && post.id !== "undefined") {
-			updatePostDispatch({
+		const {
+			updatePost: {
+				updateNow,
+				post,
+				params,
+				unscheduled,
+				newIndex,
+				trash,
+			},
+		} = posts;
+		if (updateNow === true && post.id !== "undefined") {
+			postsDispatch({
 				type: "UPDATING",
 			});
 
-			let url = `${routeBase}/posts/update/${post.id}/${user}`;
+			// Check if this is a new post, a post to trash, or an existing post,
+			//   and set the proper URL
+			let url = `${routeBase}/posts/`;
+			if (trash === true) {
+				url += `trash/${post.id}/${user}`;
+			} else {
+				if (post.id === 0) {
+					url += `new/${user}`;
+				} else {
+					url += `update/${post.id}/${user}`;
+				}
+			}
 
 			let headers = {
 				"Content-Type": "application/json",
@@ -83,8 +99,9 @@ export default function App() {
 			}
 
 			let postData = {
-				params: filterUnchangedParams(updatePost.params, post),
-				unscheduled: updatePost.unscheduled,
+				// TODO decide if `filterUnchangedParams` is even necessary
+				params: filterUnchangedParams(params, post),
+				unscheduled,
 			};
 
 			if (newIndex !== null) {
@@ -107,8 +124,12 @@ export default function App() {
 						type: "END",
 					});
 
-					updatePostDispatch({
+					postsDispatch({
 						type: "COMPLETE",
+					});
+
+					postsDispatch({
+						type: "REFETCH",
 					});
 
 					// setIsLoading(false);
@@ -124,22 +145,11 @@ export default function App() {
 		routeBase,
 		user,
 		nonce,
-		updatePost,
+		posts,
 		draggedPost,
 		draggedPostDispatch,
 		postsDispatch,
 	]);
-
-	const getList = (id) => {
-		let list;
-		if (id === "unscheduled") {
-			list = posts.unscheduled;
-		} else {
-			list = posts.scheduled[id];
-		}
-
-		return list;
-	};
 
 	const handleTodayClick = () => {
 		const today = new Date();
@@ -232,7 +242,7 @@ export default function App() {
 		if (overUnscheduled && source.droppableId === destination.droppableId) {
 			// Reorder
 			const items = reorderUnscheduled(
-				getList(source.droppableId),
+				getPostList(source.droppableId, posts),
 				source.index,
 				destination.index
 			);
@@ -244,8 +254,8 @@ export default function App() {
 		} else if (source.droppableId !== destination.droppableId) {
 			// Move
 			const result = moveItem(
-				getList(source.droppableId),
-				getList(destination.droppableId),
+				getPostList(source.droppableId, posts),
+				getPostList(destination.droppableId, posts),
 				source,
 				destination
 			);
@@ -260,7 +270,7 @@ export default function App() {
 		}
 
 		// Run the update
-		updatePostDispatch({
+		postsDispatch({
 			type: "UPDATE",
 			post,
 			unscheduled: overUnscheduled,

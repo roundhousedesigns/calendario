@@ -8,15 +8,8 @@ import React, {
 	useCallback,
 } from "react";
 import FieldGroup from "./common/FieldGroup";
-import { updateReducer, initialUpdateState } from "../lib/updatePost";
 import { useClickOutside } from "../lib/hooks";
-import {
-	dateFormat,
-	filterStatusList,
-	wp,
-	filterUnchangedParams,
-	DEBUG_MODE,
-} from "../lib/utils";
+import { dateFormat, filterStatusList } from "../lib/utils";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
 import { isEmpty } from "lodash";
@@ -24,7 +17,6 @@ import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
-import DragContext from "../DragContext";
 
 const initialEditPost = {
 	post: {},
@@ -95,7 +87,6 @@ function editPostReducer(state, action) {
 }
 
 export default function EditPost() {
-	const { routeBase, user, nonce } = wp;
 	const {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
@@ -103,14 +94,9 @@ export default function EditPost() {
 		posts: { currentPost, taxonomies },
 		postsDispatch,
 	} = useContext(PostsContext);
-	const { draggedPostDispatch } = useContext(DragContext);
 	const [editPost, editPostDispatch] = useReducer(
 		editPostReducer,
 		initialEditPost
-	);
-	const [updatePost, updatePostDispatch] = useReducer(
-		updateReducer,
-		initialUpdateState
 	);
 	const node = useRef();
 	const [date, setDate] = useState(new Date());
@@ -165,85 +151,6 @@ export default function EditPost() {
 		};
 	}, [currentPost.post_date, currentPost.post_status]);
 
-	// Update the post
-	useEffect(() => {
-		if (updatePost.updateNow === true && currentPost.id !== "undefined") {
-			updatePostDispatch({
-				type: "UPDATING",
-			});
-
-			// Check if this is a new post and set the proper URL
-			let url = `${routeBase}/posts/`;
-			if (updatePost.trash === true) {
-				url += `trash/${currentPost.id}/${user}`;
-			} else {
-				if (currentPost.id === 0) {
-					url += `new/${user}`;
-				} else {
-					url += `update/${currentPost.id}/${user}`;
-				}
-			}
-
-			let headers = {
-				"Content-Type": "application/json",
-			};
-			if (DEBUG_MODE !== true) {
-				headers["X-WP-Nonce"] = nonce;
-			}
-
-			let postData = {
-				params: filterUnchangedParams(updatePost.params, currentPost),
-				unscheduled: updatePost.unscheduled,
-			};
-
-			const fetchData = async () => {
-				try {
-					const response = await fetch(url, {
-						method: "POST",
-						headers,
-						body: JSON.stringify(postData),
-					});
-					// const data = await response.json(); // If you need to catch the response...
-					await response.json();
-
-					draggedPostDispatch({
-						type: "END",
-					});
-
-					updatePostDispatch({
-						type: "COMPLETE",
-					});
-
-					postsDispatch({
-						type: "SET_CURRENTPOST",
-						post: post,
-						unscheduled: post.unscheduled,
-					});
-
-					postsDispatch({
-						type: "REFETCH",
-					});
-				} catch (error) {
-					console.log(error.message);
-				}
-			};
-
-			fetchData();
-		}
-	}, [
-		currentPost,
-		routeBase,
-		post,
-		user,
-		nonce,
-		draggedPostDispatch,
-		postsDispatch,
-		updatePost.trash,
-		updatePost.params,
-		updatePost.updateNow,
-		updatePost.unscheduled,
-	]);
-
 	useEffect(() => {
 		if (currentPost.id > 0 || currentPost.id === 0) {
 			editPostDispatch({
@@ -272,8 +179,9 @@ export default function EditPost() {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		updatePostDispatch({
+		postsDispatch({
 			type: "UPDATE",
+			post,
 			params: {
 				post_title: post.post_title,
 				post_date: format(
@@ -287,14 +195,19 @@ export default function EditPost() {
 			unscheduled: post.unscheduled,
 		});
 
+		postsDispatch({
+			type: "UNSET_CURRENTPOST",
+		});
+
 		editPostDispatch({
 			type: "CLEAR",
 		});
 	};
 
 	const trashHandler = () => {
-		updatePostDispatch({
+		postsDispatch({
 			type: "TRASH",
+			post,
 			params: {
 				id: post.id,
 			},
@@ -308,10 +221,10 @@ export default function EditPost() {
 	};
 
 	const cancelHandler = () => {
-		editPostDispatch({ type: "CLEAR" });
 		postsDispatch({
 			type: "UNSET_CURRENTPOST",
 		});
+		editPostDispatch({ type: "CLEAR" });
 	};
 
 	const handleInputChange = (e) => {
