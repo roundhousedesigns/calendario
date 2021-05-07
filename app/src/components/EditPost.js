@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import FieldGroup from "./common/FieldGroup";
 import { useClickOutside } from "../lib/hooks";
-import { dateFormat, filterStatusList } from "../lib/utils";
+import { dateFormat, filterPostStatus, filterStatusList } from "../lib/utils";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
 import { isEmpty } from "lodash";
@@ -90,7 +90,7 @@ export default function EditPost() {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 	const {
-		posts: { currentPost, taxonomies, unscheduled },
+		posts: { currentPost, taxonomies, unscheduled: unscheduledPosts },
 		postsDispatch,
 	} = useContext(PostsContext);
 	const [editPost, editPostDispatch] = useReducer(
@@ -104,22 +104,35 @@ export default function EditPost() {
 	const [trashPostClicked, setTrashPostClicked] = useState(false);
 
 	const { post, editMode } = editPost;
+	const {
+		id,
+		post_title,
+		post_date,
+		post_status,
+		post_excerpt,
+		image,
+		edit_link,
+		taxonomies: post_taxonomies,
+		unscheduled,
+	} = post;
+
+	console.log(taxonomies);
 
 	useEffect(() => {
-		if (post.post_date && post.post_date !== "undefined") {
-			setDate(new Date(post.post_date));
+		if (post_date && post_date !== "undefined") {
+			setDate(new Date(post_date));
 		}
 
 		return () => {
 			setDate(new Date());
 		};
-	}, [post.post_date]);
+	}, [post_date]);
 
 	useEffect(() => {
 		let exclude = [];
 
-		if (post.unscheduled === true) {
-			exclude.push("publish", "future", "pending");
+		if (unscheduled === true) {
+			exclude.push("publish", "future");
 		} else if (isFuture(date)) {
 			exclude.push("publish");
 		} else if (isPast(date)) {
@@ -133,14 +146,15 @@ export default function EditPost() {
 		return () => {
 			setAllowedStatuses({});
 		};
-	}, [date, post.unscheduled, postStatuses]);
+	}, [date, unscheduled, postStatuses]);
 
 	useEffect(() => {
+		const { post_date, post_status } = currentPost;
+
 		setDatePickerDisabled(
-			currentPost.post_date &&
-				(isToday(currentPost.post_date) ||
-					isPast(currentPost.post_date)) &&
-				currentPost.post_status === "publish"
+			post_date &&
+				(isToday(post_date) || isPast(post_date)) &&
+				post_status === "publish"
 				? true
 				: false
 		);
@@ -148,10 +162,11 @@ export default function EditPost() {
 		return () => {
 			setDatePickerDisabled(false);
 		};
-	}, [currentPost.post_date, currentPost.post_status]);
+	}, [currentPost]);
 
 	useEffect(() => {
-		if (currentPost.id > 0 || currentPost.id === 0) {
+		const { id } = currentPost;
+		if (id > 0 || id === 0) {
 			editPostDispatch({
 				type: "SET",
 				post: currentPost,
@@ -163,7 +178,7 @@ export default function EditPost() {
 				type: "CLEAR",
 			});
 		};
-	}, [currentPost.id, currentPost]);
+	}, [currentPost]);
 
 	const closeModal = useCallback(() => {
 		editPostDispatch({
@@ -179,24 +194,21 @@ export default function EditPost() {
 		e.preventDefault();
 
 		// If unscheduled, get the current index to pass along
-		const index = post.unscheduled
-			? unscheduled.findIndex((item) => item.id === post.id)
+		const index = unscheduled
+			? unscheduledPosts.findIndex((item) => item.id === id)
 			: false;
 
 		postsDispatch({
 			type: "UPDATE",
-			post,
+			id: id,
 			params: {
-				post_title: post.post_title,
-				post_date: format(
-					new Date(post.post_date),
-					dateFormat.dateTime
-				),
-				post_status: post.post_status,
-				post_excerpt: post.post_excerpt,
-				taxonomies: post.taxonomies,
+				post_title,
+				post_date: format(new Date(post_date), dateFormat.dateTime),
+				post_status: filterPostStatus(post_status, unscheduled),
+				post_excerpt,
+				taxonomies: post_taxonomies,
 			},
-			unscheduled: post.unscheduled,
+			unscheduled,
 			newIndex: index,
 		});
 
@@ -212,10 +224,7 @@ export default function EditPost() {
 	const trashHandler = () => {
 		postsDispatch({
 			type: "TRASH",
-			post,
-			params: {
-				id: post.id,
-			},
+			id,
 		});
 
 		editPostDispatch({
@@ -287,7 +296,7 @@ export default function EditPost() {
 							highlight_off
 						</button>
 						<h3 className="title">
-							{post.id === 0 ? "New" : "Edit"} Post
+							{id === 0 ? "New" : "Edit"} Post
 						</h3>
 						<form
 							className="editPost__editor__form"
@@ -296,7 +305,7 @@ export default function EditPost() {
 							<FieldGroup name="post_title" label="Title">
 								<input
 									name="post_title"
-									value={decode(post.post_title, {
+									value={decode(post_title, {
 										scope: "strict",
 									})}
 									onChange={handleInputChange}
@@ -307,7 +316,7 @@ export default function EditPost() {
 								<div className="fieldGroup__date">
 									<div
 										className={`post_date ${
-											post.unscheduled === true
+											unscheduled === true
 												? "inactive"
 												: "active"
 										}`}
@@ -331,7 +340,7 @@ export default function EditPost() {
 										<input
 											type="checkbox"
 											name="unscheduled"
-											checked={post.unscheduled}
+											checked={unscheduled}
 											onChange={handleCheckboxToggle}
 										/>
 										<label htmlFor="unscheduled">
@@ -346,7 +355,7 @@ export default function EditPost() {
 									<select
 										name="post_status"
 										onChange={handleInputChange}
-										value={post.post_status}
+										value={post_status}
 									>
 										{renderStatusOptions(allowedStatuses)}
 									</select>
@@ -369,13 +378,12 @@ export default function EditPost() {
 														}
 														checked={
 															!isEmpty(
-																post.taxonomies
+																post_taxonomies
 															) &&
 															!isEmpty(
-																post.taxonomies
-																	.category
+																post_taxonomies.category
 															) &&
-															post.taxonomies.category.includes(
+															post_taxonomies.category.includes(
 																term.term_id
 															)
 														}
@@ -404,13 +412,12 @@ export default function EditPost() {
 														}
 														checked={
 															!isEmpty(
-																post.taxonomies
+																post_taxonomies
 															) &&
 															!isEmpty(
-																post.taxonomies
-																	.post_tag
+																post_taxonomies.post_tag
 															) &&
-															post.taxonomies.post_tag.includes(
+															post_taxonomies.post_tag.includes(
 																term.term_id
 															)
 														}
@@ -430,24 +437,24 @@ export default function EditPost() {
 									name="post_excerpt"
 									onChange={handleInputChange}
 									rows={4}
-									value={decode(post.post_excerpt, {
+									value={decode(post_excerpt, {
 										scope: "strict",
 									})}
 								/>
 							</FieldGroup>
 
 							<div className="post_thumb">
-								{post.image ? (
+								{image ? (
 									<div>
 										<span>Featured Image</span>
 										<a
-											href={decode(post.edit_link)}
+											href={decode(edit_link)}
 											target="_blank"
 											rel="noreferrer"
 										>
 											<img
-												src={post.image}
-												alt={`${post.post_title}`}
+												src={image}
+												alt={`${post_title}`}
 											/>
 										</a>
 									</div>
@@ -481,11 +488,7 @@ export default function EditPost() {
 										<input
 											type="submit"
 											className="editPost__buttons__save"
-											value={
-												post.id === 0
-													? "Save"
-													: "Update"
-											}
+											value={id === 0 ? "Save" : "Update"}
 										/>
 										<input
 											type="button"

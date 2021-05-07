@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import PostLink from "./common/PostLink";
-import { getPostList, moveItem, dayKey } from "../lib/utils";
+import { getPostList, moveItem, dayKey, filterPostStatus } from "../lib/utils";
 import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
@@ -12,7 +12,7 @@ export default function PostLinks({ post, unscheduled }) {
 	const unschedulePost = (e) => {
 		e.preventDefault();
 
-		const { post_date } = post;
+		const { post_date, post_status } = post;
 		const sourceId = dayKey(post_date);
 		const destinationId = "unscheduled";
 
@@ -33,7 +33,10 @@ export default function PostLinks({ post, unscheduled }) {
 
 		postsDispatch({
 			type: "UPDATE",
-			post,
+			id,
+			params: {
+				post_status: filterPostStatus(post_status, true),
+			},
 			unscheduled: true,
 		});
 	};
@@ -67,7 +70,7 @@ export default function PostLinks({ post, unscheduled }) {
 
 		postsDispatch({
 			type: "UPDATE",
-			post,
+			id,
 			unscheduled: false,
 		});
 	};
@@ -75,10 +78,7 @@ export default function PostLinks({ post, unscheduled }) {
 	const trashPost = () => {
 		postsDispatch({
 			type: "TRASH",
-			post,
-			params: {
-				id: id,
-			},
+			id: id,
 		});
 	};
 
@@ -99,9 +99,6 @@ export default function PostLinks({ post, unscheduled }) {
 			>
 				mode_edit
 			</PostLink>
-			{/* <PostLink icon="view" title="View Post" onClick={() => window.open(view_link, "_blank")} target="_blank">open_in_new</PostLink>
-			<PostLink icon="view" title="View Post" onClick={() => window.open(view_link, "_blank")} target="_blank">open_in_new</PostLink>
-			<PostLink icon="view" title="View Post" onClick={() => window.open(view_link, "_blank")} target="_blank">open_in_new</PostLink> */}
 			{unscheduled ? (
 				<PostLink
 					icon="schedule"

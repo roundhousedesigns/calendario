@@ -19,11 +19,11 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## Bugs
 
--   Moving a NON draft or private (only allowed statuses in unscheduled) kills it dead
--   Unschedule checkbox on Edit modal does something what i dunnos but goes away fix it
+-   Tell me tell me
 
 ## TODO
 
+-   Add permalink to edit modal?
 -   Show/hide sidebar
 -   Mobile
     -   Make it less terrible

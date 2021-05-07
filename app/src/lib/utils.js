@@ -62,8 +62,8 @@ export const dateFormat = {
 /**
  * Produces a filtered list of post status objects.
  *
- * @param {array} exclude keys to exclude.
- * @return {object} The filtered postStatuses object.
+ * @param {Array} exclude keys to exclude.
+ * @return {Object} The filtered postStatuses object.
  */
 export function filterStatusList(statuses, exclude = []) {
 	let filtered = statuses;
@@ -99,7 +99,7 @@ export function haveColorsChanged(statuses) {
  *
  * @param {string} title
  * @param {string} className
- * @param {*} children
+ * @param {*} children The widget content
  * @returns
  */
 export const renderWidget = (title, className, children) => {
@@ -119,18 +119,20 @@ export const renderWidget = (title, className, children) => {
 export const dayKey = (date) => format(date, dateFormat.date);
 
 /**
+ * Checks if a date is between 2 dates.
  *
  * @param {Date} date The target date
- * @param {*} min Start of the range
- * @param {*} max End of the range
+ * @param {Date} min Start of the range
+ * @param {Date} max End of the range
  * @returns
  */
 export const dateIsBetween = (date, min, max) =>
 	date.getTime() >= min.getTime() && date.getTime() <= max.getTime();
 
 /**
+ * Determines if an item is being dragged is coming from the Unscheduled drafts area.
  *
- * @param {Post} item Dragged item // TODO figure out documenting this "Post" type for post arrays
+ * @param {Post} item Dragged item
  * @returns {boolean} True if unscheduled, false otherwise
  */
 export const isDraggingUnscheduled = (item) =>
@@ -138,7 +140,7 @@ export const isDraggingUnscheduled = (item) =>
 
 /**
  *
- * @param {Post} item Dragged item // TODO figure out documenting this "Post" type for post arrays
+ * @param {Post} item Dragged item
  * @returns {boolean} True if dragged item is over 'unscheduled' area, false otherwise
  */
 export const isOverUnscheduled = (item) =>
@@ -148,8 +150,8 @@ export const isOverUnscheduled = (item) =>
  * Retrieves a list of posts.
  *
  * @param {string} id
- * @param {array|object} posts All posts
- * @returns {array} The posts list
+ * @param {Array|Object} posts All posts
+ * @returns {Array} The posts list
  */
 export const getPostList = (id, posts) => {
 	let list;
@@ -164,7 +166,7 @@ export const getPostList = (id, posts) => {
 
 /**
  *
- * @param {object|array} list The post list
+ * @param {Object|Array} list The post list
  * @param {number} startIndex
  * @param {number} endIndex
  * @returns
@@ -179,12 +181,12 @@ export const reorderUnscheduled = (list, startIndex, endIndex) => {
 
 /**
  *
- * @param {array} source
- * @param {array} destination
- * @param {object} droppableSource
+ * @param {Array} source
+ * @param {Array} destination
+ * @param {Object} droppableSource
  * @param {string} droppableSource.droppableId List ID
  * @param {number} [droppableSource.index = null] The starting index of the item to move
- * @param {object} droppableDestination
+ * @param {Object} droppableDestination
  * @param {string} droppableDestination.droppableId List ID
  * @param {number} [droppableDestination.index = null] The ending index of the item to move
  * @returns
@@ -219,11 +221,12 @@ export const moveItem = (
 };
 
 /**
+ * Filters and formats the post_date param during drag and drop operations.
  *
  * @param {Date} post_date
  * @param {string} droppableId
  * @param {boolean} overUnscheduled
- * @returns
+ * @returns {DraggedPostDate}
  */
 export const draggedPostDate = (post_date, droppableId, overUnscheduled) => {
 	let date, formatted;
@@ -245,3 +248,21 @@ export const draggedPostDate = (post_date, droppableId, overUnscheduled) => {
 
 	return { date, formatted };
 };
+
+/**
+ * Converts non-allowed unscheduled post statuses to "draft"
+ *
+ * @param {string} post_status
+ * @param {boolean} unscheduled
+ * @returns {string} The filtered post status
+ */
+export function filterPostStatus(post_status, unscheduled) {
+	let allowedUnscheduledStatuses = ["draft", "private", "pending"];
+	let status = post_status;
+
+	if (unscheduled === true) {
+		status = allowedUnscheduledStatuses.includes(status) ? status : "draft";
+	}
+
+	return status;
+}

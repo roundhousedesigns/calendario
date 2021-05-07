@@ -17,7 +17,7 @@ export const initialPosts = {
 	updatePost: {
 		updateNow: false,
 		trash: false,
-		post: {},
+		id: null,
 		params: {},
 		newIndex: null,
 		unscheduled: false,
@@ -152,7 +152,7 @@ export function postsReducer(state, action) {
 				...state,
 				updatePost: {
 					updateNow: true,
-					post: action.post,
+					id: action.id,
 					params: action.params,
 					newIndex: action.newIndex,
 					unscheduled: action.unscheduled,
@@ -174,7 +174,7 @@ export function postsReducer(state, action) {
 				updatePost: {
 					updateNow: true,
 					trash: true,
-					post: action.post,
+					id: action.id,
 					params: action.params,
 				},
 			};

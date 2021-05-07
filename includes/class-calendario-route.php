@@ -623,10 +623,15 @@ class Calendario_Route extends WP_REST_Controller {
 	 * Adds a 'meta_input' array arg to append this post to the unscheduled drafts list.
 	 *
 	 * @param array &$item The args array for wp_update_post/wp_insert_post
+	 * @param boolean $new True if this is a new item, or the item is not yet set as unscheduled.
 	 * @return void
 	 */
-	protected function prepare_new_item_for_unscheduled( &$item ) {
-		$item['meta_input'][RHD_UNSCHEDULED_INDEX_META_KEY] = rhd_unscheduled_draft_count();
+	protected function prepare_item_for_unscheduled( &$item, $new ) {
+		if ( $new ) {
+			$item['meta_input'][RHD_UNSCHEDULED_INDEX_META_KEY] = rhd_unscheduled_draft_count();
+		} else {
+			// maybe other stuff one day
+		}
 	}
 
 	/**
@@ -690,9 +695,10 @@ class Calendario_Route extends WP_REST_Controller {
 	protected function prepare_scheduled_unscheduled( &$item, $params ) {
 		if ( isset( $params['unscheduled'] ) && $params['unscheduled'] === true ) {
 			if ( $item['ID'] === 0 ) {
-				$this->prepare_new_item_for_unscheduled( $item );
+				$this->prepare_item_for_unscheduled( $item, true );
 			} else {
 				$newIndex = isset( $params['newIndex'] ) ? $params['newIndex'] : false;
+				$this->prepare_item_for_unscheduled( $item, false );
 				$this->reorder_unscheduled_drafts( $item['ID'], $newIndex );
 			}
 		} else {

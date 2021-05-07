@@ -158,7 +158,7 @@ function rhd_query_unscheduled_items() {
 		'order'          => 'ASC',
 		'meta_key'       => RHD_UNSCHEDULED_INDEX_META_KEY,
 		'posts_per_page' => -1,
-		'post_status'    => array( 'private', 'draft' ),
+		'post_status'    => array( 'private', 'draft', 'pending' ),
 	] );
 }
 

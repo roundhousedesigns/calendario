@@ -13,6 +13,7 @@ import {
 	wp,
 	draggedPostDate,
 	DEBUG_MODE,
+	filterPostStatus,
 } from "./lib/utils";
 import { isEmpty } from "lodash";
 import { DragDropContext } from "react-beautiful-dnd";
@@ -43,6 +44,8 @@ export default function App() {
 	const todayRef = useRef();
 	const mainRef = useRef();
 
+	const { unscheduled: unscheduledPosts, scheduled: scheduledPosts } = posts;
+
 	const { routeBase, user, nonce } = wp;
 
 	useEffect(() => {
@@ -64,17 +67,10 @@ export default function App() {
 	// Send the update!
 	useEffect(() => {
 		const {
-			updatePost: {
-				updateNow,
-				post,
-				params,
-				unscheduled,
-				newIndex,
-				trash,
-			},
+			updatePost: { updateNow, id, params, unscheduled, newIndex, trash },
 		} = posts;
 
-		if (updateNow === true && post.id !== "undefined") {
+		if (updateNow === true && id !== undefined) {
 			postsDispatch({
 				type: "UPDATING",
 			});
@@ -83,12 +79,12 @@ export default function App() {
 			//   and set the proper URL
 			let url = `${routeBase}/posts/`;
 			if (trash === true) {
-				url += `trash/${post.id}/${user}`;
+				url += `trash/${id}/${user}`;
 			} else {
-				if (post.id === 0) {
+				if (id === 0) {
 					url += `new/${user}`;
 				} else {
-					url += `update/${post.id}/${user}`;
+					url += `update/${id}/${user}`;
 				}
 			}
 
@@ -179,9 +175,9 @@ export default function App() {
 
 		let postList;
 		if (draggingUnscheduled === true) {
-			postList = posts.unscheduled;
+			postList = unscheduledPosts;
 		} else {
-			postList = posts.scheduled[item.source.droppableId];
+			postList = scheduledPosts[item.source.droppableId];
 		}
 
 		const post = postList.find((p) => {
@@ -224,7 +220,11 @@ export default function App() {
 
 	const onDragEnd = (item) => {
 		const { source, destination } = item;
-		const { post } = draggedPost;
+		const { post: {
+			id,
+			post_date: post_date_raw,
+			post_status
+		} } = draggedPost;
 
 		// dropped outside a list
 		if (!destination) {
@@ -235,7 +235,7 @@ export default function App() {
 			destination.droppableId === "unscheduled" ? true : false;
 
 		const post_date = draggedPostDate(
-			post.post_date,
+			post_date_raw,
 			destination.droppableId,
 			overUnscheduled
 		);
@@ -273,14 +273,20 @@ export default function App() {
 		// Run the update
 		postsDispatch({
 			type: "UPDATE",
-			post,
+			id,
 			unscheduled: overUnscheduled,
-			params: { post_date: post_date.formatted },
+			params: {
+				post_date: post_date.formatted,
+				post_status: filterPostStatus(
+					post_status,
+					overUnscheduled
+				),
+			},
 			newIndex: overUnscheduled ? destination.index : null,
 		});
 
 		// If doing a post edit, save the post date
-		if (posts.currentPost.id === post.id) {
+		if (posts.currentPost.id === id) {
 			postsDispatch({
 				type: "UPDATE_CURRENTPOST_FIELD",
 				field: "post_date",
