@@ -6,7 +6,7 @@ import { wp } from "../lib/utils";
 export default function Header({ handleTodayClick }) {
 	useFetchPostStatuses();
 
-	const { pluginUrl } = wp;
+	const { postsUrl } = wp;
 
 	return (
 		<header className="calendario__header">
@@ -22,10 +22,12 @@ export default function Header({ handleTodayClick }) {
 						rel="noreferrer"
 						target="_blank"
 					>
-						<img
-							src={`${pluginUrl}rhd-logo.png`}
-							alt="Roundhouse Designs logo"
-						/>
+						<button
+							className="icon closeCalendario"
+							onClick={() => (window.location.href = postsUrl)}
+						>
+							disabled_by_default
+						</button>
 					</a>
 				</div>
 			</div>

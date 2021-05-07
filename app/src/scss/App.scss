@@ -29,6 +29,21 @@ body {
 	position: relative;
 }
 
+#calendario {
+	position: absolute;
+	left: 0;
+	top: 0;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: auto;
+	overflow: auto;
+	z-index: 99999;
+	background: white;
+	min-height: 100%;
+}
+
 .calendario {
 	display: grid;
 	grid-gap: var(--gridGap);
@@ -49,6 +64,19 @@ body {
 		grid-template-areas:
 			"header header"
 			"main   sidebar";
+	}
+
+	.closeCalendario {
+		font-size: 3rem;
+		padding: 0;
+		color: var(--textColor);
+		background: var(--neutralColor);
+		transition: color 0.05s;
+
+		&:hover,
+		&:active {
+			color: var(--textColor-dark);
+		}
 	}
 
 	&__title {
@@ -250,10 +278,6 @@ body {
 
 		&:not(.picker__swatch):not(.react-datepicker__navigation):not(.todayButton):not(.viewMode__input):not(.postLink) {
 			border: none;
-		}
-
-		&.icon {
-			background-color: transparent;
 		}
 	}
 
@@ -536,7 +560,6 @@ body {
 				height: auto;
 				min-height: 7em;
 				border-right: 1px solid var(--borderColor);
-				// overflow: hidden;
 				transition: 0.25s ease-out;
 				display: flex;
 				flex-direction: column;

@@ -116,8 +116,6 @@ export default function EditPost() {
 		unscheduled,
 	} = post;
 
-	console.log(taxonomies);
-
 	useEffect(() => {
 		if (post_date && post_date !== "undefined") {
 			setDate(new Date(post_date));
