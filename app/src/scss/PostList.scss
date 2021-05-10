@@ -3,21 +3,36 @@
 	line-height: 2;
 	list-style: none;
 	margin-bottom: $postLinks__height;
-	transition: all 0.1s ease-out;
+	transition: all 100ms ease-out 500ms;
 
-	// &:hover {
-	// 	padding-bottom: 0;
-	// }
+	&.dayPosts {
+		.post {
+			&.hovered {
+				.postLinks {
+					width: 94px;
+				}
+			}
+		}
+	}
+
+	&.unscheduledDrafts {
+		.post {
+			&.hovered {
+				.postLinks {
+					width: 100%;
+				}
+			}
+		}
+	}
 
 	.post {
-		background-color: var(--textColor-light);
 		border-radius: var(--borderRadius);
 		margin: 2px 0;
 		padding-bottom: 0;
 		color: var(--neutralColor);
 		cursor: pointer;
 		position: relative;
-		transition: all 0.1s ease;
+		transition: padding-bottom 250ms ease;
 
 		&.visible {
 			visibility: visible;
@@ -29,10 +44,6 @@
 
 		&.hovered {
 			padding-bottom: $postLinks__height;
-
-			.postLinks {
-				z-index: 0;
-			}
 		}
 
 		&.notransition {
@@ -47,30 +58,29 @@
 		}
 
 		.postLinks {
+			border-radius: var(--borderRadius);
 			display: flex;
 			align-items: center;
-			flex-wrap: wrap;
+			flex-wrap: nowrap;
 			justify-content: center;
-			width: 90%;
-			height: $postLinks__height;
-			padding-bottom: 1px;
-			margin: 0 auto;
+			min-height: $postLinks__height;
+			padding: 0 2px;
+			margin: 0;
 			overflow: hidden;
 			position: absolute;
 			bottom: 0;
 			right: 50%;
 			transform: translateX(50%);
-			transition: height 0.05s;
-			z-index: -1;
+			transition: all 100ms ease-in-out;
+			width: 100%;
 
 			button {
 				&.icon {
 					flex: 0;
-					background-color: var(--neutralColor);
 					border-radius: 50%;
 					border: 1px solid var(--textColor);
-					padding: 3px;
-					margin: 0;
+					padding: 2px;
+					margin: 1px;
 					font-size: 0.9rem;
 					text-decoration: none;
 
@@ -97,6 +107,14 @@
 			position: relative;
 			z-index: 1;
 			font-size: 90%;
+			overflow: hidden;
+
+			&__title {
+				display: inline-block;
+				padding: 0 1px;
+				width: 100%;
+				margin: 0;
+			}
 		}
 
 		&.currentPost {

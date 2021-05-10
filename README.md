@@ -29,6 +29,10 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 -   Mobile
     -   Make it less terrible
 
+## Roadmap
+
+-   Featured Image selector/uploader
+
 ## Proposed features
 
 -   Custom taxonomy support?

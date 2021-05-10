@@ -119,7 +119,9 @@ export default function Post({ post, index, unscheduled }) {
 								backgroundColor: color,
 							}}
 						>
-							{decode(post.post_title, { scope: "strict" })}
+							<p className="postData__title">
+								{decode(post.post_title, { scope: "strict" })}
+							</p>
 						</div>
 						<PostLinks post={post} unscheduled={unscheduled} />
 					</li>
