@@ -15,6 +15,7 @@ export function dragReducer(state, action) {
 	switch (action.type) {
 		case "START":
 			return {
+				...state,
 				post: action.post,
 				isDragging: true,
 				currentIndex:

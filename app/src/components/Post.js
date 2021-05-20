@@ -14,7 +14,7 @@ export default function Post({ post, index, unscheduled }) {
 		postsDispatch,
 	} = useContext(PostsContext);
 	const {
-		draggedPost: { isDragging },
+		draggedPost: { isDragging, overUnscheduled },
 	} = useContext(DragContext);
 	const {
 		viewOptions: { postStatuses },
@@ -88,7 +88,7 @@ export default function Post({ post, index, unscheduled }) {
 		}
 	};
 
-	const renderPost = () => {
+	function draggableStyles(snapshot) {
 		let classes = [
 			"post",
 			`post-id-${post.id} status__${post.post_status}`,
@@ -112,46 +112,47 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push("dragging");
 		}
 
-		return (
-			<Draggable draggableId={`${post.id}`} index={index}>
-				{(provided, snapshot) => (
-					<li
-						ref={provided.innerRef}
-						{...provided.draggableProps}
-						{...provided.dragHandleProps}
-						key={post.id}
-						className={classes.join(" ")}
-						data-index={index}
-						onClick={handleClick}
-						onMouseEnter={handleMouseEnter}
-						onMouseLeave={handleMouseLeave}
-						onMouseDown={handleMouseDown}
-					>
-						<div
-							className="postData"
-							style={{
-								backgroundColor: color,
-							}}
-						>
-							<p className="postData__title">
-								{decode(post.post_title, { scope: "strict" })}
-							</p>
-						</div>
-						<PostLinks
-							style={{
-								backgroundColor: color.replace(
-									/,1\)/,
-									",0.75)"
-								),
-							}}
-							post={post}
-							unscheduled={unscheduled}
-						/>
-					</li>
-				)}
-			</Draggable>
-		);
-	};
+		if (snapshot.isDragging && overUnscheduled === false) {
+			classes.push("killTransition");
+		}
 
-	return !isEmpty(postStatuses) ? renderPost() : null;
+		return classes.join(" ");
+	}
+
+	return !isEmpty(postStatuses) ? (
+		<Draggable draggableId={`${post.id}`} index={index}>
+			{({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
+				<li
+					ref={innerRef}
+					{...draggableProps}
+					{...dragHandleProps}
+					key={post.id}
+					className={draggableStyles(snapshot)}
+					data-index={index}
+					onClick={handleClick}
+					onMouseEnter={handleMouseEnter}
+					onMouseLeave={handleMouseLeave}
+					onMouseDown={handleMouseDown}
+				>
+					<div
+						className="postData"
+						style={{
+							backgroundColor: color,
+						}}
+					>
+						<p className="postData__title">
+							{decode(post.post_title, { scope: "strict" })}
+						</p>
+					</div>
+					<PostLinks
+						style={{
+							backgroundColor: color.replace(/,1\)/, ",0.75)"),
+						}}
+						post={post}
+						unscheduled={unscheduled}
+					/>
+				</li>
+			)}
+		</Draggable>
+	) : null;
 }

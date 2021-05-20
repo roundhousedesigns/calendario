@@ -323,24 +323,63 @@ export default function EditPost() {
 							highlight_off
 						</button>
 						<h3 className="title">
-							{id === 0 ? "New" : "Edit"} Post
+							{id === 0 ? (
+								"New Post"
+							) : (
+								<a href={decode(edit_link)} target="_blank">
+									Edit Post{" "}
+									<span className="icon">open_in_new</span>
+								</a>
+							)}
 						</h3>
 						<form
 							className="editPost__editor__form"
 							onSubmit={handleSubmit}
 						>
-							<FieldGroup name="post_title" label="Title">
-								<input
-									name="post_title"
-									id="post_title"
-									value={decode(post_title, {
-										scope: "strict",
-									})}
-									onChange={handleInputChange}
-								/>
-							</FieldGroup>
-
-							<FieldGroup name="date_status">
+							<FieldGroup name="header">
+								<div className="fieldGroup__post_thumb">
+									{image ? (
+										<div>
+											<a
+												href={decode(edit_link)}
+												target="_blank"
+												rel="noreferrer"
+											>
+												Featured Image{" "}
+												<span className="icon">
+													open_in_new
+												</span>
+												<img
+													src={image}
+													alt={`${post_title}`}
+												/>
+											</a>
+										</div>
+									) : null}
+								</div>
+								<div className="fieldGroup__post_title">
+									<label htmlFor="post_title">Title</label>
+									<input
+										name="post_title"
+										id="post_title"
+										value={decode(post_title, {
+											scope: "strict",
+										})}
+										onChange={handleInputChange}
+									/>
+								</div>
+								<div className="fieldGroup__status">
+									<label htmlFor="post_status">
+										Post Status
+									</label>
+									<select
+										name="post_status"
+										onChange={handleInputChange}
+										value={post_status}
+									>
+										{renderStatusOptions(allowedStatuses)}
+									</select>
+								</div>
 								<div className="fieldGroup__date">
 									<div
 										className={`post_date ${
@@ -376,18 +415,6 @@ export default function EditPost() {
 											Unscheduled
 										</label>
 									</div>
-								</div>
-								<div className="fieldGroup__status">
-									<label htmlFor="post_status">
-										Post Status
-									</label>
-									<select
-										name="post_status"
-										onChange={handleInputChange}
-										value={post_status}
-									>
-										{renderStatusOptions(allowedStatuses)}
-									</select>
 								</div>
 							</FieldGroup>
 
@@ -537,24 +564,6 @@ export default function EditPost() {
 									</fieldset>
 								</div>
 							</FieldGroup>
-
-							<div className="post_thumb">
-								{image ? (
-									<div>
-										<span>Featured Image</span>
-										<a
-											href={decode(edit_link)}
-											target="_blank"
-											rel="noreferrer"
-										>
-											<img
-												src={image}
-												alt={`${post_title}`}
-											/>
-										</a>
-									</div>
-								) : null}
-							</div>
 
 							<div className="editPost__buttons">
 								{trashPostClicked === true ? (

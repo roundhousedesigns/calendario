@@ -1,6 +1,7 @@
 .postList {
 	position: relative;
 	line-height: 2;
+	height: 100%;
 	list-style: none;
 	margin-bottom: $postLinks__height;
 	transition: background-color 150ms ease;
@@ -21,6 +22,8 @@
 
 	&.unscheduledDrafts {
 		.post {
+			margin: 0;
+
 			&:hover {
 				.postLinks {
 					width: 100%;

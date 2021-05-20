@@ -608,16 +608,13 @@ body {
 			display: flex;
 			flex-direction: column;
 			justify-content: flex-start;
-			padding: 3px 0;
+			padding: 40px 0 3px;
 			margin: 0;
 			list-style: none;
 
 			.post {
 				margin: 0 2px;
 
-				&:first-of-type {
-					margin-top: 40px;
-				}
 				.postData {
 					line-height: 1.3;
 				}

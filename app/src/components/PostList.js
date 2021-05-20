@@ -30,10 +30,10 @@ export default function PostList({ renderPosts, className, date }) {
 
 	return (
 		<Droppable droppableId={droppableId}>
-			{(provided, snapshot) => (
+			{({ innerRef, droppableProps, placeholder }, snapshot) => (
 				<ul
-					ref={provided.innerRef}
-					{...provided.droppableProps}
+					ref={innerRef}
+					{...droppableProps}
 					className={`postList ${className} ${
 						snapshot.isDraggingOver ? "draggingOver" : "idle"
 					}`}
@@ -42,7 +42,11 @@ export default function PostList({ renderPosts, className, date }) {
 					style={hovered ? { marginBottom: 0 } : null}
 				>
 					{renderPostList}
-					{provided.placeholder}
+					{date !== false ? (
+						<span style={{ disable: "none" }}>{placeholder}</span>
+					) : (
+						placeholder
+					)}
 				</ul>
 			)}
 		</Droppable>

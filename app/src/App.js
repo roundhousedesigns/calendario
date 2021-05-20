@@ -203,7 +203,7 @@ export default function App() {
 		let overUnscheduled = isOverUnscheduled(item);
 
 		// only dispatch if an update is necessary
-		if (overUnscheduled === true && draggedPost.overUnscheduled === false) {
+		if (overUnscheduled === true) {
 			draggedPostDispatch({
 				type: "DRAGGING_OVER_UNSCHEDULED",
 				draggedOver: item.destination.index,
@@ -220,11 +220,9 @@ export default function App() {
 
 	const onDragEnd = (item) => {
 		const { source, destination } = item;
-		const { post: {
-			id,
-			post_date: post_date_raw,
-			post_status
-		} } = draggedPost;
+		const {
+			post: { id, post_date: post_date_raw, post_status },
+		} = draggedPost;
 
 		// dropped outside a list
 		if (!destination) {
@@ -277,10 +275,7 @@ export default function App() {
 			unscheduled: overUnscheduled,
 			params: {
 				post_date: post_date.formatted,
-				post_status: filterPostStatus(
-					post_status,
-					overUnscheduled
-				),
+				post_status: filterPostStatus(post_status, overUnscheduled),
 			},
 			newIndex: overUnscheduled ? destination.index : null,
 		});
