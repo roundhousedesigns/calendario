@@ -217,12 +217,8 @@
 		justify-content: flex-end;
 		flex: 1;
 
-		&__cancel {
-			margin-left: 6px;
-		}
-
 		&__trash {
-			margin-left: 24px;
+			margin-left: 6px;
 
 			&:not(.confirm) {
 				float: right;

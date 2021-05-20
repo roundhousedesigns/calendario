@@ -260,12 +260,12 @@ export default function EditPost() {
 		setTrashPostClicked(false);
 	};
 
-	const cancelHandler = () => {
-		postsDispatch({
-			type: "UNSET_CURRENTPOST",
-		});
-		editPostDispatch({ type: "CLEAR" });
-	};
+	// const cancelHandler = () => {
+	// 	postsDispatch({
+	// 		type: "UNSET_CURRENTPOST",
+	// 	});
+	// 	editPostDispatch({ type: "CLEAR" });
+	// };
 
 	const handleInputChange = (e) => {
 		editPostDispatch({
@@ -374,12 +374,12 @@ export default function EditPost() {
 													id === 0 ? "Save" : "Update"
 												}
 											/>
-											<input
+											{/* <input
 												type="button"
 												className="editPost__buttons__cancel"
 												onClick={cancelHandler}
 												value="Cancel"
-											/>
+											/> */}
 											<input
 												type="button"
 												className="editPost__buttons__trash"
