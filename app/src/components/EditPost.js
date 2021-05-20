@@ -322,20 +322,76 @@ export default function EditPost() {
 						<button className="close icon" onClick={closeModal}>
 							highlight_off
 						</button>
-						<h3 className="title">
-							{id === 0 ? (
-								"New Post"
-							) : (
-								<a href={decode(edit_link)} target="_blank">
-									Edit Post{" "}
-									<span className="icon">open_in_new</span>
-								</a>
-							)}
-						</h3>
 						<form
 							className="editPost__editor__form"
 							onSubmit={handleSubmit}
 						>
+							<div className="titleBar">
+								<h3>
+									{id === 0 ? (
+										"New Post"
+									) : (
+										<a
+											href={decode(edit_link)}
+											target="_blank"
+											rel="noreferrer"
+										>
+											Edit Post{" "}
+											<span className="icon">
+												open_in_new
+											</span>
+										</a>
+									)}
+								</h3>
+								<div className="editPost__buttons">
+									{trashPostClicked === true ? (
+										<div className="editPost__buttons__trash confirm">
+											<p style={{ fontWeight: "bold" }}>
+												Are you sure you want to Trash
+												this post?
+											</p>
+											<input
+												type="button"
+												onClick={trashHandler}
+												value="Yes"
+												autoFocus={true}
+											/>
+											{/* TODO bind ESC to cancel */}
+											<input
+												type="button"
+												onClick={() =>
+													setTrashPostClicked(false)
+												}
+												value="No"
+											/>
+										</div>
+									) : (
+										<>
+											<input
+												type="submit"
+												className="editPost__buttons__save"
+												value={
+													id === 0 ? "Save" : "Update"
+												}
+											/>
+											<input
+												type="button"
+												className="editPost__buttons__cancel"
+												onClick={cancelHandler}
+												value="Cancel"
+											/>
+											<input
+												type="button"
+												className="editPost__buttons__trash"
+												onClick={() =>
+													setTrashPostClicked(true)
+												}
+												value="Delete Post"
+											/>
+										</>
+									)}
+								</div>
+							</div>
 							<FieldGroup name="header">
 								<div className="fieldGroup__post_thumb">
 									{image ? (
@@ -452,8 +508,11 @@ export default function EditPost() {
 										</div>
 										<div className="terms">
 											{taxonomies.category.terms.map(
-												(term, index) => {
-													return term.name
+												(
+													{ name, slug, term_id },
+													index
+												) => {
+													return name
 														.toLowerCase()
 														.includes(
 															taxFilter.category.toLowerCase()
@@ -462,15 +521,13 @@ export default function EditPost() {
 															"" ? (
 														<label
 															key={index}
-															htmlFor={term.slug}
+															htmlFor={slug}
 														>
 															<input
 																type="checkbox"
-																name={term.slug}
-																id={term.slug}
-																value={
-																	term.term_id
-																}
+																name={slug}
+																id={slug}
+																value={term_id}
 																onChange={
 																	handleTermCheckboxChange
 																}
@@ -482,11 +539,11 @@ export default function EditPost() {
 																		post_taxonomies.category
 																	) &&
 																	post_taxonomies.category.includes(
-																		term.term_id
+																		term_id
 																	)
 																}
 															/>
-															{decode(term.name, {
+															{decode(name, {
 																scope: "strict",
 															})}
 														</label>
@@ -520,8 +577,11 @@ export default function EditPost() {
 										</div>
 										<div className="terms">
 											{taxonomies.post_tag.terms.map(
-												(term, index) => {
-													return term.name
+												(
+													{ slug, name, term_id },
+													index
+												) => {
+													return name
 														.toLowerCase()
 														.includes(
 															taxFilter.post_tag.toLowerCase()
@@ -531,11 +591,9 @@ export default function EditPost() {
 														<label key={index}>
 															<input
 																type="checkbox"
-																name={term.slug}
-																id={term.slug}
-																value={
-																	term.term_id
-																}
+																name={slug}
+																id={slug}
+																value={term_id}
 																onChange={
 																	handleTermCheckboxChange
 																}
@@ -547,11 +605,11 @@ export default function EditPost() {
 																		post_taxonomies.post_tag
 																	) &&
 																	post_taxonomies.post_tag.includes(
-																		term.term_id
+																		term_id
 																	)
 																}
 															/>
-															{decode(term.name, {
+															{decode(name, {
 																scope: "strict",
 															})}
 														</label>
@@ -564,53 +622,6 @@ export default function EditPost() {
 									</fieldset>
 								</div>
 							</FieldGroup>
-
-							<div className="editPost__buttons">
-								{trashPostClicked === true ? (
-									<div className="editPost__buttons__trash confirm">
-										<p style={{ fontWeight: "bold" }}>
-											Are you sure you want to Trash this
-											post?
-										</p>
-										<input
-											type="button"
-											onClick={trashHandler}
-											value="Yes"
-											autoFocus={true}
-										/>
-										{/* TODO bind ESC to cancel */}
-										<input
-											type="button"
-											onClick={() =>
-												setTrashPostClicked(false)
-											}
-											value="No"
-										/>
-									</div>
-								) : (
-									<>
-										<input
-											type="submit"
-											className="editPost__buttons__save"
-											value={id === 0 ? "Save" : "Update"}
-										/>
-										<input
-											type="button"
-											className="editPost__buttons__cancel"
-											onClick={cancelHandler}
-											value="Cancel"
-										/>
-										<input
-											type="button"
-											className="editPost__buttons__trash"
-											onClick={() =>
-												setTrashPostClicked(true)
-											}
-											value="Delete"
-										/>
-									</>
-								)}
-							</div>
 						</form>
 					</div>
 				) : null}

@@ -42,11 +42,7 @@ export default function PostList({ renderPosts, className, date }) {
 					style={hovered ? { marginBottom: 0 } : null}
 				>
 					{renderPostList}
-					{date !== false ? (
-						<span style={{ disable: "none" }}>{placeholder}</span>
-					) : (
-						placeholder
-					)}
+					{placeholder}
 				</ul>
 			)}
 		</Droppable>

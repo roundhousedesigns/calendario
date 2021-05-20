@@ -132,19 +132,21 @@ export const dateIsBetween = (date, min, max) =>
 /**
  * Determines if an item is being dragged is coming from the Unscheduled drafts area.
  *
- * @param {Post} item Dragged item
+ * @param {Post} item Dragged post
+ * @param {string} item.source.droppableId The drop area ID
  * @returns {boolean} True if unscheduled, false otherwise
  */
-export const isDraggingUnscheduled = (item) =>
-	item.source.droppableId === "unscheduled" ? true : false;
+export const isDraggingUnscheduled = ({ source: { droppableId } }) =>
+	droppableId === "unscheduled" ? true : false;
 
 /**
  *
  * @param {Post} item Dragged item
+ * @param {string} item.destination.droppableId The drop area ID
  * @returns {boolean} True if dragged item is over 'unscheduled' area, false otherwise
  */
-export const isOverUnscheduled = (item) =>
-	item.destination.droppableId === "unscheduled" ? true : false;
+export const isOverUnscheduled = ({ source: { droppableId } }) =>
+	droppableId === "unscheduled" ? true : false;
 
 /**
  * Retrieves a list of posts.

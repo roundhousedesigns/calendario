@@ -14,7 +14,7 @@ export default function Post({ post, index, unscheduled }) {
 		postsDispatch,
 	} = useContext(PostsContext);
 	const {
-		draggedPost: { isDragging, overUnscheduled },
+		draggedPost: { isDragging },
 	} = useContext(DragContext);
 	const {
 		viewOptions: { postStatuses },
@@ -110,10 +110,6 @@ export default function Post({ post, index, unscheduled }) {
 
 		if (isDragging) {
 			classes.push("dragging");
-		}
-
-		if (snapshot.isDragging && overUnscheduled === false) {
-			classes.push("killTransition");
 		}
 
 		return classes.join(" ");

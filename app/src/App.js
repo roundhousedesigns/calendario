@@ -44,8 +44,11 @@ export default function App() {
 	const todayRef = useRef();
 	const mainRef = useRef();
 
-	const { unscheduled: unscheduledPosts, scheduled: scheduledPosts } = posts;
-
+	const {
+		unscheduled: unscheduledPosts,
+		scheduled: scheduledPosts,
+		currentPost,
+	} = posts;
 	const { routeBase, user, nonce } = wp;
 
 	useEffect(() => {
@@ -281,7 +284,7 @@ export default function App() {
 		});
 
 		// If doing a post edit, save the post date
-		if (posts.currentPost.id === id) {
+		if (currentPost.id === id) {
 			postsDispatch({
 				type: "UPDATE_CURRENTPOST_FIELD",
 				field: "post_date",
