@@ -34,7 +34,9 @@ export default function PostList({ renderPosts, className, date }) {
 				<ul
 					ref={provided.innerRef}
 					{...provided.droppableProps}
-					className={`postList ${className}`}
+					className={`postList ${className} ${
+						snapshot.isDraggingOver ? "draggingOver" : "idle"
+					}`}
 					onMouseEnter={() => setHovered(true)}
 					onMouseLeave={() => setHovered(false)}
 					style={hovered ? { marginBottom: 0 } : null}

@@ -113,7 +113,7 @@ export default function PostLinks({ post, unscheduled }) {
 					title="Unschedule this post"
 					onClick={unschedulePost}
 				>
-					drafts
+					event_busy
 				</PostLink>
 			)}
 			<PostLink icon="trash" title="Trash this post" onClick={trashPost}>

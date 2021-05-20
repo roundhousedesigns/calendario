@@ -19,8 +19,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## Bugs
 
--   Tell me tell me
-
 ## TODO
 
 -   Polish interaction CSS

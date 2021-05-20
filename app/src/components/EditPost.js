@@ -22,6 +22,11 @@ const initialEditPost = {
 	editMode: false,
 };
 
+const initialTaxFilter = {
+	category: "",
+	post_tag: "",
+};
+
 function editPostReducer(state, action) {
 	switch (action.type) {
 		case "SET":
@@ -85,6 +90,25 @@ function editPostReducer(state, action) {
 	}
 }
 
+function taxFilterReducer(state, action) {
+	switch (action.type) {
+		case "category":
+			return {
+				...state,
+				category: action.filter,
+			};
+
+		case "post_tag":
+			return {
+				...state,
+				post_tag: action.filter,
+			};
+
+		default:
+			return state;
+	}
+}
+
 export default function EditPost() {
 	const {
 		viewOptions: { postStatuses },
@@ -96,6 +120,10 @@ export default function EditPost() {
 	const [editPost, editPostDispatch] = useReducer(
 		editPostReducer,
 		initialEditPost
+	);
+	const [taxFilter, taxFilterDispatch] = useReducer(
+		taxFilterReducer,
+		initialTaxFilter
 	);
 	const node = useRef();
 	const [date, setDate] = useState(new Date());
@@ -256,9 +284,10 @@ export default function EditPost() {
 	};
 
 	const handleTermCheckboxChange = (e) => {
+		console.log(e);
 		editPostDispatch({
 			type: "TOGGLE_TAXONOMY",
-			taxonomy: e.target.name,
+			taxonomy: e.target.closest("fieldset").name,
 			term_id: e.target.value,
 		});
 	};
@@ -303,6 +332,7 @@ export default function EditPost() {
 							<FieldGroup name="post_title" label="Title">
 								<input
 									name="post_title"
+									id="post_title"
 									value={decode(post_title, {
 										scope: "strict",
 									})}
@@ -338,6 +368,7 @@ export default function EditPost() {
 										<input
 											type="checkbox"
 											name="unscheduled"
+											id="unscheduled"
 											checked={unscheduled}
 											onChange={handleCheckboxToggle}
 										/>
@@ -360,76 +391,6 @@ export default function EditPost() {
 								</div>
 							</FieldGroup>
 
-							<FieldGroup name="taxonomies">
-								<label htmlFor="category">
-									Categories
-									<fieldset name="category">
-										{taxonomies.category.terms.map(
-											(term, index) => (
-												<label key={index}>
-													<input
-														type="checkbox"
-														name="category"
-														value={term.term_id}
-														onChange={
-															handleTermCheckboxChange
-														}
-														checked={
-															!isEmpty(
-																post_taxonomies
-															) &&
-															!isEmpty(
-																post_taxonomies.category
-															) &&
-															post_taxonomies.category.includes(
-																term.term_id
-															)
-														}
-													/>
-													{decode(term.name, {
-														scope: "strict",
-													})}
-												</label>
-											)
-										)}
-									</fieldset>
-								</label>
-
-								<label htmlFor="post_tag">
-									Tags
-									<fieldset name="post_tag">
-										{taxonomies.post_tag.terms.map(
-											(term, index) => (
-												<label key={index}>
-													<input
-														type="checkbox"
-														name="post_tag"
-														value={term.term_id}
-														onChange={
-															handleTermCheckboxChange
-														}
-														checked={
-															!isEmpty(
-																post_taxonomies
-															) &&
-															!isEmpty(
-																post_taxonomies.post_tag
-															) &&
-															post_taxonomies.post_tag.includes(
-																term.term_id
-															)
-														}
-													/>
-													{decode(term.name, {
-														scope: "strict",
-													})}
-												</label>
-											)
-										)}
-									</fieldset>
-								</label>
-							</FieldGroup>
-
 							<FieldGroup name="post_excerpt" label="Excerpt">
 								<textarea
 									name="post_excerpt"
@@ -439,6 +400,142 @@ export default function EditPost() {
 										scope: "strict",
 									})}
 								/>
+							</FieldGroup>
+
+							<FieldGroup name="taxonomies">
+								<div className="taxonomy">
+									<fieldset name="category">
+										<legend>Categories</legend>
+										<div className="filter">
+											<label htmlFor="category_filter">
+												Search Categories
+											</label>
+											<input
+												id="category_filter"
+												name="category_filter"
+												type="text"
+												value={taxFilter.category}
+												onChange={(e) =>
+													taxFilterDispatch({
+														type: "category",
+														filter: e.target.value,
+													})
+												}
+											/>
+										</div>
+										<div className="terms">
+											{taxonomies.category.terms.map(
+												(term, index) => {
+													return term.name
+														.toLowerCase()
+														.includes(
+															taxFilter.category.toLowerCase()
+														) ||
+														taxFilter.category ===
+															"" ? (
+														<label
+															key={index}
+															htmlFor={term.slug}
+														>
+															<input
+																type="checkbox"
+																name={term.slug}
+																id={term.slug}
+																value={
+																	term.term_id
+																}
+																onChange={
+																	handleTermCheckboxChange
+																}
+																checked={
+																	!isEmpty(
+																		post_taxonomies
+																	) &&
+																	!isEmpty(
+																		post_taxonomies.category
+																	) &&
+																	post_taxonomies.category.includes(
+																		term.term_id
+																	)
+																}
+															/>
+															{decode(term.name, {
+																scope: "strict",
+															})}
+														</label>
+													) : (
+														""
+													);
+												}
+											)}
+										</div>
+									</fieldset>
+								</div>
+								<div className="taxonomy">
+									<fieldset name="post_tag">
+										<legend>Tags</legend>
+										<div className="filter">
+											<label htmlFor="category_filter">
+												Search Post Tags
+											</label>
+											<input
+												id="post_tag_filter"
+												name="post_tag_filter"
+												type="text"
+												value={taxFilter.post_tag}
+												onChange={(e) =>
+													taxFilterDispatch({
+														type: "post_tag",
+														filter: e.target.value,
+													})
+												}
+											/>
+										</div>
+										<div className="terms">
+											{taxonomies.post_tag.terms.map(
+												(term, index) => {
+													return term.name
+														.toLowerCase()
+														.includes(
+															taxFilter.post_tag.toLowerCase()
+														) ||
+														taxFilter.post_tag ===
+															"" ? (
+														<label key={index}>
+															<input
+																type="checkbox"
+																name={term.slug}
+																id={term.slug}
+																value={
+																	term.term_id
+																}
+																onChange={
+																	handleTermCheckboxChange
+																}
+																checked={
+																	!isEmpty(
+																		post_taxonomies
+																	) &&
+																	!isEmpty(
+																		post_taxonomies.post_tag
+																	) &&
+																	post_taxonomies.post_tag.includes(
+																		term.term_id
+																	)
+																}
+															/>
+															{decode(term.name, {
+																scope: "strict",
+															})}
+														</label>
+													) : (
+														""
+													);
+												}
+											)}
+										</div>
+									</fieldset>
+								</div>
 							</FieldGroup>
 
 							<div className="post_thumb">

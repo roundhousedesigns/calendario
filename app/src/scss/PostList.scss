@@ -3,11 +3,15 @@
 	line-height: 2;
 	list-style: none;
 	margin-bottom: $postLinks__height;
-	transition: all 100ms ease-out 500ms;
+	transition: background-color 150ms ease;
+
+	&.draggingOver {
+		background-color: var(--mainColor-transparent);
+	}
 
 	&.dayPosts {
 		.post {
-			&.hovered {
+			&:hover {
 				.postLinks {
 					width: 94px;
 				}
@@ -17,7 +21,7 @@
 
 	&.unscheduledDrafts {
 		.post {
-			&.hovered {
+			&:hover {
 				.postLinks {
 					width: 100%;
 				}
@@ -26,13 +30,13 @@
 	}
 
 	.post {
+		border: 2px solid transparent;
 		border-radius: var(--borderRadius);
-		margin: 2px 0;
 		padding-bottom: 0;
 		color: var(--neutralColor);
 		cursor: pointer;
 		position: relative;
-		transition: padding-bottom 250ms ease;
+		// transition: padding-bottom 100ms ease-in-out;
 
 		&.visible {
 			visibility: visible;
@@ -53,10 +57,6 @@
 			transition: none;
 		}
 
-		&.dragging {
-			padding-bottom: 0;
-		}
-
 		.postLinks {
 			border-radius: var(--borderRadius);
 			display: flex;
@@ -71,7 +71,6 @@
 			bottom: 0;
 			right: 50%;
 			transform: translateX(50%);
-			transition: all 100ms ease-in-out;
 			width: 100%;
 
 			button {

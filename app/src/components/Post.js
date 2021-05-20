@@ -20,15 +20,7 @@ export default function Post({ post, index, unscheduled }) {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 	const [color, setColor] = useState("");
-	const [isHovered, setIsHovered] = useState(false);
-	const [isMouseDown, setIsMouseDown] = useState(false);
-
-	// Make sure isMouseDown is false when dragging
-	useEffect(() => {
-		if (isDragging) {
-			setIsMouseDown(false);
-		}
-	}, [isDragging]);
+	const [animationRequestId, setAnimationRequestId] = useState(null);
 
 	useEffect(() => {
 		if (postStatuses === undefined || isEmpty(postStatuses)) {
@@ -55,14 +47,44 @@ export default function Post({ post, index, unscheduled }) {
 		});
 	};
 
+	const handleMouseEnter = (e) => {
+		animateLinks(e.currentTarget, {
+			timing: function (timeFraction) {
+				return timeFraction;
+			},
+			draw: function (element, progress) {
+				element.style.paddingBottom = progress + 30 + "px";
+			},
+			duration: 50,
+		});
+	};
+
+	function animateLinks(element, { timing, draw, duration }) {
+		let start = performance.now();
+
+		setAnimationRequestId(() =>
+			requestAnimationFrame(function animate(time) {
+				let timeFraction = (time - start) / duration;
+
+				let progress = timing(timeFraction);
+				draw(element, progress);
+			})
+		);
+	}
+
+	const handleMouseLeave = (e) => {
+		e.currentTarget.style.paddingBottom = 0;
+		cancelAnimationFrame(animationRequestId);
+	};
+
 	const handleMouseDown = (e) => {
 		// Close the postLinks drawer if we're clicking or dragging, but not on the drawer itself
 		if (
 			!e.target.classList.contains("postLinks") &&
 			!e.target.classList.contains("postLink")
 		) {
-			setIsMouseDown(true);
-			setIsHovered(false);
+			cancelAnimationFrame(animationRequestId);
+			e.currentTarget.style.paddingBottom = 0;
 		}
 	};
 
@@ -90,14 +112,6 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push("dragging");
 		}
 
-		if (isHovered) {
-			classes.push("hovered");
-		}
-
-		if (isMouseDown) {
-			classes.push("notransition");
-		}
-
 		return (
 			<Draggable draggableId={`${post.id}`} index={index}>
 				{(provided, snapshot) => (
@@ -109,9 +123,9 @@ export default function Post({ post, index, unscheduled }) {
 						className={classes.join(" ")}
 						data-index={index}
 						onClick={handleClick}
+						onMouseEnter={handleMouseEnter}
+						onMouseLeave={handleMouseLeave}
 						onMouseDown={handleMouseDown}
-						onMouseEnter={() => setIsHovered(true)}
-						onMouseLeave={() => setIsHovered(false)}
 					>
 						<div
 							className="postData"
@@ -123,7 +137,16 @@ export default function Post({ post, index, unscheduled }) {
 								{decode(post.post_title, { scope: "strict" })}
 							</p>
 						</div>
-						<PostLinks post={post} unscheduled={unscheduled} />
+						<PostLinks
+							style={{
+								backgroundColor: color.replace(
+									/,1\)/,
+									",0.75)"
+								),
+							}}
+							post={post}
+							unscheduled={unscheduled}
+						/>
 					</li>
 				)}
 			</Draggable>
