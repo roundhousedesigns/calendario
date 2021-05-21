@@ -132,7 +132,7 @@ export default function EditPost() {
 		initialTaxFilter
 	);
 	const node = useRef(null);
-	const slug = useRef(null);
+	const initial = useRef({});
 	const [date, setDate] = useState(new Date());
 	const [allowedStatuses, setAllowedStatuses] = useState({});
 	const [datePickerDisabled, setDatePickerDisabled] = useState(false);
@@ -155,10 +155,18 @@ export default function EditPost() {
 
 	// Save the original slug
 	useEffect(() => {
-		if (!slug.current) {
-			slug.current = post_name;
+		if (!initial.current.post_status) {
+			initial.current.post_status = post_status;
 		}
-	}, [post_name]);
+
+		if (!initial.current.slug) {
+			initial.current.slug = post_name;
+		}
+
+		return () => {
+			initial.current = {};
+		};
+	}, [post_name, post_status]);
 
 	useEffect(() => {
 		if (post_date && post_date !== "undefined") {
@@ -324,7 +332,10 @@ export default function EditPost() {
 	useClickOutside(node, closeModal);
 
 	return (
-		<div className={`editPost ${editMode ? "active" : "inactive"}`}>
+		<div
+			className={`editPost ${editMode ? "active" : "inactive"}`}
+			ref={initial}
+		>
 			<div className="editPost__container">
 				{editMode ? (
 					<div ref={node} className="editPost__editor">
@@ -363,7 +374,8 @@ export default function EditPost() {
 							</div>
 							<div className="header">
 								<div className="header__left">
-									{post_status === "publish" ? (
+									{initial.current.post_status ===
+									"publish" ? (
 										<FieldGroup name="post_name">
 											<div className="permalink">
 												<span className="base">
@@ -618,7 +630,7 @@ export default function EditPost() {
 										<div className="terms">
 											{taxonomies.post_tag.terms.map(
 												(
-													{ slug, name, term_id },
+													{ name, slug, term_id },
 													index
 												) => {
 													return name
