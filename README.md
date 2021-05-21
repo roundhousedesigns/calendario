@@ -22,8 +22,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 ## TODO
 
 -   Poll for updates for when something edited outside Calendar.io
--   Mobile
-    -   Make it less terrible
+-   Your CSS is a fucking nightmare, fix it and organize it
 
 ## Roadmap
 

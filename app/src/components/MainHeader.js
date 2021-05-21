@@ -1,10 +1,10 @@
-import { forwardRef, useContext, useEffect } from "react";
+import { forwardRef, useContext, useEffect, useState } from "react";
 import ViewOptions from "./ViewOptions";
 import DatePicker from "react-datepicker";
 import { addDays, startOfToday, startOfMonth, endOfMonth } from "date-fns";
 
 import ViewContext from "../ViewContext";
-import { dateFormat } from "../lib/utils";
+import { dateFormat, dateIsBetween } from "../lib/utils";
 
 export default function MainHeader({ handleTodayClick }) {
 	const {
@@ -12,6 +12,7 @@ export default function MainHeader({ handleTodayClick }) {
 		viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
+	const [todayInRange, setTodayInRange] = useState(true);
 
 	const today = startOfToday();
 
@@ -20,6 +21,13 @@ export default function MainHeader({ handleTodayClick }) {
 			{value}
 		</button>
 	));
+
+	useEffect(() => {
+		const { start, end } = viewRange;
+		if (start !== null && end !== null) {
+			setTodayInRange(dateIsBetween(new Date(), start, end));
+		}
+	}, [viewRange]);
 
 	useEffect(() => {
 		// set a sensible default range
@@ -55,7 +63,9 @@ export default function MainHeader({ handleTodayClick }) {
 				</button>
 			</div>
 			<div className="col col__center mainViewOptions">
-				<div className="toToday">
+				<div
+					className={`toToday ${todayInRange ? "hidden" : "visible"}`}
+				>
 					<button
 						className="icon today todayButton"
 						onClick={handleTodayClick}

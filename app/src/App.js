@@ -2,6 +2,7 @@ import React, { useEffect, /*useState,*/ useReducer, useRef } from "react";
 import Header from "./components/Header";
 import Main from "./components/Main";
 import Sidebar from "./components/Sidebar";
+import Icon from "./components/common/Icon";
 import { useStickyState } from "./lib/hooks";
 import {
 	dateIsBetween,
@@ -295,32 +296,50 @@ export default function App() {
 		draggedPostDispatch({ type: "END" });
 	};
 
-	return (
-		<div
-			className={`calendario ${
-				viewOptions.sidebarOpen === true
-					? "sidebarOpen"
-					: "sidebarClosed"
-			}`}
-		>
-			<ViewContext.Provider value={{ viewOptions, viewOptionsDispatch }}>
-				<PostsContext.Provider value={{ posts, postsDispatch }}>
-					<Header handleTodayClick={handleTodayClick} />
+	function appClass() {
+		const { sidebarOpen } = viewOptions;
 
-					<DragContext.Provider
-						value={{ draggedPost, draggedPostDispatch }}
-					>
-						<DragDropContext
-							onDragEnd={onDragEnd}
-							onDragStart={onDragStart}
-							onDragUpdate={onDragUpdate}
+		let classes = ["calendario"];
+
+		if (sidebarOpen === true) {
+			classes.push("sidebarOpen");
+		} else {
+			classes.push("sidebarClosed");
+		}
+
+		return classes.join(" ");
+	}
+
+	return (
+		<>
+			<div className="mobileOrientationCheck">
+				<div className="message">
+					<Icon>screen_rotation</Icon>
+					<p className="caption">Please rotate your device</p>
+				</div>
+			</div>
+			<div className={appClass()}>
+				<ViewContext.Provider
+					value={{ viewOptions, viewOptionsDispatch }}
+				>
+					<PostsContext.Provider value={{ posts, postsDispatch }}>
+						<Header handleTodayClick={handleTodayClick} />
+
+						<DragContext.Provider
+							value={{ draggedPost, draggedPostDispatch }}
 						>
-							<Sidebar />
-							<Main ref={mainRef} todayRef={todayRef} />
-						</DragDropContext>
-					</DragContext.Provider>
-				</PostsContext.Provider>
-			</ViewContext.Provider>
-		</div>
+							<DragDropContext
+								onDragEnd={onDragEnd}
+								onDragStart={onDragStart}
+								onDragUpdate={onDragUpdate}
+							>
+								<Sidebar />
+								<Main ref={mainRef} todayRef={todayRef} />
+							</DragDropContext>
+						</DragContext.Provider>
+					</PostsContext.Provider>
+				</ViewContext.Provider>
+			</div>
+		</>
 	);
 }

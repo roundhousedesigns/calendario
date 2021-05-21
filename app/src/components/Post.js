@@ -88,7 +88,7 @@ export default function Post({ post, index, unscheduled }) {
 		}
 	};
 
-	function draggableStyles(snapshot) {
+	function draggableStyles() {
 		let classes = [
 			"post",
 			`post-id-${post.id} status__${post.post_status}`,

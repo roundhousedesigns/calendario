@@ -44,11 +44,53 @@ body {
 	min-height: 100%;
 }
 
+.mobileOrientationCheck {
+	display: none;
+	z-index: -1;
+
+	@media (max-width: $mobileBreak) and (orientation: portrait) {
+		display: block;
+		height: 100vh;
+		width: 100vw;
+		position: fixed;
+		left: 0;
+		top: 0;
+		background: var(--textColor-transparent);
+		color: var(--neutralColor);
+		z-index: 999;
+	}
+
+	.message {
+		color: var(--neutralColor);
+		width: 80%;
+		@include absoluteCenter;
+
+		.icon,
+		.caption {
+			color: inherit;
+		}
+
+		.icon {
+			font-size: 2em;
+			display: block;
+		}
+
+		.caption {
+			font-size: 1.4em;
+			text-align: center;
+		}
+	}
+}
+
 .calendario {
 	display: grid;
 	grid-gap: var(--gridGap);
 	height: 90vh;
 	transition: all 500ms ease;
+
+	@media (max-width: $mobileBreak) and (orientation: portrait) {
+		overflow: hidden;
+	}
 
 	@media (max-width: $mobileBreak) {
 		grid-template-rows: auto;
@@ -463,10 +505,6 @@ body {
 			}
 		}
 
-		.toToday {
-			margin-right: 2rem;
-		}
-
 		.viewOptions {
 			margin-left: 2rem;
 
@@ -692,21 +730,21 @@ body {
 	.viewMode,
 	.toToday {
 		font-size: 1rem;
+		margin-right: 2rem;
+
+		&.hidden {
+			visibility: hidden;
+			pointer-events: none;
+		}
 
 		button {
-			border-color: var(--textColor-light);
+			border: 1px solid var(--textColor-light);
 			margin: 0;
 
 			&.active {
 				background-color: var(--textColor);
 				color: var(--neutralColor);
 			}
-		}
-	}
-
-	.toToday {
-		button {
-			border: 1px solid var(--textColor-light);
 		}
 	}
 
