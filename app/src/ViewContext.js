@@ -12,6 +12,7 @@ export const initialViewOptions = {
 		end: null,
 	},
 	postStatuses: {},
+	sidebarOpen: true,
 };
 
 const { defaultStatusColors } = wp;
@@ -137,6 +138,12 @@ export function viewReducer(state, action) {
 			return {
 				...state,
 				postStatuses: { ...reset },
+			};
+
+		case "TOGGLE_SIDEBAR":
+			return {
+				...state,
+				sidebarOpen: !state.sidebarOpen,
 			};
 
 		default:

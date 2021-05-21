@@ -11,24 +11,18 @@ export default function Header({ handleTodayClick }) {
 	return (
 		<header className="calendario__header">
 			<div className="calendario__header__content">
-				<div className="left">
+				<div className="calendarHeader">
 					<MainHeader handleTodayClick={handleTodayClick} />
 				</div>
-				<div className="right">
-					<h1 className="calendario__title">editorial calendar.io</h1>
-					<a
-						className="calendario__logo"
-						href="https://roundhouse-designs.com"
-						rel="noreferrer"
-						target="_blank"
+				<div className="title">
+					<button
+						className="icon closeCalendario"
+						onClick={() => (window.location.href = postsUrl)}
+						title="Close"
 					>
-						<button
-							className="icon closeCalendario"
-							onClick={() => (window.location.href = postsUrl)}
-						>
-							disabled_by_default
-						</button>
-					</a>
+						close
+					</button>
+					<h1 className="calendario__title">editorial calendar.io</h1>
 				</div>
 			</div>
 		</header>

@@ -296,7 +296,13 @@ export default function App() {
 	};
 
 	return (
-		<div className={`calendario`}>
+		<div
+			className={`calendario ${
+				viewOptions.sidebarOpen === true
+					? "sidebarOpen"
+					: "sidebarClosed"
+			}`}
+		>
 			<ViewContext.Provider value={{ viewOptions, viewOptionsDispatch }}>
 				<PostsContext.Provider value={{ posts, postsDispatch }}>
 					<Header handleTodayClick={handleTodayClick} />

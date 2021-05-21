@@ -7,8 +7,14 @@ import React, {
 	useCallback,
 } from "react";
 import FieldGroup from "./common/FieldGroup";
+import Icon from "./common/Icon";
 import { useClickOutside } from "../lib/hooks";
-import { dateFormat, filterPostStatus, filterStatusList } from "../lib/utils";
+import {
+	dateFormat,
+	filterPostStatus,
+	filterStatusList,
+	stripPermalinkSlug,
+} from "../lib/utils";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
 import { isEmpty } from "lodash";
@@ -125,7 +131,8 @@ export default function EditPost() {
 		taxFilterReducer,
 		initialTaxFilter
 	);
-	const node = useRef();
+	const node = useRef(null);
+	const slug = useRef(null);
 	const [date, setDate] = useState(new Date());
 	const [allowedStatuses, setAllowedStatuses] = useState({});
 	const [datePickerDisabled, setDatePickerDisabled] = useState(false);
@@ -135,14 +142,23 @@ export default function EditPost() {
 	const {
 		id,
 		post_title,
+		post_name,
 		post_date,
 		post_status,
 		post_excerpt,
 		image,
 		edit_link,
+		view_link,
 		taxonomies: post_taxonomies,
 		unscheduled,
 	} = post;
+
+	// Save the original slug
+	useEffect(() => {
+		if (!slug.current) {
+			slug.current = post_name;
+		}
+	}, [post_name]);
 
 	useEffect(() => {
 		if (post_date && post_date !== "undefined") {
@@ -229,6 +245,7 @@ export default function EditPost() {
 			id: id,
 			params: {
 				post_title,
+				post_name,
 				post_date: format(new Date(post_date), dateFormat.dateTime),
 				post_status: filterPostStatus(post_status, unscheduled),
 				post_excerpt,
@@ -260,13 +277,6 @@ export default function EditPost() {
 		setTrashPostClicked(false);
 	};
 
-	// const cancelHandler = () => {
-	// 	postsDispatch({
-	// 		type: "UNSET_CURRENTPOST",
-	// 	});
-	// 	editPostDispatch({ type: "CLEAR" });
-	// };
-
 	const handleInputChange = (e) => {
 		editPostDispatch({
 			type: "EDIT",
@@ -284,7 +294,6 @@ export default function EditPost() {
 	};
 
 	const handleTermCheckboxChange = (e) => {
-		console.log(e);
 		editPostDispatch({
 			type: "TOGGLE_TAXONOMY",
 			taxonomy: e.target.closest("fieldset").name,
@@ -323,168 +332,199 @@ export default function EditPost() {
 							highlight_off
 						</button>
 						<form
-							className="editPost__editor__form"
+							className={`editPost__form ${
+								trashPostClicked ? "trashConfirm" : ""
+							}`}
 							onSubmit={handleSubmit}
 						>
-							<div className="titleBar">
-								<h3>
-									{id === 0 ? (
-										"New Post"
-									) : (
-										<a
-											href={decode(edit_link)}
-											target="_blank"
-											rel="noreferrer"
-										>
-											Edit Post{" "}
-											<span className="icon">
-												open_in_new
-											</span>
-										</a>
-									)}
-								</h3>
-								<div className="editPost__buttons">
-									{trashPostClicked === true ? (
-										<div className="editPost__buttons__trash confirm">
-											<p style={{ fontWeight: "bold" }}>
-												Are you sure you want to Trash
-												this post?
-											</p>
-											<input
-												type="button"
-												onClick={trashHandler}
-												value="Yes"
-												autoFocus={true}
-											/>
-											{/* TODO bind ESC to cancel */}
-											<input
-												type="button"
-												onClick={() =>
-													setTrashPostClicked(false)
-												}
-												value="No"
-											/>
-										</div>
-									) : (
-										<>
-											<input
-												type="submit"
-												className="editPost__buttons__save"
-												value={
-													id === 0 ? "Save" : "Update"
-												}
-											/>
-											{/* <input
-												type="button"
-												className="editPost__buttons__cancel"
-												onClick={cancelHandler}
-												value="Cancel"
-											/> */}
-											<input
-												type="button"
-												className="editPost__buttons__trash"
-												onClick={() =>
-													setTrashPostClicked(true)
-												}
-												value="Delete Post"
-											/>
-										</>
-									)}
-								</div>
-							</div>
-							<FieldGroup name="header">
-								<div className="fieldGroup__post_thumb">
-									{image ? (
-										<div>
-											<a
-												href={decode(edit_link)}
-												target="_blank"
-												rel="noreferrer"
-											>
-												Featured Image{" "}
-												<span className="icon">
-													open_in_new
-												</span>
-												<img
-													src={image}
-													alt={`${post_title}`}
-												/>
-											</a>
-										</div>
-									) : null}
-								</div>
-								<div className="fieldGroup__post_title">
-									<label htmlFor="post_title">Title</label>
+							<div className="editPost__title">
+								<FieldGroup name="post_title">
 									<input
 										name="post_title"
 										id="post_title"
 										value={decode(post_title, {
 											scope: "strict",
 										})}
+										placeholder="New Post Title"
 										onChange={handleInputChange}
 									/>
-								</div>
-								<div className="fieldGroup__status">
-									<label htmlFor="post_status">
-										Post Status
-									</label>
-									<select
-										name="post_status"
-										onChange={handleInputChange}
-										value={post_status}
+								</FieldGroup>
+								<a
+									className="button editLink"
+									href={decode(edit_link)}
+									target="_blank"
+									rel="noreferrer"
+								>
+									Edit{" "}
+									<Icon className="open_in_new">
+										open_in_new
+									</Icon>
+								</a>
+							</div>
+							<div className="header">
+								<div className="header__left">
+									{post_status === "publish" ? (
+										<FieldGroup name="post_name">
+											<div className="permalink">
+												<span className="base">
+													<a
+														href={view_link}
+														target="_blank"
+														rel="noreferrer"
+													>
+														{stripPermalinkSlug(
+															view_link
+														)}
+													</a>
+												</span>
+												<input
+													name="post_name"
+													id="post_name"
+													value={post_name}
+													onChange={handleInputChange}
+												/>
+											</div>
+										</FieldGroup>
+									) : (
+										""
+									)}
+									<FieldGroup name="date">
+										<div
+											className={`post_date ${
+												unscheduled === true
+													? "inactive"
+													: "active"
+											}`}
+										>
+											<label htmlFor="post_date">
+												Post Date
+											</label>
+											<DatePicker
+												closeOnScroll={(e) =>
+													e.target === document
+												}
+												selected={date}
+												timeInputLabel="Time:"
+												showTimeInput
+												dateFormat={dateFormat.dateTime}
+												onChange={handleInputDateChange}
+												disabled={datePickerDisabled}
+											/>
+										</div>
+										<div className="unscheduled">
+											<input
+												type="checkbox"
+												name="unscheduled"
+												id="unscheduled"
+												checked={unscheduled}
+												onChange={handleCheckboxToggle}
+											/>
+											<label htmlFor="unscheduled">
+												Unscheduled
+											</label>
+										</div>
+									</FieldGroup>
+									<FieldGroup
+										name="post_excerpt"
+										label="Excerpt"
 									>
-										{renderStatusOptions(allowedStatuses)}
-									</select>
-								</div>
-								<div className="fieldGroup__date">
-									<div
-										className={`post_date ${
-											unscheduled === true
-												? "inactive"
-												: "active"
-										}`}
-									>
-										<label htmlFor="post_date">
-											Post Date
-										</label>
-										<DatePicker
-											closeOnScroll={(e) =>
-												e.target === document
-											}
-											selected={date}
-											timeInputLabel="Time:"
-											showTimeInput
-											dateFormat={dateFormat.dateTime}
-											onChange={handleInputDateChange}
-											disabled={datePickerDisabled}
+										<textarea
+											name="post_excerpt"
+											onChange={handleInputChange}
+											rows={4}
+											value={decode(post_excerpt, {
+												scope: "strict",
+											})}
 										/>
-									</div>
-									<div className="unscheduled">
-										<input
-											type="checkbox"
-											name="unscheduled"
-											id="unscheduled"
-											checked={unscheduled}
-											onChange={handleCheckboxToggle}
-										/>
-										<label htmlFor="unscheduled">
-											Unscheduled
-										</label>
-									</div>
+									</FieldGroup>
 								</div>
-							</FieldGroup>
-
-							<FieldGroup name="post_excerpt" label="Excerpt">
-								<textarea
-									name="post_excerpt"
-									onChange={handleInputChange}
-									rows={4}
-									value={decode(post_excerpt, {
-										scope: "strict",
-									})}
-								/>
-							</FieldGroup>
-
+								<div className="header__right">
+									<div className="editPost__buttons">
+										{trashPostClicked === true ? (
+											<div className="trash confirm">
+												<p
+													style={{
+														fontWeight: "bold",
+													}}
+												>
+													Are you sure you want to
+													Trash this post?
+												</p>
+												<input
+													type="button"
+													onClick={trashHandler}
+													value="Yes"
+													autoFocus={true}
+												/>
+												{/* TODO bind ESC to cancel */}
+												<input
+													type="button"
+													onClick={() =>
+														setTrashPostClicked(
+															false
+														)
+													}
+													value="No"
+												/>
+											</div>
+										) : (
+											<>
+												<input
+													type="submit"
+													className="save"
+													value={
+														id === 0
+															? "Save"
+															: "Update"
+													}
+												/>
+												<input
+													type="button"
+													className="trash"
+													onClick={() =>
+														setTrashPostClicked(
+															true
+														)
+													}
+													value="Delete"
+												/>
+											</>
+										)}
+									</div>
+									<div className="fieldGroup__status">
+										<label htmlFor="post_status">
+											Post Status
+										</label>
+										<select
+											name="post_status"
+											onChange={handleInputChange}
+											value={post_status}
+										>
+											{renderStatusOptions(
+												allowedStatuses
+											)}
+										</select>
+									</div>
+									<FieldGroup name="post_thumb">
+										{image ? (
+											<a
+												href={decode(edit_link)}
+												target="_blank"
+												rel="noreferrer"
+											>
+												Featured Image{" "}
+												<Icon className="open_in_new">
+													open_in_new
+												</Icon>
+												<img
+													src={image}
+													alt={`${post_title}`}
+												/>
+											</a>
+										) : null}
+									</FieldGroup>
+								</div>
+							</div>
 							<FieldGroup name="taxonomies">
 								<div className="taxonomy">
 									<fieldset name="category">

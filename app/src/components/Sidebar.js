@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useContext } from "react";
 import UnscheduledDrafts from "./UnscheduledDrafts";
 import StatusFilters from "./StatusFilters";
+import DrawerHandle from "./common/DrawerHandle";
 import { renderWidget } from "../lib/utils";
 import { wp } from "../lib/utils";
 
+import ViewContext from "../ViewContext";
+
 export default function Sidebar() {
 	const { pluginUrl } = wp;
+	// const [sidebarOpen, setSidebarOpen] = useState(true);
+	const {
+		viewOptions: { sidebarOpen },
+		viewOptionsDispatch,
+	} = useContext(ViewContext);
 
 	return (
-		<aside className="calendario__sidebar">
+		<aside
+			className={`calendario__sidebar ${sidebarOpen ? "open" : "closed"}`}
+		>
+			<DrawerHandle
+				toggle={() =>
+					viewOptionsDispatch({
+						type: "TOGGLE_SIDEBAR",
+					})
+				}
+			/>
 			<div className="calendario__sidebar__inner">
 				{renderWidget(
 					"Unscheduled Drafts",

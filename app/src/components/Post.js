@@ -140,13 +140,20 @@ export default function Post({ post, index, unscheduled }) {
 							{decode(post.post_title, { scope: "strict" })}
 						</p>
 					</div>
-					<PostLinks
-						style={{
-							backgroundColor: color.replace(/,1\)/, ",0.75)"),
-						}}
-						post={post}
-						unscheduled={unscheduled}
-					/>
+					{!isDragging ? (
+						<PostLinks
+							style={{
+								backgroundColor: color.replace(
+									/,1\)/,
+									",0.75)"
+								),
+							}}
+							post={post}
+							unscheduled={unscheduled}
+						/>
+					) : (
+						""
+					)}
 				</li>
 			)}
 		</Draggable>

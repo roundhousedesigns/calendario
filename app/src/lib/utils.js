@@ -268,3 +268,22 @@ export function filterPostStatus(post_status, unscheduled) {
 
 	return status;
 }
+
+/**
+ * Strips a slug from a permalink
+ *
+ * @param {string} url The permalink
+ * @param {string} slug The post slug
+ * @returns {string} The filtered URL
+ */
+export const stripPermalinkSlug = (url) => {
+	// Remove trailing slash, if necessary
+	if (url.substr(-1) === "/") {
+		url = url.slice(0, -1);
+	}
+
+	let parts = url.split("/");
+	parts.pop();
+
+	return `${parts.join("/")}/`;
+};

@@ -21,8 +21,6 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   Polish interaction CSS
--   Add permalink to edit modal?
 -   Show/hide sidebar
 -   Mobile
     -   Make it less terrible

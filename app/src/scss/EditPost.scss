@@ -4,6 +4,7 @@
 	width: 100%;
 	height: 100%;
 	top: 0;
+	left: 0;
 	z-index: 999;
 
 	&.active {
@@ -21,6 +22,110 @@
 		position: fixed;
 		top: 0;
 		left: 0;
+	}
+
+	&__title {
+		margin: 0;
+		text-transform: uppercase;
+		display: flex;
+		align-items: center;
+		width: 100%;
+		position: relative;
+
+		.fieldGroup {
+			flex: 1;
+		}
+
+		.editLink {
+			flex: 0 0 auto;
+			text-decoration: none;
+			color: inherit;
+			margin-left: 8px;
+
+			&:hover,
+			&:active {
+				text-decoration: underline;
+			}
+		}
+
+		label {
+			visibility: hidden;
+			height: 0;
+			width: 0;
+		}
+
+		input {
+			border-radius: 0;
+			border-top: none;
+			border-right: none;
+			border-left: none;
+			border-bottom: 1px solid var(--textColor-light);
+			font-size: 1.1em;
+			outline: none;
+			width: 100%;
+
+			&:focus {
+				border-bottom: 1px solid var(--textColor);
+			}
+		}
+	}
+
+	&__buttons {
+		margin-bottom: 1em;
+
+		input,
+		.button {
+			width: 100%;
+			display: block;
+			margin-bottom: 4px;
+
+			&:last-of-type {
+				margin-bottom: 0;
+			}
+		}
+
+		.trash {
+			input {
+				&:focus {
+					outline: 1px solid var(--mainColor-light);
+				}
+			}
+
+			&.confirm {
+				text-align: center;
+				background-color: var(--textColor-dark);
+				padding: 24px 12px;
+				position: absolute;
+				width: 100%;
+				left: 0;
+				top: 0;
+				z-index: 10;
+				border-radius: calc(var(--borderRadius) / 2);
+
+				p {
+					margin: 0;
+					color: var(--textColor-light);
+				}
+
+				input {
+					margin: 0 4px;
+				}
+			}
+		}
+	}
+
+	&__form {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+
+		&.trashConfirm {
+			.fieldGroup {
+				opacity: 0.4;
+				pointer-events: none;
+			}
+		}
 	}
 
 	&__editor {
@@ -48,57 +153,50 @@
 			color: var(--textColor);
 		}
 
-		.titleBar {
-			margin: 0;
-			text-transform: uppercase;
-			display: flex;
-			align-items: center;
-			border-bottom: 1px solid var(--borderColor);
-			width: 100%;
-
-			h3 {
-				margin: 0;
+		.icon {
+			&.open_in_new {
+				font-size: 0.7em;
+				position: relative;
+				bottom: 4px;
 			}
 		}
 
-		.titleBar,
-		.fieldGroup__post_thumb {
+		label {
 			a {
 				text-decoration: none;
 				color: inherit;
-			}
 
-			.icon {
-				font-size: 0.8em;
-				position: relative;
-				bottom: 2px;
+				&:hover,
+				&:active {
+					text-decoration: underline;
+				}
 			}
 		}
 
-		&__form {
-			position: relative;
+		.header {
 			display: flex;
-			flex-direction: column;
-			flex-wrap: nowrap;
-		}
+			margin: 6px 0 0;
 
-		.fieldGroup {
-			&__header {
-				& > div {
-					margin-bottom: 4px;
-				}
+			&__left {
+				flex: 1;
+				margin-right: 12px;
 			}
 
-			&__post_title {
-				input {
-					width: 100%;
-				}
-			}
-
-			&__post_thumb {
-				width: 33.3334%;
+			&__right {
+				background-color: var(--mainColor-transparent);
+				border-radius: calc(var(--borderRadius) / 2);
+				flex: 0 0 33.3334%;
 				height: auto;
 				float: right;
+				padding: 8px;
+
+				& > div {
+					margin-bottom: 8px;
+
+					&:last-of-type {
+						margin-bottom: 0;
+					}
+				}
 
 				img {
 					width: 100%;
@@ -106,22 +204,51 @@
 					display: block;
 					border-radius: calc(var(--borderRadius) / 2);
 				}
+
+				a {
+					text-decoration: none;
+					color: inherit;
+
+					&:hover,
+					&:active {
+						text-decoration: underline;
+					}
+				}
+			}
+		}
+
+		.fieldGroup {
+			&__post_name {
+				a {
+					color: inherit;
+					text-decoration: none;
+
+					&:hover, &:active {
+						text-decoration: underline;
+					}
+				}
+
+				.permalink {
+					width: 100%;
+					display: flex;
+
+					.base {
+						flex: 0;
+					}
+				}
+
+				input {
+					flex: 1;
+					display: inline;
+					margin-left: 4px;
+				}
 			}
 
 			&__post_excerpt {
-				width: 100%;
-
 				input,
 				textarea {
 					width: 100%;
 				}
-			}
-
-			&__post_title,
-			&__date,
-			&__status {
-				float: left;
-				width: calc(66.6667% - 12px);
 			}
 
 			&__date {
@@ -170,6 +297,7 @@
 						border-radius: calc(var(--borderRadius) / 2);
 						border-bottom-right-radius: 0;
 						border-bottom-left-radius: 0;
+						border-bottom-width: 1.5px;
 
 						legend {
 							margin-left: 6px;
@@ -207,35 +335,6 @@
 							margin-right: 0.5rem;
 						}
 					}
-				}
-			}
-		}
-	}
-
-	&__buttons {
-		display: flex;
-		justify-content: flex-end;
-		flex: 1;
-
-		&__trash {
-			margin-left: 6px;
-
-			&:not(.confirm) {
-				float: right;
-			}
-
-			input {
-				&:focus {
-					outline: 1px solid var(--mainColor-light);
-				}
-			}
-
-			&.confirm {
-				text-align: center;
-
-				p {
-					font-size: 1.2em;
-					margin: 0 0 6px;
 				}
 			}
 		}

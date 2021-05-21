@@ -48,6 +48,7 @@ body {
 	display: grid;
 	grid-gap: var(--gridGap);
 	height: 90vh;
+	transition: all 500ms ease;
 
 	@media (max-width: $mobileBreak) {
 		grid-template-rows: auto;
@@ -60,50 +61,44 @@ body {
 
 	@media (min-width: $mobileBreak) {
 		grid-template-rows: min-content auto;
-		grid-template-columns: 3fr fit-content(300px);
 		grid-template-areas:
 			"header header"
-			"main   sidebar";
+			"sidebar   main";
+
+		&.sidebarOpen {
+			grid-template-columns: 300px 3fr;
+		}
+
+		&.sidebarClosed {
+			grid-template-columns: 14px 3fr;
+		}
 	}
 
 	.closeCalendario {
-		font-size: 3rem;
-		padding: 0;
-		color: var(--textColor);
-		background: var(--neutralColor);
-		transition: color 0.05s;
+		color: var(--neutralColor);
+		font-size: 1.75em;
+		padding: 6px;
+		background-color: var(--textColor);
+		transition: all 100ms ease;
 
 		&:hover,
 		&:active {
-			color: var(--textColor-dark);
+			background-color: var(--textColor-dark);
 		}
 	}
 
 	&__title {
 		color: var(--textColor-light);
-		text-align: right;
+		text-align: left;
 		word-spacing: 100vw;
 		line-height: 1;
 		font-size: 2em;
-		margin: 0.5rem 0;
+		margin: 0.5rem 0 0.5rem 12px;
 		text-transform: lowercase;
 		font-weight: bold;
 
 		.line {
 			display: block;
-		}
-	}
-
-	&__logo {
-		flex: auto;
-		max-height: 80px;
-		width: auto;
-		display: block;
-		margin: 6px 12px;
-
-		img {
-			width: 100%;
-			height: auto;
 		}
 	}
 
@@ -119,8 +114,8 @@ body {
 			@media (min-width: $mobileBreak) {
 				display: grid;
 				grid-gap: var(--gridGap);
-				grid-template-columns: 3fr 300px;
-				grid-template-areas: "left right";
+				grid-template-columns: 300px 3fr;
+				grid-template-areas: "title calendarHeader";
 			}
 
 			& > div {
@@ -129,21 +124,20 @@ body {
 				align-self: center;
 				align-items: center;
 
-				&.right {
+				&.calendarHeader {
 					@media (max-width: $mobileBreak) {
 						display: none;
 					}
 
 					@media (min-width: $mobileBreak) {
-						grid-area: right;
+						grid-area: calendarHeader;
 						padding-right: 1rem;
 					}
 				}
 
-				&.left {
+				&.title {
 					@media (min-width: $mobileBreak) {
-						grid-area: left;
-						flex-direction: column;
+						grid-area: title;
 
 						& > div {
 							flex-basis: 100%;
@@ -217,6 +211,37 @@ body {
 	&__sidebar {
 		grid-area: sidebar;
 		width: 100%;
+		position: relative;
+
+		&.closed {
+			overflow: hidden;
+			border-right: 1px solid var(--borderColor);
+		}
+
+		.drawerHandle {
+			@media (max-width: $mobileBreak) {
+				display: none;
+			}
+
+			@media (min-width: $mobileBreak) {
+				background-color: var(--textColor-light);
+				border-radius: 0;
+				position: absolute;
+				top: 28px;
+				font-size: 0.8em;
+				right: 0;
+				z-index: 1;
+				line-height: 2;
+				padding: 0;
+				transition: all 100ms ease;
+
+				&:hover,
+				&:active {
+					background-color: var(--textColor-dark);
+					color: var(--textColor-light);
+				}
+			}
+		}
 
 		&__inner {
 			background-color: var(--neutralColor);
@@ -582,10 +607,6 @@ body {
 
 			.past {
 				background: var(--neutralColor-dark);
-
-				.postList {
-					opacity: 0.4;
-				}
 			}
 
 			.row {
