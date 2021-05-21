@@ -21,7 +21,7 @@ Enable the plugin inside a WP installation and visit `Posts->Calendario` from th
 
 ## TODO
 
--   Show/hide sidebar
+-   Poll for updates for when something edited outside Calendar.io
 -   Mobile
     -   Make it less terrible
 
