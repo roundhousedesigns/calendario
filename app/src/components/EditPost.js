@@ -361,7 +361,7 @@ export default function EditPost() {
 									/>
 								</FieldGroup>
 								<a
-									className="button editLink"
+									className="editLink"
 									href={decode(edit_link)}
 									target="_blank"
 									rel="noreferrer"
@@ -518,22 +518,24 @@ export default function EditPost() {
 										</select>
 									</div>
 									<FieldGroup name="post_thumb">
-										{image ? (
-											<a
-												href={decode(edit_link)}
-												target="_blank"
-												rel="noreferrer"
-											>
-												Featured Image{" "}
-												<Icon className="open_in_new">
-													open_in_new
-												</Icon>
+										<a
+											href={decode(edit_link)}
+											target="_blank"
+											rel="noreferrer"
+										>
+											Featured Image{" "}
+											<Icon className="open_in_new">
+												open_in_new
+											</Icon>
+											{image ? (
 												<img
 													src={image}
 													alt={`${post_title}`}
 												/>
-											</a>
-										) : null}
+											) : (
+												""
+											)}
+										</a>
 									</FieldGroup>
 								</div>
 							</div>
