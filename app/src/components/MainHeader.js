@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import { addDays, startOfToday, startOfMonth, endOfMonth } from "date-fns";
 
 import ViewContext from "../ViewContext";
+import PostsContext from "../PostsContext";
 import { dateFormat, dateIsBetween } from "../lib/utils";
 
 export default function MainHeader({ handleTodayClick }) {
@@ -12,6 +13,7 @@ export default function MainHeader({ handleTodayClick }) {
 		viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
+	const { postsDispatch } = useContext(PostsContext);
 	const [todayInRange, setTodayInRange] = useState(true);
 
 	const today = startOfToday();
@@ -51,6 +53,12 @@ export default function MainHeader({ handleTodayClick }) {
 		viewOptionsDispatch({ type: "PREV_MONTH" });
 	};
 
+	const handleRefreshClick = () => {
+		postsDispatch({
+			type: "REFETCH",
+		});
+	};
+
 	return (
 		<div className="calendarListHeader row flex-middle">
 			<div className="col col__start">
@@ -63,15 +71,22 @@ export default function MainHeader({ handleTodayClick }) {
 				</button>
 			</div>
 			<div className="col col__center mainViewOptions">
-				<div
-					className={`toToday ${todayInRange ? "hidden" : "visible"}`}
-				>
+				<div className={`controlButtons`}>
 					<button
-						className="icon today todayButton"
+						className={`icon today todayButton ${
+							todayInRange ? "hidden" : "visible"
+						}`}
 						onClick={handleTodayClick}
 						title="Jump to Today"
 					>
 						today
+					</button>
+					<button
+						className="icon refreshButton"
+						onClick={handleRefreshClick}
+						title="Refresh Posts"
+					>
+						sync
 					</button>
 				</div>
 				<div className="viewRange">

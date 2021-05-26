@@ -207,7 +207,7 @@ body {
 								"options"
 								"today";
 
-							.toToday {
+							.controlButtons {
 								grid-area: today;
 							}
 
@@ -227,7 +227,7 @@ body {
 					font-size: 1.2rem;
 				}
 
-				// .toToday,
+				// .controlButtons,
 				// .viewMode {
 				// 	@media (max-width: $mobileBreak) {
 				// 		display: none;
@@ -311,6 +311,10 @@ body {
 		&:not(.picker__swatch):not(.react-datepicker__navigation):not(.todayButton):not(.viewMode__input):not(.postLink) {
 			border: none;
 		}
+	}
+
+	.react-datepicker-popper {
+		z-index: 999;
 	}
 
 	.react-datepicker {
@@ -728,14 +732,9 @@ body {
 
 .mainViewOptions {
 	.viewMode,
-	.toToday {
+	.controlButtons {
 		font-size: 1rem;
 		margin-right: 2rem;
-
-		&.hidden {
-			visibility: hidden;
-			pointer-events: none;
-		}
 
 		button {
 			border: 1px solid var(--textColor-light);
@@ -744,6 +743,15 @@ body {
 			&.active {
 				background-color: var(--textColor);
 				color: var(--neutralColor);
+			}
+		}
+	}
+
+	.controlButtons {
+		.todayButton {
+			&.hidden {
+				visibility: hidden;
+				pointer-events: none;
 			}
 		}
 	}
