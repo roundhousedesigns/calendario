@@ -39,7 +39,7 @@
 		color: var(--neutralColor);
 		cursor: pointer;
 		position: relative;
-		// transition: padding-bottom 100ms ease-in-out;
+		transition: all 100ms ease-in-out;
 
 		&.visible {
 			visibility: visible;
@@ -58,6 +58,20 @@
 			-moz-transition: none;
 			-o-transition: none;
 			transition: none;
+		}
+
+		&.dragging {
+			&.over {
+				&__unscheduled,
+				&__calendar {
+					width: 100%;
+					flex: 0 0 100%;
+				}
+
+				&__none {
+					opacity: 0.5;
+				}
+			}
 		}
 
 		.postLinks {
