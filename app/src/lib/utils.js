@@ -140,15 +140,6 @@ export const isDraggingUnscheduled = ({ source: { droppableId } }) =>
 	droppableId === "unscheduled" ? true : false;
 
 /**
- *
- * @param {Post} item Dragged item
- * @param {string} item.destination.droppableId The drop area ID
- * @returns {boolean} True if dragged item is over 'unscheduled' area, false otherwise
- */
-export const isOverUnscheduled = ({ source: { droppableId } }) =>
-	droppableId === "unscheduled" ? true : false;
-
-/**
  * Retrieves a list of posts.
  *
  * @param {string} id
