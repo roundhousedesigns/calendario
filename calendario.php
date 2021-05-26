@@ -96,9 +96,6 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 						'slug' => 'edit.php',
 					),
 				),
-				// Set the SDK to work in a sandbox mode (for development & testing).
-				// IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
-				'secret_key'       => 'sk_cR%[KEAzQyGU.RFj7P#CGgJ^t#GHT',
 			) );
 		}
 
