@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:     Calendar.io -- DEV --
+ * Plugin Name:     Calendar.io
  * Description:     The professional editorial calendar for WordPress.
  * Author:          Roundhouse Designs
  * Author URI:      https://roundhouse-designs.com
