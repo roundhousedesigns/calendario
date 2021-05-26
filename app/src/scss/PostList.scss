@@ -39,7 +39,7 @@
 		color: var(--neutralColor);
 		cursor: pointer;
 		position: relative;
-		transition: all 100ms ease-in-out;
+		// transition: all 100ms ease-in-out;
 
 		&.visible {
 			visibility: visible;
