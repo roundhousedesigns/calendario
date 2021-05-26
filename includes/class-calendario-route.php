@@ -140,14 +140,14 @@ class Calendario_Route extends WP_REST_Controller {
 	public function get_range_endpoint_args() {
 		return [
 			'start' => [
-				'description'       => esc_html__( 'Start date', 'rhd' ),
+				'description'       => esc_html__( 'Start date', 'calendario' ),
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_date_string'],
 				'sanitize_callback' => [$this, 'sanitize_string'],
 				'required'          => true,
 			],
 			'end'   => [
-				'description'       => esc_html__( 'End date', 'rhd' ),
+				'description'       => esc_html__( 'End date', 'calendario' ),
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_date_string'],
 				'sanitize_callback' => [$this, 'sanitize_string'],
@@ -162,7 +162,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function get_taxonomy_endpoint_args() {
 		return [
 			'taxonomy' => [
-				'description'       => esc_html__( 'Taxonomy name', 'rhd' ),
+				'description'       => esc_html__( 'Taxonomy name', 'calendario' ),
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_string'],
 				'sanitize_callback' => [$this, 'sanitize_string'],
@@ -177,14 +177,14 @@ class Calendario_Route extends WP_REST_Controller {
 	public function get_update_post_endpoint_args() {
 		return [
 			'post_id' => [
-				'description'       => esc_html__( 'Post ID', 'rhd' ),
+				'description'       => esc_html__( 'Post ID', 'calendario' ),
 				'type'              => 'int',
 				'validate_callback' => [$this, 'validate_integer'],
 				'sanitize_callback' => 'absint',
 				'required'          => true,
 			],
 			'user_id' => [
-				'description'       => esc_html__( 'User ID', 'rhd' ),
+				'description'       => esc_html__( 'User ID', 'calendario' ),
 				'type'              => 'int',
 				'validate_callback' => [$this, 'validate_integer'],
 				'sanitize_callback' => 'absint',
@@ -199,7 +199,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function get_create_post_endpoint_args() {
 		return [
 			'user_id' => [
-				'description'       => esc_html__( 'User ID', 'rhd' ),
+				'description'       => esc_html__( 'User ID', 'calendario' ),
 				'type'              => 'int',
 				'validate_callback' => [$this, 'validate_integer'],
 				'sanitize_callback' => 'absint',
@@ -214,7 +214,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function get_item_endpoint_args() {
 		return [
 			'ID'          => [
-				'description'       => esc_html__( 'Post ID', 'rhd' ),
+				'description'       => esc_html__( 'Post ID', 'calendario' ),
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_integer'],
 				'sanitize_callback' => 'absint',
@@ -222,7 +222,7 @@ class Calendario_Route extends WP_REST_Controller {
 			],
 
 			'post_date'   => [
-				'description'       => esc_html__( 'New post date', 'rhd' ),
+				'description'       => esc_html__( 'New post date', 'calendario' ),
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_date_string'],
 				'sanitize_callback' => [$this, 'sanitize_string'],
@@ -230,7 +230,7 @@ class Calendario_Route extends WP_REST_Controller {
 			],
 
 			'post_status' => [
-				'description'       => esc_html__( 'New post status', 'rhd' ),
+				'description'       => esc_html__( 'New post status', 'calendario' ),
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_string'],
 				'sanitize_callback' => [$this, 'sanitize_string'],
@@ -248,7 +248,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function get_update_item_endpoint_args() {
 		return [
 			'ID' => [
-				'description'       => esc_html__( 'Post ID', 'rhd' ),
+				'description'       => esc_html__( 'Post ID', 'calendario' ),
 				'type'              => 'string',
 				'validate_callback' => [$this, 'validate_integer'],
 				'sanitize_callback' => 'absint',
@@ -272,10 +272,10 @@ class Calendario_Route extends WP_REST_Controller {
 			$arg = $atts['args'][$param];
 
 			if ( 'string' === $arg['type'] && ! is_string( $value ) ) {
-				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'calendario' ), $param, 'string' ), ['status' => 400] );
 			}
 		} else {
-			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), ['status' => 400] );
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'calendario' ), $param ), ['status' => 400] );
 		}
 
 		return true;
@@ -296,10 +296,10 @@ class Calendario_Route extends WP_REST_Controller {
 			$arg = $atts['args'][$param];
 
 			if ( 'integer' === $arg['type'] && ! is_int( $value ) ) {
-				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'calendario' ), $param, 'string' ), ['status' => 400] );
 			}
 		} else {
-			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), ['status' => 400] );
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'calendario' ), $param ), ['status' => 400] );
 		}
 
 		return true;
@@ -320,12 +320,12 @@ class Calendario_Route extends WP_REST_Controller {
 			$arg = $atts['args'][$param];
 
 			if ( 'string' === $arg['type'] && ! is_string( $value ) ) {
-				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'rhd' ), $param, 'string' ), ['status' => 400] );
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not of type %2$s.', 'calendario' ), $param, 'string' ), ['status' => 400] );
 			} elseif ( rhd_validate_date( $value ) === false ) {
-				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not a valid date.', 'rhd' ), $param ), ['status' => 400] );
+				return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%1$s is not a valid date.', 'calendario' ), $param ), ['status' => 400] );
 			}
 		} else {
-			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'rhd' ), $param ), ['status' => 400] );
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not specified as an argument', 'calendario' ), $param ), ['status' => 400] );
 		}
 
 		return true;
@@ -349,11 +349,11 @@ class Calendario_Route extends WP_REST_Controller {
 				return sanitize_text_field( $value );
 			}
 		} else {
-			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not registered as a request argument.', 'rhd' ), $param ), ['status' => 400] );
+			return new WP_Error( 'rest_invalid_param', sprintf( esc_html__( '%s was not registered as a request argument.', 'calendario' ), $param ), ['status' => 400] );
 		}
 
 		// If we got this far then something went wrong don't use user input.
-		return new WP_Error( 'rest_api_sad', esc_html__( 'Something went terribly wrong.', 'rhd' ), ['status' => 500] );
+		return new WP_Error( 'rest_api_sad', esc_html__( 'Something went terribly wrong.', 'calendario' ), ['status' => 500] );
 	}
 
 	/**
@@ -482,7 +482,7 @@ class Calendario_Route extends WP_REST_Controller {
 			return new WP_REST_Response( 'Updated post ' . $result, 200 );
 		}
 
-		return new WP_Error( 'cant-update', __( 'message', 'rhd' ), ['status' => 500] );
+		return new WP_Error( 'cant-update', __( 'message', 'calendario' ), ['status' => 500] );
 	}
 
 	/**
@@ -509,7 +509,7 @@ class Calendario_Route extends WP_REST_Controller {
 		}
 
 		// TODO meaningful error message for tax and/or wp_insert_post result
-		return new WP_Error( 'error-updating', __( 'message', 'rhd' ), ['status' => 500] );
+		return new WP_Error( 'error-updating', __( 'message', 'calendario' ), ['status' => 500] );
 	}
 
 	/**
@@ -527,7 +527,7 @@ class Calendario_Route extends WP_REST_Controller {
 			return new WP_REST_Response( 'Post trashed.', 200 );
 		}
 
-		return new WP_Error( 'cant-trash', __( 'message', 'rhd' ), ['status' => 500] );
+		return new WP_Error( 'cant-trash', __( 'message', 'calendario' ), ['status' => 500] );
 	}
 
 	/**
@@ -547,7 +547,7 @@ class Calendario_Route extends WP_REST_Controller {
 		}
 
 		if ( is_wp_error( $result ) ) {
-			return new WP_Error( 'cant-update-taxonomies', __( 'message', 'rhd' ), ['status' => 500] );
+			return new WP_Error( 'cant-update-taxonomies', __( 'message', 'calendario' ), ['status' => 500] );
 		}
 	}
 
@@ -583,7 +583,7 @@ class Calendario_Route extends WP_REST_Controller {
 			return new WP_REST_Response( 'Post status colors updated.', 200 );
 		}
 
-		return new WP_Error( 'colors-not-updated', __( 'message', 'rhd' ), ['status' => 200] );
+		return new WP_Error( 'colors-not-updated', __( 'message', 'calendario' ), ['status' => 200] );
 	}
 
 	/**

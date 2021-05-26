@@ -39,6 +39,7 @@ body {
 	z-index: 99999;
 	background: white;
 	min-height: 100%;
+	font-size: 16px;
 }
 
 .mobileOrientationCheck {
@@ -170,7 +171,7 @@ body {
 
 					@media (min-width: $mobileBreak) {
 						grid-area: calendarHeader;
-						padding-right: 1rem;
+						padding: 0 2rem;
 					}
 				}
 
@@ -252,6 +253,10 @@ body {
 		width: 100%;
 		position: relative;
 
+		@media (min-width: $mobileBreak) {
+			padding-left: 1em;
+		}
+
 		&.closed {
 			overflow: hidden;
 			border-right: 1px solid var(--borderColor);
@@ -297,6 +302,12 @@ body {
 		}
 	}
 
+	&__main {
+		@media (min-width: $mobileBreak) {
+			padding-right: 1em;
+		}
+	}
+
 	button {
 		border-radius: var(--borderRadius);
 		font-size: 1em;
@@ -339,9 +350,10 @@ body {
 	position: relative;
 	padding: 12px;
 	width: 100%;
+	margin: 0 0 12px;
 
-	&:not(:last-of-type) {
-		margin-bottom: 12px;
+	&:last-of-type {
+		margin-bottom: 0;
 	}
 
 	.widgetTitle {
@@ -827,6 +839,7 @@ body {
 
 .newPost {
 	font-size: 1.2rem;
+	background: none;
 
 	&:hover {
 		color: var(--mainColor-light);

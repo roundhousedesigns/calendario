@@ -1,58 +1,28 @@
 <?php
 /**
- * Plugin Name:     Calendario
- * Description:     The best editorial calendar for WordPress.
+ * Plugin Name:     Calendar.io
+ * Description:     The professional editorial calendar for WordPress.
  * Author:          Roundhouse Designs
  * Author URI:      https://roundhouse-designs.com
  * Text Domain:     rhd
- * Version:         0.1.0
+ * Version:         0.4.0
  *
  * @package         calendario
  */
 
-if ( ! function_exists( 'rhd_cal' ) ) {
-	// Create a helper function for easy SDK access.
-	function rhd_cal() {
-		global $rhd_cal;
+/**
+ * Paths
+ */
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.4.0' );
+define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
+define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
+define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
+define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
+// define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
 
-		if ( ! isset( $rhd_cal ) ) {
-			// Include Freemius SDK.
-			require_once dirname( __FILE__ ) . '/freemius/start.php';
-
-			$rhd_cal = fs_dynamic_init( array(
-				'id'               => '8136',
-				'slug'             => 'calendario',
-				'type'             => 'plugin',
-				'public_key'       => 'pk_0ceb9fcfae9cbd708428cd6126d45',
-				'is_premium'       => false,
-				'has_addons'       => false,
-				'has_paid_plans'   => false,
-				'is_org_compliant' => false,
-				'menu'             => array(
-					'slug'    => 'calendario',
-					'account' => false,
-					'support' => false,
-					'parent'  => array(
-						'slug' => 'edit.php',
-					),
-				),
-			) );
-		}
-
-		return $rhd_cal;
-	}
-
-	// Init Freemius.
-	rhd_cal();
-	// Signal that SDK was initiated.
-	do_action( 'rhd_cal_loaded' );
-}
-
-// Setting react app path constants.
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.3.0' );
-// define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
-// define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
-define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
+/**
+ * Base configuration
+ */
 define( 'RHD_CALENDARIO_REST_VERSION', 'v1' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
 define( 'RHD_DATE_FORMAT', 'Y-m-d H:i:s' );
@@ -94,6 +64,80 @@ define( 'RHD_POST_STATUS_SWATCHES', [
 ] );
 
 /**
+ * Freemius integration
+ */
+if ( ! function_exists( 'rhd_cal' ) ) {
+	// Create a helper function for easy SDK access.
+	function rhd_cal() {
+		global $rhd_cal;
+
+		if ( ! isset( $rhd_cal ) ) {
+			// Include Freemius SDK.
+			require_once dirname( __FILE__ ) . '/freemius/start.php';
+
+			$rhd_cal = fs_dynamic_init( array(
+				'id'                  => '8136',
+				'slug'                => 'calendario',
+				'type'                => 'plugin',
+				'public_key'          => 'pk_0ceb9fcfae9cbd708428cd6126d45',
+				'is_premium'          => true,
+				'premium_suffix'      => 'Blogger',
+				// If your plugin is a serviceware, set this option to false.
+				'has_premium_version' => true,
+				'has_addons'          => false,
+				'has_paid_plans'      => true,
+				'is_org_compliant'    => false,
+				'trial'               => array(
+					'days'               => 7,
+					'is_require_payment' => false,
+				),
+				'menu'                => array(
+					'slug'    => 'calendario',
+					'support' => false,
+					'parent'  => array(
+						'slug' => 'edit.php',
+					),
+				),
+				// Set the SDK to work in a sandbox mode (for development & testing).
+				// IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
+				'secret_key'          => 'sk_cR%[KEAzQyGU.RFj7P#CGgJ^t#GHT',
+			) );
+		}
+
+		return $rhd_cal;
+	}
+
+	// Init Freemius.
+	rhd_cal();
+	// Signal that SDK was initiated.
+	do_action( 'rhd_cal_loaded' );
+}
+
+/**
+ * Freemius customer messages
+ */
+function rhd_cal_custom_connect_message_on_update(
+	$message,
+	$user_first_name,
+	$plugin_title,
+	$user_login,
+	$site_link,
+	$freemius_link
+) {
+	return sprintf(
+		__( 'Hey %1$s' ) . ',<br>' .
+		__( 'Never miss an important %2$s update! Opt-in to our security and feature updates notifications and non-sensitive diagnostic tracking with %5$s. If you skip this, that\'s okay! %2$s will totally work just fine. :)', 'calendario' ),
+		$user_first_name,
+		'<b>' . $plugin_title . '</b>',
+		'<b>' . $user_login . '</b>',
+		$site_link,
+		$freemius_link
+	);
+}
+
+rhd_cal()->add_filter( 'connect_message_on_update', 'rhd_cal_custom_connect_message_on_update', 10, 6 );
+
+/**
  * Functions
  */
 include plugin_dir_path( __FILE__ ) . 'includes/functions.php';
@@ -132,145 +176,4 @@ function rhd_calendario_plugin_activation() {
 }
 register_activation_hook( __FILE__, 'rhd_calendario_plugin_activation' );
 
-/**
- * Class Calendario.
- */
-class Calendario {
-
-	/**
-	 * @var string
-	 */
-	private $selector = '';
-	/**
-	 * @var string
-	 */
-	private $limit_load_hook = '';
-	/**
-	 * @var bool|string
-	 */
-	private $limit_callback = '';
-
-	/**
-	 * Calendario constructor.
-	 *
-	 * @param string $enqueue_hook Hook to enqueue scripts.
-	 * @param string $limit_load_hook Limit load to hook in admin load. If front end pass empty string.
-	 * @param bool|string $limit_callback Limit load by callback result. If back end send false.
-	 * @param string $css_selector Css selector to render app.
-	 */
-	function __construct( $enqueue_hook, $limit_load_hook, $limit_callback = false, $css_selector ) {
-		$this->selector        = $css_selector;
-		$this->limit_load_hook = $limit_load_hook;
-		$this->limit_callback  = $limit_callback;
-
-		add_action( $enqueue_hook, [$this, 'load_react_app'] );
-
-		// wp-admin interface
-		add_action( 'admin_menu', [$this, 'create_plugin_page'] );
-	}
-
-	/**
-	 * Load react app files in WordPress admin.
-	 *
-	 * @param $hook
-	 *
-	 * @return bool|void
-	 */
-	function load_react_app( $hook ) {
-		// Limit app load in admin by admin page hook.
-		$is_main_dashboard = $hook === $this->limit_load_hook;
-
-		if ( ! $is_main_dashboard && is_bool( $this->limit_callback ) ) {
-			return;
-		}
-
-		// Limit app load in front end by callback.
-		$limit_callback = $this->limit_callback;
-		if ( is_string( $limit_callback ) && ! $limit_callback() ) {
-			return;
-		}
-
-		// Get assets links.
-		$assets_files = $this->get_assets_files();
-
-		$js_files  = array_filter( $assets_files, fn( $file_string ) => pathinfo( $file_string, PATHINFO_EXTENSION ) === 'js' );
-		$css_files = array_filter( $assets_files, fn( $file_string ) => pathinfo( $file_string, PATHINFO_EXTENSION ) === 'css' );
-
-		// Load css files.
-		foreach ( $css_files as $index => $css_file ) {
-			wp_enqueue_style( 'react-plugin-' . $index, RHD_CALENDARIO_REACT_APP_BUILD . $css_file );
-		}
-
-		// Load js files.
-		foreach ( $js_files as $index => $js_file ) {
-			$handle = 'react-plugin-' . $index;
-			wp_enqueue_script( $handle, RHD_CALENDARIO_REACT_APP_BUILD . $js_file, [], RHD_CALENDARIO_PLUGIN_VERSION, true );
-		}
-
-		// Variables for app use - These variables will be available in window.rhdReactPlugin variable.
-		wp_localize_script( 'react-plugin-0', 'rhdReactPlugin',
-			[
-				'appSelector'         => $this->selector,
-				'adminUrl'            => admin_url(),
-				'pluginUrl'           => plugin_dir_url( __FILE__ ),
-				'postsUrl'            => admin_url( 'edit.php?post_type=post' ),
-				'trashUrl'            => admin_url( 'edit.php?post_status=trash&post_type=post' ),
-				'blogUrl'             => get_option( 'page_for_posts' ),
-				'user'                => get_current_user_id(),
-				'nonce'               => wp_create_nonce( 'wp_rest' ),
-				'routeBase'           => get_rest_url( null, sprintf( 'calendario/%s', RHD_CALENDARIO_REST_VERSION ) ),
-				'defaultStatusColors' => rhd_post_status_default_color_pairs(),
-				'presetStatusColors'  => RHD_POST_STATUS_SWATCHES,
-			]
-		);
-	}
-
-	/**
-	 * create_plugin_page function. Creates the submenu!
-	 *
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function create_plugin_page() {
-		add_submenu_page( 'edit.php', 'Calendario', 'Calendario', 'manage_options', 'calendario', [$this, 'calendario_page'] );
-	}
-
-	/**
-	 * calendario_page function. Prints the main workspace. Tasty!
-	 *
-	 * @return void
-	 */
-	public function calendario_page() {
-		include_once plugin_dir_path( __FILE__ ) . 'templates/main.php';
-	}
-
-	/**
-	 * Get app entry points assets files.
-	 *
-	 * @return array|void
-	 */
-	private function get_assets_files() {
-		// Request manifest file.
-		$request = file_get_contents( RHD_CALENDARIO_MANIFEST_URL );
-
-		// If the remote request fails.
-		if ( ! $request ) {
-			return false;
-		}
-
-		// Convert json to php array.
-		$files_data = json_decode( $request );
-		if ( $files_data === null ) {
-			return;
-		}
-
-		// No entry points found.
-		if ( ! property_exists( $files_data, 'entrypoints' ) ) {
-			return false;
-		}
-
-		return $files_data->entrypoints;
-	}
-
-}
+require_once plugin_dir_path( __FILE__ ) . '/includes/class-calendario.php';
