@@ -12,8 +12,6 @@ import {
 export const DEBUG_MODE =
 	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
 
-eb6e6f, f6bc98, ffc90d, d9eee1, 474750
-
 export const wp =
 	DEBUG_MODE === true
 		? {
@@ -36,7 +34,7 @@ export const wp =
 					"#ffc90d",
 					"#8F3C3D",
 					"#f27121",
-					"#eb6e6f, f6bc98, ffc90d, d9eee1, 474750",
+					"#474750",
 					"#c1bfb8",
 					"#d9eee1",
 					"#64b181",
