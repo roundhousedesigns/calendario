@@ -12,6 +12,8 @@ import {
 export const DEBUG_MODE =
 	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
 
+eb6e6f, f6bc98, ffc90d, d9eee1, 474750
+
 export const wp =
 	DEBUG_MODE === true
 		? {
@@ -24,23 +26,23 @@ export const wp =
 				trashUrl: "",
 				blogUrl: "//localhost",
 				defaultStatusColors: {
-					publish: "dodgerblue",
-					future: "olivedrab",
-					draft: "darkgray",
-					pending: "orange",
-					private: "brown",
+					publish: "#eb6e6f",
+					future: "#d9eee1",
+					draft: "#ffc90d",
+					pending: "#f6bc98",
+					private: "#eb6e6f",
 				},
 				presetStatusColors: [
-					"darkgray",
-					"violet",
-					"darkorchid",
-					"dodgerblue",
-					"skyblue",
-					"olivedrab",
-					"mediumseagreen",
-					"lightsalmon",
-					"orange",
-					"brown",
+					"#ffc90d",
+					"#8F3C3D",
+					"#f27121",
+					"#eb6e6f, f6bc98, ffc90d, d9eee1, 474750",
+					"#c1bfb8",
+					"#d9eee1",
+					"#64b181",
+					"#aaaae8",
+					"#f6bc98",
+					"#eb6e6f",
 				],
 		  }
 		: {

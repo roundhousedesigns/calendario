@@ -28,39 +28,39 @@ define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-m
 define( 'RHD_DATE_FORMAT', 'Y-m-d H:i:s' );
 define( 'RHD_UNSCHEDULED_INDEX_META_KEY', 'rhd_unscheduled' );
 define( 'RHD_POST_STATUS_COLOR_OPTION_KEY', 'rhd_calendario_post_statuses' );
-define( 'RHD_POST_STATUSES', [
+define( 'RHD_POST_STATUS_DEFAULTS', [
 	'publish' => [
 		'name'  => 'Published',
-		'color' => 'dodgerblue',
+		'color' => '#474750',
 	],
 	'future'  => [
 		'name'  => 'Scheduled',
-		'color' => 'olivedrab',
+		'color' => '#d9eee1',
 	],
 	'draft'   => [
 		'name'  => "Draft",
-		'color' => 'darkgray',
+		'color' => '#ffc90d',
 	],
 	'pending' => [
 		'name'  => 'Pending Review',
-		'color' => 'orange',
+		'color' => '#f6bc98',
 	],
 	'private' => [
 		'name'  => 'Private',
-		'color' => 'brown',
+		'color' => '#eb6e6f',
 	],
 ] );
 define( 'RHD_POST_STATUS_SWATCHES', [
-	"darkgray",
-	"violet",
-	"darkorchid",
-	"dodgerblue",
-	"skyblue",
-	"olivedrab",
-	"mediumseagreen",
-	"lightsalmon",
-	"orange",
-	"brown",
+	"#ffc90d",
+	"#8f3c3d",
+	"#f27121",
+	"#474750",
+	"#c1bfb8",
+	"#d9eee1",
+	"#64b181",
+	"#aaaae8",
+	"#f6bc98",
+	"#eb6e6f",
 ] );
 
 /**
@@ -159,7 +159,7 @@ add_action( 'init', 'rhd_load_plugin' );
 function rhd_calendario_plugin_activation() {
 	// Check for saved post status colors, and set defaults if not present.
 	if ( false === ( $colors = get_option( 'rhd_calendario_post_status_colors' ) ) ) {
-		$statuses = RHD_POST_STATUSES;
+		$statuses = RHD_POST_STATUS_DEFAULTS;
 		$colors   = [];
 
 		foreach ( $statuses as $status => $props ) {
