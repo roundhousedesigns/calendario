@@ -88,7 +88,7 @@ export default function Post({ post, index, unscheduled }) {
 		}
 	};
 
-	function draggableStyles() {
+	function draggableStyles(snapshot) {
 		let classes = [
 			"post",
 			`post-id-${post.id} status__${post.post_status}`,
@@ -108,8 +108,16 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push("currentPost");
 		}
 
-		if (isDragging) {
+		if (snapshot.isDragging) {
 			classes.push("dragging");
+		}
+
+		if (snapshot.draggingOver === "unscheduled") {
+			classes.push("over__unscheduled");
+		} else if (snapshot.draggingOver !== null) {
+			classes.push("over__calendar");
+		} else {
+			classes.push("over__none");
 		}
 
 		return classes.join(" ");
