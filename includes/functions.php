@@ -185,7 +185,7 @@ function rhd_get_unscheduled_item_ids() {
  */
 function rhd_prepare_post_statuses() {
 	$colors   = get_option( RHD_POST_STATUS_COLOR_OPTION_KEY );
-	$statuses = RHD_POST_STATUSES;
+	$statuses = RHD_POST_STATUS_DEFAULTS;
 
 	foreach ( $statuses as $status => $props ) {
 		$statuses[$status]['color'] = $colors[$status];
