@@ -7,7 +7,6 @@ import { useStickyState } from "./lib/hooks";
 import {
 	dateIsBetween,
 	isDraggingUnscheduled,
-	isOverUnscheduled,
 	reorderUnscheduled,
 	getPostList,
 	moveItem,
@@ -152,6 +151,9 @@ export default function App() {
 		postsDispatch,
 	]);
 
+	const isOverUnscheduled = (droppableId) =>
+		droppableId === "unscheduled" ? true : false;
+
 	const handleTodayClick = () => {
 		const today = new Date();
 
@@ -204,7 +206,7 @@ export default function App() {
 			return;
 		}
 
-		let overUnscheduled = isOverUnscheduled(item);
+		let overUnscheduled = isOverUnscheduled(item.source.droppableId);
 
 		// only dispatch if an update is necessary
 		if (overUnscheduled === true) {
@@ -233,8 +235,7 @@ export default function App() {
 			return;
 		}
 
-		let overUnscheduled =
-			destination.droppableId === "unscheduled" ? true : false;
+		let overUnscheduled = isOverUnscheduled(destination.droppableId);
 
 		const post_date = draggedPostDate(
 			post_date_raw,
