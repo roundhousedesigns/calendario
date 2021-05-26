@@ -19,6 +19,10 @@
 	box-sizing: border-box;
 }
 
+html {
+	overflow: hidden;
+}
+
 body {
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 	font-size: 1em;
@@ -35,7 +39,7 @@ body {
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	overflow: auto;
+	overflow: hidden;
 	z-index: 99999;
 	background: white;
 	min-height: 100%;
@@ -82,7 +86,7 @@ body {
 .calendario {
 	display: grid;
 	grid-gap: var(--gridGap);
-	height: 90vh;
+	height: 100%;
 	transition: all 500ms ease;
 
 	@media (max-width: $mobileBreak) and (orientation: portrait) {
@@ -235,11 +239,6 @@ body {
 				// }
 			}
 		}
-	}
-
-	&__main,
-	&__sidebar {
-		margin-bottom: 2em;
 	}
 
 	&__main {
