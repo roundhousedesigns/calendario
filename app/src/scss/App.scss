@@ -61,6 +61,7 @@ body {
 	.message {
 		color: var(--neutralColor);
 		width: 80%;
+
 		@include absoluteCenter;
 
 		.icon,
@@ -243,11 +244,6 @@ body {
 		margin-bottom: 2em;
 	}
 
-	&__main {
-		grid-area: main;
-		width: 100%;
-	}
-
 	&__sidebar {
 		grid-area: sidebar;
 		width: 100%;
@@ -303,6 +299,9 @@ body {
 	}
 
 	&__main {
+		grid-area: main;
+		width: 100%;
+
 		@media (min-width: $mobileBreak) {
 			padding-right: 1em;
 		}
