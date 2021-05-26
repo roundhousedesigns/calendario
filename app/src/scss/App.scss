@@ -344,41 +344,6 @@ body {
 	}
 }
 
-.widget {
-	border: 1px solid var(--borderColor);
-	position: relative;
-	padding: 12px;
-	width: 100%;
-	margin: 0 0 12px;
-
-	&:last-of-type {
-		margin-bottom: 0;
-	}
-
-	.widgetTitle {
-		margin: 0 0 1em;
-		font-size: 1.2em;
-	}
-
-	&__support {
-		display: flex;
-		justify-content: space-evenly;
-		flex-wrap: nowrap;
-		align-items: center;
-
-		.rhdLogo {
-			flex: 0 1 40%;
-			height: 100%;
-			margin: 0;
-
-			img {
-				width: 100%;
-				height: auto;
-			}
-		}
-	}
-}
-
 .unscheduledDrafts {
 	display: flex;
 	flex-direction: column;
