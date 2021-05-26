@@ -214,10 +214,7 @@ export default function App() {
 				type: "DRAGGING_OVER_UNSCHEDULED",
 				draggedOver: item.destination.index,
 			});
-		} else if (
-			overUnscheduled === false &&
-			draggedPost.overUnscheduled === true
-		) {
+		} else if (draggedPost.overUnscheduled === true) {
 			draggedPostDispatch({
 				type: "DRAGGING_OVER_CALENDAR",
 			});
