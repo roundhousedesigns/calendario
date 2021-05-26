@@ -9,7 +9,7 @@ import ViewContext from "../ViewContext";
 
 export default function Sidebar() {
 	const { pluginUrl } = wp;
-	// const [sidebarOpen, setSidebarOpen] = useState(true);
+
 	const {
 		viewOptions: { sidebarOpen },
 		viewOptionsDispatch,
@@ -43,26 +43,6 @@ export default function Sidebar() {
 					"",
 					"support",
 					<>
-						<ul className="docs">
-							<li>
-								<a
-									href="https://github.com/gaswirth/rhdwp-calendario"
-									rel="noreferrer"
-									target="_blank"
-								>
-									Help + Documentation (dummy link)
-								</a>
-							</li>
-							<li>
-								<a
-									href="https://github.com/gaswirth/rhdwp-calendario"
-									rel="noreferrer"
-									target="_blank"
-								>
-									Support (dummy link)
-								</a>
-							</li>
-						</ul>
 						<a
 							className="rhdLogo"
 							href="https://roundhouse-designs.com"
@@ -74,6 +54,26 @@ export default function Sidebar() {
 								alt="Roundhouse Designs logo"
 							/>
 						</a>
+						<ul className="docs">
+							<li>
+								<a
+									href="https://github.com/gaswirth/rhdwp-calendario/wiki"
+									rel="noreferrer"
+									target="_blank"
+								>
+									Support
+								</a>
+							</li>
+							<li>
+								<a
+									href="https://github.com/gaswirth/rhdwp-calendario/issues"
+									rel="noreferrer"
+									target="_blank"
+								>
+									Report a Bug
+								</a>
+							</li>
+						</ul>
 					</>
 				)}
 			</div>

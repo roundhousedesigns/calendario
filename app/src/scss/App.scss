@@ -349,12 +349,15 @@ body {
 	}
 
 	&__support {
+		display: flex;
+		justify-content: space-evenly;
+		flex-wrap: nowrap;
+		align-items: center;
+
 		.rhdLogo {
-			display: block;
-			width: 100%;
-			max-width: 150px;
-			height: auto;
-			margin: 0 auto;
+			flex: 1;
+			height: 100%;
+			margin: 0;
 
 			img {
 				width: 100%;
