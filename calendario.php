@@ -5,7 +5,7 @@
  * Author:          Roundhouse Designs
  * Author URI:      https://roundhouse-designs.com
  * Text Domain:     rhd
- * Version:         0.4.0
+ * Version:         0.7.1
  *
  * @package         calendario
  */
@@ -13,7 +13,7 @@
 /**
  * Paths
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.4.0' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.1' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 // define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
@@ -76,31 +76,26 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 			require_once dirname( __FILE__ ) . '/freemius/start.php';
 
 			$rhd_cal = fs_dynamic_init( array(
-				'id'                  => '8136',
-				'slug'                => 'calendario',
-				'type'                => 'plugin',
-				'public_key'          => 'pk_0ceb9fcfae9cbd708428cd6126d45',
-				'is_premium'          => true,
-				'premium_suffix'      => 'Blogger',
-				// If your plugin is a serviceware, set this option to false.
-				'has_premium_version' => true,
-				'has_addons'          => false,
-				'has_paid_plans'      => true,
-				'is_org_compliant'    => false,
-				'trial'               => array(
-					'days'               => 7,
+				'id'               => '8136',
+				'slug'             => 'calendario',
+				'type'             => 'plugin',
+				'public_key'       => 'pk_0ceb9fcfae9cbd708428cd6126d45',
+				'is_premium'       => true,
+				'is_premium_only'  => true,
+				'has_addons'       => false,
+				'has_paid_plans'   => true,
+				'is_org_compliant' => false,
+				'trial'            => array(
+					'days'               => 14,
 					'is_require_payment' => false,
 				),
-				'menu'                => array(
+				'menu'             => array(
 					'slug'    => 'calendario',
 					'support' => false,
 					'parent'  => array(
 						'slug' => 'edit.php',
 					),
 				),
-				// Set the SDK to work in a sandbox mode (for development & testing).
-				// IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
-				'secret_key'          => 'sk_cR%[KEAzQyGU.RFj7P#CGgJ^t#GHT',
 			) );
 		}
 
