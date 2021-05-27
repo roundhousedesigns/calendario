@@ -130,17 +130,20 @@ body {
 
 	&__title {
 		color: var(--textColor-light);
-		text-align: left;
-		word-spacing: 100vw;
 		line-height: 1;
 		font-size: 2em;
-		// margin: 0.5rem 0 0.5rem 12px;
 		margin: 0 0 0 12px;
-		text-transform: lowercase;
-		font-weight: bold;
+		max-width: 240px;
 
-		img {
-			width: 240px;
+		img,
+		svg {
+			width: 100%;
+		}
+
+		svg {
+			g {
+				fill:var(--textColor);
+			}
 		}
 
 		.line {
@@ -165,7 +168,7 @@ body {
 			}
 
 			& > div {
-				padding: 6px 12px;
+				padding: 6px 16px;
 				display: flex;
 				align-self: center;
 				align-items: center;

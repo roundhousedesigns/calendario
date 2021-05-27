@@ -81,13 +81,6 @@ export default function MainHeader({ handleTodayClick }) {
 					>
 						today
 					</button>
-					<button
-						className="icon refreshButton"
-						onClick={handleRefreshClick}
-						title="Refresh Posts"
-					>
-						sync
-					</button>
 				</div>
 				<div className="viewRange">
 					<DatePicker
@@ -125,6 +118,13 @@ export default function MainHeader({ handleTodayClick }) {
 					/>
 				</div>
 				<ViewOptions />
+				<button
+					className="icon refreshButton"
+					onClick={handleRefreshClick}
+					title="Refresh Posts"
+				>
+					sync
+				</button>
 			</div>
 			<div className="col col__end">
 				<button

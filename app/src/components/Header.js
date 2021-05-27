@@ -2,6 +2,7 @@ import React from "react";
 import MainHeader from "./MainHeader";
 import { useFetchPostStatuses } from "../lib/hooks";
 import { wp } from "../lib/utils";
+import { ReactComponent as Logo } from '../svg/calendariologo.svg';
 
 export default function Header({ handleTodayClick }) {
 	useFetchPostStatuses();
@@ -23,10 +24,7 @@ export default function Header({ handleTodayClick }) {
 						close
 					</button>
 					<h1 className="calendario__title">
-						<img
-							src={`${pluginUrl}cal-logo-no-icon.png`}
-							alt="editorial calendar.io logo"
-						/>
+						<Logo />
 					</h1>
 				</div>
 			</div>
