@@ -60,8 +60,8 @@ class Calendario {
 		// Get assets links.
 		$assets_files = $this->get_assets_files();
 
-		$js_files  = array_filter( $assets_files, fn( $file_string ) => pathinfo( $file_string, PATHINFO_EXTENSION ) === 'js' );
-		$css_files = array_filter( $assets_files, fn( $file_string ) => pathinfo( $file_string, PATHINFO_EXTENSION ) === 'css' );
+		$js_files = array_filter( $assets_files, function ( $file_string ) {return pathinfo( $file_string, PATHINFO_EXTENSION ) === 'js';} );
+		$css_files = array_filter( $assets_files, function ( $file_string ) {return pathinfo( $file_string, PATHINFO_EXTENSION ) === 'css';} );
 
 		// Load css files.
 		foreach ( $css_files as $index => $css_file ) {
