@@ -452,6 +452,7 @@ body {
 		&[disabled] {
 			background-color: var(--neutralColor-dark);
 			color: var(--textColor-light);
+			cursor: not-allowed;
 		}
 	}
 }
