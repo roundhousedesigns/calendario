@@ -24,7 +24,7 @@ export default function Header({ handleTodayClick }) {
 					</button>
 					<h1 className="calendario__title">
 						<img
-							src={`${pluginUrl}cal-logo-long.png`}
+							src={`${pluginUrl}cal-logo-no-icon.png`}
 							alt="editorial calendar.io logo"
 						/>
 					</h1>
