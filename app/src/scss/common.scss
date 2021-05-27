@@ -14,14 +14,14 @@ button {
 
 		&:hover {
 			&:not([disabled]) {
-				background-color: var(--textColor);
-				color: var(--neutralColor);
+				color: var(--textColor-dark);
 			}
 		}
 
 		&.active {
 			background-color: var(--textColor);
 			color: var(--neutralColor);
+			pointer-events: none;
 		}
 	}
 

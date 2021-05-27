@@ -57,7 +57,7 @@ export default function MainHeader({ handleTodayClick }) {
 		<div className="calendarHeaderControls">
 			<div className="col col__start">
 				<button
-					className="icon dateChevron"
+					className="icon control dateChevron"
 					onClick={prevMonth}
 					title="Previous Month"
 				>
@@ -110,7 +110,7 @@ export default function MainHeader({ handleTodayClick }) {
 			</div>
 			<div className="col col__end">
 				<button
-					className="icon dateChevron"
+					className="icon control dateChevron"
 					onClick={nextMonth}
 					title="Next Month"
 				>
