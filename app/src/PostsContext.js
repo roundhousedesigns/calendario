@@ -36,8 +36,8 @@ export const initialPosts = {
 
 export function postsReducer(state, action) {
 	switch (action.type) {
-		case "SET_SCHEDULED":
-			let scheduledPosts = action.posts;
+		case "SET_SCHEDULED": {
+			let { posts: scheduledPosts } = action;
 
 			// cast the date as a Date object
 			scheduledPosts.forEach((post, index) => {
@@ -58,9 +58,10 @@ export function postsReducer(state, action) {
 				},
 				scheduled: scheduledByDate,
 			};
+		}
 
-		case "SET_UNSCHEDULED":
-			let unscheduledPosts = action.posts;
+		case "SET_UNSCHEDULED": {
+			let { posts: unscheduledPosts } = action;
 
 			// cast the date as a Date object
 			unscheduledPosts.forEach((post, index) => {
@@ -71,21 +72,22 @@ export function postsReducer(state, action) {
 				...state,
 				unscheduled: unscheduledPosts,
 			};
+		}
 
-		case "MOVE":
-			let scheduled = state.scheduled;
-			let unscheduled = state.unscheduled;
+		case "MOVE": {
+			let { scheduled, unscheduled } = state;
+			const { source, sourceId, destination, destinationId } = action;
 
 			if (action.sourceId === "unscheduled") {
-				unscheduled = action.source;
+				unscheduled = source;
 			} else {
-				scheduled[action.sourceId] = action.source;
+				scheduled[sourceId] = source;
 			}
 
-			if (action.destinationId === "unscheduled") {
-				unscheduled = action.destination;
+			if (destinationId === "unscheduled") {
+				unscheduled = destination;
 			} else {
-				scheduled[action.destinationId] = action.destination;
+				scheduled[destinationId] = destination;
 			}
 
 			return {
@@ -93,8 +95,9 @@ export function postsReducer(state, action) {
 				unscheduled,
 				scheduled,
 			};
+		}
 
-		case "SET_TAXONOMY_TERMS":
+		case "SET_TAXONOMY_TERMS": {
 			return {
 				...state,
 				taxonomies: {
@@ -105,8 +108,9 @@ export function postsReducer(state, action) {
 					},
 				},
 			};
+		}
 
-		case "SET_CURRENTPOST":
+		case "SET_CURRENTPOST": {
 			return {
 				...state,
 				currentPost: {
@@ -114,14 +118,16 @@ export function postsReducer(state, action) {
 					unscheduled: action.unscheduled,
 				},
 			};
+		}
 
-		case "REFETCH":
+		case "REFETCH": {
 			return {
 				...state,
 				refetch: !state.refetch,
 			};
+		}
 
-		case "NEW_POST":
+		case "NEW_POST": {
 			return {
 				...state,
 				currentPost: {
@@ -131,8 +137,9 @@ export function postsReducer(state, action) {
 					taxonomies: {},
 				},
 			};
+		}
 
-		case "UPDATE_CURRENTPOST_FIELD":
+		case "UPDATE_CURRENTPOST_FIELD": {
 			return {
 				...state,
 				currentPost: {
@@ -140,26 +147,31 @@ export function postsReducer(state, action) {
 					[action.field]: action.value,
 				},
 			};
+		}
 
-		case "UNSET_CURRENTPOST":
+		case "UNSET_CURRENTPOST": {
 			return {
 				...state,
 				currentPost: initialPosts.currentPost,
 			};
+		}
 
-		case "UPDATE":
+		case "UPDATE": {
+			const { id, params, newIndex, unscheduled } = action;
+
 			return {
 				...state,
 				updatePost: {
 					updateNow: true,
-					id: action.id,
-					params: action.params,
-					newIndex: action.newIndex,
-					unscheduled: action.unscheduled,
+					id,
+					params,
+					newIndex,
+					unscheduled,
 				},
 			};
+		}
 
-		case "UPDATING":
+		case "UPDATING": {
 			return {
 				...state,
 				updatePost: {
@@ -167,25 +179,30 @@ export function postsReducer(state, action) {
 					updateNow: false,
 				},
 			};
+		}
 
-		case "TRASH":
+		case "TRASH": {
+			const { id, params } = action;
 			return {
 				...state,
 				updatePost: {
 					updateNow: true,
 					trash: true,
-					id: action.id,
-					params: action.params,
+					id,
+					params,
 				},
 			};
+		}
 
-		case "COMPLETE":
+		case "COMPLETE": {
 			return {
 				...state,
 				updatePost: initialPosts.updatePost,
 			};
+		}
 
-		default:
+		default: {
 			return state;
+		}
 	}
 }

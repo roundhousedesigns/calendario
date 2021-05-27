@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
+import DrawerHandle from "./common/DrawerHandle";
+import Widget from "./common/Widget";
 import UnscheduledDrafts from "./UnscheduledDrafts";
 import StatusFilters from "./StatusFilters";
-import DrawerHandle from "./common/DrawerHandle";
-import { renderWidget } from "../lib/utils";
+import RefetchButton from "./RefetchButton";
+import ViewOptions from "./ViewOptions";
 import { wp } from "../lib/utils";
 
 import ViewContext from "../ViewContext";
@@ -12,6 +14,7 @@ export default function Sidebar() {
 
 	const {
 		viewOptions: { sidebarOpen },
+		// viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
 
@@ -27,22 +30,25 @@ export default function Sidebar() {
 				}
 			/>
 			<div className="calendario__sidebar__inner">
-				{renderWidget(
-					"Unscheduled Drafts",
-					"unscheduledDrafts",
+				<Widget widgetClass="options">
+					<div className="options">
+						<ViewOptions />
+						<RefetchButton />
+					</div>
+				</Widget>
+				<Widget
+					title="Unscheduled Drafts"
+					widgetClass="unscheduledDrafts"
+				>
 					<UnscheduledDrafts />
-				)}
+				</Widget>
 
-				{renderWidget(
-					"Post Status",
-					"statusFilters",
+				<Widget title="Post Status" widgetClass="statusFilters">
 					<StatusFilters />
-				)}
+				</Widget>
 
-				{renderWidget(
-					"",
-					"support",
-					<>
+				<Widget widgetClass="support">
+					<div className="support-links">
 						<a
 							className="rhdLogo"
 							href="https://roundhouse-designs.com"
@@ -74,8 +80,8 @@ export default function Sidebar() {
 								</a>
 							</li>
 						</ul>
-					</>
-				)}
+					</div>
+				</Widget>
 			</div>
 		</aside>
 	);

@@ -1,4 +1,4 @@
-import Widget from "../components/common/Widget";
+// import Widget from "../components/common/Widget";
 import { omit, isEmpty, isEqual } from "lodash";
 import {
 	format,
@@ -93,22 +93,6 @@ export function haveColorsChanged(statuses) {
 
 	return !isEqual(defaultStatusColors, currentStatusColors);
 }
-
-/**
- * Renders a styled Widget.
- *
- * @param {string} title
- * @param {string} className
- * @param {*} children The widget content
- * @returns
- */
-export const renderWidget = (title, className, children) => {
-	return (
-		<Widget title={title} className={`widget__${className}`}>
-			{children}
-		</Widget>
-	);
-};
 
 /**
  * Retrieves a calendar day's key (format: yyyy-MM-dd)

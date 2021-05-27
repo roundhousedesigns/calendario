@@ -15,6 +15,7 @@ import {
 	DEBUG_MODE,
 	filterPostStatus,
 } from "./lib/utils";
+import { differenceInWeeks, addWeeks } from "date-fns";
 import { isEmpty } from "lodash";
 import { DragDropContext } from "react-beautiful-dnd";
 
@@ -41,6 +42,10 @@ export default function App() {
 		"viewOptions"
 	);
 
+	const {
+		viewRange: { start, end },
+	} = viewOptions;
+
 	const todayRef = useRef();
 	const mainRef = useRef();
 
@@ -54,7 +59,7 @@ export default function App() {
 	useEffect(() => {
 		// Update the context initially
 		viewOptionsDispatch({
-			type: "UPDATE",
+			type: "SET_VIEW_MODE",
 			viewMode: view.viewMode,
 		});
 		//eslint-disable-next-line
@@ -157,21 +162,18 @@ export default function App() {
 	const handleTodayClick = () => {
 		const today = new Date();
 
-		if (
-			dateIsBetween(
-				today,
-				viewOptions.viewRange.start,
-				viewOptions.viewRange.end
-			)
-		) {
+		if (dateIsBetween(today, start, end)) {
 			mainRef.current.scroll({
 				top: todayRef.current.offsetTop,
 				behavior: "smooth",
 			});
 		} else {
+			const weekDiff = differenceInWeeks(end, start);
+
 			viewOptionsDispatch({
-				type: "SET_RANGE_START",
-				date: today,
+				type: "SET_RANGE",
+				start: today,
+				end: addWeeks(today, weekDiff),
 			});
 		}
 	};

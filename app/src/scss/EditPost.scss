@@ -100,7 +100,7 @@
 				left: 0;
 				top: 0;
 				z-index: 10;
-				border-radius: calc(var(--borderRadius) / 2);
+				border-radius: var(--borderRadius-half);
 
 				p {
 					margin: 0;
@@ -184,7 +184,7 @@
 
 			&__right {
 				background-color: var(--mainColor-transparent);
-				border-radius: calc(var(--borderRadius) / 2);
+				border-radius: var(--borderRadius-half);
 				flex: 0 0 33.3334%;
 				height: auto;
 				float: right;
@@ -202,7 +202,7 @@
 					width: 100%;
 					height: auto;
 					display: block;
-					border-radius: calc(var(--borderRadius) / 2);
+					border-radius: var(--borderRadius-half);
 				}
 
 				a {
@@ -295,7 +295,7 @@
 					fieldset {
 						padding: 0;
 						margin: 0;
-						border-radius: calc(var(--borderRadius) / 2);
+						border-radius: var(--borderRadius-half);
 						border-bottom-right-radius: 0;
 						border-bottom-left-radius: 0;
 						border-bottom-width: 1.5px;

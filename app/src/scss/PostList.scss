@@ -41,14 +41,6 @@
 		position: relative;
 		// transition: all 100ms ease-in-out;
 
-		&.visible {
-			visibility: visible;
-		}
-
-		&.hidden {
-			visibility: hidden;
-		}
-
 		&.hovered {
 			padding-bottom: $postLinks__height;
 		}

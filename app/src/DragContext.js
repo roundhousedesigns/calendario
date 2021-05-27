@@ -13,7 +13,7 @@ export const initialDrag = {
 
 export function dragReducer(state, action) {
 	switch (action.type) {
-		case "START":
+		case "START": {
 			return {
 				...state,
 				post: action.post,
@@ -21,26 +21,30 @@ export function dragReducer(state, action) {
 				currentIndex:
 					action.currentIndex >= 0 ? action.currentIndex : false,
 			};
+		}
 
-		case "DRAGGING_OVER_UNSCHEDULED":
+		case "DRAGGING_OVER_UNSCHEDULED": {
 			return {
 				...state,
 				newIndex: action.draggedOver,
 				overUnscheduled: true,
 			};
+		}
 
-		case "DRAGGING_OVER_CALENDAR":
+		case "DRAGGING_OVER_CALENDAR": {
 			return {
 				...state,
 				newIndex: initialDrag.newIndex,
 				overUnscheduled: false,
 			};
+		}
 
 		case "END": {
 			return initialDrag;
 		}
 
-		default:
+		default: {
 			return state;
+		}
 	}
 }

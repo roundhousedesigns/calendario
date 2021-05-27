@@ -1,10 +1,10 @@
 import { forwardRef, useContext, useEffect, useState } from "react";
-import ViewOptions from "./ViewOptions";
+// import ViewOptions from "./ViewOptions";
 import DatePicker from "react-datepicker";
 import { addDays, startOfToday, startOfMonth, endOfMonth } from "date-fns";
 
 import ViewContext from "../ViewContext";
-import PostsContext from "../PostsContext";
+// import PostsContext from "../PostsContext";
 import { dateFormat, dateIsBetween } from "../lib/utils";
 
 export default function MainHeader({ handleTodayClick }) {
@@ -13,7 +13,7 @@ export default function MainHeader({ handleTodayClick }) {
 		viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
-	const { postsDispatch } = useContext(PostsContext);
+	// const { postsDispatch } = useContext(PostsContext);
 	const [todayInRange, setTodayInRange] = useState(true);
 
 	const today = startOfToday();
@@ -45,22 +45,16 @@ export default function MainHeader({ handleTodayClick }) {
 
 	const nextMonth = (e) => {
 		e.preventDefault();
-		viewOptionsDispatch({ type: "NEXT_MONTH" });
+		viewOptionsDispatch({ type: "CHANGE_MONTH", direction: "next" });
 	};
 
 	const prevMonth = (e) => {
 		e.preventDefault();
-		viewOptionsDispatch({ type: "PREV_MONTH" });
-	};
-
-	const handleRefreshClick = () => {
-		postsDispatch({
-			type: "REFETCH",
-		});
+		viewOptionsDispatch({ type: "CHANGE_MONTH", direction: "previous" });
 	};
 
 	return (
-		<div className="calendarListHeader flex-middle">
+		<div className="calendarHeaderControls">
 			<div className="col col__start">
 				<button
 					className="icon dateChevron"
@@ -70,26 +64,24 @@ export default function MainHeader({ handleTodayClick }) {
 					chevron_left
 				</button>
 			</div>
-			<div className="col col__center mainViewOptions">
-				<div className={`controlButtons`}>
-					<button
-						className={`icon today todayButton ${
-							todayInRange ? "hidden" : "visible"
-						}`}
-						onClick={handleTodayClick}
-						title="Jump to Today"
-					>
-						today
-					</button>
-				</div>
+			<div className="viewControl">
+				<button
+					className={`icon today control todayButton ${
+						todayInRange ? "hidden" : "visible"
+					}`}
+					onClick={handleTodayClick}
+					title="Jump to Today"
+				>
+					today
+				</button>
 				<div className="viewRange">
 					<DatePicker
 						dateFormat={dateFormat.daylessDate}
 						selected={viewRange.start}
 						onChange={(date) =>
 							viewOptionsDispatch({
-								type: `SET_RANGE_START`,
-								date,
+								type: "SET_RANGE",
+								start: date,
 							})
 						}
 						customInput={<DateInput />}
@@ -104,8 +96,8 @@ export default function MainHeader({ handleTodayClick }) {
 						selected={viewRange.end}
 						onChange={(date) =>
 							viewOptionsDispatch({
-								type: `SET_RANGE_END`,
-								date,
+								type: "SET_RANGE",
+								end: date,
 							})
 						}
 						customInput={<DateInput />}
@@ -117,14 +109,6 @@ export default function MainHeader({ handleTodayClick }) {
 						closeOnScroll={(e) => e.target === document}
 					/>
 				</div>
-				<ViewOptions />
-				<button
-					className="icon refreshButton"
-					onClick={handleRefreshClick}
-					title="Refresh Posts"
-				>
-					sync
-				</button>
 			</div>
 			<div className="col col__end">
 				<button

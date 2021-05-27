@@ -7,7 +7,7 @@ import { ReactComponent as Logo } from '../svg/calendariologo.svg';
 export default function Header({ handleTodayClick }) {
 	useFetchPostStatuses();
 
-	const { postsUrl, pluginUrl } = wp;
+	const { postsUrl } = wp;
 
 	return (
 		<header className="calendario__header">
