@@ -66,13 +66,11 @@ export default function MainHeader({ handleTodayClick }) {
 			</div>
 			<div className="viewControl">
 				<button
-					className={`icon today control todayButton ${
-						todayInRange ? "hidden" : "visible"
-					}`}
+					className="today control todayButton"
 					onClick={handleTodayClick}
-					title="Jump to Today"
+					disabled={todayInRange}
 				>
-					today
+					Today
 				</button>
 				<div className="viewRange">
 					<DatePicker

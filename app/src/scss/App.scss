@@ -407,7 +407,7 @@ body {
 	width: 100%;
 
 	.viewRange {
-		margin-right: 46px; // offset todayButton
+		margin-right: 64px; // offset todayButton
 
 		&__input {
 			background-color: transparent;
@@ -431,7 +431,8 @@ body {
 	}
 
 	.todayButton {
-		width: 42px;
+		font-size: 0.9em;
+		width: 60px;
 		margin-right: 4px;
 	}
 }

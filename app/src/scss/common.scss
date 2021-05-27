@@ -6,18 +6,17 @@ button {
 	font-weight: normal;
 
 	&.control {
+		background-color: var(--neutralColor-dark);
 		border: none;
 		font-size: 1.3em;
 		font-weight: normal;
 		transition: all 100ms ease-out;
 
 		&:hover {
-			background-color: var(--textColor);
-			color: var(--neutralColor);
-		}
-
-		&.inactive {
-			background-color: var(--textColor-light);
+			&:not([disabled]) {
+				background-color: var(--textColor);
+				color: var(--neutralColor);
+			}
 		}
 
 		&.active {
@@ -30,7 +29,7 @@ button {
 		cursor: pointer;
 	}
 
-	&:not(.picker__swatch):not(.react-datepicker__navigation):not(.todayButton):not(.viewMode__input):not(.postLink) {
+	&:not(.picker__swatch):not(.react-datepicker__navigation):not(.postLink):not(.control) {
 		border: none;
 	}
 }
