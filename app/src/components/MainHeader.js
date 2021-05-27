@@ -60,7 +60,7 @@ export default function MainHeader({ handleTodayClick }) {
 	};
 
 	return (
-		<div className="calendarListHeader row flex-middle">
+		<div className="calendarListHeader flex-middle">
 			<div className="col col__start">
 				<button
 					className="icon dateChevron"

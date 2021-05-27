@@ -34,7 +34,8 @@ body {
 	top: 0;
 	left: 0;
 	width: 100vw;
-	height: 100vh;
+	height: calc(100vh - 32px); // admin bar
+	margin-top: 32px;
 	overflow: auto;
 	z-index: 99999;
 	background: white;
@@ -142,7 +143,7 @@ body {
 
 		svg {
 			g {
-				fill:var(--textColor);
+				fill: var(--textColor);
 			}
 		}
 
@@ -196,9 +197,14 @@ body {
 			}
 
 			.calendarListHeader {
+				display: flex;
+				flex-wrap: nowrap;
+				justify-content: space-between;
+				margin: 0 auto;
 				text-transform: uppercase;
 				font-weight: 700;
 				align-items: center;
+				width: 100%;
 
 				@media (max-width: $mobileBreak) {
 					align-items: center;
@@ -471,6 +477,7 @@ body {
 			flex-wrap: nowrap;
 			align-items: center;
 			justify-content: space-around;
+			max-width: 500px;
 
 			&__input {
 				background-color: transparent;
@@ -715,6 +722,10 @@ body {
 }
 
 .mainViewOptions {
+	width: 100%;
+	max-width: 720px;
+	margin: 0 auto;
+
 	.viewMode,
 	.controlButtons {
 		font-size: 1rem;
