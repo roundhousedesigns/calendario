@@ -153,21 +153,13 @@ function rhd_load_plugin() {
 }
 add_action( 'init', 'rhd_load_plugin' );
 
+
+
 /**
  * Activation hook
  */
 function rhd_calendario_plugin_activation() {
-	// Check for saved post status colors, and set defaults if not present.
-	if ( false === ( $colors = get_option( 'rhd_calendario_post_status_colors' ) ) ) {
-		$statuses = RHD_POST_STATUS_DEFAULTS;
-		$colors   = [];
-
-		foreach ( $statuses as $status => $props ) {
-			$colors[$status] = $props['color'];
-		}
-
-		update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $colors );
-	}
+	rhd_set_post_status_colors();
 }
 register_activation_hook( __FILE__, 'rhd_calendario_plugin_activation' );
 
