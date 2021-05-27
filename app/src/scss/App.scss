@@ -35,11 +35,11 @@ body {
 
 #calendario {
 	position: fixed;
-	top: 0;
+	top: 32px; // admin bar
 	left: 0;
 	width: 100vw;
-	height: calc(100vh - 32px); // admin bar
-	margin: 32px 0 40px;
+	height: 100vh;
+	margin: 0 0;
 	overflow: auto;
 	z-index: 99999;
 	background: white;
@@ -89,7 +89,9 @@ body {
 .calendario {
 	display: grid;
 	grid-gap: var(--gridGap);
-	height: 100vh;
+	min-height: 100%;
+	height: auto;
+	padding-bottom: 40px;
 	transition: all 500ms ease;
 
 	@media (max-width: $mobileBreak) and (orientation: portrait) {
