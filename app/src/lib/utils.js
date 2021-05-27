@@ -19,7 +19,7 @@ export const wp =
 				routeBase: "http://localhost/wp-json/calendario/v1",
 				user: 1,
 				adminUrl: "",
-				pluginUrl: "//localhost/wp-content/plugins/rhdwp-calendario/",
+				pluginUrl: "//localhost/wp-content/plugins/calendario/",
 				postsUrl: "",
 				trashUrl: "",
 				blogUrl: "//localhost",

@@ -134,9 +134,14 @@ body {
 		word-spacing: 100vw;
 		line-height: 1;
 		font-size: 2em;
-		margin: 0.5rem 0 0.5rem 12px;
+		// margin: 0.5rem 0 0.5rem 12px;
+		margin: 0 0 0 12px;
 		text-transform: lowercase;
 		font-weight: bold;
+
+		img {
+			width: 240px;
+		}
 
 		.line {
 			display: block;

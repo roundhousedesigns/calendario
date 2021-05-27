@@ -6,7 +6,7 @@ import { wp } from "../lib/utils";
 export default function Header({ handleTodayClick }) {
 	useFetchPostStatuses();
 
-	const { postsUrl } = wp;
+	const { postsUrl, pluginUrl } = wp;
 
 	return (
 		<header className="calendario__header">
@@ -22,7 +22,12 @@ export default function Header({ handleTodayClick }) {
 					>
 						close
 					</button>
-					<h1 className="calendario__title">editorial calendar.io</h1>
+					<h1 className="calendario__title">
+						<img
+							src={`${pluginUrl}cal-logo-long.png`}
+							alt="editorial calendar.io logo"
+						/>
+					</h1>
 				</div>
 			</div>
 		</header>
