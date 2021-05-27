@@ -29,9 +29,9 @@ export default function Post({ post, index, unscheduled }) {
 
 		setColor(postStatuses[post.post_status].color);
 
-		return () => {
-			setColor("");
-		};
+		// return () => {
+		// 	setColor("");
+		// };
 	}, [post.post_status, postStatuses]);
 
 	const handleClick = (e) => {

@@ -156,6 +156,8 @@ export const useFetchPostStatuses = () => {
 					postStatuses: data,
 				});
 
+				console.log(data);
+
 				setIsLoading(false);
 			} catch (error) {
 				console.log("REST error", error.message);
