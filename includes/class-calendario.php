@@ -30,9 +30,7 @@ class Calendario {
 		$this->limit_load_hook = $limit_load_hook;
 		$this->limit_callback  = $limit_callback;
 
-		if ( rhd_cal()->is__premium_only() ) {
-			add_action( $enqueue_hook, [$this, 'load_react_app__premium_only'] );
-		}
+		add_action( $enqueue_hook, [$this, 'load_react_app__premium_only'] );
 
 		// wp-admin interface
 		add_action( 'admin_menu', [$this, 'create_plugin_page'] );

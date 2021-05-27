@@ -50,6 +50,7 @@ define( 'RHD_POST_STATUS_DEFAULTS', [
 		'color' => '#eb6e6f',
 	],
 ] );
+
 define( 'RHD_POST_STATUS_SWATCHES', [
 	"#ffc90d",
 	"#8f3c3d",
@@ -153,8 +154,6 @@ function rhd_load_plugin() {
 }
 add_action( 'init', 'rhd_load_plugin' );
 
-
-
 /**
  * Activation hook
  */
@@ -163,4 +162,7 @@ function rhd_calendario_plugin_activation() {
 }
 register_activation_hook( __FILE__, 'rhd_calendario_plugin_activation' );
 
+/**
+ * Calendario
+ */
 require_once plugin_dir_path( __FILE__ ) . '/includes/class-calendario.php';
