@@ -438,6 +438,21 @@ body {
 		font-size: 0.9em;
 		width: 60px;
 		margin-right: 4px;
+
+		&:not([disabled]) {
+			border: 1px solid var(--textColor-light);
+
+			&:hover,
+			&:focus {
+				background-color: var(--textColor-light);
+				color: var(--neutralColor);
+			}
+		}
+
+		&[disabled] {
+			background-color: var(--neutralColor-dark);
+			color: var(--textColor-light);
+		}
 	}
 }
 

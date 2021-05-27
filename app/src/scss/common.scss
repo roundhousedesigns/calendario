@@ -4,6 +4,11 @@ button {
 	outline: none;
 	padding: 0.25em 0.5em;
 	font-weight: normal;
+	color: var(--textColor-dark);
+	
+	&.icon {
+		color: var(--textColor);
+	}
 
 	&.control {
 		background-color: var(--neutralColor-dark);
