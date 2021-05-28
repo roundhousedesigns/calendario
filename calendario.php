@@ -5,7 +5,7 @@
  * Author:          Roundhouse Designs
  * Author URI:      https://roundhouse-designs.com
  * Text Domain:     rhd
- * Version:         0.7.32
+ * Version:         0.7.4
  *
  * @package         calendario
  */
@@ -13,7 +13,7 @@
 /**
  * Paths
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.32' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.4' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 // define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
@@ -28,40 +28,39 @@ define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-m
 define( 'RHD_DATE_FORMAT', 'Y-m-d H:i:s' );
 define( 'RHD_UNSCHEDULED_INDEX_META_KEY', 'rhd_unscheduled' );
 define( 'RHD_POST_STATUS_COLOR_OPTION_KEY', 'rhd_calendario_post_statuses' );
+define( 'RHD_POST_STATUS_SWATCHES', [
+	"#00A193",
+	"#F7C900",
+	"#B8B8B8",
+	"#EB867B",
+	"#252B6F",
+	"#00A2ED",
+	"#6C6C6C",
+	"#F85A00",
+	"#B90062",
+	"#AA70BB",
+] );
 define( 'RHD_POST_STATUS_DEFAULTS', [
 	'publish' => [
 		'name'  => 'Published',
-		'color' => '#474750',
+		'color' => RHD_POST_STATUS_SWATCHES[0],
 	],
 	'future'  => [
 		'name'  => 'Scheduled',
-		'color' => '#d9eee1',
+		'color' => RHD_POST_STATUS_SWATCHES[1],
 	],
 	'draft'   => [
-		'name'  => "Draft",
-		'color' => '#ffc90d',
+		'name'  => 'Draft',
+		'color' => RHD_POST_STATUS_SWATCHES[2],
 	],
 	'pending' => [
 		'name'  => 'Pending Review',
-		'color' => '#f6bc98',
+		'color' => RHD_POST_STATUS_SWATCHES[3],
 	],
 	'private' => [
 		'name'  => 'Private',
-		'color' => '#eb6e6f',
+		'color' => RHD_POST_STATUS_SWATCHES[4],
 	],
-] );
-
-define( 'RHD_POST_STATUS_SWATCHES', [
-	"#ffc90d",
-	"#8f3c3d",
-	"#f27121",
-	"#474750",
-	"#c1bfb8",
-	"#d9eee1",
-	"#64b181",
-	"#aaaae8",
-	"#f6bc98",
-	"#eb6e6f",
 ] );
 
 /**
