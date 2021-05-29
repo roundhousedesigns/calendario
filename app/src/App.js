@@ -75,7 +75,6 @@ export default function App() {
 
 	// Send the update!
 	useEffect(() => {
-		console.log(posts.updatePost);
 		const {
 			updatePost: { updateNow, id, params, unscheduled, newIndex, trash },
 		} = posts;
