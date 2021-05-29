@@ -12,7 +12,6 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 			isUnscheduled,
 		},
 	} = useContext(DragContext);
-	var classes = ["day", "col", "cell"];
 
 	const handleDragOver = () => {
 		if (!isUnscheduled && isSameDay(day, post_date)) {
@@ -22,7 +21,9 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 		setDragOver(true);
 	};
 
-	const renderDay = () => {
+	function getStyles() {
+		let classes = ["day", "col", "cell"];
+
 		if (isToday(day)) {
 			classes.push("today");
 		}
@@ -35,23 +36,23 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 			classes.push("dragOver");
 		}
 
-		return (
-			<div
-				className={classes.join(" ")}
-				ref={isToday(day) ? ref : null}
-				onDragOver={handleDragOver}
-				onDragLeave={() => setDragOver(false)}
-				onDrop={() => setDragOver(false)}
-			>
-				{monthName ? <span className="month">{monthName}</span> : ""}
-				<span className="number">{format(day, dateFormat.day)}</span>
+		return classes.join(" ");
+	}
 
-				{children}
-			</div>
-		);
-	};
+	return (
+		<div
+			className={getStyles()}
+			ref={isToday(day) ? ref : null}
+			onDragOver={handleDragOver}
+			onDragLeave={() => setDragOver(false)}
+			onDrop={() => setDragOver(false)}
+		>
+			{monthName ? <span className="month">{monthName}</span> : ""}
+			<span className="number">{format(day, dateFormat.day)}</span>
 
-	return renderDay();
+			{children}
+		</div>
+	);
 });
 
 export default Day;

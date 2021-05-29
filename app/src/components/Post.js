@@ -88,7 +88,7 @@ export default function Post({ post, index, unscheduled }) {
 		}
 	};
 
-	function draggableStyles(snapshot) {
+	function getStyles(snapshot) {
 		let classes = [
 			"post",
 			`post-id-${post.id} status__${post.post_status}`,
@@ -139,7 +139,7 @@ export default function Post({ post, index, unscheduled }) {
 					{...draggableProps}
 					{...dragHandleProps}
 					key={post.id}
-					className={draggableStyles(snapshot)}
+					className={getStyles(snapshot)}
 					data-index={index}
 					onClick={handleClick}
 					onMouseEnter={handleMouseEnter}
