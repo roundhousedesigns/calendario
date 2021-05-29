@@ -10,7 +10,7 @@ import ViewContext from "../ViewContext";
 
 export default function Post({ post, index, unscheduled }) {
 	const {
-		posts: { currentPost },
+		posts: { currentPost, isUpdating },
 		postsDispatch,
 	} = useContext(PostsContext);
 	const {
@@ -120,11 +120,19 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push("over__none");
 		}
 
+		if (isUpdating) {
+			classes.push("locked");
+		}
+
 		return classes.join(" ");
 	}
 
 	return !isEmpty(postStatuses) ? (
-		<Draggable draggableId={`${post.id}`} index={index}>
+		<Draggable
+			draggableId={`${post.id}`}
+			index={index}
+			isDragDisabled={isUpdating ? true : false}
+		>
 			{({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
 				<li
 					ref={innerRef}

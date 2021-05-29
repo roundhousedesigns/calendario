@@ -14,8 +14,9 @@ import {
 	draggedPostDate,
 	DEBUG_MODE,
 	filterPostStatus,
+	dateFormat,
 } from "./lib/utils";
-import { differenceInWeeks, addWeeks } from "date-fns";
+import { differenceInWeeks, addWeeks, format } from "date-fns";
 import { isEmpty } from "lodash";
 import { DragDropContext } from "react-beautiful-dnd";
 
@@ -74,13 +75,14 @@ export default function App() {
 
 	// Send the update!
 	useEffect(() => {
+		console.log(posts.updatePost);
 		const {
 			updatePost: { updateNow, id, params, unscheduled, newIndex, trash },
 		} = posts;
 
 		if (updateNow === true && id !== undefined) {
 			postsDispatch({
-				type: "UPDATING",
+				type: "UPDATE_INIT",
 			});
 
 			// Check if this is a new post, a post to trash, or an existing post,
@@ -114,7 +116,15 @@ export default function App() {
 			}
 
 			const fetchData = async () => {
-				// setIsLoading(true);
+				const droppableId =
+					unscheduled === true
+						? "unscheduled"
+						: format(new Date(params.post_date), dateFormat.date);
+
+				postsDispatch({
+					type: "UPDATE_IN_PROGRESS",
+					droppableId,
+				});
 
 				try {
 					const response = await fetch(url, {
@@ -122,26 +132,20 @@ export default function App() {
 						headers,
 						body: JSON.stringify(postData),
 					});
-					// const data = await response.json(); // If you need to catch the response...
 					await response.json();
 
 					draggedPostDispatch({
 						type: "END",
 					});
 
-					postsDispatch({
-						type: "COMPLETE",
-					});
-
-					postsDispatch({
-						type: "REFETCH",
-					});
-
-					// setIsLoading(false);
+					// postsDispatch({
+					// 	type: "REFETCH",
+					// });
 				} catch (error) {
 					console.log(error.message);
-					// setIsLoading(false);
 				}
+
+				postsDispatch({ type: "UPDATE_COMPLETE" });
 			};
 
 			fetchData();

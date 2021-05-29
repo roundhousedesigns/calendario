@@ -1,11 +1,17 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useContext } from "react";
 import Post from "./Post";
+import Loading from "./common/Loading";
 import { dateFormat } from "../lib/utils";
 import { Droppable } from "react-beautiful-dnd";
 import { format } from "date-fns";
 import { isEmpty } from "lodash";
 
+import PostsContext from "../PostsContext";
+
 export default function PostList({ renderPosts, className, date }) {
+	const {
+		posts: { isUpdating },
+	} = useContext(PostsContext);
 	const [hovered, setHovered] = useState(false);
 
 	const droppableId =
@@ -31,19 +37,24 @@ export default function PostList({ renderPosts, className, date }) {
 	return (
 		<Droppable droppableId={droppableId}>
 			{({ innerRef, droppableProps, placeholder }, snapshot) => (
-				<ul
-					ref={innerRef}
-					{...droppableProps}
-					className={`postList ${className} ${
-						snapshot.isDraggingOver ? "draggingOver" : "idle"
-					}`}
-					onMouseEnter={() => setHovered(true)}
-					onMouseLeave={() => setHovered(false)}
-					style={hovered ? { marginBottom: 0 } : null}
-				>
-					{renderPostList}
-					{placeholder}
-				</ul>
+				<>
+					{isUpdating === droppableId ? (
+						<Loading debug={droppableId} />
+					) : null}
+					<ul
+						ref={innerRef}
+						{...droppableProps}
+						className={`postList ${className} ${
+							snapshot.isDraggingOver ? "draggingOver" : "idle"
+						}`}
+						onMouseEnter={() => setHovered(true)}
+						onMouseLeave={() => setHovered(false)}
+						style={hovered ? { marginBottom: 0 } : null}
+					>
+						{renderPostList}
+						{placeholder}
+					</ul>
+				</>
 			)}
 		</Droppable>
 	);

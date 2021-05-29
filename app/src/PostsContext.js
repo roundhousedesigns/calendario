@@ -27,6 +27,7 @@ export const initialPosts = {
 		start: "",
 		end: "",
 	},
+	isUpdating: null,
 	unscheduled: [],
 	scheduled: [],
 	trashed: [],
@@ -171,13 +172,29 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case "UPDATING": {
+		case "UPDATE_INIT": {
 			return {
 				...state,
 				updatePost: {
 					...state.updatePost,
 					updateNow: false,
 				},
+			};
+		}
+
+		case "UPDATE_IN_PROGRESS": {
+			return {
+				...state,
+				isUpdating: action.droppableId,
+			};
+		}
+
+		case "UPDATE_COMPLETE":
+		case "UPDATE_FAIL": {
+			return {
+				...state,
+				isUpdating: null,
+				updatePost: initialPosts.updatePost,
 			};
 		}
 
@@ -191,13 +208,6 @@ export function postsReducer(state, action) {
 					id,
 					params,
 				},
-			};
-		}
-
-		case "COMPLETE": {
-			return {
-				...state,
-				updatePost: initialPosts.updatePost,
 			};
 		}
 

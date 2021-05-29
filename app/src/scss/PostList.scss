@@ -10,28 +10,6 @@
 		background-color: var(--mainColor-transparent);
 	}
 
-	&.dayPosts {
-		.post {
-			&:hover {
-				.postLinks {
-					width: 94px;
-				}
-			}
-		}
-	}
-
-	&.unscheduledDrafts {
-		.post {
-			margin: 0;
-
-			&:hover {
-				.postLinks {
-					width: 100%;
-				}
-			}
-		}
-	}
-
 	.post {
 		border: 2px solid transparent;
 		border-radius: var(--borderRadius);
@@ -43,6 +21,12 @@
 
 		&.hovered {
 			padding-bottom: $postLinks__height;
+		}
+
+		&.locked {
+			opacity: 0.5;
+			transition: opacity 100ms ease;
+			pointer-events: none;
 		}
 
 		&.notransition {
@@ -129,6 +113,28 @@
 		&.currentPost {
 			.postData {
 				border: 2px solid var(--mainColor-light);
+			}
+		}
+	}
+
+	&.dayPosts {
+		.post {
+			&:hover {
+				.postLinks {
+					width: 94px;
+				}
+			}
+		}
+	}
+
+	&.unscheduledDrafts {
+		.post {
+			margin: 0;
+
+			&:hover {
+				.postLinks {
+					width: 100%;
+				}
 			}
 		}
 	}
