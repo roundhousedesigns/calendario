@@ -9,7 +9,7 @@ export default function NewPostButton({ day, unscheduled }) {
 		e.preventDefault();
 
 		postsDispatch({
-			type: "NEW_POST",
+			type: "CREATE_NEW_POST",
 			post_date: day ? day : new Date(),
 			unscheduled: unscheduled ? unscheduled : false,
 		});

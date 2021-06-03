@@ -274,7 +274,7 @@ export default function EditPost() {
 
 	const trashHandler = () => {
 		postsDispatch({
-			type: "TRASH",
+			type: "SEND_TO_TRASH",
 			id,
 		});
 

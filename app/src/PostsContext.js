@@ -22,7 +22,7 @@ export const initialPosts = {
 		newIndex: null,
 		unscheduled: false,
 	},
-	refetch: false,
+	refetch: false, // Toggle value to trigger refetch
 	dateRange: {
 		start: "",
 		end: "",
@@ -128,12 +128,13 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case "NEW_POST": {
+		case "CREATE_NEW_POST": {
 			return {
 				...state,
 				currentPost: {
 					id: 0,
 					post_date: action.post_date,
+					post_status: "draft",
 					unscheduled: action.unscheduled,
 					taxonomies: {},
 				},
@@ -182,24 +183,141 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case "UPDATE_IN_PROGRESS": {
+		case "ADD_POST": {
+			const { droppableId } = action;
+			const {
+				updatePost: { id, params },
+			} = state;
+			let { scheduled, unscheduled } = state;
+
+			const post = {
+				id,
+				...params,
+			};
+
+			if (droppableId === "unscheduled") {
+				unscheduled.push(post);
+			} else {
+				if (scheduled.hasOwnProperty(droppableId)) {
+					scheduled[droppableId].push(post);
+				} else {
+					scheduled = {
+						...scheduled,
+						[droppableId]: [post],
+					};
+				}
+			}
+
 			return {
 				...state,
-				isUpdating: action.droppableId,
+				scheduled,
+				unscheduled,
+				isUpdating: droppableId,
 			};
 		}
 
-		case "UPDATE_COMPLETE":
-		case "UPDATE_FAIL": {
+		case "UPDATE_POST": {
+			const { droppableId } = action;
+			const {
+				updatePost: { id, params },
+			} = state;
+			let { scheduled, unscheduled } = state;
+
+			if (droppableId === "unscheduled") {
+				unscheduled = unscheduled.map((item) => {
+					if (item.id === id) {
+						item = { ...item, ...params };
+					}
+
+					return item;
+				});
+			} else {
+				scheduled[droppableId] = scheduled[droppableId].map((item) =>
+					item.id === id ? { ...item, ...params } : item
+				);
+			}
+
+			// console.log(unscheduled);
+
+			return {
+				...state,
+				scheduled,
+				unscheduled,
+				isUpdating: droppableId,
+			};
+		}
+
+		case "REMOVE_POST": {
+			const { droppableId } = action;
+			const {
+				updatePost: { id },
+			} = state;
+			let { scheduled, unscheduled } = state;
+
+			if (droppableId === "unscheduled") {
+				unscheduled = unscheduled.filter((item) => item.id !== id);
+			} else {
+				scheduled[droppableId] = scheduled[droppableId].filter(
+					(item) => item.id !== id
+				);
+			}
+
+			return {
+				...state,
+				scheduled,
+				unscheduled,
+				isUpdating: droppableId,
+			};
+		}
+
+		case "UPDATE_SUCCESS": {
+			console.log("update success");
+			// const { id, params } = action;
+			// const { scheduled, unscheduled } = state;
+
+			// const key = format(new Date(params.post_date), dateFormat.date);
+
+			// if (scheduled.hasOwnProperty(key)) {
+			// 	// post is scheduled
+			// 	console.log("scheduled", id, params);
+			// } else if (find(unscheduled, { id: id })) {
+			// 	// post is unscheduled
+			// 	console.log("unscheduled", id, params);
+			// } else {
+			// 	// post is new
+			// 	console.log("new", id, params);
+			// }
+
+			// return {
+			// 	...state,
+			// };
+
+			return {
+				...state,
+			};
+		}
+
+		case "UPDATE_ERROR": {
+			console.log(action.error);
+
+			// TODO remove/revert post change
+
+			return {
+				...state,
+			};
+		}
+
+		case "UPDATE_COMPLETE": {
 			return {
 				...state,
 				isUpdating: null,
+				refetch: !state.refetch,
 				updatePost: initialPosts.updatePost,
 			};
 		}
 
-		case "TRASH": {
-			const { id, params } = action;
+		case "SEND_TO_TRASH": {
+			const { id, params, unscheduled } = action;
 			return {
 				...state,
 				updatePost: {
@@ -207,6 +325,7 @@ export function postsReducer(state, action) {
 					trash: true,
 					id,
 					params,
+					unscheduled,
 				},
 			};
 		}

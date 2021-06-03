@@ -479,7 +479,7 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( $result !== false && ! is_wp_error( $result ) ) {
 			$this->update_post_taxonomy_terms( $result, $terms );
 
-			return new WP_REST_Response( 'Updated post ' . $result, 200 );
+			return new WP_REST_Response( $result, 200 );
 		}
 
 		return new WP_Error( 'cant-update', __( 'message', 'calendario' ), ['status' => 500] );
@@ -504,7 +504,7 @@ class Calendario_Route extends WP_REST_Controller {
 			$tax_result = $this->update_post_taxonomy_terms( $result, $taxonomies );
 
 			if ( ! is_wp_error( $tax_result ) ) {
-				return new WP_REST_Response( 'Updated post ' . $result, 200 );
+				return new WP_REST_Response( $result, 200 );
 			}
 		}
 
@@ -524,7 +524,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$trashed = wp_delete_post( $id, false );
 
 		if ( $trashed ) {
-			return new WP_REST_Response( 'Post trashed.', 200 );
+			return new WP_REST_Response( $trashed->ID, 200 );
 		}
 
 		return new WP_Error( 'cant-trash', __( 'message', 'calendario' ), ['status' => 500] );

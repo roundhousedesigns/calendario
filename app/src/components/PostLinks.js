@@ -76,9 +76,14 @@ export default function PostLinks({ post, unscheduled }) {
 	};
 
 	const trashPost = () => {
+		const { post_date } = post;
 		postsDispatch({
-			type: "TRASH",
+			type: "SEND_TO_TRASH",
 			id: id,
+			params: {
+				post_date,
+			},
+			unscheduled
 		});
 	};
 

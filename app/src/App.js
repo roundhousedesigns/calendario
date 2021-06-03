@@ -17,7 +17,6 @@ import {
 	dateFormat,
 } from "./lib/utils";
 import { differenceInWeeks, addWeeks, format } from "date-fns";
-import { isEmpty } from "lodash";
 import { DragDropContext } from "react-beautiful-dnd";
 
 import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
@@ -74,12 +73,18 @@ export default function App() {
 	}, [setView, viewOptions.viewMode]);
 
 	// Send the update!
+	// TODO move this to a custom hook
 	useEffect(() => {
 		const {
 			updatePost: { updateNow, id, params, unscheduled, newIndex, trash },
 		} = posts;
 
 		if (updateNow === true && id !== undefined) {
+			const droppableId =
+				unscheduled === true
+					? "unscheduled"
+					: format(new Date(params.post_date), dateFormat.date);
+
 			postsDispatch({
 				type: "UPDATE_INIT",
 			});
@@ -89,12 +94,13 @@ export default function App() {
 			let url = `${routeBase}/posts/`;
 			if (trash === true) {
 				url += `trash/${id}/${user}`;
+				postsDispatch({ type: "REMOVE_POST", droppableId });
+			} else if (id === 0) {
+				url += `new/${user}`;
+				postsDispatch({ type: "ADD_POST", droppableId });
 			} else {
-				if (id === 0) {
-					url += `new/${user}`;
-				} else {
-					url += `update/${id}/${user}`;
-				}
+				url += `update/${id}/${user}`;
+				postsDispatch({ type: "UPDATE_POST", droppableId });
 			}
 
 			let headers = {
@@ -106,7 +112,7 @@ export default function App() {
 			}
 
 			let postData = {
-				params: !isEmpty(params) ? params : {},
+				params,
 				unscheduled,
 			};
 
@@ -114,40 +120,38 @@ export default function App() {
 				postData.newIndex = newIndex;
 			}
 
-			const fetchData = async () => {
-				const droppableId =
-					unscheduled === true
-						? "unscheduled"
-						: format(new Date(params.post_date), dateFormat.date);
-
-				postsDispatch({
-					type: "UPDATE_IN_PROGRESS",
-					droppableId,
-				});
-
+			const sendUpdate = async () => {
 				try {
 					const response = await fetch(url, {
 						method: "POST",
 						headers,
 						body: JSON.stringify(postData),
 					});
-					await response.json();
+					const data = await response.json();
+
+					if (data && data > 0) {
+						postsDispatch({ type: "UPDATE_SUCCESS", id, params });
+					} else {
+						console.log("Update server error", data);
+
+						postsDispatch({ type: "UPDATE_ERROR", id, params });
+					}
 
 					draggedPostDispatch({
 						type: "END",
 					});
 
-					// postsDispatch({
-					// 	type: "REFETCH",
-					// });
-				} catch (error) {
-					console.log(error.message);
-				}
+					// TODO fix new post not appearing right away
 
-				postsDispatch({ type: "UPDATE_COMPLETE" });
+					// postsDispatch({ type: "REFETCH" });
+
+					postsDispatch({ type: "UPDATE_COMPLETE" });
+				} catch (error) {
+					postsDispatch({ type: "UPDATE_COMPLETE" });
+				}
 			};
 
-			fetchData();
+			sendUpdate();
 		}
 	}, [
 		routeBase,

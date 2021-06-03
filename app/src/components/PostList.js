@@ -39,7 +39,7 @@ export default function PostList({ renderPosts, className, date }) {
 			{({ innerRef, droppableProps, placeholder }, snapshot) => (
 				<>
 					{isUpdating === droppableId ? (
-						<Loading debug={droppableId} />
+						<Loading />
 					) : null}
 					<ul
 						ref={innerRef}
