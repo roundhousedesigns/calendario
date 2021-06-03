@@ -237,8 +237,6 @@ export function postsReducer(state, action) {
 				);
 			}
 
-			// console.log(unscheduled);
-
 			return {
 				...state,
 				scheduled,
@@ -271,43 +269,16 @@ export function postsReducer(state, action) {
 		}
 
 		case "UPDATE_SUCCESS": {
-			console.log("update success");
-			// const { id, params } = action;
-			// const { scheduled, unscheduled } = state;
-
-			// const key = format(new Date(params.post_date), dateFormat.date);
-
-			// if (scheduled.hasOwnProperty(key)) {
-			// 	// post is scheduled
-			// 	console.log("scheduled", id, params);
-			// } else if (find(unscheduled, { id: id })) {
-			// 	// post is unscheduled
-			// 	console.log("unscheduled", id, params);
-			// } else {
-			// 	// post is new
-			// 	console.log("new", id, params);
-			// }
-
-			// return {
-			// 	...state,
-			// };
-
 			return {
 				...state,
+				isUpdating: null,
+				updatePost: initialPosts.updatePost,
 			};
 		}
 
 		case "UPDATE_ERROR": {
-			console.log(action.error);
+			console.log(action.data);
 
-			// TODO remove/revert post change
-
-			return {
-				...state,
-			};
-		}
-
-		case "UPDATE_COMPLETE": {
 			return {
 				...state,
 				isUpdating: null,

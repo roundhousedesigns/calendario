@@ -132,22 +132,19 @@ export default function App() {
 					if (data && data > 0) {
 						postsDispatch({ type: "UPDATE_SUCCESS", id, params });
 					} else {
-						console.log("Update server error", data);
-
-						postsDispatch({ type: "UPDATE_ERROR", id, params });
+						postsDispatch({
+							type: "UPDATE_ERROR",
+							id,
+							params,
+							data,
+						});
 					}
 
 					draggedPostDispatch({
 						type: "END",
 					});
-
-					// TODO fix new post not appearing right away
-
-					// postsDispatch({ type: "REFETCH" });
-
-					postsDispatch({ type: "UPDATE_COMPLETE" });
 				} catch (error) {
-					postsDispatch({ type: "UPDATE_COMPLETE" });
+					console.log(error.message);
 				}
 			};
 
