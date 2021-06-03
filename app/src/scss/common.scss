@@ -117,6 +117,10 @@ button {
 .fieldGroup {
 	margin: 12px 0;
 
+	&:first-of-type {
+		margin-top: 0;
+	}
+
 	&.inlineLabel {
 		label,
 		input,

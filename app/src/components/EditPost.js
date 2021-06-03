@@ -13,7 +13,7 @@ import {
 	dateFormat,
 	filterPostStatus,
 	filterStatusList,
-	stripPermalinkSlug,
+	// stripPermalinkSlug,
 } from "../lib/utils";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
@@ -148,7 +148,7 @@ export default function EditPost() {
 		post_excerpt,
 		image,
 		edit_link,
-		view_link,
+		// view_link,
 		taxonomies: post_taxonomies,
 		unscheduled,
 	} = post;
@@ -374,20 +374,14 @@ export default function EditPost() {
 							</div>
 							<div className="header">
 								<div className="header__left">
-									{initial.current.post_status ===
+									{/* {initial.current.post_status ===
 									"publish" ? (
 										<FieldGroup name="post_name">
 											<div className="permalink">
 												<span className="base">
-													<a
-														href={view_link}
-														target="_blank"
-														rel="noreferrer"
-													>
-														{stripPermalinkSlug(
-															view_link
-														)}
-													</a>
+													{stripPermalinkSlug(
+														view_link
+													)}
 												</span>
 												<input
 													name="post_name"
@@ -399,7 +393,7 @@ export default function EditPost() {
 										</FieldGroup>
 									) : (
 										""
-									)}
+									)} */}
 									<FieldGroup name="date">
 										<div
 											className={`post_date ${

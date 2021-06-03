@@ -7,19 +7,15 @@ The professional blogger's editorial calendar plugin for WordPress.
 
 ---
 
-## Bugs
-
--   New Posts don't appaer right away (needs refresh to show)
-
 ## TODO
 
--   Visual feedback on using refetch button
 -   Clean up and organize SCSS
--   Show more calendar header options on mobile?
 
 ## Roadmap
 
+-   Refine and restore permalink/slug Edit capability
 -   Featured Image selector/uploader
+-   Improve mobile interface
 
 ## Proposed features
 

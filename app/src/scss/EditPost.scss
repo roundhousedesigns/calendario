@@ -232,16 +232,19 @@
 				.permalink {
 					width: 100%;
 					display: flex;
+					flex-wrap: wrap;
 
 					.base {
-						flex: 0;
+						flex: 1 0 0;
+						display: flex;
+						align-items: center;
 					}
-				}
 
-				input {
-					flex: 1;
-					display: inline;
-					margin-left: 4px;
+					input {
+						flex: 1 1 auto;
+						display: inline;
+						margin-left: 4px;
+					}
 				}
 			}
 
