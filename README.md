@@ -7,6 +7,10 @@ The professional blogger's editorial calendar plugin for WordPress.
 
 ---
 
+## Bugs
+
+-  Figure out indexing on days w/ multiple posts; adding/removing w/ quicklinks will put them in an order and it's not guaranteed to be the same as server.
+
 ## TODO
 
 -   Clean up and organize SCSS

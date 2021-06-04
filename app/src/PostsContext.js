@@ -291,8 +291,6 @@ export function postsReducer(state, action) {
 		}
 
 		case "UPDATE_ERROR": {
-			console.log("Update error", action.data);
-
 			return {
 				...state,
 				isUpdating: initialPosts.isUpdating,

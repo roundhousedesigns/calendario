@@ -18,7 +18,7 @@ export default function UnscheduledDrafts() {
 			<PostList
 				className="unscheduledDrafts"
 				date={false}
-				renderPosts={unscheduled}
+				posts={unscheduled}
 			/>
 			<NewPostButton unscheduled={true} />
 			<AdminLinks />

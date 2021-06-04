@@ -17,7 +17,7 @@ export default function DayPosts({ posts, date, title }) {
 				<PostList
 					className="dayPosts"
 					date={date}
-					renderPosts={posts}
+					posts={posts}
 				/>
 			</>
 		);
