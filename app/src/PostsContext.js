@@ -291,7 +291,7 @@ export function postsReducer(state, action) {
 		}
 
 		case "UPDATE_ERROR": {
-			console.log(action.data);
+			console.log("Update error", action.data);
 
 			return {
 				...state,
