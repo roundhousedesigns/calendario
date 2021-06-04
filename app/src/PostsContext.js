@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { dateFormat, dayKey } from "./lib/utils";
-import { groupBy, find } from "lodash";
+import { groupBy } from "lodash";
 import { format } from "date-fns";
 
 const PostsContext = createContext({});
