@@ -20,7 +20,7 @@ import {
 } from "../lib/utils";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
-import { isEmpty, isEqual } from "lodash";
+import { isEmpty } from "lodash";
 import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
@@ -252,8 +252,8 @@ export default function EditPost() {
 		const posts = { scheduled, unscheduled };
 
 		const index = isUnscheduled
-				? unscheduled.findIndex((item) => item.id === id)
-				: null;
+			? unscheduled.findIndex((item) => item.id === id)
+			: null;
 
 		// Move from one list to another
 		const postLists = {
