@@ -317,6 +317,10 @@ export default function EditPost() {
 		postsDispatch({
 			type: "SEND_TO_TRASH",
 			id,
+			params: {
+				post_date,
+			},
+			unscheduled: isUnscheduled,
 		});
 
 		editPostDispatch({
