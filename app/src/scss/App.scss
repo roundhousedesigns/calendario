@@ -89,9 +89,8 @@ body {
 .calendario {
 	display: grid;
 	grid-gap: var(--gridGap);
-	min-height: 100%;
-	height: auto;
-	padding-bottom: 40px;
+	height: 100vh;
+	overflow: auto;
 	transition: all 500ms ease;
 
 	@media (max-width: $mobileBreak) and (orientation: portrait) {
@@ -246,7 +245,7 @@ body {
 
 	&__main,
 	&__sidebar {
-		margin-bottom: 2em;
+		padding-bottom: 40px;
 	}
 
 	&__sidebar {
