@@ -38,9 +38,7 @@ export default function PostList({ renderPosts, className, date }) {
 		<Droppable droppableId={droppableId}>
 			{({ innerRef, droppableProps, placeholder }, snapshot) => (
 				<>
-					{isUpdating === droppableId ? (
-						<Loading />
-					) : null}
+					{isUpdating === droppableId ? <Loading /> : null}
 					<ul
 						ref={innerRef}
 						{...droppableProps}

@@ -11,10 +11,11 @@ import {
 	getPostList,
 	moveItem,
 	wp,
-	draggedPostDate,
+	draggedPostDestination,
 	DEBUG_MODE,
 	filterPostStatus,
 	dateFormat,
+	sanitizeParamsForUpdate,
 } from "./lib/utils";
 import { differenceInWeeks, addWeeks, format } from "date-fns";
 import { DragDropContext } from "react-beautiful-dnd";
@@ -72,8 +73,8 @@ export default function App() {
 		});
 	}, [setView, viewOptions.viewMode]);
 
-	// Send the update!
 	// TODO move this to a custom hook
+	// Send the update!
 	useEffect(() => {
 		const {
 			updatePost: { updateNow, id, params, unscheduled, newIndex, trash },
@@ -112,7 +113,7 @@ export default function App() {
 			}
 
 			let postData = {
-				params,
+				params: sanitizeParamsForUpdate(params),
 				unscheduled,
 			};
 
@@ -146,6 +147,10 @@ export default function App() {
 				} catch (error) {
 					console.log(error.message);
 				}
+
+				postsDispatch({
+					type: "REFETCH",
+				});
 			};
 
 			sendUpdate();
@@ -230,7 +235,7 @@ export default function App() {
 	const onDragEnd = (item) => {
 		const { source, destination } = item;
 		const {
-			post: { id, post_date: post_date_raw, post_status },
+			post: { id, post_date: post_date_source, post_status },
 		} = draggedPost;
 
 		// dropped outside a list
@@ -240,8 +245,8 @@ export default function App() {
 
 		let overUnscheduled = isOverUnscheduled(destination.droppableId);
 
-		const post_date = draggedPostDate(
-			post_date_raw,
+		const post_date = draggedPostDestination(
+			post_date_source,
 			destination.droppableId,
 			overUnscheduled
 		);
@@ -268,7 +273,7 @@ export default function App() {
 			);
 
 			postsDispatch({
-				type: "MOVE",
+				type: "MOVE_POST",
 				source: result[source.droppableId],
 				destination: result[destination.droppableId],
 				sourceId: result.sourceId,
@@ -278,11 +283,11 @@ export default function App() {
 
 		// Run the update
 		postsDispatch({
-			type: "UPDATE",
+			type: "PREPARE_UPDATE",
 			id,
 			unscheduled: overUnscheduled,
 			params: {
-				post_date: post_date.formatted,
+				post_date,
 				post_status: filterPostStatus(post_status, overUnscheduled),
 			},
 			newIndex: overUnscheduled ? destination.index : null,
@@ -293,7 +298,7 @@ export default function App() {
 			postsDispatch({
 				type: "UPDATE_CURRENTPOST_FIELD",
 				field: "post_date",
-				value: post_date.date,
+				value: post_date,
 			});
 		}
 

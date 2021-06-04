@@ -1,5 +1,5 @@
 // import Widget from "../components/common/Widget";
-import { omit, isEmpty, isEqual } from "lodash";
+import { omit, find, isEmpty, isEqual } from "lodash";
 import {
 	format,
 	parseISO,
@@ -158,15 +158,11 @@ export const reorderUnscheduled = (list, startIndex, endIndex) => {
 
 /**
  *
- * @param {Array} source
- * @param {Array} destination
- * @param {Object} droppableSource
- * @param {string} droppableSource.droppableId List ID
- * @param {number} [droppableSource.index = null] The starting index of the item to move
- * @param {Object} droppableDestination
- * @param {string} droppableDestination.droppableId List ID
- * @param {number} [droppableDestination.index = null] The ending index of the item to move
- * @returns
+ * @param {Array} source The "from" post list
+ * @param {Array} destination The "to" post list
+ * @param {DroppableList} droppableSource
+ * @param {DroppableList} droppableDestination
+ * @returns {Object}
  */
 export const moveItem = (
 	source,
@@ -198,32 +194,29 @@ export const moveItem = (
 };
 
 /**
- * Filters and formats the post_date param during drag and drop operations.
+ * Prepares the post_date for a dragged post's destination using
+ * its droppableID.
  *
  * @param {Date} post_date
  * @param {string} droppableId
- * @param {boolean} overUnscheduled
- * @returns {DraggedPostDate}
+ * @returns {draggedPostDestination}
  */
-export const draggedPostDate = (post_date, droppableId, overUnscheduled) => {
-	let date, formatted;
+export const draggedPostDestination = (post_date_source, droppableId) => {
+	let post_date = post_date_source;
 
-	if (overUnscheduled === true) {
-		formatted = format(post_date, dateFormat.dateTime);
-	} else {
-		date = parseISO(droppableId);
+	if (droppableId !== "unscheduled") {
+		post_date = parseISO(droppableId); // The new date
 
+		// Conserve the existing date's time value
 		const time = {
-			h: getHours(post_date),
-			m: getMinutes(post_date),
+			h: getHours(post_date_source),
+			m: getMinutes(post_date_source),
 		};
-		date = setHours(date, time.h);
-		date = setMinutes(date, time.m);
-
-		formatted = format(date, dateFormat.dateTime);
+		post_date = setHours(post_date, time.h);
+		post_date = setMinutes(post_date, time.m);
 	}
 
-	return { date, formatted };
+	return post_date;
 };
 
 /**
@@ -262,3 +255,52 @@ export const stripPermalinkSlug = (url) => {
 
 	return `${parts.join("/")}/`;
 };
+
+/**
+ * Sanitizes post parameters for sending to the server
+ *
+ * @param {Object} params The post parameters
+ * @returns {Object} The sanitized post parameters
+ */
+export function sanitizeParamsForUpdate(params) {
+	for (let key in params) {
+		switch (key) {
+			case "post_date":
+				if (params[key] instanceof Date) {
+					params[key] = format(params[key], dateFormat.dateTime);
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	return params;
+}
+
+/**
+ *
+ * @param {int} id
+ * @param {Array} scheduled Scheduled posts, keyed by day
+ * @param {Array} unscheduled Unscheduled posts
+ * @returns {string|null} The post's droppableId, or null if not found
+ */
+export function getPostSourceDroppableId(id, scheduled, unscheduled) {
+	let droppableId = null;
+	let found = find(unscheduled, { id: id });
+
+	if (found) {
+		droppableId = "unscheduled";
+	} else {
+		for (let key in scheduled) {
+			found = find(scheduled[key], { id: id });
+			if (found) {
+				droppableId = dayKey(found.post_date);
+				break;
+			}
+		}
+	}
+
+	return droppableId;
+}

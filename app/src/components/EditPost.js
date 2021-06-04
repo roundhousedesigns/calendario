@@ -11,8 +11,11 @@ import Icon from "./common/Icon";
 import { useClickOutside } from "../lib/hooks";
 import {
 	dateFormat,
+	dayKey,
 	filterPostStatus,
 	filterStatusList,
+	getPostList,
+	moveItem,
 	// stripPermalinkSlug,
 } from "../lib/utils";
 import DatePicker from "react-datepicker";
@@ -26,6 +29,7 @@ import ViewContext from "../ViewContext";
 const initialEditPost = {
 	post: {},
 	editMode: false,
+	og_post_date: null,
 };
 
 const initialTaxFilter = {
@@ -39,6 +43,7 @@ function editPostReducer(state, action) {
 			return {
 				post: action.post,
 				editMode: true,
+				og_post_date: action.post.post_date,
 			};
 
 		case "EDIT":
@@ -120,7 +125,7 @@ export default function EditPost() {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 	const {
-		posts: { currentPost, taxonomies, unscheduled: unscheduledPosts },
+		posts: { currentPost, taxonomies, scheduled, unscheduled },
 		postsDispatch,
 	} = useContext(PostsContext);
 	const [editPost, editPostDispatch] = useReducer(
@@ -150,7 +155,7 @@ export default function EditPost() {
 		edit_link,
 		// view_link,
 		taxonomies: post_taxonomies,
-		unscheduled,
+		unscheduled: isUnscheduled,
 	} = post;
 
 	// Save the original slug
@@ -181,7 +186,7 @@ export default function EditPost() {
 	useEffect(() => {
 		let exclude = [];
 
-		if (unscheduled === true) {
+		if (isUnscheduled === true) {
 			exclude.push("publish", "future");
 		} else if (isFuture(date)) {
 			exclude.push("publish");
@@ -196,7 +201,7 @@ export default function EditPost() {
 		return () => {
 			setAllowedStatuses({});
 		};
-	}, [date, unscheduled, postStatuses]);
+	}, [date, isUnscheduled, postStatuses]);
 
 	useEffect(() => {
 		const { post_date, post_status } = currentPost;
@@ -242,24 +247,52 @@ export default function EditPost() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		const {
+			og_post_date,
+			post: { post_date },
+		} = editPost;
+		const posts = { scheduled, unscheduled };
 
 		// If unscheduled, get the current index to pass along
-		const index = unscheduled
-			? unscheduledPosts.findIndex((item) => item.id === id)
+		const index = isUnscheduled
+			? unscheduled.findIndex((item) => item.id === id)
 			: false;
 
+		// Move from one list to another
+		const dates = {
+			source: dayKey(og_post_date),
+			destination: dayKey(post_date),
+		};
+
+		if (dates.source !== dates.destination) {
+			const result = moveItem(
+				getPostList(dates.source, posts),
+				getPostList(dates.destination, posts),
+				{ droppableId: dates.source },
+				{ droppableId: dates.destination }
+			);
+
+			postsDispatch({
+				type: "MOVE_POST",
+				source: result[dates.source],
+				destination: result[dates.destination],
+				sourceId: result.sourceId,
+				destinationId: result.destinationId,
+			});
+		}
+
 		postsDispatch({
-			type: "UPDATE",
+			type: "PREPARE_UPDATE",
 			id: id,
 			params: {
 				post_title,
 				post_name,
 				post_date: format(new Date(post_date), dateFormat.dateTime),
-				post_status: filterPostStatus(post_status, unscheduled),
+				post_status: filterPostStatus(post_status, isUnscheduled),
 				post_excerpt,
 				taxonomies: post_taxonomies,
 			},
-			unscheduled,
+			isUnscheduled,
 			newIndex: index,
 		});
 
@@ -397,7 +430,7 @@ export default function EditPost() {
 									<FieldGroup name="date">
 										<div
 											className={`post_date ${
-												unscheduled === true
+												isUnscheduled === true
 													? "inactive"
 													: "active"
 											}`}
@@ -422,7 +455,7 @@ export default function EditPost() {
 												type="checkbox"
 												name="unscheduled"
 												id="unscheduled"
-												checked={unscheduled}
+												checked={isUnscheduled}
 												onChange={handleCheckboxToggle}
 											/>
 											<label htmlFor="unscheduled">

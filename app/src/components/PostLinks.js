@@ -24,7 +24,7 @@ export default function PostLinks({ post, unscheduled }) {
 		);
 
 		postsDispatch({
-			type: "MOVE",
+			type: "MOVE_POST",
 			source: result[sourceId],
 			destination: result[destinationId],
 			sourceId,
@@ -32,7 +32,7 @@ export default function PostLinks({ post, unscheduled }) {
 		});
 
 		postsDispatch({
-			type: "UPDATE",
+			type: "PREPARE_UPDATE",
 			id,
 			params: {
 				post_status: filterPostStatus(post_status, true),
@@ -61,7 +61,7 @@ export default function PostLinks({ post, unscheduled }) {
 		);
 
 		postsDispatch({
-			type: "MOVE",
+			type: "MOVE_POST",
 			source: result[sourceId],
 			destination: result[destinationId],
 			sourceId,
@@ -69,7 +69,7 @@ export default function PostLinks({ post, unscheduled }) {
 		});
 
 		postsDispatch({
-			type: "UPDATE",
+			type: "PREPARE_UPDATE",
 			id,
 			unscheduled: false,
 		});

@@ -75,7 +75,8 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case "MOVE": {
+		case "MOVE_POST": {
+			//TODO kill this and let UPDATE_POST handle
 			let { scheduled, unscheduled } = state;
 			const { source, sourceId, destination, destinationId } = action;
 
@@ -158,7 +159,7 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case "UPDATE": {
+		case "PREPARE_UPDATE": {
 			const { id, params, newIndex, unscheduled } = action;
 
 			return {
@@ -218,29 +219,15 @@ export function postsReducer(state, action) {
 
 		case "UPDATE_POST": {
 			const { droppableId } = action;
-			const {
-				updatePost: { id, params },
+			let {
+				updatePost: { params },
 			} = state;
-			let { scheduled, unscheduled } = state;
 
-			if (droppableId === "unscheduled") {
-				unscheduled = unscheduled.map((item) => {
-					if (item.id === id) {
-						item = { ...item, ...params };
-					}
-
-					return item;
-				});
-			} else {
-				scheduled[droppableId] = scheduled[droppableId].map((item) =>
-					item.id === id ? { ...item, ...params } : item
-				);
-			}
+			// Cast the date as a Date
+			params.post_date = new Date(params.post_date);
 
 			return {
 				...state,
-				scheduled,
-				unscheduled,
 				isUpdating: droppableId,
 			};
 		}
@@ -271,7 +258,7 @@ export function postsReducer(state, action) {
 		case "UPDATE_SUCCESS": {
 			return {
 				...state,
-				isUpdating: null,
+				isUpdating: initialPosts.isUpdating,
 				updatePost: initialPosts.updatePost,
 			};
 		}
@@ -281,7 +268,7 @@ export function postsReducer(state, action) {
 
 			return {
 				...state,
-				isUpdating: null,
+				isUpdating: initialPosts.isUpdating,
 				refetch: !state.refetch,
 				updatePost: initialPosts.updatePost,
 			};

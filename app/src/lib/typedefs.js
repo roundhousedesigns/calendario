@@ -1,5 +1,5 @@
 /**
- * @typedef {Object} Post A collection of parameters representing a Post item
+ * @typedef {Object} Post A collection of propertyeters representing a Post item
  * @property {number} id The post id
  * @property {string} post_title The post_title attribute
  * @property {Date} post_date The post_date attribute
@@ -11,12 +11,6 @@
  * @property {Array} taxonomies.category Category term IDs
  * @property {Array} taxonomies.post_tag Tag term IDs
  * @property {boolean} unscheduled Is the post unscheduled?
- */
-
-/**
- * @typedef {Object} DraggedPostDate
- * @property {Date} date The raw post_date parameter
- * @property {string} formatted A formatted date string
  */
 
 /**
@@ -39,4 +33,10 @@
  * @property {number} term_id
  * @property {string} name The term display name
  * @property {string} slug The term slug
+ */
+
+/**
+ * @typedef {Object} DroppableList A collection of post list data
+ * @property {string} droppableId List ID
+ * @property {number} [index = null] The starting index of the item to move
  */
