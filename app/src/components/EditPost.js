@@ -251,58 +251,53 @@ export default function EditPost() {
 		const { ogPost, post } = editPost;
 		const posts = { scheduled, unscheduled };
 
-		// Only update if necessary
-		if (!isEqual(post, ogPost)) {
-			// If unscheduled, get the current index to pass along
-			const index = isUnscheduled
+		const index = isUnscheduled
 				? unscheduled.findIndex((item) => item.id === id)
-				: false;
+				: null;
 
-			// Move from one list to another
-			const dates = {
-				source: ogPost.unscheduled
-					? "unscheduled"
-					: dayKey(ogPost.post_date),
-				destination: isUnscheduled
-					? "unscheduled"
-					: dayKey(post.post_date),
-			};
+		// Move from one list to another
+		const postLists = {
+			source: ogPost.unscheduled
+				? "unscheduled"
+				: dayKey(ogPost.post_date),
+			destination: isUnscheduled ? "unscheduled" : dayKey(post.post_date),
+		};
 
-			if (dates.source !== dates.destination) {
-				const result = moveItem(
-					getPostList(dates.source, posts),
-					getPostList(dates.destination, posts),
-					{ droppableId: dates.source },
-					{ droppableId: dates.destination }
-				);
-
-				postsDispatch({
-					type: "MOVE_POST",
-					source: result[dates.source],
-					destination: result[dates.destination],
-					sourceId: result.sourceId,
-					destinationId: result.destinationId,
-				});
-			}
+		if (postLists.source !== postLists.destination) {
+			const result = moveItem(
+				getPostList(postLists.source, posts),
+				getPostList(postLists.destination, posts),
+				{ droppableId: postLists.source },
+				{ droppableId: postLists.destination }
+			);
 
 			postsDispatch({
-				type: "PREPARE_UPDATE",
-				id: id,
-				params: {
-					post_title,
-					post_name,
-					post_date: format(
-						new Date(post.post_date),
-						dateFormat.dateTime
-					),
-					post_status: filterPostStatus(post_status, isUnscheduled),
-					post_excerpt,
-					taxonomies: post_taxonomies,
-				},
-				unscheduled: isUnscheduled,
-				newIndex: index,
+				type: "MOVE_POST",
+				source: result[postLists.source],
+				destination: result[postLists.destination],
+				sourceId: result.sourceId,
+				destinationId: result.destinationId,
 			});
 		}
+
+		postsDispatch({
+			type: "PREPARE_UPDATE",
+			id: id,
+			params: {
+				post_title,
+				post_name,
+				post_date: format(
+					new Date(post.post_date),
+					dateFormat.dateTime
+				),
+				post_status: filterPostStatus(post_status, isUnscheduled),
+				post_excerpt,
+				taxonomies: post_taxonomies,
+			},
+			unscheduled: isUnscheduled,
+			newIndex: index,
+		});
+		// }
 
 		postsDispatch({
 			type: "UNSET_CURRENTPOST",

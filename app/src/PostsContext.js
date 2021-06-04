@@ -162,14 +162,17 @@ export function postsReducer(state, action) {
 		case "PREPARE_UPDATE": {
 			const { id, params, newIndex, unscheduled } = action;
 
+			const index =
+				unscheduled && newIndex === -1 ? unscheduled.length : newIndex;
+
 			return {
 				...state,
 				updatePost: {
 					updateNow: true,
 					id,
 					params,
-					newIndex,
 					unscheduled,
+					newIndex: index,
 				},
 			};
 		}
