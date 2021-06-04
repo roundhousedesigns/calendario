@@ -20,7 +20,7 @@ import {
 } from "../lib/utils";
 import DatePicker from "react-datepicker";
 import { format, isFuture, isPast, isToday } from "date-fns";
-import { isEmpty } from "lodash";
+import { isEmpty, isEqual } from "lodash";
 import { decode } from "html-entities";
 
 import PostsContext from "../PostsContext";
@@ -29,7 +29,7 @@ import ViewContext from "../ViewContext";
 const initialEditPost = {
 	post: {},
 	editMode: false,
-	og_post_date: null,
+	ogPost: null,
 };
 
 const initialTaxFilter = {
@@ -43,7 +43,7 @@ function editPostReducer(state, action) {
 			return {
 				post: action.post,
 				editMode: true,
-				og_post_date: action.post.post_date,
+				ogPost: action.post,
 			};
 
 		case "EDIT":
@@ -247,54 +247,62 @@ export default function EditPost() {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		const {
-			og_post_date,
-			post: { post_date },
-		} = editPost;
+
+		const { ogPost, post } = editPost;
 		const posts = { scheduled, unscheduled };
 
-		// If unscheduled, get the current index to pass along
-		const index = isUnscheduled
-			? unscheduled.findIndex((item) => item.id === id)
-			: false;
+		// Only update if necessary
+		if (!isEqual(post, ogPost)) {
+			// If unscheduled, get the current index to pass along
+			const index = isUnscheduled
+				? unscheduled.findIndex((item) => item.id === id)
+				: false;
 
-		// Move from one list to another
-		const dates = {
-			source: dayKey(og_post_date),
-			destination: dayKey(post_date),
-		};
+			// Move from one list to another
+			const dates = {
+				source: ogPost.unscheduled
+					? "unscheduled"
+					: dayKey(ogPost.post_date),
+				destination: isUnscheduled
+					? "unscheduled"
+					: dayKey(post.post_date),
+			};
 
-		if (dates.source !== dates.destination) {
-			const result = moveItem(
-				getPostList(dates.source, posts),
-				getPostList(dates.destination, posts),
-				{ droppableId: dates.source },
-				{ droppableId: dates.destination }
-			);
+			if (dates.source !== dates.destination) {
+				const result = moveItem(
+					getPostList(dates.source, posts),
+					getPostList(dates.destination, posts),
+					{ droppableId: dates.source },
+					{ droppableId: dates.destination }
+				);
+
+				postsDispatch({
+					type: "MOVE_POST",
+					source: result[dates.source],
+					destination: result[dates.destination],
+					sourceId: result.sourceId,
+					destinationId: result.destinationId,
+				});
+			}
 
 			postsDispatch({
-				type: "MOVE_POST",
-				source: result[dates.source],
-				destination: result[dates.destination],
-				sourceId: result.sourceId,
-				destinationId: result.destinationId,
+				type: "PREPARE_UPDATE",
+				id: id,
+				params: {
+					post_title,
+					post_name,
+					post_date: format(
+						new Date(post.post_date),
+						dateFormat.dateTime
+					),
+					post_status: filterPostStatus(post_status, isUnscheduled),
+					post_excerpt,
+					taxonomies: post_taxonomies,
+				},
+				unscheduled: isUnscheduled,
+				newIndex: index,
 			});
 		}
-
-		postsDispatch({
-			type: "PREPARE_UPDATE",
-			id: id,
-			params: {
-				post_title,
-				post_name,
-				post_date: format(new Date(post_date), dateFormat.dateTime),
-				post_status: filterPostStatus(post_status, isUnscheduled),
-				post_excerpt,
-				taxonomies: post_taxonomies,
-			},
-			isUnscheduled,
-			newIndex: index,
-		});
 
 		postsDispatch({
 			type: "UNSET_CURRENTPOST",

@@ -1,6 +1,6 @@
 import { createContext } from "react";
-import { dateFormat } from "./lib/utils";
-import { groupBy } from "lodash";
+import { dateFormat, dayKey } from "./lib/utils";
+import { groupBy, find } from "lodash";
 import { format } from "date-fns";
 
 const PostsContext = createContext({});
@@ -218,16 +218,43 @@ export function postsReducer(state, action) {
 		}
 
 		case "UPDATE_POST": {
-			const { droppableId } = action;
+			const { droppableId, unscheduled: isUnscheduled } = action;
 			let {
-				updatePost: { params },
+				updatePost: { id, params },
+				scheduled,
+				unscheduled,
 			} = state;
 
 			// Cast the date as a Date
-			params.post_date = new Date(params.post_date);
+			if (typeof params.post_date === "string") {
+				params.post_date = new Date(params.post_date);
+			}
+
+			if (isUnscheduled) {
+				unscheduled.forEach((item, index) => {
+					if (item.id === id) {
+						unscheduled[index] = {
+							...unscheduled[index],
+							...params,
+						};
+					}
+				});
+			} else {
+				const key = dayKey(params.post_date);
+				scheduled[key].forEach((item, index) => {
+					if (item.id === id) {
+						scheduled[key][index] = {
+							...scheduled[key][index],
+							...params,
+						};
+					}
+				});
+			}
 
 			return {
 				...state,
+				scheduled,
+				unscheduled,
 				isUpdating: droppableId,
 			};
 		}

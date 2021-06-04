@@ -101,7 +101,7 @@ export default function App() {
 				postsDispatch({ type: "ADD_POST", droppableId });
 			} else {
 				url += `update/${id}/${user}`;
-				postsDispatch({ type: "UPDATE_POST", droppableId });
+				postsDispatch({ type: "UPDATE_POST", droppableId, unscheduled });
 			}
 
 			let headers = {
