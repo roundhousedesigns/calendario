@@ -72,6 +72,9 @@ export default function PostLinks({ post, unscheduled }) {
 			type: "PREPARE_UPDATE",
 			id,
 			unscheduled: false,
+			params: {
+				post_date,
+			},
 		});
 	};
 
@@ -83,7 +86,7 @@ export default function PostLinks({ post, unscheduled }) {
 			params: {
 				post_date,
 			},
-			unscheduled
+			unscheduled,
 		});
 	};
 
