@@ -3,7 +3,7 @@ import DrawerHandle from "./common/DrawerHandle";
 import Widget from "./common/Widget";
 import UnscheduledDrafts from "./UnscheduledDrafts";
 import StatusFilters from "./StatusFilters";
-import RefetchButton from "./RefetchButton";
+// import RefetchButton from "./RefetchButton";
 import ViewOptions from "./ViewOptions";
 import { wp } from "../lib/utils";
 
@@ -33,7 +33,7 @@ export default function Sidebar() {
 				<Widget widgetClass="options">
 					<div className="options">
 						<ViewOptions />
-						<RefetchButton />
+						{/* <RefetchButton /> */}
 					</div>
 				</Widget>
 				<Widget
