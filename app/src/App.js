@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import Main from "./components/Main";
 import Sidebar from "./components/Sidebar";
 import Icon from "./components/common/Icon";
-import { useStickyState } from "./lib/hooks";
+import { useStickyState, useUpdate } from "./lib/hooks";
 import {
 	dateIsBetween,
 	isDraggingUnscheduled,
@@ -12,12 +12,9 @@ import {
 	moveItem,
 	wp,
 	draggedPostDestination,
-	DEBUG_MODE,
 	filterPostStatus,
-	dateFormat,
-	sanitizeParamsForUpdate,
 } from "./lib/utils";
-import { differenceInWeeks, addWeeks, format } from "date-fns";
+import { differenceInWeeks, addWeeks } from "date-fns";
 import { DragDropContext } from "react-beautiful-dnd";
 
 import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
@@ -55,7 +52,7 @@ export default function App() {
 		scheduled: scheduledPosts,
 		currentPost,
 	} = posts;
-	const { routeBase, user, nonce } = wp;
+	const { user } = wp;
 
 	useEffect(() => {
 		// Update the context initially
@@ -73,101 +70,10 @@ export default function App() {
 		});
 	}, [setView, viewOptions.viewMode]);
 
-	// TODO move this to a custom hook
-	// Send the update!
-	useEffect(() => {
-		const {
-			updatePost: { updateNow, id, params, unscheduled, newIndex, trash },
-		} = posts;
-
-		if (updateNow === true && id !== undefined) {
-			const droppableId =
-				unscheduled === true
-					? "unscheduled"
-					: format(new Date(params.post_date), dateFormat.date);
-
-			postsDispatch({
-				type: "UPDATE_INIT",
-			});
-
-			// Check if this is a new post, a post to trash, or an existing post,
-			//   and set the proper URL
-			let url = `${routeBase}/posts/`;
-			if (trash === true) {
-				url += `trash/${id}/${user}`;
-				postsDispatch({ type: "REMOVE_POST", droppableId });
-			} else if (id === 0) {
-				url += `new/${user}`;
-				postsDispatch({ type: "ADD_POST", droppableId });
-			} else {
-				url += `update/${id}/${user}`;
-				postsDispatch({
-					type: "UPDATE_POST",
-					droppableId,
-					unscheduled,
-				});
-			}
-
-			let headers = {
-				"Content-Type": "application/json",
-			};
-
-			if (DEBUG_MODE !== true) {
-				headers["X-WP-Nonce"] = nonce;
-			}
-
-			let postData = {
-				params: sanitizeParamsForUpdate(params),
-				unscheduled,
-			};
-
-			if (newIndex !== null) {
-				postData.newIndex = newIndex;
-			}
-
-			const sendUpdate = async () => {
-				try {
-					const response = await fetch(url, {
-						method: "POST",
-						headers,
-						body: JSON.stringify(postData),
-					});
-					const data = await response.json();
-
-					if (data && data > 0) {
-						postsDispatch({ type: "UPDATE_SUCCESS", id, params });
-					} else {
-						postsDispatch({
-							type: "UPDATE_ERROR",
-							id,
-							params,
-							data,
-						});
-					}
-
-					draggedPostDispatch({
-						type: "END",
-					});
-				} catch (error) {
-					console.log(error.message);
-				}
-
-				postsDispatch({
-					type: "REFETCH",
-				});
-			};
-
-			sendUpdate();
-		}
-	}, [
-		routeBase,
-		user,
-		nonce,
-		posts,
-		draggedPost,
-		draggedPostDispatch,
-		postsDispatch,
-	]);
+	/**
+	 * Send the upaate
+	 */
+	useUpdate(posts, postsDispatch, draggedPost, draggedPostDispatch, user);
 
 	const isOverUnscheduled = (droppableId) =>
 		droppableId === "unscheduled" ? true : false;
