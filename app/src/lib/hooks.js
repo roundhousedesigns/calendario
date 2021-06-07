@@ -2,7 +2,7 @@ import { useState, useEffect, useContext /* useRef */ } from "react";
 import { wp, dateFormat } from "../lib/utils";
 import { format } from "date-fns";
 import { isEmpty } from "lodash";
-import { DEBUG_MODE } from "../lib/utils";
+import { DEBUG_MODE, sanitizeParamsForUpdate } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
@@ -37,6 +37,7 @@ export const useStickyState = (defaultValue, key) => {
  * @param {Date} end The range's end
  * @returns {boolean} The current loading state
  */
+// TODO pass in context
 export const useFetchScheduledPosts = (start, end) => {
 	const {
 		posts: { refetch },
@@ -89,6 +90,7 @@ export const useFetchScheduledPosts = (start, end) => {
  *
  * @returns {boolean} The current loading state
  */
+// TODO pass in context
 export const useFetchUnscheduledPosts = () => {
 	const {
 		posts: { refetch },
@@ -135,6 +137,7 @@ export const useFetchUnscheduledPosts = () => {
  *
  * @returns {boolean} The current loading state
  */
+// TODO pass in context
 export const useFetchPostStatuses = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const { viewOptionsDispatch } = useContext(ViewContext);
@@ -179,6 +182,7 @@ export const useFetchPostStatuses = () => {
  * @param {string} name The taxonomy name (slug) to fetch
  * @returns {boolean} The current loading state
  */
+// TODO pass in context
 export const useFetchTaxonomyTerms = (name) => {
 	const {
 		posts: { taxonomies },
@@ -226,6 +230,117 @@ export const useFetchTaxonomyTerms = (name) => {
 };
 
 /**
+ *
+ * @param {Object} posts PostsContext
+ * @param {Function} postsDispatch PostsContext
+ * @param {Object} draggedPost DragContext
+ * @param {Function} draggedPostDispatch DragContext
+ * @param {number} user User ID
+ * @returns {void}
+ */
+export const useUpdate = (
+	posts,
+	postsDispatch,
+	draggedPost,
+	draggedPostDispatch,
+	user
+) => {
+	useEffect(() => {
+		const {
+			updatePost: { updateNow, id, params, unscheduled, newIndex, trash },
+		} = posts;
+
+		if (updateNow === true && id !== undefined) {
+			const droppableId =
+				unscheduled === true
+					? "unscheduled"
+					: format(new Date(params.post_date), dateFormat.date);
+
+			postsDispatch({
+				type: "UPDATE_INIT",
+			});
+
+			/**
+			 * Check if this is a new post, a post to trash, or an existing post,
+			 * and set the proper URL
+			 */
+			let url = `${routeBase}/posts/`;
+			if (trash === true) {
+				url += `trash/${id}/${user}`;
+				postsDispatch({ type: "REMOVE_POST", droppableId });
+			} else if (id === 0) {
+				url += `new/${user}`;
+				postsDispatch({ type: "ADD_POST", droppableId });
+			} else {
+				url += `update/${id}/${user}`;
+				postsDispatch({
+					type: "UPDATE_POST",
+					droppableId,
+					unscheduled,
+				});
+			}
+
+			let headers = {
+				"Content-Type": "application/json",
+			};
+
+			if (DEBUG_MODE !== true) {
+				headers["X-WP-Nonce"] = nonce;
+			}
+
+			let postData = {
+				params: sanitizeParamsForUpdate(params),
+				unscheduled,
+			};
+
+			if (newIndex !== null) {
+				postData.newIndex = newIndex;
+			}
+
+			const sendUpdate = async () => {
+				try {
+					const response = await fetch(url, {
+						method: "POST",
+						headers,
+						body: JSON.stringify(postData),
+					});
+					const data = await response.json();
+
+					if (data && data > 0) {
+						postsDispatch({ type: "UPDATE_SUCCESS", id, params });
+					} else {
+						postsDispatch({
+							type: "UPDATE_ERROR",
+							id,
+							params,
+							data,
+						});
+					}
+
+					draggedPostDispatch({
+						type: "END",
+					});
+				} catch (error) {
+					console.log(error.message);
+				}
+
+				postsDispatch({
+					type: "REFETCH",
+				});
+			};
+
+			sendUpdate();
+		}
+	}, [
+		user,
+		posts,
+		draggedPost,
+		draggedPostDispatch,
+		postsDispatch,
+	]);
+};
+
+/**
  * Retrieves 'scheduled' posts from the server
  * @param {Object} ref The element's ref
  * @param {Function} end The handler function
@@ -251,7 +366,7 @@ export const useClickOutside = (ref, handler) => {
 		};
 
 		document.addEventListener("mousedown", validateEventStart);
-		document.addEventListener("touchstart", validateEventStart);
+		document.addEventListener("touchstart", validateEventStar t);
 		document.addEventListener("click", listener);
 
 		return () => {
