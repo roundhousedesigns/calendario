@@ -2,14 +2,13 @@ import { useState, useEffect, useContext /* useRef */ } from "react";
 import { wp, dateFormat } from "../lib/utils";
 import { format } from "date-fns";
 import { isEmpty } from "lodash";
-import { DEBUG_MODE, sanitizeParamsForUpdate } from "../lib/utils";
+import { sanitizeParamsForUpdate } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
 const { routeBase, nonce } = wp;
-
-const headers = DEBUG_MODE !== true ? { "X-WP-Nonce": nonce } : {};
+const headers = { "X-WP-Nonce": nonce, "Content-Type": "application/json" };
 
 /**
  * Uses localStorage to save view-specific user options.
@@ -280,14 +279,6 @@ export const useUpdate = (
 				});
 			}
 
-			let headers = {
-				"Content-Type": "application/json",
-			};
-
-			if (DEBUG_MODE !== true) {
-				headers["X-WP-Nonce"] = nonce;
-			}
-
 			let postData = {
 				params: sanitizeParamsForUpdate(params),
 				unscheduled,
@@ -331,13 +322,7 @@ export const useUpdate = (
 
 			sendUpdate();
 		}
-	}, [
-		user,
-		posts,
-		draggedPost,
-		draggedPostDispatch,
-		postsDispatch,
-	]);
+	}, [user, posts, draggedPost, draggedPostDispatch, postsDispatch]);
 };
 
 /**
@@ -366,7 +351,7 @@ export const useClickOutside = (ref, handler) => {
 		};
 
 		document.addEventListener("mousedown", validateEventStart);
-		document.addEventListener("touchstart", validateEventStar t);
+		document.addEventListener("touchstart", validateEventStart);
 		document.addEventListener("click", listener);
 
 		return () => {

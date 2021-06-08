@@ -5,7 +5,7 @@ import UnscheduledDrafts from "./UnscheduledDrafts";
 import StatusFilters from "./StatusFilters";
 import RefetchButton from "./RefetchButton";
 import ViewOptions from "./ViewOptions";
-import { wp, DEBUG_MODE } from "../lib/utils";
+import { wp } from "../lib/utils";
 
 import ViewContext from "../ViewContext";
 
@@ -33,7 +33,6 @@ export default function Sidebar() {
 				<Widget widgetClass="options">
 					<div className="options">
 						<ViewOptions />
-						{DEBUG_MODE ? <RefetchButton /> : null}
 					</div>
 				</Widget>
 				<Widget

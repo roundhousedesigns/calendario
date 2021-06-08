@@ -5,18 +5,9 @@ import "./lib/typedefs";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import { DEBUG_MODE } from "./lib/utils";
-
-var reactAppData, appAnchorElement;
-if (DEBUG_MODE !== true) {
-	// live values
-	reactAppData = window.rhdReactPlugin || {};
-	const { appSelector } = reactAppData;
-	appAnchorElement = document.querySelector(appSelector);
-} else {
-	// Dev
-	appAnchorElement = document.getElementById("root");
-}
+var reactAppData = window.rhdReactPlugin || {};
+const { appSelector } = reactAppData;
+var appAnchorElement = document.querySelector(appSelector);
 
 if (appAnchorElement) {
 	ReactDOM.render(
