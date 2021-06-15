@@ -59,22 +59,15 @@ export default function Sidebar() {
 							/>
 						</a>
 						<ul className="docs">
+							<li>Documentation coming soon</li>
+							<li>Thanks for testing!</li>
 							<li>
 								<a
-									href="https://github.com/gaswirth/rhdwp-calendario/wiki"
+									href="mailto:help@roundhouse-designs.com?subject=Calendar.io Support Request?body=***Please type your editorial calendar.io support request here***"
 									rel="noreferrer"
 									target="_blank"
 								>
 									Support
-								</a>
-							</li>
-							<li>
-								<a
-									href="https://github.com/gaswirth/rhdwp-calendario/issues"
-									rel="noreferrer"
-									target="_blank"
-								>
-									Report a Bug
 								</a>
 							</li>
 						</ul>
