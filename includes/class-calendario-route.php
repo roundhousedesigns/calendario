@@ -79,24 +79,6 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Check if a given request has access to get items
-	 *
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|bool
-	 */
-	public function get_items_permissions_check( $request ) {
-		return true;
-	}
-
-	/**
-	 * @param WP_REST_Request $request Full data about the request.
-	 * @return bool
-	 */
-	public function options_permissions_check( $request ) {
-		return true;
-	}
-
-	/**
 	 * Check if a given request has access to create items
 	 *
 	 * @param WP_REST_Request $request Full data about the request.
@@ -105,11 +87,31 @@ class Calendario_Route extends WP_REST_Controller {
 	public function create_item_permissions_check( $request ) {
 		$params = $request->get_params();
 
-		if ( ! isset( $params['user_id'] ) ) {
-			return false;
-		}
+		$user = wp_get_current_user();
 
-		return user_can( $params['user_id'], 'edit_others_posts' );
+		// if ( ! isset( $params['user_id'] ) ) {
+		// 	return false;
+		// }
+
+		return user_can( $user, 'edit_others_posts' );
+	}
+
+	/**
+	 * Check if a given request has access to get items
+	 *
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return WP_Error|bool
+	 */
+	public function get_items_permissions_check( $request ) {
+		return $this->create_item_permissions_check( $request );
+	}
+
+	/**
+	 * @param WP_REST_Request $request Full data about the request.
+	 * @return bool
+	 */
+	public function options_permissions_check( $request ) {
+		return $this->create_item_permissions_check( $request );
 	}
 
 	/**

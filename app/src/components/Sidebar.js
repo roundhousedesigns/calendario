@@ -3,7 +3,6 @@ import DrawerHandle from "./common/DrawerHandle";
 import Widget from "./common/Widget";
 import UnscheduledDrafts from "./UnscheduledDrafts";
 import StatusFilters from "./StatusFilters";
-import RefetchButton from "./RefetchButton";
 import ViewOptions from "./ViewOptions";
 import { wp } from "../lib/utils";
 
