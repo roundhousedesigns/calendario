@@ -336,6 +336,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	line-height: 1.8;
+	min-height: 50px;
 
 	&.postList {
 		background-color: var(--borderColor);
@@ -367,6 +368,10 @@ body {
 				}
 			}
 		}
+	}
+
+	&.draggingOver {
+		background-color: var(--mainColor-transparent);
 	}
 
 	& + .newPost {
