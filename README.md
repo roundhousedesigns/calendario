@@ -1,7 +1,7 @@
 # editorial calendar.io
 
-[![DeepScan grade](https://deepscan.io/api/teams/13521/projects/16500/branches/356708/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=13521&pid=16500&bid=356708)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/30d73f826c774f6ba8437003efef22b2)](https://www.codacy.com?utm_source=github.com&utm_medium=referral&utm_content=roundhousedesigns/calendario&utm_campaign=Badge_Grade)
+<!-- [![DeepScan grade](https://deepscan.io/api/teams/13521/projects/16500/branches/356708/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=13521&pid=16500&bid=356708)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/30d73f826c774f6ba8437003efef22b2)](https://www.codacy.com?utm_source=github.com&utm_medium=referral&utm_content=roundhousedesigns/calendario&utm_campaign=Badge_Grade) -->
 
 The professional blogger's editorial calendar plugin for WordPress.
 
