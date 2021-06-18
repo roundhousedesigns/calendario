@@ -85,13 +85,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function create_item_permissions_check( $request ) {
-		$params = $request->get_params();
-
 		$user = wp_get_current_user();
-
-		// if ( ! isset( $params['user_id'] ) ) {
-		// 	return false;
-		// }
 
 		return user_can( $user, 'edit_others_posts' );
 	}
