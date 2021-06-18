@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import Main from "./components/Main";
 import Sidebar from "./components/Sidebar";
 import Icon from "./components/common/Icon";
-import { useStickyState, useUpdate } from "./lib/hooks";
+import { useStickyState, useFetchPostStatuses, useUpdate } from "./lib/hooks";
 import {
 	dateIsBetween,
 	isDraggingUnscheduled,
@@ -42,6 +42,7 @@ export default function App() {
 
 	const {
 		viewRange: { start, end },
+		postStatuses,
 	} = viewOptions;
 
 	const todayRef = useRef();
@@ -69,6 +70,11 @@ export default function App() {
 			viewMode: viewOptions.viewMode,
 		});
 	}, [setView, viewOptions.viewMode]);
+
+	/**
+	 * Post Statuses
+	 */
+	useFetchPostStatuses(viewOptionsDispatch, postStatuses);
 
 	/**
 	 * Send the upaate

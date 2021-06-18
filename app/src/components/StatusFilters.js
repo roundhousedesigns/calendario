@@ -32,7 +32,6 @@ export default function StatusFilters() {
 			return;
 		}
 
-		// update server
 		let url = `${routeBase}/statuses`;
 
 		const fetchData = async () => {
@@ -42,15 +41,19 @@ export default function StatusFilters() {
 			}
 
 			try {
+				const { nonce } = wp;
 				const response = await fetch(url, {
 					method: "POST",
-					headers: { "Content-Type": "application/json" },
+					headers: {
+						"Content-Type": "application/json",
+						"X-WP-Nonce": nonce,
+					},
 					body: JSON.stringify(colors),
 				});
-				// const data = await response.json(); // If you need to catch the response...
-				await response.json();
 
-				// do something else?
+				// const data = await response.json(); // If you need to catch the response...
+
+				await response.json();
 			} catch (error) {
 				console.log(error.message);
 			}

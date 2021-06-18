@@ -5,10 +5,12 @@ import { isEmpty } from "lodash";
 import { sanitizeParamsForUpdate } from "../lib/utils";
 
 import PostsContext from "../PostsContext";
-import ViewContext from "../ViewContext";
 
 const { routeBase, nonce } = wp;
-const headers = { "X-WP-Nonce": nonce, "Content-Type": "application/json" };
+const headers = {
+	"Content-Type": "application/json",
+	"X-WP-Nonce": nonce,
+};
 
 /**
  * Uses localStorage to save view-specific user options.
@@ -134,12 +136,12 @@ export const useFetchUnscheduledPosts = () => {
 /**
  * Retrieves the set of post statuses from the server
  *
+ * @param {function} viewOptionsDispatch
  * @returns {boolean} The current loading state
  */
-// TODO pass in context
-export const useFetchPostStatuses = () => {
+// TODO fix forbidden console error on toggle
+export const useFetchPostStatuses = (viewOptionsDispatch) => {
 	const [isLoading, setIsLoading] = useState(false);
-	const { viewOptionsDispatch } = useContext(ViewContext);
 
 	useEffect(() => {
 		let url = `${routeBase}/statuses`;

@@ -112,14 +112,14 @@ body {
 		grid-template-rows: min-content auto;
 		grid-template-areas:
 			"header header"
-			"sidebar   main";
+			"main   sidebar";
 
 		&.sidebarOpen {
-			grid-template-columns: 300px 3fr;
+			grid-template-columns: 3fr 300px;
 		}
 
 		&.sidebarClosed {
-			grid-template-columns: 14px 3fr;
+			grid-template-columns: 3fr 16px;
 		}
 	}
 
@@ -171,8 +171,8 @@ body {
 			@media (min-width: $mobileBreak) {
 				display: grid;
 				grid-gap: var(--gridGap);
-				grid-template-columns: 300px 3fr;
-				grid-template-areas: "title calendarHeader";
+				grid-template-columns: 3fr 300px;
+				grid-template-areas: "calendarHeader title";
 			}
 
 			& > div {
@@ -275,7 +275,7 @@ body {
 				position: absolute;
 				top: 28px;
 				font-size: 0.8em;
-				right: 0;
+				left: 4px;
 				z-index: 1;
 				line-height: 2;
 				padding: 0;
