@@ -218,7 +218,7 @@ export default function App() {
 	function appClass() {
 		const { sidebarOpen } = viewOptions;
 
-		let classes = ["calendario"];
+		let classes = ["calendarioMain"];
 
 		if (sidebarOpen === true) {
 			classes.push("sidebarOpen");

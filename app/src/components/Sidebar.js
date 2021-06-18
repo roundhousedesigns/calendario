@@ -19,7 +19,7 @@ export default function Sidebar() {
 
 	return (
 		<aside
-			className={`calendario__sidebar ${sidebarOpen ? "open" : "closed"}`}
+			className={`calendarioMain__sidebar ${sidebarOpen ? "open" : "closed"}`}
 		>
 			<DrawerHandle
 				toggle={() =>
@@ -28,7 +28,7 @@ export default function Sidebar() {
 					})
 				}
 			/>
-			<div className="calendario__sidebar__inner">
+			<div className="calendarioMain__sidebar__inner">
 				<Widget widgetClass="options">
 					<div className="options">
 						<ViewOptions />

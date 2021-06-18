@@ -10,13 +10,13 @@ export default function Header({ handleTodayClick }) {
 	const { postsUrl } = wp;
 
 	return (
-		<header className="calendario__header">
-			<div className="calendario__header__content">
+		<header className="calendarioMain__header">
+			<div className="calendarioMain__header__content">
 				<div className="calendarHeader">
 					<MainHeader handleTodayClick={handleTodayClick} />
 				</div>
 				<div className="title">
-					<h1 className="calendario__title">
+					<h1 className="calendarioMain__title">
 						<Logo />
 					</h1>
 				</div>

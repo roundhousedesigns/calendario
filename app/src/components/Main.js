@@ -15,7 +15,7 @@ const Main = forwardRef(({ todayRef }, ref) => {
 	useFetchTaxonomyTerms("post_tag");
 
 	return (
-		<main className="calendario__main">
+		<main className="calendarioMain__main">
 			<div className="view" ref={ref}>
 				{viewMode === "calendar" ? (
 					<Calendar className="view__calendar" todayRef={todayRef} />

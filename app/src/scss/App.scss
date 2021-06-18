@@ -35,7 +35,7 @@ body {
 
 #wpcontent {
 	.auto-fold & {
-		margin-left: 0;
+		padding-left: 0;
 	}
 }
 
@@ -88,7 +88,7 @@ body {
 	}
 }
 
-.calendario {
+.calendarioMain {
 	display: grid;
 	grid-gap: var(--gridGap);
 	height: 100vh;
