@@ -1,10 +1,8 @@
-import { useState, useEffect, useContext /* useRef */ } from "react";
+import { useState, useEffect } from "react";
 import { wp, dateFormat } from "../lib/utils";
 import { format } from "date-fns";
 import { isEmpty } from "lodash";
 import { sanitizeParamsForUpdate } from "../lib/utils";
-
-import PostsContext from "../PostsContext";
 
 const { routeBase, nonce } = wp;
 const headers = {
@@ -36,14 +34,12 @@ export const useStickyState = (defaultValue, key) => {
  * Retrieves 'scheduled' posts from the server
  * @param {Date} start The range's start
  * @param {Date} end The range's end
+ * @param {Object} posts PostsContext store
+ * @param {Function} postsDispatch PostsContext reducer
  * @returns {boolean} The current loading state
  */
-// TODO pass in context
-export const useFetchScheduledPosts = (start, end) => {
-	const {
-		posts: { refetch },
-		postsDispatch,
-	} = useContext(PostsContext);
+export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
+	const { refetch } = posts;
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
@@ -89,14 +85,12 @@ export const useFetchScheduledPosts = (start, end) => {
 /**
  * Retrieves 'unscheduled' posts from the server
  *
+ * @param {Object} posts PostsContext store
+ * @param {Function} postsDispatch PostsContext reducer
  * @returns {boolean} The current loading state
  */
-// TODO pass in context
-export const useFetchUnscheduledPosts = () => {
-	const {
-		posts: { refetch },
-		postsDispatch,
-	} = useContext(PostsContext);
+export const useFetchUnscheduledPosts = (posts, postsDispatch) => {
+	const { refetch } = posts;
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
@@ -136,10 +130,9 @@ export const useFetchUnscheduledPosts = () => {
 /**
  * Retrieves the set of post statuses from the server
  *
- * @param {function} viewOptionsDispatch
+ * @param {Function} viewOptionsDispatch ViewContext reducer
  * @returns {boolean} The current loading state
  */
-// TODO fix forbidden console error on toggle
 export const useFetchPostStatuses = (viewOptionsDispatch) => {
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -181,14 +174,12 @@ export const useFetchPostStatuses = (viewOptionsDispatch) => {
  * Retrieves all terms of a taxonomy
  *
  * @param {string} name The taxonomy name (slug) to fetch
+ * @param {Object} posts PostsContext store
+ * @param {Function} postsDispatch PostsContext reducer
  * @returns {boolean} The current loading state
  */
-// TODO pass in context
-export const useFetchTaxonomyTerms = (name) => {
-	const {
-		posts: { taxonomies },
-		postsDispatch,
-	} = useContext(PostsContext);
+export const useFetchTaxonomyTerms = (name, posts, postsDispatch) => {
+	const { taxonomies } = posts;
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
@@ -232,10 +223,10 @@ export const useFetchTaxonomyTerms = (name) => {
 
 /**
  *
- * @param {Object} posts PostsContext
- * @param {Function} postsDispatch PostsContext
- * @param {Object} draggedPost DragContext
- * @param {Function} draggedPostDispatch DragContext
+ * @param {Object} posts PostsContext store
+ * @param {Function} postsDispatch PostsContext reducer
+ * @param {Object} draggedPost DragContext store
+ * @param {Function} draggedPostDispatch DragContext reducer
  * @param {number} user User ID
  * @returns {void}
  */

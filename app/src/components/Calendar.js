@@ -16,13 +16,21 @@ import ViewContext from "../ViewContext";
 
 export default function Calendar({ className, todayRef }) {
 	const {
-		posts: { scheduled },
+		posts,
+		postsDispatch,
 	} = useContext(PostsContext);
 	const {
 		viewOptions: { viewRange },
 	} = useContext(ViewContext);
 
-	useFetchScheduledPosts(viewRange.start, viewRange.end);
+	const { scheduled } = posts;
+
+	useFetchScheduledPosts(
+		viewRange.start,
+		viewRange.end,
+		posts,
+		postsDispatch
+	);
 
 	const renderDaysHeaderRow = useCallback(() => {
 		const days = [];

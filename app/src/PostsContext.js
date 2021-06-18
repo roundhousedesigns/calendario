@@ -76,7 +76,6 @@ export function postsReducer(state, action) {
 		}
 
 		case "MOVE_POST": {
-			//TODO kill this and let UPDATE_POST handle
 			let { scheduled, unscheduled } = state;
 			const { source, sourceId, destination, destinationId } = action;
 

@@ -7,11 +7,11 @@ import { useFetchUnscheduledPosts } from "../lib/hooks";
 import PostsContext from "../PostsContext";
 
 export default function UnscheduledDrafts() {
-	const {
-		posts: { unscheduled },
-	} = useContext(PostsContext);
+	const { posts, postsDispatch } = useContext(PostsContext);
 
-	useFetchUnscheduledPosts();
+	const { unscheduled } = posts;
+
+	useFetchUnscheduledPosts(posts, postsDispatch);
 
 	return (
 		<>

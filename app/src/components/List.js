@@ -9,17 +9,16 @@ import PostsContext from "../PostsContext";
 import ViewContext from "../ViewContext";
 
 export default function List({ className }) {
-	const {
-		posts: { scheduled },
-	} = useContext(PostsContext);
-
+	const { posts, postsDispatch } = useContext(PostsContext);
 	const {
 		viewOptions: {
 			viewRange: { start, end },
 		},
 	} = useContext(ViewContext);
 
-	useFetchScheduledPosts(start, end);
+	const { scheduled } = posts;
+
+	useFetchScheduledPosts(start, end, posts, postsDispatch);
 
 	const renderDays = () => {
 		let days = [];

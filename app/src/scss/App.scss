@@ -42,7 +42,8 @@ body {
 #calendario {
 	width: 100%;
 	min-height: 100%;
-	margin: 0 0;
+	margin: 0;
+	padding-top: 23px; // admin bar difference
 	overflow: auto;
 	z-index: 99999;
 	background: white;
@@ -307,10 +308,6 @@ body {
 	&__main {
 		grid-area: main;
 		width: 100%;
-
-		@media (min-width: $mobileBreak) {
-			padding-right: 1em;
-		}
 	}
 
 	.react-datepicker-popper {
@@ -768,7 +765,7 @@ body {
 			.rhdLogo {
 				flex: 0 1 40%;
 				height: 100%;
-				margin: 0;
+				margin: 0 8px 0 0;
 
 				img {
 					width: 100%;
