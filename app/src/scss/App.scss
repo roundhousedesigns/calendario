@@ -33,17 +33,19 @@ body {
 	position: relative;
 }
 
+#wpcontent {
+	.auto-fold & {
+		margin-left: 0;
+	}
+}
+
 #calendario {
-	position: fixed;
-	top: 32px; // admin bar
-	left: 0;
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
+	min-height: 100%;
 	margin: 0 0;
 	overflow: auto;
 	z-index: 99999;
 	background: white;
-	min-height: 100%;
 	font-size: 16px;
 }
 
@@ -417,8 +419,6 @@ body {
 	width: 100%;
 
 	.viewRange {
-		margin-right: 64px; // offset todayButton
-
 		&__input {
 			background-color: transparent;
 			border-bottom: 2px dotted var(--textColor-light);
@@ -443,7 +443,7 @@ body {
 	.todayButton {
 		font-size: 0.9em;
 		width: 60px;
-		margin-right: 4px;
+		margin-right: 12px;
 
 		&:not([disabled]) {
 			border: 1px solid var(--textColor-light);

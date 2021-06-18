@@ -16,13 +16,6 @@ export default function Header({ handleTodayClick }) {
 					<MainHeader handleTodayClick={handleTodayClick} />
 				</div>
 				<div className="title">
-					<button
-						className="icon closeCalendario"
-						onClick={() => (window.location.href = postsUrl)}
-						title="Close"
-					>
-						close
-					</button>
 					<h1 className="calendario__title">
 						<Logo />
 					</h1>
