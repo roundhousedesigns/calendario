@@ -42,7 +42,6 @@ export default function App() {
 
 	const {
 		viewRange: { start, end },
-		postStatuses,
 	} = viewOptions;
 
 	const todayRef = useRef();
@@ -74,7 +73,7 @@ export default function App() {
 	/**
 	 * Post Statuses
 	 */
-	useFetchPostStatuses(viewOptionsDispatch, postStatuses);
+	useFetchPostStatuses(viewOptionsDispatch);
 
 	/**
 	 * Send the upaate
@@ -163,8 +162,7 @@ export default function App() {
 
 		const post_date = draggedPostDestination(
 			post_date_source,
-			destination.droppableId,
-			overUnscheduled
+			destination.droppableId
 		);
 
 		if (overUnscheduled && source.droppableId === destination.droppableId) {
