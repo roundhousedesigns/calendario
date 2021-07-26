@@ -21,7 +21,7 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 		setDragOver(true);
 	};
 
-	function getStyles() {
+	const styles = () => {
 		let classes = ["day", "col", "cell"];
 
 		if (isToday(day)) {
@@ -37,11 +37,11 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 		}
 
 		return classes.join(" ");
-	}
+	};
 
 	return (
 		<div
-			className={getStyles()}
+			className={styles()}
 			ref={isToday(day) ? ref : null}
 			onDragOver={handleDragOver}
 			onDragLeave={() => setDragOver(false)}

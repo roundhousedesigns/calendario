@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import ColorPickerPopover from "./common/ColorPickerPopover";
 import ToggleButton from "./common/ToggleButton";
-import { wp, haveColorsChanged } from "../lib/utils";
+import { wp, haveColorsChanged, DEBUG_MODE } from "../lib/utils";
 import { isEmpty } from "lodash";
 
 import ViewContext from "../ViewContext";
@@ -15,6 +15,7 @@ export default function StatusFilters() {
 	} = useContext(ViewContext);
 	const keys = Object.keys(postStatuses);
 	const [colorsChanged, setColorsChanged] = useState(false);
+	const { nonce } = wp;
 
 	// Maintain state for color defaults
 	useEffect(() => {
@@ -22,6 +23,7 @@ export default function StatusFilters() {
 	}, [postStatuses]);
 
 	// Updates the server when the dispatch is updated (after debounce)
+	// TODO Move this to hooks.js
 	useEffect(() => {
 		if (isEmpty(postStatuses)) {
 			return;
@@ -36,18 +38,21 @@ export default function StatusFilters() {
 
 		const fetchData = async () => {
 			let colors = {};
+			let headers = {
+				"Content-Type": "application/json",
+			};
+			if (DEBUG_MODE === false) {
+				headers["X-WP-Nonce"] = nonce;
+			}
+
 			for (let status in postStatuses) {
 				colors[status] = postStatuses[status].color;
 			}
 
 			try {
-				const { nonce } = wp;
 				const response = await fetch(url, {
 					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						"X-WP-Nonce": nonce,
-					},
+					headers,
 					body: JSON.stringify(colors),
 				});
 
@@ -60,7 +65,7 @@ export default function StatusFilters() {
 		};
 
 		fetchData();
-	}, [firstUpdate, routeBase, postStatuses]);
+	}, [firstUpdate, routeBase, postStatuses, nonce]);
 
 	const toggleStatus = (e) => {
 		viewOptionsDispatch({

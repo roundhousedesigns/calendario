@@ -185,6 +185,39 @@ button {
 		margin: 0 0 1em;
 		font-size: 1.2em;
 	}
+
+	.help {
+		position: absolute;
+		right: 1em;
+		bottom: 1em;
+	}
+}
+
+.help {
+	display: inline-block;
+	line-height: 1;
+
+	&:hover {
+		.tooltip {
+			width: auto;
+			height: auto;
+			opacity: 1;
+		}
+	}
+
+	.tooltip-icon {
+		font-size: 0.9em;
+	}
+
+	.tooltip {
+		opacity: 0;
+		width: 0;
+		height: 0;
+		transition: opacity 300ms ease-out; 
+		transition-duration: 1s;
+		position: absolute;
+		top: 1em;
+	}
 }
 
 .loadingOverlay {

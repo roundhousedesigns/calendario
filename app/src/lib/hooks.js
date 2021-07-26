@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { wp, dateFormat } from "../lib/utils";
 import { format } from "date-fns";
 import { isEmpty } from "lodash";
-import { sanitizeParamsForUpdate } from "../lib/utils";
+import { sanitizeParamsForUpdate, DEBUG_MODE } from "../lib/utils";
 
 const { routeBase, nonce } = wp;
-const headers = {
+var headers = {
 	"Content-Type": "application/json",
-	"X-WP-Nonce": nonce,
 };
+
+if (DEBUG_MODE === false) {
+	headers["X-WP-Nonce"] = nonce;
+}
 
 /**
  * Uses localStorage to save view-specific user options.

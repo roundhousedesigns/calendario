@@ -5,9 +5,18 @@ import "./lib/typedefs";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-var reactAppData = window.rhdReactPlugin || {};
-const { appSelector } = reactAppData;
-var appAnchorElement = document.querySelector(appSelector);
+import { DEBUG_MODE } from "./lib/utils";
+
+var reactAppData, appAnchorElement;
+if (DEBUG_MODE === false) {
+	// live values
+	reactAppData = window.rhdReactPlugin || {};
+	const { appSelector } = reactAppData;
+	appAnchorElement = document.querySelector(appSelector);
+} else {
+	// Dev
+	appAnchorElement = document.getElementById("root");
+}
 
 if (appAnchorElement) {
 	ReactDOM.render(
