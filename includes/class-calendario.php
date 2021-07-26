@@ -82,7 +82,6 @@ class Calendario {
 				'pluginUrl'           => RHD_CALENDARIO_PLUGIN_DIR_BASE_URL,
 				'postsUrl'            => admin_url( 'edit.php?post_type=post' ),
 				'trashUrl'            => admin_url( 'edit.php?post_status=trash&post_type=post' ),
-				'blogUrl'             => get_option( 'page_for_posts' ),
 				'user'                => get_current_user_id(),
 				'nonce'               => wp_create_nonce( 'wp_rest' ),
 				'routeBase'           => get_rest_url( null, sprintf( 'calendario/%s', RHD_CALENDARIO_REST_VERSION ) ),

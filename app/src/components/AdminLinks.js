@@ -2,7 +2,7 @@ import React from "react";
 import { wp } from "../lib/utils";
 
 export default function AdminLinks() {
-	const { blogUrl, trashUrl } = wp;
+	const { trashUrl } = wp;
 
 	const renderLink = ([link, title, target]) => {
 		target = target ? target : "_self";
@@ -18,8 +18,7 @@ export default function AdminLinks() {
 
 	return (
 		<ul className="adminLinks">
-			{renderLink([trashUrl, "Trash", "_blank"])}
-			{renderLink([blogUrl, "View Posts", "_blank"])}
+			{renderLink([trashUrl, "Manage Trashed Posts", "_blank"])}
 		</ul>
 	);
 }

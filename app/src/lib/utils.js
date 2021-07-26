@@ -22,7 +22,6 @@ export const wp =
 				pluginUrl: "//localhost/wp-content/plugins/calendario/",
 				postsUrl: "",
 				trashUrl: "",
-				blogUrl: "//localhost",
 				defaultStatusColors: {
 					publish: "#eb6e6f",
 					future: "#d9eee1",
