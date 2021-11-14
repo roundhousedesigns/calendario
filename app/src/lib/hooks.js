@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
-import { wp, dateFormat } from "../lib/utils";
-import { format } from "date-fns";
-import { isEmpty } from "lodash";
-import { sanitizeParamsForUpdate, DEBUG_MODE } from "../lib/utils";
+import { useState, useEffect } from 'react';
+import { wp, dateFormat } from '../lib/utils';
+import { format } from 'date-fns';
+import { isEmpty } from 'lodash';
+import { sanitizeParamsForUpdate, DEBUG_MODE } from '../lib/utils';
 
 const { routeBase, nonce } = wp;
 var headers = {
-	"Content-Type": "application/json",
+	'Content-Type': 'application/json',
 };
 
 if (DEBUG_MODE === false) {
-	headers["X-WP-Nonce"] = nonce;
+	headers['X-WP-Nonce'] = nonce;
 }
 
 /**
@@ -61,7 +61,7 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 					const data = await res.json();
 
 					postsDispatch({
-						type: "SET_SCHEDULED",
+						type: 'SET_SCHEDULED',
 						posts: data.posts,
 						start: data.dateRange.start,
 						end: data.dateRange.end,
@@ -69,7 +69,7 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 
 					setIsLoading(false);
 				} catch (error) {
-					console.log("REST error", error.message);
+					console.log('REST error', error.message);
 					setIsLoading(false);
 				}
 			};
@@ -109,13 +109,13 @@ export const useFetchUnscheduledPosts = (posts, postsDispatch) => {
 				const data = await res.json();
 
 				postsDispatch({
-					type: "SET_UNSCHEDULED",
+					type: 'SET_UNSCHEDULED',
 					posts: data.posts,
 				});
 
 				setIsLoading(false);
 			} catch (error) {
-				console.log("REST error", error.message);
+				console.log('REST error', error.message);
 				setIsLoading(false);
 			}
 		};
@@ -152,13 +152,13 @@ export const useFetchPostStatuses = (viewOptionsDispatch) => {
 				const data = await res.json();
 
 				viewOptionsDispatch({
-					type: "SET_POST_STATUSES",
+					type: 'SET_POST_STATUSES',
 					postStatuses: data,
 				});
 
 				setIsLoading(false);
 			} catch (error) {
-				console.log("REST error", error.message);
+				console.log('REST error', error.message);
 				setIsLoading(false);
 			}
 		};
@@ -200,7 +200,7 @@ export const useFetchTaxonomyTerms = (name, posts, postsDispatch) => {
 					const data = await res.json();
 
 					postsDispatch({
-						type: "SET_TAXONOMY_TERMS",
+						type: 'SET_TAXONOMY_TERMS',
 						name,
 						taxonomy: data.taxonomy,
 						terms: data.terms,
@@ -208,7 +208,7 @@ export const useFetchTaxonomyTerms = (name, posts, postsDispatch) => {
 
 					setIsLoading(false);
 				} catch (error) {
-					console.log("REST error", error.message);
+					console.log('REST error', error.message);
 					setIsLoading(false);
 				}
 			};
@@ -248,11 +248,11 @@ export const useUpdate = (
 		if (updateNow === true && id !== undefined) {
 			const droppableId =
 				unscheduled === true
-					? "unscheduled"
+					? 'unscheduled'
 					: format(new Date(params.post_date), dateFormat.date);
 
 			postsDispatch({
-				type: "UPDATE_INIT",
+				type: 'UPDATE_INIT',
 			});
 
 			/**
@@ -262,14 +262,14 @@ export const useUpdate = (
 			let url = `${routeBase}/posts/`;
 			if (trash === true) {
 				url += `trash/${id}/${user}`;
-				postsDispatch({ type: "REMOVE_POST", droppableId });
+				postsDispatch({ type: 'REMOVE_POST', droppableId });
 			} else if (id === 0) {
 				url += `new/${user}`;
-				postsDispatch({ type: "ADD_POST", droppableId });
+				postsDispatch({ type: 'ADD_POST', droppableId });
 			} else {
 				url += `update/${id}/${user}`;
 				postsDispatch({
-					type: "UPDATE_POST",
+					type: 'UPDATE_POST',
 					droppableId,
 					unscheduled,
 				});
@@ -287,17 +287,17 @@ export const useUpdate = (
 			const sendUpdate = async () => {
 				try {
 					const response = await fetch(url, {
-						method: "POST",
+						method: 'POST',
 						headers,
 						body: JSON.stringify(postData),
 					});
 					const data = await response.json();
 
 					if (data && data > 0) {
-						postsDispatch({ type: "UPDATE_SUCCESS", id, params });
+						postsDispatch({ type: 'UPDATE_SUCCESS', id, params });
 					} else {
 						postsDispatch({
-							type: "UPDATE_ERROR",
+							type: 'UPDATE_ERROR',
 							id,
 							params,
 							data,
@@ -305,14 +305,14 @@ export const useUpdate = (
 					}
 
 					draggedPostDispatch({
-						type: "END",
+						type: 'END',
 					});
 				} catch (error) {
 					console.log(error.message);
 				}
 
 				postsDispatch({
-					type: "REFETCH",
+					type: 'REFETCH',
 				});
 			};
 
@@ -346,14 +346,14 @@ export const useClickOutside = (ref, handler) => {
 			startedInside = ref.current && ref.current.contains(event.target);
 		};
 
-		document.addEventListener("mousedown", validateEventStart);
-		document.addEventListener("touchstart", validateEventStart);
-		document.addEventListener("click", listener);
+		document.addEventListener('mousedown', validateEventStart);
+		document.addEventListener('touchstart', validateEventStart);
+		document.addEventListener('click', listener);
 
 		return () => {
-			document.removeEventListener("mousedown", validateEventStart);
-			document.removeEventListener("touchstart", validateEventStart);
-			document.removeEventListener("click", listener);
+			document.removeEventListener('mousedown', validateEventStart);
+			document.removeEventListener('touchstart', validateEventStart);
+			document.removeEventListener('click', listener);
 		};
 	}, [ref, handler]);
 };

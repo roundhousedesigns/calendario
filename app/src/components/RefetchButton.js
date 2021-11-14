@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
-import PostsContext from "../PostsContext";
+import React, { useContext } from 'react';
+import PostsContext from '../PostsContext';
 
 export default function RefetchButton() {
 	const { postsDispatch } = useContext(PostsContext);
 
 	const handleRefetchClick = () => {
 		postsDispatch({
-			type: "REFETCH",
+			type: 'REFETCH',
 		});
 	};
 

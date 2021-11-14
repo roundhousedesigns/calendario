@@ -1,9 +1,9 @@
-import React, { useEffect, useReducer, useRef } from "react";
-import Header from "./components/Header";
-import Main from "./components/Main";
-import Sidebar from "./components/Sidebar";
-import Icon from "./components/common/Icon";
-import { useStickyState, useFetchPostStatuses, useUpdate } from "./lib/hooks";
+import React, { useEffect, useReducer, useRef } from 'react';
+import Header from './components/Header';
+import Main from './components/Main';
+import Sidebar from './components/Sidebar';
+import Icon from './components/common/Icon';
+import { useStickyState, useFetchPostStatuses, useUpdate } from './lib/hooks';
 import {
 	dateIsBetween,
 	isDraggingUnscheduled,
@@ -13,15 +13,15 @@ import {
 	wp,
 	draggedPostDestination,
 	filterPostStatus,
-} from "./lib/utils";
-import { differenceInWeeks, addWeeks } from "date-fns";
-import { DragDropContext } from "react-beautiful-dnd";
+} from './lib/utils';
+import { differenceInWeeks, addWeeks } from 'date-fns';
+import { DragDropContext } from 'react-beautiful-dnd';
 
-import PostsContext, { postsReducer, initialPosts } from "./PostsContext";
-import DragContext, { dragReducer, initialDrag } from "./DragContext";
-import ViewContext, { viewReducer, initialViewOptions } from "./ViewContext";
+import PostsContext, { postsReducer, initialPosts } from './PostsContext';
+import DragContext, { dragReducer, initialDrag } from './DragContext';
+import ViewContext, { viewReducer, initialViewOptions } from './ViewContext';
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 
 export default function App() {
 	const [posts, postsDispatch] = useReducer(postsReducer, initialPosts);
@@ -35,9 +35,9 @@ export default function App() {
 	);
 	const [view, setView] = useStickyState(
 		{
-			viewMode: "calendar",
+			viewMode: 'calendar',
 		},
-		"viewOptions"
+		'viewOptions'
 	);
 
 	const {
@@ -57,7 +57,7 @@ export default function App() {
 	useEffect(() => {
 		// Update the context initially
 		viewOptionsDispatch({
-			type: "SET_VIEW_MODE",
+			type: 'SET_VIEW_MODE',
 			viewMode: view.viewMode,
 		});
 		//eslint-disable-next-line
@@ -81,7 +81,7 @@ export default function App() {
 	useUpdate(posts, postsDispatch, draggedPost, draggedPostDispatch, user);
 
 	const isOverUnscheduled = (droppableId) =>
-		droppableId === "unscheduled" ? true : false;
+		droppableId === 'unscheduled' ? true : false;
 
 	const handleTodayClick = () => {
 		const today = new Date();
@@ -89,13 +89,13 @@ export default function App() {
 		if (dateIsBetween(today, start, end)) {
 			mainRef.current.scroll({
 				top: todayRef.current.offsetTop,
-				behavior: "smooth",
+				behavior: 'smooth',
 			});
 		} else {
 			const weekDiff = differenceInWeeks(end, start);
 
 			viewOptionsDispatch({
-				type: "SET_RANGE",
+				type: 'SET_RANGE',
 				start: today,
 				end: addWeeks(today, weekDiff),
 			});
@@ -120,7 +120,7 @@ export default function App() {
 			: false;
 
 		draggedPostDispatch({
-			type: "START",
+			type: 'START',
 			post: post,
 			draggingUnscheduled,
 			currentIndex,
@@ -137,12 +137,12 @@ export default function App() {
 		// only dispatch if an update is necessary
 		if (overUnscheduled === true) {
 			draggedPostDispatch({
-				type: "DRAGGING_OVER_UNSCHEDULED",
+				type: 'DRAGGING_OVER_UNSCHEDULED',
 				draggedOver: item.destination.index,
 			});
 		} else if (draggedPost.overUnscheduled === true) {
 			draggedPostDispatch({
-				type: "DRAGGING_OVER_CALENDAR",
+				type: 'DRAGGING_OVER_CALENDAR',
 			});
 		}
 	};
@@ -174,7 +174,7 @@ export default function App() {
 			);
 
 			postsDispatch({
-				type: "SET_UNSCHEDULED",
+				type: 'SET_UNSCHEDULED',
 				posts: items,
 			});
 		} else if (source.droppableId !== destination.droppableId) {
@@ -187,7 +187,7 @@ export default function App() {
 			);
 
 			postsDispatch({
-				type: "MOVE_POST",
+				type: 'MOVE_POST',
 				source: result[source.droppableId],
 				destination: result[destination.droppableId],
 				sourceId: result.sourceId,
@@ -197,7 +197,7 @@ export default function App() {
 
 		// Run the update
 		postsDispatch({
-			type: "PREPARE_UPDATE",
+			type: 'PREPARE_UPDATE',
 			id,
 			unscheduled: overUnscheduled,
 			params: {
@@ -210,27 +210,27 @@ export default function App() {
 		// If doing a post edit, save the post date
 		if (currentPost.id === id) {
 			postsDispatch({
-				type: "UPDATE_CURRENTPOST_FIELD",
-				field: "post_date",
+				type: 'UPDATE_CURRENTPOST_FIELD',
+				field: 'post_date',
 				value: post_date,
 			});
 		}
 
-		draggedPostDispatch({ type: "END" });
+		draggedPostDispatch({ type: 'END' });
 	};
 
 	function appClass() {
 		const { sidebarOpen } = viewOptions;
 
-		let classes = ["calendarioMain"];
+		let classes = ['calendarioMain'];
 
 		if (sidebarOpen === true) {
-			classes.push("sidebarOpen");
+			classes.push('sidebarOpen');
 		} else {
-			classes.push("sidebarClosed");
+			classes.push('sidebarClosed');
 		}
 
-		return classes.join(" ");
+		return classes.join(' ');
 	}
 
 	return (
@@ -242,15 +242,11 @@ export default function App() {
 				</div>
 			</div>
 			<div className={appClass()}>
-				<ViewContext.Provider
-					value={{ viewOptions, viewOptionsDispatch }}
-				>
+				<ViewContext.Provider value={{ viewOptions, viewOptionsDispatch }}>
 					<PostsContext.Provider value={{ posts, postsDispatch }}>
 						<Header handleTodayClick={handleTodayClick} />
 
-						<DragContext.Provider
-							value={{ draggedPost, draggedPostDispatch }}
-						>
+						<DragContext.Provider value={{ draggedPost, draggedPostDispatch }}>
 							<DragDropContext
 								onDragEnd={onDragEnd}
 								onDragStart={onDragStart}

@@ -1,5 +1,5 @@
-import React from "react";
-import MainHeader from "./MainHeader";
+import React from 'react';
+import MainHeader from './MainHeader';
 import { ReactComponent as Logo } from '../svg/calendariologo.svg';
 
 export default function Header({ handleTodayClick }) {

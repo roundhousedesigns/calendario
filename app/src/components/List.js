@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
-import DayPosts from "./DayPosts";
-import { dateFormat, dayKey } from "../lib/utils";
-import { format, addDays, endOfDay, isToday, isPast } from "date-fns";
+import React, { useContext } from 'react';
+import DayPosts from './DayPosts';
+import { dateFormat, dayKey } from '../lib/utils';
+import { format, addDays, endOfDay, isToday, isPast } from 'date-fns';
 
-import { useFetchScheduledPosts } from "../lib/hooks";
+import { useFetchScheduledPosts } from '../lib/hooks';
 
-import PostsContext from "../PostsContext";
-import ViewContext from "../ViewContext";
+import PostsContext from '../PostsContext';
+import ViewContext from '../ViewContext';
 
 export default function List({ className }) {
 	const { posts, postsDispatch } = useContext(PostsContext);
@@ -23,19 +23,19 @@ export default function List({ className }) {
 	const renderDays = () => {
 		let days = [];
 		let day = start;
-		let classes = ["listDay"];
+		let classes = ['listDay'];
 
-		if (end !== "undefined" && end !== null) {
+		if (end !== 'undefined' && end !== null) {
 			while (endOfDay(day) <= endOfDay(end)) {
 				if (isToday(day)) {
-					classes.push("today");
+					classes.push('today');
 				}
 				if (isPast(day) && !isToday(day)) {
-					classes.push("past");
+					classes.push('past');
 				}
 
 				days.push(
-					<li key={day} className={classes.join(" ")}>
+					<li key={day} className={classes.join(' ')}>
 						<DayPosts
 							date={day}
 							posts={scheduled[dayKey(day)]}

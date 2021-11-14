@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import ViewContext from "../ViewContext";
+import React, { useContext } from 'react';
+import ViewContext from '../ViewContext';
 
 export default function ViewOptions() {
 	const {
@@ -9,7 +9,7 @@ export default function ViewOptions() {
 
 	const handleViewModeChange = (e) => {
 		viewOptionsDispatch({
-			type: "SET_VIEW_MODE",
+			type: 'SET_VIEW_MODE',
 			viewMode: e.target.value,
 		});
 	};
@@ -19,7 +19,7 @@ export default function ViewOptions() {
 			<button
 				onClick={handleViewModeChange}
 				className={`icon control viewMode__input ${
-					viewMode === "calendar" ? "active " : "inactive"
+					viewMode === 'calendar' ? 'active ' : 'inactive'
 				}`}
 				value="calendar"
 				title="Calendar"
@@ -30,7 +30,7 @@ export default function ViewOptions() {
 				name="viewMode"
 				onClick={handleViewModeChange}
 				className={`icon control viewMode__input ${
-					viewMode === "list" ? "active " : "inactive"
+					viewMode === 'list' ? 'active ' : 'inactive'
 				}`}
 				value="list"
 				title="List"

@@ -1,5 +1,5 @@
 // import Widget from "../components/common/Widget";
-import { omit, find, isEmpty, isEqual } from "lodash";
+import { omit, find, isEmpty, isEqual } from 'lodash';
 import {
 	format,
 	parseISO,
@@ -7,39 +7,39 @@ import {
 	getMinutes,
 	setHours,
 	setMinutes,
-} from "date-fns";
+} from 'date-fns';
 
 export const DEBUG_MODE =
-	process.env.REACT_APP_DEBUG_MODE === "true" ? true : false;
+	process.env.REACT_APP_DEBUG_MODE === 'true' ? true : false;
 
 export const wp =
 	DEBUG_MODE === true
 		? {
 				nonce: 0,
-				routeBase: "http://localhost/wp-json/calendario/v1",
+				routeBase: 'http://localhost/wp-json/calendario/v1',
 				user: 1,
-				adminUrl: "",
-				pluginUrl: "//localhost/wp-content/plugins/calendario/",
-				postsUrl: "",
-				trashUrl: "",
+				adminUrl: '',
+				pluginUrl: '//localhost/wp-content/plugins/calendario/',
+				postsUrl: '',
+				trashUrl: '',
 				defaultStatusColors: {
-					publish: "#eb6e6f",
-					future: "#d9eee1",
-					draft: "#ffc90d",
-					pending: "#f6bc98",
-					private: "#eb6e6f",
+					publish: '#eb6e6f',
+					future: '#d9eee1',
+					draft: '#ffc90d',
+					pending: '#f6bc98',
+					private: '#eb6e6f',
 				},
 				presetStatusColors: [
-					"#ffc90d",
-					"#8F3C3D",
-					"#f27121",
-					"#474750",
-					"#c1bfb8",
-					"#d9eee1",
-					"#64b181",
-					"#aaaae8",
-					"#f6bc98",
-					"#eb6e6f",
+					'#ffc90d',
+					'#8F3C3D',
+					'#f27121',
+					'#474750',
+					'#c1bfb8',
+					'#d9eee1',
+					'#64b181',
+					'#aaaae8',
+					'#f6bc98',
+					'#eb6e6f',
 				],
 		  }
 		: {
@@ -47,15 +47,15 @@ export const wp =
 		  };
 
 export const dateFormat = {
-	day: "d",
-	date: "yyyy-MM-dd",
-	dateTime: "yyyy-MM-dd h:mm aa",
-	year: "yyyy",
-	dayName: "EEEE",
-	monthName: "MMMM",
-	monthShort: "MMM",
-	fullDate: "EEEE,  MMMM dd, yyyy",
-	daylessDate: "MMMM dd, yyyy",
+	day: 'd',
+	date: 'yyyy-MM-dd',
+	dateTime: 'yyyy-MM-dd h:mm aa',
+	year: 'yyyy',
+	dayName: 'EEEE',
+	monthName: 'MMMM',
+	monthShort: 'MMM',
+	fullDate: 'EEEE,  MMMM dd, yyyy',
+	daylessDate: 'MMMM dd, yyyy',
 };
 
 /**
@@ -120,7 +120,7 @@ export const dateIsBetween = (date, min, max) =>
  * @returns {boolean} True if unscheduled, false otherwise
  */
 export const isDraggingUnscheduled = ({ source: { droppableId } }) =>
-	droppableId === "unscheduled" ? true : false;
+	droppableId === 'unscheduled' ? true : false;
 
 /**
  * Retrieves a list of posts.
@@ -131,7 +131,7 @@ export const isDraggingUnscheduled = ({ source: { droppableId } }) =>
  */
 export const getPostList = (id, posts) => {
 	let list;
-	if (id === "unscheduled") {
+	if (id === 'unscheduled') {
 		list = posts.unscheduled;
 	} else {
 		list = posts.scheduled[id];
@@ -203,7 +203,7 @@ export const moveItem = (
 export const draggedPostDestination = (post_date_source, droppableId) => {
 	let post_date = post_date_source;
 
-	if (droppableId !== "unscheduled") {
+	if (droppableId !== 'unscheduled') {
 		post_date = parseISO(droppableId); // The new date
 
 		// Conserve the existing date's time value
@@ -226,11 +226,11 @@ export const draggedPostDestination = (post_date_source, droppableId) => {
  * @returns {string} The filtered post status
  */
 export function filterPostStatus(post_status, unscheduled) {
-	let allowedUnscheduledStatuses = ["draft", "private", "pending"];
+	let allowedUnscheduledStatuses = ['draft', 'private', 'pending'];
 	let status = post_status;
 
 	if (unscheduled === true) {
-		status = allowedUnscheduledStatuses.includes(status) ? status : "draft";
+		status = allowedUnscheduledStatuses.includes(status) ? status : 'draft';
 	}
 
 	return status;
@@ -245,14 +245,14 @@ export function filterPostStatus(post_status, unscheduled) {
  */
 export const stripPermalinkSlug = (url) => {
 	// Remove trailing slash, if necessary
-	if (url.substr(-1) === "/") {
+	if (url.substr(-1) === '/') {
 		url = url.slice(0, -1);
 	}
 
-	let parts = url.split("/");
+	let parts = url.split('/');
 	parts.pop();
 
-	return `${parts.join("/")}/`;
+	return `${parts.join('/')}/`;
 };
 
 /**
@@ -264,7 +264,7 @@ export const stripPermalinkSlug = (url) => {
 export function sanitizeParamsForUpdate(params) {
 	for (let key in params) {
 		switch (key) {
-			case "post_date":
+			case 'post_date':
 				if (params[key] instanceof Date) {
 					params[key] = format(params[key], dateFormat.dateTime);
 				}
@@ -290,7 +290,7 @@ export function getPostSourceDroppableId(id, scheduled, unscheduled) {
 	let found = find(unscheduled, { id: id });
 
 	if (found) {
-		droppableId = "unscheduled";
+		droppableId = 'unscheduled';
 	} else {
 		for (let key in scheduled) {
 			found = find(scheduled[key], { id: id });

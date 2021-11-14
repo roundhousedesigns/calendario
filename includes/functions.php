@@ -1,9 +1,17 @@
 <?php
 /**
+ * Functions.php
+ *
+ * phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
+ *
+ * @package callboard
+ */
+
+/**
  * Validates a date string.
  *
- * @param string $date   The date to validate
- * @param string The date format
+ * @param string $date The date to validate.
+ * @param string $format The date format.
  */
 function rhd_validate_date( $date, $format = 'Y-m-d' ) {
 	$d = DateTime::createFromFormat( $format, $date );
@@ -13,8 +21,7 @@ function rhd_validate_date( $date, $format = 'Y-m-d' ) {
 /**
  * Formats a date string
  *
- * @param string $date The date string to format
- * @param array Contains post_date and post_date_gmt date strings
+ * @param string $date_string The date string to format.
  */
 function rhd_wp_prepare_date( $date_string ) {
 	if ( ! is_string( $date_string ) ) {
@@ -41,10 +48,12 @@ function rhd_wp_prepare_date( $date_string ) {
  * @return string|boolean The post date, or false if no posts found.
  */
 function rhd_get_futuremost_date() {
-	$posts = get_posts( array(
-		'post_status'    => array( 'any' ),
-		'posts_per_page' => 1,
-	) );
+	$posts = get_posts(
+		array(
+			'post_status'    => array( 'any' ),
+			'posts_per_page' => 1,
+		)
+	);
 
 	return $posts ? rhd_end_of_day( $posts[0]->post_date ) : false;
 }
@@ -52,7 +61,7 @@ function rhd_get_futuremost_date() {
 /**
  * Returns a formatted date set to the start of the requested day usable in WP_Query.
  *
- * @param DateTime|string $date The date to manipulate
+ * @param DateTime|string $date The date to manipulate.
  * @return string The formatted date string
  */
 function rhd_start_of_day( $date ) {
@@ -72,8 +81,8 @@ function rhd_start_of_day( $date ) {
 /**
  * Returns a formatted date set to the end of the requested day usable in WP_Query.
  *
- * @param DateTime|string $date The date to manipulate
- * @return string The formatted date string
+ * @param DateTime|string $date The date to manipulate.
+ * @return string The formatted date string.
  */
 function rhd_end_of_day( $date ) {
 	if ( gettype( $date ) === 'string' ) {
@@ -92,13 +101,14 @@ function rhd_end_of_day( $date ) {
 /**
  * Get an array of term IDs attached to a post, by taxonomy
  *
- * @param int|WP_Post $post The post object or post ID
- * @param string $taxonomy The taxonomy name (slug)
+ * @param int|WP_Post $post The post object or post ID.
+ * @param string      $taxonomy The taxonomy name (slug).
  * @return array Array of term IDs
  */
 function rhd_get_term_ids( $post, $taxonomy ) {
-	$ids = [];
-	if ( $terms = get_the_terms( $post, $taxonomy ) ) {
+	$ids   = array();
+	$terms = get_the_terms( $post, $taxonomy );
+	if ( $terms ) {
 		$ids = wp_list_pluck( $terms, 'term_id' );
 	}
 
@@ -111,17 +121,20 @@ function rhd_get_term_ids( $post, $taxonomy ) {
  * @return int The post count
  */
 function rhd_unscheduled_draft_count() {
-	$p = get_posts( [
-		'posts_per_page' => -1,
-		'post_status'    => 'any',
-		'post_type'      => 'post',
-		'meta_query'     => [
-			[
-				'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
-				'compare' => 'EXISTS',
-			],
-		],
-	] );
+	$p = get_posts(
+		array(
+			'posts_per_page' => -1,
+			'post_status'    => 'any',
+			'post_type'      => 'post',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			'meta_query'     => array(
+				array(
+					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
+					'compare' => 'EXISTS',
+				),
+			),
+		)
+	);
 
 	return count( $p );
 }
@@ -132,7 +145,7 @@ function rhd_unscheduled_draft_count() {
  * @return array $pairs The array of status/color pairs
  */
 function rhd_post_status_default_color_pairs() {
-	$pairs = [];
+	$pairs = array();
 
 	foreach ( RHD_POST_STATUS_DEFAULTS as $status => $props ) {
 		$pairs[$status] = $props['color'];
@@ -147,19 +160,23 @@ function rhd_post_status_default_color_pairs() {
  * @return array The queried posts.
  */
 function rhd_query_unscheduled_items() {
-	return get_posts( [
-		'meta_query'     => [
-			[
-				'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
-				'compare' => 'EXISTS',
-			],
-		],
-		'orderby'        => 'meta_value_num',
-		'order'          => 'ASC',
-		'meta_key'       => RHD_UNSCHEDULED_INDEX_META_KEY,
-		'posts_per_page' => -1,
-		'post_status'    => array( 'private', 'draft', 'pending' ),
-	] );
+	return get_posts(
+		array(
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			'meta_query'     => array(
+				array(
+					'key'     => RHD_UNSCHEDULED_INDEX_META_KEY,
+					'compare' => 'EXISTS',
+				),
+			),
+			'orderby'        => 'meta_value_num',
+			'order'          => 'ASC',
+			// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			'meta_key'       => RHD_UNSCHEDULED_INDEX_META_KEY,
+			'posts_per_page' => -1,
+			'post_status'    => array( 'private', 'draft', 'pending' ),
+		)
+	);
 }
 
 /**
@@ -170,7 +187,7 @@ function rhd_query_unscheduled_items() {
 function rhd_get_unscheduled_item_ids() {
 	$posts = rhd_query_unscheduled_items();
 
-	$ids = [];
+	$ids = array();
 	foreach ( $posts as $post ) {
 		$ids[] = $post->ID;
 	}
@@ -197,13 +214,13 @@ function rhd_prepare_post_statuses() {
 /**
  * Extracts the taxonomy terms from a prepared item.
  *
- * @param array &$item Post data being prepared for database storage.
+ * @param array $item Post data being prepared for database storage.
  * @return array The taxonomy terms for use in wp_set_object_terms().
  */
 function rhd_extract_item_taxonomy_terms( &$item ) {
-	$tax_index = array_search( 'tax_input', array_keys( $item ) );
+	$tax_index = array_search( 'tax_input', array_keys( $item ), true );
 
-	return $tax_index !== false ? array_splice( $item, $tax_index, 1 ) : [];
+	return false !== $tax_index ? array_splice( $item, $tax_index, 1 ) : array();
 }
 
 /**
@@ -212,9 +229,10 @@ function rhd_extract_item_taxonomy_terms( &$item ) {
  * @return void
  */
 function rhd_set_post_status_colors() {
-	if ( false === ( $colors = get_option( 'rhd_calendario_post_status_colors' ) ) ) {
+	$colors = get_option( 'rhd_calendario_post_status_colors' );
+	if ( false === $colors ) {
 		$statuses = RHD_POST_STATUS_DEFAULTS;
-		$colors   = [];
+		$colors   = array();
 
 		foreach ( $statuses as $status => $props ) {
 			$colors[$status] = $props['color'];

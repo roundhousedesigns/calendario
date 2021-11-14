@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import ColorPickerPopover from "./common/ColorPickerPopover";
-import ToggleButton from "./common/ToggleButton";
-import { wp, haveColorsChanged, DEBUG_MODE } from "../lib/utils";
-import { isEmpty } from "lodash";
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import ColorPickerPopover from './common/ColorPickerPopover';
+import ToggleButton from './common/ToggleButton';
+import { wp, haveColorsChanged, DEBUG_MODE } from '../lib/utils';
+import { isEmpty } from 'lodash';
 
-import ViewContext from "../ViewContext";
+import ViewContext from '../ViewContext';
 
 export default function StatusFilters() {
 	const { routeBase } = wp;
@@ -39,10 +39,10 @@ export default function StatusFilters() {
 		const fetchData = async () => {
 			let colors = {};
 			let headers = {
-				"Content-Type": "application/json",
+				'Content-Type': 'application/json',
 			};
 			if (DEBUG_MODE === false) {
-				headers["X-WP-Nonce"] = nonce;
+				headers['X-WP-Nonce'] = nonce;
 			}
 
 			for (let status in postStatuses) {
@@ -51,7 +51,7 @@ export default function StatusFilters() {
 
 			try {
 				const response = await fetch(url, {
-					method: "POST",
+					method: 'POST',
 					headers,
 					body: JSON.stringify(colors),
 				});
@@ -69,14 +69,14 @@ export default function StatusFilters() {
 
 	const toggleStatus = (e) => {
 		viewOptionsDispatch({
-			type: "TOGGLE_POST_STATUS",
+			type: 'TOGGLE_POST_STATUS',
 			postStatus: e.target.name,
 		});
 	};
 
 	const handleResetColors = () => {
 		viewOptionsDispatch({
-			type: "RESET_POST_STATUS_COLORS",
+			type: 'RESET_POST_STATUS_COLORS',
 		});
 	};
 
@@ -86,16 +86,11 @@ export default function StatusFilters() {
 				{keys.map((status, index) => {
 					const { color, name } = postStatuses[status];
 					return (
-						<li
-							className={`filterItem status__${status}`}
-							key={index}
-						>
+						<li className={`filterItem status__${status}`} key={index}>
 							<ColorPickerPopover color={color} name={status} />
 							<span className="name">{name}</span>
 							<ToggleButton
-								selected={
-									postStatuses[status].visible ? true : false
-								}
+								selected={postStatuses[status].visible ? true : false}
 								toggleSelected={toggleStatus}
 								name={status}
 							/>
