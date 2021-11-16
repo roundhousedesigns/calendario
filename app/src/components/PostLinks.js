@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
-import PostLink from "./common/PostLink";
-import { getPostList, moveItem, dayKey, filterPostStatus } from "../lib/utils";
-import { decode } from "html-entities";
+import React, { useContext } from 'react';
+import PostLink from './common/PostLink';
+import { getPostList, moveItem, dayKey, filterPostStatus } from '../lib/utils';
+import { decode } from 'html-entities';
 
-import PostsContext from "../PostsContext";
+import PostsContext from '../PostsContext';
 
 export default function PostLinks({ post, unscheduled }) {
 	const { id, edit_link, view_link } = post;
@@ -14,7 +14,7 @@ export default function PostLinks({ post, unscheduled }) {
 
 		const { post_date, post_status } = post;
 		const sourceId = dayKey(post_date);
-		const destinationId = "unscheduled";
+		const destinationId = 'unscheduled';
 
 		const result = moveItem(
 			getPostList(sourceId, posts),
@@ -24,7 +24,7 @@ export default function PostLinks({ post, unscheduled }) {
 		);
 
 		postsDispatch({
-			type: "MOVE_POST",
+			type: 'MOVE_POST',
 			source: result[sourceId],
 			destination: result[destinationId],
 			sourceId,
@@ -32,7 +32,7 @@ export default function PostLinks({ post, unscheduled }) {
 		});
 
 		postsDispatch({
-			type: "PREPARE_UPDATE",
+			type: 'PREPARE_UPDATE',
 			id,
 			params: {
 				post_status: filterPostStatus(post_status, true),
@@ -45,7 +45,7 @@ export default function PostLinks({ post, unscheduled }) {
 		e.preventDefault();
 
 		const { id, post_date } = post;
-		const sourceId = "unscheduled";
+		const sourceId = 'unscheduled';
 		const source = getPostList(sourceId, posts);
 		const destinationId = dayKey(post_date);
 		const destination = getPostList(destinationId, posts);
@@ -61,7 +61,7 @@ export default function PostLinks({ post, unscheduled }) {
 		);
 
 		postsDispatch({
-			type: "MOVE_POST",
+			type: 'MOVE_POST',
 			source: result[sourceId],
 			destination: result[destinationId],
 			sourceId,
@@ -69,7 +69,7 @@ export default function PostLinks({ post, unscheduled }) {
 		});
 
 		postsDispatch({
-			type: "PREPARE_UPDATE",
+			type: 'PREPARE_UPDATE',
 			id,
 			unscheduled: false,
 			params: {
@@ -81,7 +81,7 @@ export default function PostLinks({ post, unscheduled }) {
 	const trashPost = () => {
 		const { post_date } = post;
 		postsDispatch({
-			type: "SEND_TO_TRASH",
+			type: 'SEND_TO_TRASH',
 			id: id,
 			params: {
 				post_date,
@@ -95,7 +95,7 @@ export default function PostLinks({ post, unscheduled }) {
 			<PostLink
 				icon="view"
 				title="View Post"
-				onClick={() => window.open(view_link, "_blank")}
+				onClick={() => window.open(view_link, '_blank')}
 				target="_blank"
 			>
 				open_in_new
@@ -103,7 +103,7 @@ export default function PostLinks({ post, unscheduled }) {
 			<PostLink
 				icon="edit"
 				title="Edit Post in a new tab"
-				onClick={() => window.open(decode(edit_link), "_blank")}
+				onClick={() => window.open(decode(edit_link), '_blank')}
 			>
 				mode_edit
 			</PostLink>

@@ -1,8 +1,8 @@
-import React, { forwardRef, useContext, useState } from "react";
-import { dateFormat } from "../lib/utils";
-import { format, isToday, isPast, isSameDay } from "date-fns";
+import React, { forwardRef, useContext, useState } from 'react';
+import { dateFormat } from '../lib/utils';
+import { format, isToday, isPast, isSameDay } from 'date-fns';
 
-import DragContext from "../DragContext";
+import DragContext from '../DragContext';
 
 const Day = forwardRef(({ day, monthName, children }, ref) => {
 	const [dragOver, setDragOver] = useState(false);
@@ -22,21 +22,21 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 	};
 
 	const styles = () => {
-		let classes = ["day", "col", "cell"];
+		let classes = ['day', 'col', 'cell'];
 
 		if (isToday(day)) {
-			classes.push("today");
+			classes.push('today');
 		}
 
 		if (isPast(day) && !isToday(day)) {
-			classes.push("past");
+			classes.push('past');
 		}
 
 		if (dragOver) {
-			classes.push("dragOver");
+			classes.push('dragOver');
 		}
 
-		return classes.join(" ");
+		return classes.join(' ');
 	};
 
 	return (
@@ -47,7 +47,7 @@ const Day = forwardRef(({ day, monthName, children }, ref) => {
 			onDragLeave={() => setDragOver(false)}
 			onDrop={() => setDragOver(false)}
 		>
-			{monthName ? <span className="month">{monthName}</span> : ""}
+			{monthName ? <span className="month">{monthName}</span> : ''}
 			<span className="number">{format(day, dateFormat.day)}</span>
 
 			{children}

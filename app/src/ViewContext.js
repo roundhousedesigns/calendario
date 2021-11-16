@@ -1,12 +1,12 @@
-import { createContext } from "react";
-import { wp } from "./lib/utils";
-import { addMonths, subMonths, startOfWeek, endOfWeek } from "date-fns";
+import { createContext } from 'react';
+import { wp } from './lib/utils';
+import { addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns';
 
 const ViewContext = createContext({});
 export default ViewContext;
 
 export const initialViewOptions = {
-	viewMode: "",
+	viewMode: '',
 	viewRange: {
 		start: null,
 		end: null,
@@ -19,7 +19,7 @@ const { defaultStatusColors } = wp;
 
 export function viewReducer(state, action) {
 	switch (action.type) {
-		case "SET_VIEW_MODE": {
+		case 'SET_VIEW_MODE': {
 			const { viewMode } = action;
 			const {
 				viewRange: { start, end },
@@ -29,13 +29,13 @@ export function viewReducer(state, action) {
 				...state,
 				viewMode,
 				viewRange: {
-					start: viewMode === "calendar" ? startOfWeek(start) : start,
-					end: viewMode === "calendar" ? endOfWeek(end) : end,
+					start: viewMode === 'calendar' ? startOfWeek(start) : start,
+					end: viewMode === 'calendar' ? endOfWeek(end) : end,
 				},
 			};
 		}
 
-		case "SET_RANGE": {
+		case 'SET_RANGE': {
 			const { viewMode, viewRange } = state;
 			const start = action.start ? action.start : viewRange.start;
 			const end = action.end ? action.end : viewRange.end;
@@ -43,21 +43,21 @@ export function viewReducer(state, action) {
 			return {
 				...state,
 				viewRange: {
-					start: viewMode === "list" ? start : startOfWeek(start),
-					end: viewMode === "list" ? end : endOfWeek(end),
+					start: viewMode === 'list' ? start : startOfWeek(start),
+					end: viewMode === 'list' ? end : endOfWeek(end),
 				},
 			};
 		}
 
-		case "CHANGE_MONTH": {
+		case 'CHANGE_MONTH': {
 			const { viewMode } = state;
 			const { direction } = action;
 			let newStart, newEnd;
 
-			if (direction === "next") {
+			if (direction === 'next') {
 				newStart = addMonths(state.viewRange.start, 1);
 				newEnd = addMonths(state.viewRange.end, 1);
-			} else if (direction === "previous") {
+			} else if (direction === 'previous') {
 				newStart = subMonths(state.viewRange.start, 1);
 				newEnd = subMonths(state.viewRange.end, 1);
 			}
@@ -65,22 +65,19 @@ export function viewReducer(state, action) {
 			return {
 				...state,
 				viewRange: {
-					start:
-						viewMode === "list" ? newStart : startOfWeek(newStart),
-					end: viewMode === "list" ? newEnd : endOfWeek(newEnd),
+					start: viewMode === 'list' ? newStart : startOfWeek(newStart),
+					end: viewMode === 'list' ? newEnd : endOfWeek(newEnd),
 				},
 			};
 		}
 
-		case "SET_POST_STATUSES": {
+		case 'SET_POST_STATUSES': {
 			let statuses = action.postStatuses;
 
 			// Don't overwrite visibility, if set
 			for (let status in statuses) {
 				statuses[status].visible =
-					"visible" in statuses[status]
-						? statuses[status].visible
-						: true;
+					'visible' in statuses[status] ? statuses[status].visible : true;
 			}
 
 			return {
@@ -89,7 +86,7 @@ export function viewReducer(state, action) {
 			};
 		}
 
-		case "TOGGLE_POST_STATUS": {
+		case 'TOGGLE_POST_STATUS': {
 			return {
 				...state,
 				postStatuses: {
@@ -102,7 +99,7 @@ export function viewReducer(state, action) {
 			};
 		}
 
-		case "SET_POST_STATUS_COLOR": {
+		case 'SET_POST_STATUS_COLOR': {
 			return {
 				...state,
 				postStatuses: {
@@ -115,7 +112,7 @@ export function viewReducer(state, action) {
 			};
 		}
 
-		case "RESET_POST_STATUS_COLORS": {
+		case 'RESET_POST_STATUS_COLORS': {
 			let reset = state.postStatuses;
 			const statusKeys = Object.keys(state.postStatuses);
 
@@ -129,7 +126,7 @@ export function viewReducer(state, action) {
 			};
 		}
 
-		case "TOGGLE_SIDEBAR": {
+		case 'TOGGLE_SIDEBAR': {
 			const { sidebarOpen } = state;
 
 			return {

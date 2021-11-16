@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import PostLinks from "./PostLinks";
-import { Draggable } from "react-beautiful-dnd";
-import { isEmpty } from "lodash";
-import { decode } from "html-entities";
+import React, { useContext, useEffect, useState } from 'react';
+import PostLinks from './PostLinks';
+import { Draggable } from 'react-beautiful-dnd';
+import { isEmpty } from 'lodash';
+import { decode } from 'html-entities';
 
-import PostsContext from "../PostsContext";
-import DragContext from "../DragContext";
-import ViewContext from "../ViewContext";
+import PostsContext from '../PostsContext';
+import DragContext from '../DragContext';
+import ViewContext from '../ViewContext';
 
 export default function Post({ post, index, unscheduled }) {
 	const {
@@ -19,7 +19,7 @@ export default function Post({ post, index, unscheduled }) {
 	const {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
-	const [color, setColor] = useState("");
+	const [color, setColor] = useState('');
 	const [animationRequestId, setAnimationRequestId] = useState(null);
 
 	useEffect(() => {
@@ -36,12 +36,12 @@ export default function Post({ post, index, unscheduled }) {
 
 	const handleClick = (e) => {
 		// Skip if clicking a QuickLink button
-		if (e.target.classList.contains("icon")) {
+		if (e.target.classList.contains('icon')) {
 			return;
 		}
 
 		postsDispatch({
-			type: "SET_CURRENTPOST",
+			type: 'SET_CURRENTPOST',
 			post: post,
 			unscheduled,
 		});
@@ -53,7 +53,7 @@ export default function Post({ post, index, unscheduled }) {
 				return timeFraction;
 			},
 			draw: function (element, progress) {
-				element.style.paddingBottom = progress + 30 + "px";
+				element.style.paddingBottom = progress + 30 + 'px';
 			},
 			duration: 50,
 		});
@@ -80,8 +80,8 @@ export default function Post({ post, index, unscheduled }) {
 	const handleMouseDown = (e) => {
 		// Close the postLinks drawer if we're clicking or dragging, but not on the drawer itself
 		if (
-			!e.target.classList.contains("postLinks") &&
-			!e.target.classList.contains("postLink")
+			!e.target.classList.contains('postLinks') &&
+			!e.target.classList.contains('postLink')
 		) {
 			cancelAnimationFrame(animationRequestId);
 			e.currentTarget.style.paddingBottom = 0;
@@ -89,42 +89,39 @@ export default function Post({ post, index, unscheduled }) {
 	};
 
 	function getStyles(snapshot) {
-		let classes = [
-			"post",
-			`post-id-${post.id} status__${post.post_status}`,
-		];
+		let classes = ['post', `post-id-${post.id} status__${post.post_status}`];
 
 		if (
 			(unscheduled === false &&
 				postStatuses[post.post_status].visible === true) ||
 			unscheduled === true
 		) {
-			classes.push("visible");
+			classes.push('visible');
 		} else {
-			classes.push("hidden");
+			classes.push('hidden');
 		}
 
 		if (!isEmpty(currentPost) && currentPost.id === post.id) {
-			classes.push("currentPost");
+			classes.push('currentPost');
 		}
 
 		if (snapshot.isDragging) {
-			classes.push("dragging");
+			classes.push('dragging');
 		}
 
-		if (snapshot.draggingOver === "unscheduled") {
-			classes.push("over__unscheduled");
+		if (snapshot.draggingOver === 'unscheduled') {
+			classes.push('over__unscheduled');
 		} else if (snapshot.draggingOver !== null) {
-			classes.push("over__calendar");
+			classes.push('over__calendar');
 		} else {
-			classes.push("over__none");
+			classes.push('over__none');
 		}
 
 		if (isUpdating) {
-			classes.push("locked");
+			classes.push('locked');
 		}
 
-		return classes.join(" ");
+		return classes.join(' ');
 	}
 
 	return !isEmpty(postStatuses) ? (
@@ -153,22 +150,19 @@ export default function Post({ post, index, unscheduled }) {
 						}}
 					>
 						<p className="postData__title">
-							{decode(post.post_title, { scope: "strict" })}
+							{decode(post.post_title, { scope: 'strict' })}
 						</p>
 					</div>
 					{!isDragging ? (
 						<PostLinks
 							style={{
-								backgroundColor: color.replace(
-									/,1\)/,
-									",0.75)"
-								),
+								backgroundColor: color.replace(/,1\)/, ',0.75)'),
 							}}
 							post={post}
 							unscheduled={unscheduled}
 						/>
 					) : (
-						""
+						''
 					)}
 				</li>
 			)}

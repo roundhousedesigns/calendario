@@ -1,11 +1,11 @@
-import { forwardRef, useContext, useEffect, useState } from "react";
+import { forwardRef, useContext, useEffect, useState } from 'react';
 // import ViewOptions from "./ViewOptions";
-import DatePicker from "react-datepicker";
-import { addDays, startOfToday, startOfMonth, endOfMonth } from "date-fns";
+import DatePicker from 'react-datepicker';
+import { addDays, startOfToday, startOfMonth, endOfMonth } from 'date-fns';
 
-import ViewContext from "../ViewContext";
+import ViewContext from '../ViewContext';
 // import PostsContext from "../PostsContext";
-import { dateFormat, dateIsBetween } from "../lib/utils";
+import { dateFormat, dateIsBetween } from '../lib/utils';
 
 export default function MainHeader({ handleTodayClick }) {
 	const {
@@ -35,22 +35,21 @@ export default function MainHeader({ handleTodayClick }) {
 		// set a sensible default range
 		if (!viewRange.start && !viewRange.end) {
 			viewOptionsDispatch({
-				type: "SET_RANGE",
-				start: viewMode === "calendar" ? startOfMonth(today) : today,
-				end:
-					viewMode === "calendar" ? endOfMonth() : addDays(today, 30),
+				type: 'SET_RANGE',
+				start: viewMode === 'calendar' ? startOfMonth(today) : today,
+				end: viewMode === 'calendar' ? endOfMonth() : addDays(today, 30),
 			});
 		}
 	}, [today, viewRange.start, viewRange.end, viewMode, viewOptionsDispatch]);
 
 	const nextMonth = (e) => {
 		e.preventDefault();
-		viewOptionsDispatch({ type: "CHANGE_MONTH", direction: "next" });
+		viewOptionsDispatch({ type: 'CHANGE_MONTH', direction: 'next' });
 	};
 
 	const prevMonth = (e) => {
 		e.preventDefault();
-		viewOptionsDispatch({ type: "CHANGE_MONTH", direction: "previous" });
+		viewOptionsDispatch({ type: 'CHANGE_MONTH', direction: 'previous' });
 	};
 
 	return (
@@ -78,7 +77,7 @@ export default function MainHeader({ handleTodayClick }) {
 						selected={viewRange.start}
 						onChange={(date) =>
 							viewOptionsDispatch({
-								type: "SET_RANGE",
+								type: 'SET_RANGE',
 								start: date,
 							})
 						}
@@ -88,13 +87,13 @@ export default function MainHeader({ handleTodayClick }) {
 						endDate={viewRange.end}
 						closeOnScroll={(e) => e.target === document}
 					/>
-					{" to "}
+					{' to '}
 					<DatePicker
 						dateFormat={dateFormat.daylessDate}
 						selected={viewRange.end}
 						onChange={(date) =>
 							viewOptionsDispatch({
-								type: "SET_RANGE",
+								type: 'SET_RANGE',
 								end: date,
 							})
 						}

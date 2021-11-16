@@ -611,6 +611,8 @@ class Calendario_Route extends WP_REST_Controller {
 		$item  = $this->prepare_existing_item_for_database( $request );
 		$terms = rhd_extract_item_taxonomy_terms( $item );
 
+		// TODO Fix saving NEW draft post date...not working, and not showing anything in logs.
+
 		// Update the post.
 		$result = wp_update_post( $item );
 

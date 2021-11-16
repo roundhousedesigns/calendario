@@ -73,6 +73,7 @@ class Calendario {
 				return pathinfo( $file_string, PATHINFO_EXTENSION ) === 'js';
 			}
 		);
+
 		$css_files = array_filter(
 			$assets_files,
 			function ( $file_string ) {

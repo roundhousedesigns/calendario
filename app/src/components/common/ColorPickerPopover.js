@@ -4,13 +4,13 @@ import React, {
 	useEffect,
 	useRef,
 	useState,
-} from "react";
-import { wp } from "../../lib/utils";
-import { useClickOutside } from "../../lib/hooks";
+} from 'react';
+import { wp } from '../../lib/utils';
+import { useClickOutside } from '../../lib/hooks';
 
-import ViewContext from "../../ViewContext";
+import ViewContext from '../../ViewContext';
 
-import { HexColorPicker } from "react-colorful";
+import { HexColorPicker } from 'react-colorful';
 
 export default function ColorPickerPopover({ color, name }) {
 	const { presetStatusColors } = wp;
@@ -20,7 +20,7 @@ export default function ColorPickerPopover({ color, name }) {
 		viewOptions: { postStatuses },
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
-	const [colorValue, setColorValue] = useState("");
+	const [colorValue, setColorValue] = useState('');
 	const [isOpen, setIsOpen] = useState(false);
 
 	useEffect(() => {
@@ -41,7 +41,7 @@ export default function ColorPickerPopover({ color, name }) {
 		}
 
 		viewOptionsDispatch({
-			type: "SET_POST_STATUS_COLOR",
+			type: 'SET_POST_STATUS_COLOR',
 			postStatus: name,
 			color: colorValue,
 		});

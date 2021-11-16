@@ -16,7 +16,8 @@ export const wp =
 	DEBUG_MODE === true
 		? {
 				nonce: 0,
-				routeBase: 'http://localhost/wp-json/calendario/v1',
+				// routeBase: 'http://localhost/wp-json/calendario/v1',
+				routeBase: 'http://localhost/backend/wp-json/calendario/v1',
 				user: 1,
 				adminUrl: '',
 				pluginUrl: '//localhost/wp-content/plugins/calendario/',

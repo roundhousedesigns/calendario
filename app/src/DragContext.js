@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext } from 'react';
 
 const DragContext = createContext(null);
 export default DragContext;
@@ -13,17 +13,16 @@ export const initialDrag = {
 
 export function dragReducer(state, action) {
 	switch (action.type) {
-		case "START": {
+		case 'START': {
 			return {
 				...state,
 				post: action.post,
 				isDragging: true,
-				currentIndex:
-					action.currentIndex >= 0 ? action.currentIndex : false,
+				currentIndex: action.currentIndex >= 0 ? action.currentIndex : false,
 			};
 		}
 
-		case "DRAGGING_OVER_UNSCHEDULED": {
+		case 'DRAGGING_OVER_UNSCHEDULED': {
 			return {
 				...state,
 				newIndex: action.draggedOver,
@@ -31,7 +30,7 @@ export function dragReducer(state, action) {
 			};
 		}
 
-		case "DRAGGING_OVER_CALENDAR": {
+		case 'DRAGGING_OVER_CALENDAR': {
 			return {
 				...state,
 				newIndex: initialDrag.newIndex,
@@ -39,7 +38,7 @@ export function dragReducer(state, action) {
 			};
 		}
 
-		case "END": {
+		case 'END': {
 			return initialDrag;
 		}
 

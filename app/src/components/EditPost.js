@@ -5,10 +5,10 @@ import React, {
 	useState,
 	useReducer,
 	useCallback,
-} from "react";
-import FieldGroup from "./common/FieldGroup";
-import Icon from "./common/Icon";
-import { useClickOutside } from "../lib/hooks";
+} from 'react';
+import FieldGroup from './common/FieldGroup';
+import Icon from './common/Icon';
+import { useClickOutside } from '../lib/hooks';
 import {
 	dateFormat,
 	dayKey,
@@ -17,14 +17,14 @@ import {
 	getPostList,
 	moveItem,
 	// stripPermalinkSlug,
-} from "../lib/utils";
-import DatePicker from "react-datepicker";
-import { format, isFuture, isPast, isToday } from "date-fns";
-import { isEmpty } from "lodash";
-import { decode } from "html-entities";
+} from '../lib/utils';
+import DatePicker from 'react-datepicker';
+import { format, isFuture, isPast, isToday } from 'date-fns';
+import { isEmpty } from 'lodash';
+import { decode } from 'html-entities';
 
-import PostsContext from "../PostsContext";
-import ViewContext from "../ViewContext";
+import PostsContext from '../PostsContext';
+import ViewContext from '../ViewContext';
 
 const initialEditPost = {
 	post: {},
@@ -33,24 +33,24 @@ const initialEditPost = {
 };
 
 const initialTaxFilter = {
-	category: "",
-	post_tag: "",
+	category: '',
+	post_tag: '',
 };
 
 function editPostReducer(state, action) {
 	switch (action.type) {
-		case "SET":
+		case 'SET':
 			return {
 				post: action.post,
 				editMode: true,
 				ogPost: action.post,
 			};
 
-		case "EDIT":
+		case 'EDIT':
 			const { field } = action;
 			var { value } = action;
 
-			if (field === "post_date") {
+			if (field === 'post_date') {
 				value = new Date(value);
 			}
 
@@ -62,7 +62,7 @@ function editPostReducer(state, action) {
 				},
 			};
 
-		case "TOGGLE_TAXONOMY":
+		case 'TOGGLE_TAXONOMY':
 			const term_id = parseInt(action.term_id);
 			const index = state.post.taxonomies.hasOwnProperty(action.taxonomy)
 				? state.post.taxonomies[action.taxonomy].indexOf(term_id)
@@ -73,13 +73,8 @@ function editPostReducer(state, action) {
 					: index === false
 					? [term_id]
 					: [
-							...state.post.taxonomies[action.taxonomy].slice(
-								0,
-								index
-							),
-							...state.post.taxonomies[action.taxonomy].slice(
-								index + 1
-							),
+							...state.post.taxonomies[action.taxonomy].slice(0, index),
+							...state.post.taxonomies[action.taxonomy].slice(index + 1),
 					  ];
 
 			return {
@@ -93,7 +88,7 @@ function editPostReducer(state, action) {
 				},
 			};
 
-		case "CLEAR":
+		case 'CLEAR':
 			return initialEditPost;
 
 		default:
@@ -103,13 +98,13 @@ function editPostReducer(state, action) {
 
 function taxFilterReducer(state, action) {
 	switch (action.type) {
-		case "category":
+		case 'category':
 			return {
 				...state,
 				category: action.filter,
 			};
 
-		case "post_tag":
+		case 'post_tag':
 			return {
 				...state,
 				post_tag: action.filter,
@@ -174,7 +169,7 @@ export default function EditPost() {
 	}, [post_name, post_status]);
 
 	useEffect(() => {
-		if (post_date && post_date !== "undefined") {
+		if (post_date && post_date !== 'undefined') {
 			setDate(new Date(post_date));
 		}
 
@@ -187,11 +182,11 @@ export default function EditPost() {
 		let exclude = [];
 
 		if (isUnscheduled === true) {
-			exclude.push("publish", "future");
+			exclude.push('publish', 'future');
 		} else if (isFuture(date)) {
-			exclude.push("publish");
+			exclude.push('publish');
 		} else if (isPast(date)) {
-			exclude.push("future");
+			exclude.push('future');
 		}
 
 		const statusList = filterStatusList(postStatuses, exclude);
@@ -209,7 +204,7 @@ export default function EditPost() {
 		setDatePickerDisabled(
 			post_date &&
 				(isToday(post_date) || isPast(post_date)) &&
-				post_status === "publish"
+				post_status === 'publish'
 				? true
 				: false
 		);
@@ -223,25 +218,25 @@ export default function EditPost() {
 		const { id } = currentPost;
 		if (id > 0 || id === 0) {
 			editPostDispatch({
-				type: "SET",
+				type: 'SET',
 				post: currentPost,
 			});
 		}
 
 		return () => {
 			editPostDispatch({
-				type: "CLEAR",
+				type: 'CLEAR',
 			});
 		};
 	}, [currentPost]);
 
 	const closeModal = useCallback(() => {
 		editPostDispatch({
-			type: "CLEAR",
+			type: 'CLEAR',
 		});
 
 		postsDispatch({
-			type: "UNSET_CURRENTPOST",
+			type: 'UNSET_CURRENTPOST',
 		});
 	}, [editPostDispatch, postsDispatch]);
 
@@ -257,10 +252,8 @@ export default function EditPost() {
 
 		// Move from one list to another
 		const postLists = {
-			source: ogPost.unscheduled
-				? "unscheduled"
-				: dayKey(ogPost.post_date),
-			destination: isUnscheduled ? "unscheduled" : dayKey(post.post_date),
+			source: ogPost.unscheduled ? 'unscheduled' : dayKey(ogPost.post_date),
+			destination: isUnscheduled ? 'unscheduled' : dayKey(post.post_date),
 		};
 
 		if (postLists.source !== postLists.destination) {
@@ -272,7 +265,7 @@ export default function EditPost() {
 			);
 
 			postsDispatch({
-				type: "MOVE_POST",
+				type: 'MOVE_POST',
 				source: result[postLists.source],
 				destination: result[postLists.destination],
 				sourceId: result.sourceId,
@@ -281,15 +274,12 @@ export default function EditPost() {
 		}
 
 		postsDispatch({
-			type: "PREPARE_UPDATE",
+			type: 'PREPARE_UPDATE',
 			id: id,
 			params: {
 				post_title,
 				post_name,
-				post_date: format(
-					new Date(post.post_date),
-					dateFormat.dateTime
-				),
+				post_date: format(new Date(post.post_date), dateFormat.dateTime),
 				post_status: filterPostStatus(post_status, isUnscheduled),
 				post_excerpt,
 				taxonomies: post_taxonomies,
@@ -300,17 +290,17 @@ export default function EditPost() {
 		// }
 
 		postsDispatch({
-			type: "UNSET_CURRENTPOST",
+			type: 'UNSET_CURRENTPOST',
 		});
 
 		editPostDispatch({
-			type: "CLEAR",
+			type: 'CLEAR',
 		});
 	};
 
 	const trashHandler = () => {
 		postsDispatch({
-			type: "SEND_TO_TRASH",
+			type: 'SEND_TO_TRASH',
 			id,
 			params: {
 				post_date,
@@ -319,7 +309,7 @@ export default function EditPost() {
 		});
 
 		editPostDispatch({
-			type: "CLEAR",
+			type: 'CLEAR',
 		});
 
 		setTrashPostClicked(false);
@@ -327,7 +317,7 @@ export default function EditPost() {
 
 	const handleInputChange = (e) => {
 		editPostDispatch({
-			type: "EDIT",
+			type: 'EDIT',
 			field: e.target.name,
 			value: e.target.value,
 		});
@@ -335,7 +325,7 @@ export default function EditPost() {
 
 	const handleCheckboxToggle = (e) => {
 		editPostDispatch({
-			type: "EDIT",
+			type: 'EDIT',
 			field: e.target.name,
 			value: !post[e.target.name],
 		});
@@ -343,8 +333,8 @@ export default function EditPost() {
 
 	const handleTermCheckboxChange = (e) => {
 		editPostDispatch({
-			type: "TOGGLE_TAXONOMY",
-			taxonomy: e.target.closest("fieldset").name,
+			type: 'TOGGLE_TAXONOMY',
+			taxonomy: e.target.closest('fieldset').name,
 			term_id: e.target.value,
 		});
 	};
@@ -355,8 +345,8 @@ export default function EditPost() {
 		}
 
 		editPostDispatch({
-			type: "EDIT",
-			field: "post_date",
+			type: 'EDIT',
+			field: 'post_date',
 			value: date,
 		});
 	};
@@ -373,7 +363,7 @@ export default function EditPost() {
 
 	return (
 		<div
-			className={`editPost ${editMode ? "active" : "inactive"}`}
+			className={`editPost ${editMode ? 'active' : 'inactive'}`}
 			ref={initial}
 		>
 			<div className="editPost__container">
@@ -384,7 +374,7 @@ export default function EditPost() {
 						</button>
 						<form
 							className={`editPost__form ${
-								trashPostClicked ? "trashConfirm" : ""
+								trashPostClicked ? 'trashConfirm' : ''
 							}`}
 							onSubmit={handleSubmit}
 						>
@@ -394,7 +384,7 @@ export default function EditPost() {
 										name="post_title"
 										id="post_title"
 										value={decode(post_title, {
-											scope: "strict",
+											scope: 'strict',
 										})}
 										placeholder="New Post Title"
 										onChange={handleInputChange}
@@ -406,10 +396,7 @@ export default function EditPost() {
 									target="_blank"
 									rel="noreferrer"
 								>
-									Edit{" "}
-									<Icon className="open_in_new">
-										open_in_new
-									</Icon>
+									Edit <Icon className="open_in_new">open_in_new</Icon>
 								</a>
 							</div>
 							<div className="header">
@@ -437,18 +424,12 @@ export default function EditPost() {
 									<FieldGroup name="date">
 										<div
 											className={`post_date ${
-												isUnscheduled === true
-													? "inactive"
-													: "active"
+												isUnscheduled === true ? 'inactive' : 'active'
 											}`}
 										>
-											<label htmlFor="post_date">
-												Post Date
-											</label>
+											<label htmlFor="post_date">Post Date</label>
 											<DatePicker
-												closeOnScroll={(e) =>
-													e.target === document
-												}
+												closeOnScroll={(e) => e.target === document}
 												selected={date}
 												timeInputLabel="Time:"
 												showTimeInput
@@ -465,21 +446,16 @@ export default function EditPost() {
 												checked={isUnscheduled}
 												onChange={handleCheckboxToggle}
 											/>
-											<label htmlFor="unscheduled">
-												Unscheduled
-											</label>
+											<label htmlFor="unscheduled">Unscheduled</label>
 										</div>
 									</FieldGroup>
-									<FieldGroup
-										name="post_excerpt"
-										label="Excerpt"
-									>
+									<FieldGroup name="post_excerpt" label="Excerpt">
 										<textarea
 											name="post_excerpt"
 											onChange={handleInputChange}
 											rows={4}
 											value={decode(post_excerpt, {
-												scope: "strict",
+												scope: 'strict',
 											})}
 										/>
 									</FieldGroup>
@@ -490,11 +466,10 @@ export default function EditPost() {
 											<div className="trash confirm">
 												<p
 													style={{
-														fontWeight: "bold",
+														fontWeight: 'bold',
 													}}
 												>
-													Are you sure you want to
-													Trash this post?
+													Are you sure you want to Trash this post?
 												</p>
 												<input
 													type="button"
@@ -505,11 +480,7 @@ export default function EditPost() {
 												{/* TODO bind ESC to cancel */}
 												<input
 													type="button"
-													onClick={() =>
-														setTrashPostClicked(
-															false
-														)
-													}
+													onClick={() => setTrashPostClicked(false)}
 													value="No"
 												/>
 											</div>
@@ -518,37 +489,25 @@ export default function EditPost() {
 												<input
 													type="submit"
 													className="save"
-													value={
-														id === 0
-															? "Save"
-															: "Update"
-													}
+													value={id === 0 ? 'Save' : 'Update'}
 												/>
 												<input
 													type="button"
 													className="trash"
-													onClick={() =>
-														setTrashPostClicked(
-															true
-														)
-													}
+													onClick={() => setTrashPostClicked(true)}
 													value="Delete"
 												/>
 											</>
 										)}
 									</div>
 									<div className="fieldGroup__status">
-										<label htmlFor="post_status">
-											Post Status
-										</label>
+										<label htmlFor="post_status">Post Status</label>
 										<select
 											name="post_status"
 											onChange={handleInputChange}
 											value={post_status}
 										>
-											{renderStatusOptions(
-												allowedStatuses
-											)}
+											{renderStatusOptions(allowedStatuses)}
 										</select>
 									</div>
 									<FieldGroup name="post_thumb">
@@ -557,18 +516,9 @@ export default function EditPost() {
 											target="_blank"
 											rel="noreferrer"
 										>
-											Featured Image{" "}
-											<Icon className="open_in_new">
-												open_in_new
-											</Icon>
-											{image ? (
-												<img
-													src={image}
-													alt={`${post_title}`}
-												/>
-											) : (
-												""
-											)}
+											Featured Image{' '}
+											<Icon className="open_in_new">open_in_new</Icon>
+											{image ? <img src={image} alt={`${post_title}`} /> : ''}
 										</a>
 									</FieldGroup>
 								</div>
@@ -578,9 +528,7 @@ export default function EditPost() {
 									<fieldset name="category">
 										<legend>Categories</legend>
 										<div className="filter">
-											<label htmlFor="category_filter">
-												Search Categories
-											</label>
+											<label htmlFor="category_filter">Search Categories</label>
 											<input
 												id="category_filter"
 												name="category_filter"
@@ -588,7 +536,7 @@ export default function EditPost() {
 												value={taxFilter.category}
 												onChange={(e) =>
 													taxFilterDispatch({
-														type: "category",
+														type: 'category',
 														filter: e.target.value,
 													})
 												}
@@ -596,47 +544,30 @@ export default function EditPost() {
 										</div>
 										<div className="terms">
 											{taxonomies.category.terms.map(
-												(
-													{ name, slug, term_id },
-													index
-												) => {
+												({ name, slug, term_id }, index) => {
 													return name
 														.toLowerCase()
-														.includes(
-															taxFilter.category.toLowerCase()
-														) ||
-														taxFilter.category ===
-															"" ? (
-														<label
-															key={index}
-															htmlFor={slug}
-														>
+														.includes(taxFilter.category.toLowerCase()) ||
+														taxFilter.category === '' ? (
+														<label key={index} htmlFor={slug}>
 															<input
 																type="checkbox"
 																name={slug}
 																id={slug}
 																value={term_id}
-																onChange={
-																	handleTermCheckboxChange
-																}
+																onChange={handleTermCheckboxChange}
 																checked={
-																	!isEmpty(
-																		post_taxonomies
-																	) &&
-																	!isEmpty(
-																		post_taxonomies.category
-																	) &&
-																	post_taxonomies.category.includes(
-																		term_id
-																	)
+																	!isEmpty(post_taxonomies) &&
+																	!isEmpty(post_taxonomies.category) &&
+																	post_taxonomies.category.includes(term_id)
 																}
 															/>
 															{decode(name, {
-																scope: "strict",
+																scope: 'strict',
 															})}
 														</label>
 													) : (
-														""
+														''
 													);
 												}
 											)}
@@ -647,9 +578,7 @@ export default function EditPost() {
 									<fieldset name="post_tag">
 										<legend>Tags</legend>
 										<div className="filter">
-											<label htmlFor="category_filter">
-												Search Post Tags
-											</label>
+											<label htmlFor="category_filter">Search Post Tags</label>
 											<input
 												id="post_tag_filter"
 												name="post_tag_filter"
@@ -657,7 +586,7 @@ export default function EditPost() {
 												value={taxFilter.post_tag}
 												onChange={(e) =>
 													taxFilterDispatch({
-														type: "post_tag",
+														type: 'post_tag',
 														filter: e.target.value,
 													})
 												}
@@ -665,44 +594,30 @@ export default function EditPost() {
 										</div>
 										<div className="terms">
 											{taxonomies.post_tag.terms.map(
-												(
-													{ name, slug, term_id },
-													index
-												) => {
+												({ name, slug, term_id }, index) => {
 													return name
 														.toLowerCase()
-														.includes(
-															taxFilter.post_tag.toLowerCase()
-														) ||
-														taxFilter.post_tag ===
-															"" ? (
+														.includes(taxFilter.post_tag.toLowerCase()) ||
+														taxFilter.post_tag === '' ? (
 														<label key={index}>
 															<input
 																type="checkbox"
 																name={slug}
 																id={slug}
 																value={term_id}
-																onChange={
-																	handleTermCheckboxChange
-																}
+																onChange={handleTermCheckboxChange}
 																checked={
-																	!isEmpty(
-																		post_taxonomies
-																	) &&
-																	!isEmpty(
-																		post_taxonomies.post_tag
-																	) &&
-																	post_taxonomies.post_tag.includes(
-																		term_id
-																	)
+																	!isEmpty(post_taxonomies) &&
+																	!isEmpty(post_taxonomies.post_tag) &&
+																	post_taxonomies.post_tag.includes(term_id)
 																}
 															/>
 															{decode(name, {
-																scope: "strict",
+																scope: 'strict',
 															})}
 														</label>
 													) : (
-														""
+														''
 													);
 												}
 											)}

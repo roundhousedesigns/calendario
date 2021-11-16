@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
-import DrawerHandle from "./common/DrawerHandle";
-import Widget from "./common/Widget";
-import UnscheduledDrafts from "./UnscheduledDrafts";
-import StatusFilters from "./StatusFilters";
-import ViewOptions from "./ViewOptions";
-import { wp } from "../lib/utils";
+import React, { useContext } from 'react';
+import DrawerHandle from './common/DrawerHandle';
+import Widget from './common/Widget';
+import UnscheduledDrafts from './UnscheduledDrafts';
+import StatusFilters from './StatusFilters';
+import ViewOptions from './ViewOptions';
+import { wp } from '../lib/utils';
 
-import ViewContext from "../ViewContext";
+import ViewContext from '../ViewContext';
 
 export default function Sidebar() {
 	const { pluginUrl } = wp;
@@ -19,12 +19,12 @@ export default function Sidebar() {
 
 	return (
 		<aside
-			className={`calendarioMain__sidebar ${sidebarOpen ? "open" : "closed"}`}
+			className={`calendarioMain__sidebar ${sidebarOpen ? 'open' : 'closed'}`}
 		>
 			<DrawerHandle
 				toggle={() =>
 					viewOptionsDispatch({
-						type: "TOGGLE_SIDEBAR",
+						type: 'TOGGLE_SIDEBAR',
 					})
 				}
 			/>
@@ -34,10 +34,7 @@ export default function Sidebar() {
 						<ViewOptions />
 					</div>
 				</Widget>
-				<Widget
-					title="Unscheduled Drafts"
-					widgetClass="unscheduledDrafts"
-				>
+				<Widget title="Unscheduled Drafts" widgetClass="unscheduledDrafts">
 					<UnscheduledDrafts />
 				</Widget>
 

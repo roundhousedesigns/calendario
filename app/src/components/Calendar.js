@@ -1,36 +1,28 @@
-import React, { useContext, useCallback } from "react";
-import Day from "./Day";
-import DayPosts from "./DayPosts";
-import { useFetchScheduledPosts } from "../lib/hooks";
-import { dateFormat, dayKey } from "../lib/utils";
+import React, { useContext, useCallback } from 'react';
+import Day from './Day';
+import DayPosts from './DayPosts';
+import { useFetchScheduledPosts } from '../lib/hooks';
+import { dateFormat, dayKey } from '../lib/utils';
 import {
 	format,
 	addDays,
 	startOfWeek,
 	isFirstDayOfMonth,
 	isToday,
-} from "date-fns";
+} from 'date-fns';
 
-import PostsContext from "../PostsContext";
-import ViewContext from "../ViewContext";
+import PostsContext from '../PostsContext';
+import ViewContext from '../ViewContext';
 
 export default function Calendar({ className, todayRef }) {
-	const {
-		posts,
-		postsDispatch,
-	} = useContext(PostsContext);
+	const { posts, postsDispatch } = useContext(PostsContext);
 	const {
 		viewOptions: { viewRange },
 	} = useContext(ViewContext);
 
 	const { scheduled } = posts;
 
-	useFetchScheduledPosts(
-		viewRange.start,
-		viewRange.end,
-		posts,
-		postsDispatch
-	);
+	useFetchScheduledPosts(viewRange.start, viewRange.end, posts, postsDispatch);
 
 	const renderDaysHeaderRow = useCallback(() => {
 		const days = [];
@@ -57,19 +49,14 @@ export default function Calendar({ className, todayRef }) {
 
 		while (day < viewRange.end) {
 			for (let i = 0; i < 7; i++) {
-				const dayIsFirstDay =
-					isFirstDayOfMonth(day) || firstCalendarDay;
+				const dayIsFirstDay = isFirstDayOfMonth(day) || firstCalendarDay;
 
 				days.push(
 					<Day
 						key={day}
 						ref={isToday(day) ? todayRef : null}
 						day={day}
-						monthName={
-							dayIsFirstDay
-								? format(day, dateFormat.monthShort)
-								: ""
-						}
+						monthName={dayIsFirstDay ? format(day, dateFormat.monthShort) : ''}
 					>
 						<DayPosts
 							date={day}

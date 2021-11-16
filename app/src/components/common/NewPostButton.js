@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext } from 'react';
 
-import PostsContext from "../../PostsContext";
+import PostsContext from '../../PostsContext';
 
 export default function NewPostButton({ day, unscheduled }) {
 	const { postsDispatch } = useContext(PostsContext);
@@ -9,7 +9,7 @@ export default function NewPostButton({ day, unscheduled }) {
 		e.preventDefault();
 
 		postsDispatch({
-			type: "CREATE_NEW_POST",
+			type: 'CREATE_NEW_POST',
 			post_date: day ? day : new Date(),
 			unscheduled: unscheduled ? unscheduled : false,
 		});

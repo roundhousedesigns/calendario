@@ -1,12 +1,12 @@
-import React, { useState, useContext } from "react";
-import Post from "./Post";
-import Loading from "./common/Loading";
-import { dateFormat } from "../lib/utils";
-import { Droppable } from "react-beautiful-dnd";
-import { format } from "date-fns";
-import { isEmpty } from "lodash";
+import React, { useState, useContext } from 'react';
+import Post from './Post';
+import Loading from './common/Loading';
+import { dateFormat } from '../lib/utils';
+import { Droppable } from 'react-beautiful-dnd';
+import { format } from 'date-fns';
+import { isEmpty } from 'lodash';
 
-import PostsContext from "../PostsContext";
+import PostsContext from '../PostsContext';
 
 export default function PostList({ posts, className, date }) {
 	const {
@@ -15,7 +15,7 @@ export default function PostList({ posts, className, date }) {
 	const [hovered, setHovered] = useState(false);
 
 	const droppableId =
-		date === false ? "unscheduled" : format(date, dateFormat.date);
+		date === false ? 'unscheduled' : format(date, dateFormat.date);
 
 	return (
 		<Droppable droppableId={droppableId}>
@@ -26,7 +26,7 @@ export default function PostList({ posts, className, date }) {
 						ref={innerRef}
 						{...droppableProps}
 						className={`postList ${className} ${
-							snapshot.isDraggingOver ? "draggingOver" : "idle"
+							snapshot.isDraggingOver ? 'draggingOver' : 'idle'
 						}`}
 						onMouseEnter={() => setHovered(true)}
 						onMouseLeave={() => setHovered(false)}
@@ -38,11 +38,7 @@ export default function PostList({ posts, className, date }) {
 										post={post}
 										key={post.id}
 										index={index}
-										unscheduled={
-											droppableId === "unscheduled"
-												? true
-												: false
-										}
+										unscheduled={droppableId === 'unscheduled' ? true : false}
 									/>
 							  ))
 							: null}

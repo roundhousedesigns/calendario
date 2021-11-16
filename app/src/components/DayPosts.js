@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
-import PostList from "./PostList";
-import NewPostButton from "./common/NewPostButton";
-import DragContext from "../DragContext";
+import React, { useContext } from 'react';
+import PostList from './PostList';
+import NewPostButton from './common/NewPostButton';
+import DragContext from '../DragContext';
 
 export default function DayPosts({ posts, date, title }) {
 	const {
@@ -11,14 +11,8 @@ export default function DayPosts({ posts, date, title }) {
 	const renderPostList = () => {
 		const renderList = (
 			<>
-				{!isDragging ? (
-					<NewPostButton day={date} unscheduled={false} />
-				) : null}
-				<PostList
-					className="dayPosts"
-					date={date}
-					posts={posts}
-				/>
+				{!isDragging ? <NewPostButton day={date} unscheduled={false} /> : null}
+				<PostList className="dayPosts" date={date} posts={posts} />
 			</>
 		);
 

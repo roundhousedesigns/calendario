@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function PostLink({ title, icon, onClick, target, children }) {
 	return (
@@ -6,7 +6,7 @@ export default function PostLink({ title, icon, onClick, target, children }) {
 			title={title}
 			className={`icon postLink icon__${icon}`}
 			onClick={onClick}
-			target={target ? target : ""}
+			target={target ? target : ''}
 			rel="noreferrer"
 		>
 			{children}
