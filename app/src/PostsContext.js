@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { dateFormat, dayKey } from './lib/utils';
 import { groupBy } from 'lodash';
-import { format } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
 
 const PostsContext = createContext({});
 export default PostsContext;
@@ -42,11 +42,16 @@ export function postsReducer(state, action) {
 
 			// cast the date as a Date object
 			scheduledPosts.forEach((post, index) => {
-				scheduledPosts[index].post_date = new Date(post.post_date);
-				scheduledPosts[index].post_date_day = format(
-					scheduledPosts[index].post_date,
-					dateFormat.date
-				);
+				let postDate = parseISO(post.post_date);
+				if (isValid(postDate)) {
+					scheduledPosts[index].post_date = new Date(post.post_date);
+					scheduledPosts[index].post_date_day = format(
+						scheduledPosts[index].post_date,
+						dateFormat.date
+					);
+				} else {
+					console.debug('bad post date', postDate);
+				}
 			});
 
 			let scheduledByDate = groupBy(scheduledPosts, 'post_date_day');
