@@ -60,8 +60,6 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 					});
 					const data = await res.json();
 
-					console.log('posts', data.posts);
-
 					postsDispatch({
 						type: 'SET_SCHEDULED',
 						posts: data.posts,
