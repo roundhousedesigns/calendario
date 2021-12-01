@@ -613,6 +613,10 @@ class Calendario_Route extends WP_REST_Controller {
 
 		// TODO Fix saving NEW draft post date...not working, and not showing anything in logs.
 
+		ob_start();
+		print_r( $item );
+		error_log( ob_get_clean() );
+
 		// Update the post.
 		$result = wp_update_post( $item );
 

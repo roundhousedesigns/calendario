@@ -58,6 +58,11 @@ export default function Sidebar() {
 						<ul className="docs">
 							<li>Documentation coming soon</li>
 							<li>Thanks for testing!</li>
+							<li>Latest Bugfixes:
+								<ul>
+									<li>Vertical scroll was locking the Dashboard left-side menu</li>
+								</ul>
+							</li>
 							<li>
 								<a
 									href="mailto:help@roundhouse-designs.com?subject=Calendar.io Support Request?body=***Please type your editorial calendar.io support request here***"
