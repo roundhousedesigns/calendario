@@ -1,6 +1,10 @@
 # Changelog
+All notable changes to Calendar.io will be documented in this file.
 
-All notable changes will be documented in this file.
+## [0.7.57] - 2021-12-01
+
+### Changed
+- Release script upgraded
 
 ## [0.7.56] - 2021-12-01
 

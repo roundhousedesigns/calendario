@@ -1,9 +1,12 @@
 #! /bin/bash -e
 
-dest="$HOME"
+optionaldir="$1"
+dir="${optionaldir:-$HOME}"
+file="${dir}/calendario.zip"
 
-if [ ! -d "$dest" ]; then
-	mkdir "$dest"
+if [ ! -d "$dir" ]; then
+	echo "Invalid directory specified."
+	exit
 fi
 
 exclude=(
@@ -17,4 +20,8 @@ exclude=(
 )
 
 # IFS=' '
-zip -vr "${dest}/calendario.zip" . -x "${exclude[@]}"
+zip -qq -FSr "$file" . -x "${exclude[@]}"
+
+if [ -f "$file" ]; then
+	echo "Release ZIP can be found at ${file}."
+fi
