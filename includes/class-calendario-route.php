@@ -126,17 +126,12 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Check if a given request has access to create items
+	 * Check if a given request has access to create items.
 	 *
 	 * @param  WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|bool
 	 */
 	public function create_item_permissions_check( $request ) {
-		// TODO debug this
-		// DEBUG.
-		return true;
-
-		// Production code.
 		$user = wp_get_current_user();
 
 		return user_can( $user, 'edit_others_posts' );
@@ -715,7 +710,6 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function update_post_statuses( $request ) {
-		// $data = $this->prepare_post_statuses_for_database( $request );
 		$body = $request->get_params();
 
 		$result = update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $body );

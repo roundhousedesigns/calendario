@@ -1600,4 +1600,4 @@ output/
 tmp/nanoc/
 
 # WordPress
-themes/twenty*/
+freemius/*
