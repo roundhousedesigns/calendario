@@ -5,7 +5,7 @@
  * Author:          Roundhouse Designs
  * Author URI:      https://roundhouse-designs.com
  * Text Domain:     rhd
- * Version:         0.7.55
+ * Version:         0.7.56
  *
  * @package         calendario
  */
@@ -13,7 +13,7 @@
 /**
  * Paths
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.55' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.56' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
@@ -30,7 +30,7 @@ define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build
  */
 define( 'RHD_CALENDARIO_REST_VERSION', 'v1' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
-define( 'RHD_DATE_FORMAT', 'Y-m-d H:i:s' );
+define( 'RHD_WP_DATE_FORMAT', 'Y-m-d H:i:s' );
 define( 'RHD_UNSCHEDULED_INDEX_META_KEY', 'rhd_unscheduled' );
 define( 'RHD_POST_STATUS_COLOR_OPTION_KEY', 'rhd_calendario_post_statuses' );
 define(

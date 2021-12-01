@@ -611,12 +611,6 @@ class Calendario_Route extends WP_REST_Controller {
 		$item  = $this->prepare_existing_item_for_database( $request );
 		$terms = rhd_extract_item_taxonomy_terms( $item );
 
-		// TODO Fix saving NEW draft post date...not working, and not showing anything in logs.
-
-		ob_start();
-		print_r( $item );
-		error_log( ob_get_clean() );
-
 		// Update the post.
 		$result = wp_update_post( $item );
 
@@ -887,13 +881,15 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return void
 	 */
 	protected function prepare_post_date_for_database( &$item, $params ) {
-
 		if ( isset( $params['post_date'] ) ) {
-			$post_date             = rhd_wp_prepare_date( $params['post_date'] );
+			$post_date = rhd_wp_prepare_date( $params['post_date'] );
+
+			if ( isset( $params['post_status'] ) && in_array( $params['post_status'], array( 'draft', 'pending' ), true ) ) {
+				$item['edit_date'] = true;
+			}
 			$item['post_date']     = $post_date['post_date'];
 			$item['post_date_gmt'] = $post_date['post_date_gmt'];
 		}
-
 	}
 
 	/**
@@ -931,17 +927,14 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @param  WP_REST_Request $request Request object.
 	 * @return array
 	 */
-	public function prepare_item_for_response(
-		$item,
-		$request
-	) {
+	public function prepare_item_for_response( $item, $request ) {
 		$post_date = new DateTime( $item->post_date );
 
 		return array(
 			'id'           => $item->ID,
 			'post_title'   => $item->post_title,
 			'post_name'    => $item->post_name,
-			'post_date'    => $post_date->format( 'Y-m-d H:i:s' ),
+			'post_date'    => $post_date->format( RHD_WP_DATE_FORMAT ),
 			'post_status'  => $item->post_status,
 			'post_excerpt' => $item->post_excerpt,
 			'image'        => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),
