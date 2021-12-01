@@ -5,26 +5,22 @@
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
 // Mixins
-@import "./_vars.scss";
-@import "./_mixins.scss";
+@import './_vars.scss';
+@import './_mixins.scss';
 
 // Components
-@import "./common.scss";
-@import "./PostList.scss";
-@import "./EditPost.scss";
-@import "./ColorPickerPopover.scss";
-@import "./ToggleButton.scss";
+@import './common.scss';
+@import './PostList.scss';
+@import './EditPost.scss';
+@import './ColorPickerPopover.scss';
+@import './ToggleButton.scss';
 
 * {
 	box-sizing: border-box;
 }
 
-html {
-	overflow: hidden;
-}
-
 body {
-	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+	font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
 	font-size: 1em;
 	font-weight: 300;
 	line-height: 1.5;
@@ -43,7 +39,6 @@ body {
 	width: 100%;
 	min-height: 100%;
 	margin: 0;
-	padding-top: 23px; // admin bar difference
 	overflow: auto;
 	z-index: 99999;
 	background: white;
@@ -91,8 +86,8 @@ body {
 
 .calendarioMain {
 	display: grid;
+	padding-top: 23px; // admin bar difference
 	grid-gap: var(--gridGap);
-	height: 100vh;
 	overflow: auto;
 	transition: all 500ms ease;
 
@@ -104,16 +99,16 @@ body {
 		grid-template-rows: auto;
 		grid-template-columns: 100%;
 		grid-template-areas:
-			"header"
-			"main"
-			"sidebar";
+			'header'
+			'main'
+			'sidebar';
 	}
 
 	@media (min-width: $mobileBreak) {
 		grid-template-rows: min-content auto;
 		grid-template-areas:
-			"header header"
-			"main   sidebar";
+			'header header'
+			'main   sidebar';
 
 		&.sidebarOpen {
 			grid-template-columns: 3fr 300px;
@@ -173,7 +168,7 @@ body {
 				display: grid;
 				grid-gap: var(--gridGap);
 				grid-template-columns: 3fr 300px;
-				grid-template-areas: "calendarHeader title";
+				grid-template-areas: 'calendarHeader title';
 			}
 
 			& > div {
@@ -227,9 +222,9 @@ body {
 							grid-template-rows: auto;
 							grid-template-columns: 100%;
 							grid-template-areas:
-								"range"
-								"options"
-								"today";
+								'range'
+								'options'
+								'today';
 
 							.viewRange {
 								grid-area: today;
@@ -507,10 +502,7 @@ body {
 			}
 
 			&.dragOver {
-				background-color: transparentize(
-					$color: #53cbf1,
-					$amount: 0.75
-				);
+				background-color: transparentize($color: #53cbf1, $amount: 0.75);
 			}
 
 			.newPost {
