@@ -54,6 +54,7 @@
 		"immer": "^9.0.6",
 		"nth-check": "^2.0.1",
 		"glob-parent": "^5.1.2",
-		"browserslist": "^4.16.5"
+		"browserslist": "^4.16.5",
+		"ansi-regex": "^5.0.1"
 	}
 }
