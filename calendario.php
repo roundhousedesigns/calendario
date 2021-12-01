@@ -5,7 +5,7 @@
  * Author:          Roundhouse Designs
  * Author URI:      https://roundhouse-designs.com
  * Text Domain:     rhd
- * Version:         0.7.56
+ * Version:         0.7.57
  *
  * @package         calendario
  */
@@ -13,7 +13,7 @@
 /**
  * Paths
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.56' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.57' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
@@ -22,9 +22,10 @@ define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 // phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
 // define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
 // define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
+// phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
 
 // Enable for production.
-define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' ); // phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
+define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
 
 /**
  * Base configuration
