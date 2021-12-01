@@ -56,6 +56,15 @@ export default function Sidebar() {
 							/>
 						</a>
 						<ul className="docs">
+							<li>
+								<a
+									href="https://github.com/roundhousedesigns/calendario/blob/main/CHANGELOG.md"
+									rel="noreferrer"
+									target="_blank"
+								>
+									Changelog
+								</a>
+							</li>
 							<li>Documentation coming soon</li>
 							<li>Thanks for testing!</li>
 							<li>
