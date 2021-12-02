@@ -2,9 +2,9 @@
 /**
  * Calendario REST routes.
  *
- * phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
- *
  * @package rhd
+ *
+ * phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
  */
 
 /**
@@ -610,10 +610,12 @@ class Calendario_Route extends WP_REST_Controller {
 		$result = wp_update_post( $item );
 
 		// Add taxonomy data and return success response.
-		if ( false !== $result && ! is_wp_error( $result ) ) {
-			$this->update_post_taxonomy_terms( $result, $terms );
+		if ( $result && ! is_wp_error( $result ) ) {
+			$tax_result = $this->update_post_taxonomy_terms( $result, $taxonomies );
 
-			return new WP_REST_Response( $result, 200 );
+			if ( ! is_wp_error( $tax_result ) ) {
+				return new WP_REST_Response( $result, 200 );
+			}
 		}
 
 		return new WP_Error( 'cant-update', __( 'message', 'calendario' ), array( 'status' => 500 ) );
@@ -626,15 +628,14 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
-		$item = $this->prepare_new_item_for_database( $request );
-
+		$item       = $this->prepare_new_item_for_database( $request );
 		$taxonomies = rhd_extract_item_taxonomy_terms( $item );
 
 		// Create the post.
 		$result = wp_insert_post( $item );
 
 		// Add taxonomy data and return success response.
-		if ( ! is_wp_error( $result ) && 0 !== $result ) {
+		if ( $result && ! is_wp_error( $result ) ) {
 			$tax_result = $this->update_post_taxonomy_terms( $result, $taxonomies );
 
 			if ( ! is_wp_error( $tax_result ) ) {
@@ -684,7 +685,6 @@ class Calendario_Route extends WP_REST_Controller {
 		if ( is_wp_error( $result ) ) {
 			return new WP_Error( 'cant-update-taxonomies', __( 'message', 'calendario' ), array( 'status' => 500 ) );
 		}
-
 	}
 
 	/**

@@ -23,5 +23,7 @@ exclude=(
 zip -qq -FSr "$file" . -x "${exclude[@]}"
 
 if [ -f "$file" ]; then
+	echo
 	echo "Release ZIP can be found at ${file}."
+	echo
 fi

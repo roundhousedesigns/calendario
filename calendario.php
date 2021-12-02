@@ -1,31 +1,35 @@
 <?php
 /**
- * Plugin Name:     Calendar.io
- * Description:     The professional editorial calendar for WordPress.
- * Author:          Roundhouse Designs
- * Author URI:      https://roundhouse-designs.com
- * Text Domain:     rhd
- * Version:         0.7.57
+ * Plugin Name:    Calendar.io
+ * Description:    The professional editorial calendar for WordPress.
+ * Author:         Roundhouse Designs
+ * Author URI:     https://roundhouse-designs.com
+ * Text Domain:    rhd
+ * Version:        0.7.58
  *
- * @package         calendario
+ * @package       calendario
+ *
+ * phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
  */
 
 /**
  * Paths
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.57' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.58' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
 // Enable for development mode.
 // TODO Freemius code to exclude from dist?
+
 // phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
 // define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
 // define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
-// phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
 
 // Enable for production.
 define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
+
+// phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
 
 /**
  * Base configuration
@@ -50,31 +54,38 @@ define(
 		'#AA70BB',
 	)
 );
-define(
-	'RHD_POST_STATUS_DEFAULTS',
-	array(
+
+/**
+ * Sets the default post status color key.
+ */
+function rhd_set_default_status_colors() {
+	$statuses = array(
 		'publish' => array(
-			'name'  => 'Published',
-			'color' => RHD_POST_STATUS_SWATCHES[0],
+			'name' => 'Published',
 		),
 		'future'  => array(
-			'name'  => 'Scheduled',
-			'color' => RHD_POST_STATUS_SWATCHES[1],
+			'name' => 'Scheduled',
 		),
 		'draft'   => array(
-			'name'  => 'Draft',
-			'color' => RHD_POST_STATUS_SWATCHES[2],
+			'name' => 'Draft',
 		),
 		'pending' => array(
-			'name'  => 'Pending Review',
-			'color' => RHD_POST_STATUS_SWATCHES[3],
+			'name' => 'Pending Review',
 		),
 		'private' => array(
-			'name'  => 'Private',
-			'color' => RHD_POST_STATUS_SWATCHES[4],
+			'name' => 'Private',
 		),
-	)
-);
+	);
+
+	$i = 0;
+	foreach ( $statuses as $status => $atts ) {
+		$statuses[$status]['color'] = RHD_POST_STATUS_SWATCHES[$i];
+		$i++;
+	}
+
+	define( 'RHD_POST_STATUS_DEFAULTS', $statuses );
+}
+add_action( 'rhd_cal_loaded', 'rhd_set_default_status_colors' );
 
 /**
  * Freemius integration
@@ -123,22 +134,16 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 
 	// Init Freemius.
 	rhd_cal();
+
 	// Signal that SDK was initiated.
 	do_action( 'rhd_cal_loaded' );
 }
 
-// phpcs:disable Squiz.Commenting.FunctionComment.MissingParamTag
+// phpcs:ignore Squiz.Commenting.FunctionComment.MissingParamTag
 /**
  * Freemius customer messages.
  */
-function rhd_cal_custom_connect_message_on_update(
-	$message,
-	$user_first_name,
-	$plugin_title,
-	$user_login,
-	$site_link,
-	$freemius_link
-) {
+function rhd_cal_custom_connect_message_on_update( $message, $user_first_name, $plugin_title, $user_login, $site_link, $freemius_link ) {
 	$updated_message = sprintf(
 		/* Translators: %s: user first name, %s: plugin title, %s: user login, %s: site link, freemiums link */
 		__( 'Hey %1$s' ) . ',<br>' . __( 'Never miss an important %2$s update! Opt-in to our security and feature updates notifications and non-sensitive diagnostic tracking with %5$s. If you skip this, that\'s okay! %2$s will totally work just fine. :)', 'calendario' ),
@@ -152,7 +157,6 @@ function rhd_cal_custom_connect_message_on_update(
 	return $updated_message;
 }
 rhd_cal()->add_filter( 'connect_message_on_update', 'rhd_cal_custom_connect_message_on_update', 10, 6 );
-// phpcs:disable Squiz.Commenting.FunctionComment.MissingParamTag
 
 /**
  * Functions
@@ -167,13 +171,13 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-calendario-route.php';
 /**
  * Calling the plugin class with parameters.
  */
-function rhd_load_plugin() {
+function rhd_load_calendario_plugin() {
 	// Loading the app in WordPress admin main screen.
 	new Calendario( 'admin_enqueue_scripts', 'posts_page_calendario', false, '#calendario' );
 
 	new Calendario_Route();
 }
-add_action( 'init', 'rhd_load_plugin' );
+add_action( 'init', 'rhd_load_calendario_plugin' );
 
 /**
  * Activation hook
