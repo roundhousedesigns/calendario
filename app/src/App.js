@@ -150,7 +150,7 @@ export default function App() {
 	const onDragEnd = (item) => {
 		const { source, destination } = item;
 		const {
-			post: { id, post_date: post_date_source, post_status },
+			post: { id, post_date: post_date_from, post_status },
 		} = draggedPost;
 
 		// dropped outside a list
@@ -161,7 +161,7 @@ export default function App() {
 		let overUnscheduled = isOverUnscheduled(destination.droppableId);
 
 		const post_date = draggedPostDestination(
-			post_date_source,
+			post_date_from,
 			destination.droppableId
 		);
 

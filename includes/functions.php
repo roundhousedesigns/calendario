@@ -28,9 +28,7 @@ function rhd_wp_prepare_date( $date_string ) {
 		return;
 	}
 
-	$from_format = 'Y-m-d g:i A';
-
-	$date = DateTime::createFromFormat( $from_format, $date_string );
+	$date = new DateTime( $date_string );
 
 	$date_formatted = array(
 		'post_date'     => $date->format( RHD_WP_DATE_FORMAT ),

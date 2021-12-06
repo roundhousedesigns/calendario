@@ -2,6 +2,7 @@
 import { omit, find, isEmpty, isEqual } from 'lodash';
 import {
 	format,
+	formatISO,
 	parseISO,
 	getHours,
 	getMinutes,
@@ -20,7 +21,7 @@ export const wp =
 				routeBase: 'http://localhost/backend/wp-json/calendario/v1',
 				user: 1,
 				adminUrl: '',
-				pluginUrl: '//localhost/wp-content/plugins/calendario/',
+				pluginUrl: '//localhost/backend/wp-content/plugins/calendario/',
 				postsUrl: '',
 				trashUrl: '',
 				defaultStatusColors: {
@@ -197,20 +198,21 @@ export const moveItem = (
  * Prepares the post_date for a dragged post's destination using
  * its droppableID.
  *
- * @param {Date} post_date
- * @param {string} droppableId
- * @returns {draggedPostDestination}
+ * @param {Date} post_date_from The original post date (before dragging/editing/updating).
+ * @param {string} droppableId The destination ID
+ * @returns {Date} The destination post date.
  */
-export const draggedPostDestination = (post_date_source, droppableId) => {
-	let post_date = post_date_source;
+export const draggedPostDestination = (post_date_from, droppableId) => {
+	let post_date = post_date_from;
 
 	if (droppableId !== 'unscheduled') {
+		// post_date = new Date(droppableId); // The new date
 		post_date = parseISO(droppableId); // The new date
 
 		// Conserve the existing date's time value
 		const time = {
-			h: getHours(post_date_source),
-			m: getMinutes(post_date_source),
+			h: getHours(post_date_from),
+			m: getMinutes(post_date_from),
 		};
 		post_date = setHours(post_date, time.h);
 		post_date = setMinutes(post_date, time.m);
@@ -267,7 +269,7 @@ export function sanitizeParamsForUpdate(params) {
 		switch (key) {
 			case 'post_date':
 				if (params[key] instanceof Date) {
-					params[key] = format(params[key], dateFormat.dateTime);
+					params[key] = formatISO(params[key]);
 				}
 				break;
 
