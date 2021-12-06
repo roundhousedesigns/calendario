@@ -611,7 +611,7 @@ class Calendario_Route extends WP_REST_Controller {
 
 		// Add taxonomy data and return success response.
 		if ( $result && ! is_wp_error( $result ) ) {
-			$tax_result = $this->update_post_taxonomy_terms( $result, $taxonomies );
+			$tax_result = $this->update_post_taxonomy_terms( $result, $terms );
 
 			if ( ! is_wp_error( $tax_result ) ) {
 				return new WP_REST_Response( $result, 200 );
@@ -628,23 +628,23 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function create_item( $request ) {
-		$item       = $this->prepare_new_item_for_database( $request );
-		$taxonomies = rhd_extract_item_taxonomy_terms( $item );
+		$item  = $this->prepare_new_item_for_database( $request );
+		$terms = rhd_extract_item_taxonomy_terms( $item );
 
 		// Create the post.
 		$result = wp_insert_post( $item );
 
 		// Add taxonomy data and return success response.
 		if ( $result && ! is_wp_error( $result ) ) {
-			$tax_result = $this->update_post_taxonomy_terms( $result, $taxonomies );
+			$tax_result = $this->update_post_taxonomy_terms( $result, $terms );
 
 			if ( ! is_wp_error( $tax_result ) ) {
 				return new WP_REST_Response( $result, 200 );
 			}
 		}
 
-		// TODO meaningful error message for tax and/or wp_insert_post result.
-		return new WP_Error( 'error-updating', __( 'message', 'calendario' ), array( 'status' => 500 ) );
+		// TODO Improve this error message.
+		return new WP_Error( 'error-updating', __( 'Error updating post or post terms.', 'calendario' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -928,7 +928,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'id'           => $item->ID,
 			'post_title'   => $item->post_title,
 			'post_name'    => $item->post_name,
-			'post_date'    => $post_date->format( RHD_WP_DATE_FORMAT ),
+			'post_date'    => $post_date->format( 'c' ),
 			'post_status'  => $item->post_status,
 			'post_excerpt' => $item->post_excerpt,
 			'image'        => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),
@@ -939,6 +939,7 @@ class Calendario_Route extends WP_REST_Controller {
 				'post_tag' => rhd_get_term_ids( $item->ID, 'post_tag' ),
 			),
 		);
+
 	}
 
 }

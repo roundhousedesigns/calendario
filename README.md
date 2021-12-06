@@ -14,6 +14,7 @@ The professional blogger's editorial calendar plugin for WordPress.
 
 ## TODO
 
+-   FIX: iOS drop event - `RangeError: Invalid time value`
 -   Lock Quick Editor to premium?
 -   Clean up and organize SCSS
 

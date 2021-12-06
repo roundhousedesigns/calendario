@@ -1,10 +1,8 @@
 import { forwardRef, useContext, useEffect, useState } from 'react';
-// import ViewOptions from "./ViewOptions";
 import DatePicker from 'react-datepicker';
 import { addDays, startOfToday, startOfMonth, endOfMonth } from 'date-fns';
 
 import ViewContext from '../ViewContext';
-// import PostsContext from "../PostsContext";
 import { dateFormat, dateIsBetween } from '../lib/utils';
 
 export default function MainHeader({ handleTodayClick }) {
@@ -13,7 +11,6 @@ export default function MainHeader({ handleTodayClick }) {
 		viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
-	// const { postsDispatch } = useContext(PostsContext);
 	const [todayInRange, setTodayInRange] = useState(true);
 
 	const today = startOfToday();

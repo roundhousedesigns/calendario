@@ -1,6 +1,12 @@
 import { createContext } from 'react';
 import { wp } from './lib/utils';
-import { addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns';
+import {
+	addWeeks,
+	subWeeks,
+	startOfWeek,
+	endOfWeek,
+	differenceInWeeks,
+} from 'date-fns';
 
 const ViewContext = createContext({});
 export default ViewContext;
@@ -50,16 +56,17 @@ export function viewReducer(state, action) {
 		}
 
 		case 'CHANGE_MONTH': {
-			const { viewMode } = state;
+			const { viewMode, viewRange } = state;
 			const { direction } = action;
+			const weekCount = differenceInWeeks(viewRange.end, viewRange.start);
 			let newStart, newEnd;
 
 			if (direction === 'next') {
-				newStart = addMonths(state.viewRange.start, 1);
-				newEnd = addMonths(state.viewRange.end, 1);
+				newStart = addWeeks(viewRange.start, weekCount);
+				newEnd = addWeeks(viewRange.end, weekCount);
 			} else if (direction === 'previous') {
-				newStart = subMonths(state.viewRange.start, 1);
-				newEnd = subMonths(state.viewRange.end, 1);
+				newStart = subWeeks(viewRange.start, weekCount);
+				newEnd = subWeeks(viewRange.end, weekCount);
 			}
 
 			return {
