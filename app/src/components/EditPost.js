@@ -16,10 +16,9 @@ import {
 	filterStatusList,
 	getPostList,
 	moveItem,
-	// stripPermalinkSlug,
 } from '../lib/utils';
 import DatePicker from 'react-datepicker';
-import { format, isFuture, isPast, isToday } from 'date-fns';
+import { formatISO, isFuture, isPast, isToday } from 'date-fns';
 import { isEmpty } from 'lodash';
 import { decode } from 'html-entities';
 
@@ -279,7 +278,7 @@ export default function EditPost() {
 			params: {
 				post_title,
 				post_name,
-				post_date: format(new Date(post.post_date), dateFormat.dateTime),
+				post_date: formatISO(new Date(post.post_date)),
 				post_status: filterPostStatus(post_status, isUnscheduled),
 				post_excerpt,
 				taxonomies: post_taxonomies,

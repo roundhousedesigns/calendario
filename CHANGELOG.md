@@ -2,16 +2,19 @@
 
 All notable changes to Calendar.io will be documented in this file.
 
+## [0.7.59] - Not yet released
+
+### Fixed
+
+-   iOS date formatting bugs.
+-   iOS interaction improvements.
+
 ## [0.7.58] - 2021-12-01
 
 ### Changed
 
 -   Changed static default color definition to action hooked into plugin load.
 -   Minor code improvements.
-
-### Added
-
-### Fixed
 
 -   Using ISO 8601 date format for date string REST returns to the frontend.
 
