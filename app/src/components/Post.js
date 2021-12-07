@@ -21,6 +21,7 @@ export default function Post({ post, index, unscheduled }) {
 	} = useContext(ViewContext);
 	const [color, setColor] = useState('');
 	const [animationRequestId, setAnimationRequestId] = useState(null);
+	const [linksActive, setLinksActive] = useState(false);
 
 	useEffect(() => {
 		if (postStatuses === undefined || isEmpty(postStatuses)) {
@@ -28,11 +29,29 @@ export default function Post({ post, index, unscheduled }) {
 		}
 
 		setColor(postStatuses[post.post_status].color);
-
-		// return () => {
-		// 	setColor("");
-		// };
 	}, [post.post_status, postStatuses]);
+
+	function animateLinks(element, { timing, draw, duration }) {
+		let start = performance.now();
+
+		setAnimationRequestId(() =>
+			requestAnimationFrame(function animate(time) {
+				let timeFraction = (time - start) / duration;
+
+				let progress = timing(timeFraction);
+				draw(element, progress);
+			})
+		);
+
+		setLinksActive(true);
+	}
+
+	function stopAnimateLinks(element) {
+		element.currentTarget.style.paddingBottom = 0;
+		cancelAnimationFrame(animationRequestId);
+
+		setLinksActive(false);
+	}
 
 	const handleClick = (e) => {
 		// Skip if clicking a QuickLink button
@@ -59,34 +78,21 @@ export default function Post({ post, index, unscheduled }) {
 		});
 	};
 
-	function animateLinks(element, { timing, draw, duration }) {
-		let start = performance.now();
-
-		setAnimationRequestId(() =>
-			requestAnimationFrame(function animate(time) {
-				let timeFraction = (time - start) / duration;
-
-				let progress = timing(timeFraction);
-				draw(element, progress);
-			})
-		);
-	}
-
 	const handleMouseLeave = (e) => {
-		e.currentTarget.style.paddingBottom = 0;
-		cancelAnimationFrame(animationRequestId);
+		stopAnimateLinks(e);
 	};
 
-	const handleMouseDown = (e) => {
-		// Close the postLinks drawer if we're clicking or dragging, but not on the drawer itself
-		if (
-			!e.target.classList.contains('postLinks') &&
-			!e.target.classList.contains('postLink')
-		) {
-			cancelAnimationFrame(animationRequestId);
-			e.currentTarget.style.paddingBottom = 0;
-		}
-	};
+	// const handleMouseDown = (e) => {
+	// 	// Close the postLinks drawer if we're clicking or dragging, but not on the drawer itself
+	// 	if (
+	// 		!e.target.classList.contains('postLinks') &&
+	// 		!e.target.classList.contains('postLink')
+	// 	) {
+	// 		stopAnimateLinks(e);
+
+	// 		setLinksActive(false);
+	// 	}
+	// };
 
 	function getStyles(snapshot) {
 		let classes = ['post', `post-id-${post.id} status__${post.post_status}`];
@@ -141,7 +147,7 @@ export default function Post({ post, index, unscheduled }) {
 					onClick={handleClick}
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}
-					onMouseDown={handleMouseDown}
+					// onMouseDown={handleMouseDown}
 				>
 					<div
 						className="postData"
@@ -158,6 +164,7 @@ export default function Post({ post, index, unscheduled }) {
 							style={{
 								backgroundColor: color.replace(/,1\)/, ',0.75)'),
 							}}
+							active={linksActive}
 							post={post}
 							unscheduled={unscheduled}
 						/>

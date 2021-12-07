@@ -126,6 +126,13 @@ export function postsReducer(state, action) {
 			};
 		}
 
+		case 'UNSET_CURRENTPOST': {
+			return {
+				...state,
+				currentPost: initialPosts.currentPost,
+			};
+		}
+
 		case 'REFETCH': {
 			return {
 				...state,
@@ -153,13 +160,6 @@ export function postsReducer(state, action) {
 					...state.currentPost,
 					[action.field]: action.value,
 				},
-			};
-		}
-
-		case 'UNSET_CURRENTPOST': {
-			return {
-				...state,
-				currentPost: initialPosts.currentPost,
 			};
 		}
 

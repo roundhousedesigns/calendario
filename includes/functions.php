@@ -19,26 +19,6 @@ function rhd_validate_date( $date, $format = 'Y-m-d' ) {
 }
 
 /**
- * Formats a date string
- *
- * @param string $date_string The date string to format.
- */
-function rhd_wp_prepare_date( $date_string ) {
-	if ( ! is_string( $date_string ) ) {
-		return;
-	}
-
-	$date = new DateTime( $date_string );
-
-	$date_formatted = array(
-		'post_date'     => $date->format( RHD_WP_DATE_FORMAT ),
-		'post_date_gmt' => get_gmt_from_date( $date_string ),
-	);
-
-	return $date_formatted;
-}
-
-/**
  * Get the furthest-future post date
  *
  * @return string|boolean The post date, or false if no posts found.

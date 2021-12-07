@@ -2,7 +2,6 @@
 import { omit, find, isEmpty, isEqual } from 'lodash';
 import {
 	format,
-	formatISO,
 	parseISO,
 	getHours,
 	getMinutes,
@@ -269,7 +268,7 @@ export function sanitizeParamsForUpdate(params) {
 		switch (key) {
 			case 'post_date':
 				if (params[key] instanceof Date) {
-					params[key] = formatISO(params[key]);
+					params[key] = params[key].toISOString();
 				}
 				break;
 

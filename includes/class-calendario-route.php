@@ -862,7 +862,6 @@ class Calendario_Route extends WP_REST_Controller {
 		$skip = array( 'post_date', 'taxonomies' );
 
 		foreach ( $params as $key => $value ) {
-
 			if ( ! isset( $item[$key] ) && ! in_array( $key, $skip, true ) ) {
 				$item[$key] = $value;
 			}
@@ -878,13 +877,18 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	protected function prepare_post_date_for_database( &$item, $params ) {
 		if ( isset( $params['post_date'] ) ) {
-			$post_date = rhd_wp_prepare_date( $params['post_date'] );
-
 			if ( isset( $params['post_status'] ) && in_array( $params['post_status'], array( 'draft', 'pending' ), true ) ) {
 				$item['edit_date'] = true;
 			}
-			$item['post_date']     = $post_date['post_date'];
-			$item['post_date_gmt'] = $post_date['post_date_gmt'];
+
+			$date        = new DateTime( $params['post_date'] );
+			$date_string = $date->format( RHD_WP_DATE_FORMAT );
+			$post_date   = array(
+				'post_date'     => $date_string,
+				'post_date_gmt' => get_gmt_from_date( $date_string, RHD_WP_DATE_FORMAT ),
+			);
+
+			$item = array_merge( $item, $post_date );
 		}
 	}
 

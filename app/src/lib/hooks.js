@@ -249,7 +249,8 @@ export const useUpdate = (
 			const droppableId =
 				unscheduled === true
 					? 'unscheduled'
-					: format(new Date(params.post_date), dateFormat.date);
+					: // : new Date(params.post_date).toISOString();
+					  format(new Date(params.post_date), dateFormat.date);
 
 			postsDispatch({
 				type: 'UPDATE_INIT',
