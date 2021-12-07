@@ -18,6 +18,7 @@ All notable changes to Calendar.io will be documented in this file.
 
 ### Todo
 
+- Draggable nested scroll containers issue
 - Refactor SCSS
 - iOS style bugs
   - Post Status buttons weird offset
