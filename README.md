@@ -10,10 +10,9 @@
 
 ### Bugs
 
-- Figure out indexing on days w/ multiple posts; adding/removing w/ quicklinks will put them in an order and it's not guaranteed to be the same as server.
-
 ### Todo
 
+- Figure out indexing on days w/ multiple posts; adding/removing w/ quicklinks will put them in an order and it's not guaranteed to be the same as server.
 - Draggable nested scroll containers issue
 - Refactor SCSS
 - iOS style bugs
