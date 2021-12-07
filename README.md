@@ -13,6 +13,7 @@
 ### Todo
 
 - Figure out indexing on days w/ multiple posts; adding/removing w/ quicklinks will put them in an order and it's not guaranteed to be the same as server.
+- Change display format to in Quick Edit box (when not selected/modal not in use)
 - Draggable nested scroll containers issue
 - Refactor SCSS
 - iOS style bugs
