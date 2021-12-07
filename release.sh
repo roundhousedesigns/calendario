@@ -2,7 +2,8 @@
 
 optionaldir="$1"
 dir="${optionaldir:-$HOME}"
-file="${dir}calendario.zip"
+dir="${dir%/}"
+file="${dir}/calendario.zip"
 
 if [ ! -d "$dir" ]; then
 	echo "Invalid directory specified."
@@ -14,7 +15,6 @@ exclude=(
 	app/node_modules\*
 	app/src\*
 	app/build\*
-	release-exclude.lst
 	README.md
 	release.sh
 )
