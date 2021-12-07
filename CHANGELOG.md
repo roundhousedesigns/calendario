@@ -6,6 +6,8 @@ All notable changes to Calendar.io will be documented in this file.
 
 ### Fixed
 
+- iOS date formatting bugs.
+- iOS interaction improvements.
 - Date-to-string issues with timezone offsets fixed.
 - Loading animation working on post Update.
 - Some iPad interactions (ongoing...).

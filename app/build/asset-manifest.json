@@ -6,10 +6,10 @@
     "runtime-main.js": "/static/js/runtime-main.10e84a2a.js",
     "runtime-main.js.map": "/static/js/runtime-main.10e84a2a.js.map",
     "static/css/2.d22f252f.chunk.css": "/static/css/2.d22f252f.chunk.css",
-    "static/js/2.bf1d0d5d.chunk.js": "/static/js/2.bf1d0d5d.chunk.js",
-    "static/js/2.bf1d0d5d.chunk.js.map": "/static/js/2.bf1d0d5d.chunk.js.map",
-    "static/js/3.48596609.chunk.js": "/static/js/3.48596609.chunk.js",
-    "static/js/3.48596609.chunk.js.map": "/static/js/3.48596609.chunk.js.map",
+    "static/js/2.3634b711.chunk.js": "/static/js/2.3634b711.chunk.js",
+    "static/js/2.3634b711.chunk.js.map": "/static/js/2.3634b711.chunk.js.map",
+    "static/js/3.f74ca90a.chunk.js": "/static/js/3.f74ca90a.chunk.js",
+    "static/js/3.f74ca90a.chunk.js.map": "/static/js/3.f74ca90a.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.d22f252f.chunk.css.map": "/static/css/2.d22f252f.chunk.css.map",
     "static/css/main.3ba0ec44.chunk.css.map": "/static/css/main.3ba0ec44.chunk.css.map",
@@ -17,7 +17,7 @@
     "static/media/calendariologo.141d7820.svg": "/static/media/calendariologo.141d7820.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.10e84a2a.js",
+    "static/js/runtime-main.9fda9149.js",
     "static/css/2.d22f252f.chunk.css",
     "static/js/2.bf1d0d5d.chunk.js",
     "static/css/main.3ba0ec44.chunk.css",
