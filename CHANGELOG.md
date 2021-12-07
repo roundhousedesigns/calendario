@@ -2,6 +2,12 @@
 
 All notable changes to Calendar.io will be documented in this file.
 
+### [0.7.61] - 2021-12-07
+
+### Fixed
+
+- Unscheduled draft order saving
+
 ## [0.7.6] - 2021-12-07
 
 ### Fixed
@@ -15,14 +21,6 @@ All notable changes to Calendar.io will be documented in this file.
 ### Added
 
 - Quick Edit explicit link in PostLinks component.
-
-### Todo
-
-- Draggable nested scroll containers issue
-- Refactor SCSS
-- iOS style bugs
-  - Post Status buttons weird offset
-- Test iOS + Android functionality
 
 ## [0.7.58] - 2021-12-01
 

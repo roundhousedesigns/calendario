@@ -838,7 +838,7 @@ class Calendario_Route extends WP_REST_Controller {
 			if ( 0 === $item['ID'] ) {
 				$this->prepare_item_for_unscheduled( $item, true );
 			} else {
-				$new_index = isset( $params['new_index'] ) ? $params['new_index'] : false;
+				$new_index = isset( $params['newIndex'] ) ? $params['newIndex'] : false;
 				$this->prepare_item_for_unscheduled( $item, false );
 				$this->reorder_unscheduled_drafts( $item['ID'], $new_index );
 			}
