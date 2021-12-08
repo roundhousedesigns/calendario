@@ -15,6 +15,7 @@
 
 ### Todo
 
+- Fix/refine edit_lock functionality (currently disabled)
 - Featured Image uploader built-in
 - Real-time changes to posts reflected in interface without refresh, including Lock status.
 - Change date display format in Quick Edit box (when not selected/modal not in use)
