@@ -133,10 +133,10 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	public function create_item_permissions_check( $request ) {
 		// DEBUG.
-		return true;
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
+		// return true;
 
-		$user = wp_get_current_user();
-		return user_can( $user, 'edit_others_posts' );
+		return user_can( wp_get_current_user(), 'edit_others_posts' );
 	}
 
 	/**
@@ -156,7 +156,11 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return bool
 	 */
 	public function options_permissions_check( $request ) {
-		return $this->create_item_permissions_check( $request );
+		// DEBUG.
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
+		// return true;
+
+		return user_can( wp_get_current_user(), 'manage_options' );
 	}
 
 	/**

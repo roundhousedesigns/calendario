@@ -234,7 +234,7 @@ function rhd_check_post_lock( $id ) {
 
 	$lock    = explode( ':', $lock );
 	$time    = $lock[0];
-	$user_id = isset( $lock[1] ) ? $lock[1] : get_post_meta( $post->ID, '_edit_last', true );
+	$user_id = isset( $lock[1] ) ? $lock[1] : get_post_meta( $id, '_edit_last', true );
 
 	if ( ! get_userdata( $user_id ) ) {
 		return false;

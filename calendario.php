@@ -76,7 +76,7 @@ function rhd_set_default_status_colors() {
 	);
 
 	$i = 0;
-	foreach ( $statuses as $status => $atts ) {
+	foreach ( array_keys( $statuses ) as $status ) {
 		$statuses[$status]['color'] = RHD_POST_STATUS_SWATCHES[$i];
 		$i++;
 	}
