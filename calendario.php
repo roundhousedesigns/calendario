@@ -114,7 +114,7 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 					'has_paid_plans'   => true,
 					'is_org_compliant' => false,
 					'trial'            => array(
-						'days'               => 14,
+						'days'               => 30,
 						'is_require_payment' => false,
 					),
 					'menu'             => array(

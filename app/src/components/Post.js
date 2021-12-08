@@ -21,7 +21,7 @@ export default function Post({ post, index, unscheduled }) {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 
-	const { id, post_title, post_status, /*edit_lock*/ } = post;
+	const { id, post_title, post_status /*edit_lock*/ } = post;
 
 	const [color, setColor] = useState('');
 	const [animationRequestId, setAnimationRequestId] = useState(null);

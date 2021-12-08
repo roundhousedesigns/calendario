@@ -13,12 +13,16 @@
 - Draggable nested scroll containers issue (Looks to be innocuous console bug... [https://github.com/atlassian/react-beautiful-dnd/issues/362](https://github.com/atlassian/react-beautiful-dnd/issues/362))
 - Refactor SCSS
 
+### On deck
+
+- Embiggen them quicklinks and let they overflow
+- QE: "Slug:" -> Permalink/URL Slug'
+- Embiggen sidebar toggle/change icon
+
 ### Todo
 
-- Fix/refine edit_lock functionality (currently disabled)
-- Featured Image uploader built-in
-- Real-time changes to posts reflected in interface without refresh, including Lock status.
-- Change date display format in Quick Edit box (when not selected/modal not in use)
+- CRITICAL: Check for ANY posts before loading; breaks when no posts available
+- CRITICAL: Check for permalink structure and prompt to change if pretty permalinks not set
 - Refactor SCSS
 - iOS style bugs
   - Post Status buttons weird offset
@@ -26,10 +30,12 @@
 
 ### Roadmap
 
+- Real-time changes to posts reflected in interface without refresh, including Lock status.
+  - Involves post locking?
+- Add new cat/tag
 - Options Page:
   - CPT inclusion/exclusion - Display Filters
   - Multiple author support/indicators
 - Custom Taxonomy support
-- Restore and refine permalink/slug Edit capability
 - Featured Image selector/uploader
 - Improve mobile interface
