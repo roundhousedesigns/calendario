@@ -44,8 +44,6 @@ class Calendario {
 		add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
 
 		// TODO Create settings page (roadmap).
-		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar,Squiz.PHP.CommentedOutCode.Found
-		// add_action( 'admin_menu', array( $this, 'create_settings_page' ) );
 	}
 
 	/**

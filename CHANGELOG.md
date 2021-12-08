@@ -8,6 +8,8 @@ All notable changes to Calendar.io will be documented in this file.
 
 - CSS improvements
 - EditPost layout and style improvements
+- Code refinements and formatting; minor refactoring
+- \<user\> in REST routes removed (development crutch), all checks now look for logged in user server-side
 
 ### Fixed
 

@@ -10,7 +10,6 @@ import {
 	reorderUnscheduled,
 	getPostList,
 	moveItem,
-	wp,
 	draggedPostDestination,
 	filterPostStatus,
 } from './lib/utils';
@@ -52,7 +51,6 @@ export default function App() {
 		scheduled: scheduledPosts,
 		currentPost,
 	} = posts;
-	const { user } = wp;
 
 	useEffect(() => {
 		// Update the context initially
@@ -78,7 +76,7 @@ export default function App() {
 	/**
 	 * Send the update
 	 */
-	useUpdate(posts, postsDispatch, draggedPost, draggedPostDispatch, user);
+	useUpdate(posts, postsDispatch, draggedPost, draggedPostDispatch);
 
 	const isOverUnscheduled = (droppableId) =>
 		droppableId === 'unscheduled' ? true : false;

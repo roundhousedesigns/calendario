@@ -18,7 +18,6 @@ export const wp =
 				nonce: 0,
 				// routeBase: 'http://localhost/wp-json/calendario/v1',
 				routeBase: 'http://localhost/backend/wp-json/calendario/v1',
-				user: 1,
 				adminUrl: '',
 				pluginUrl: '//localhost/backend/wp-content/plugins/calendario/',
 				postsUrl: '',

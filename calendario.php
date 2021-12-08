@@ -19,8 +19,9 @@ define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.63' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
-// Load JS interface locally.
 // phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
+
+// Load JS interface locally (development).
 // define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
 // define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
 

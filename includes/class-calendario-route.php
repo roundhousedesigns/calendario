@@ -70,7 +70,7 @@ class Calendario_Route extends WP_REST_Controller {
 
 		register_rest_route(
 			$namespace,
-			'/' . $post_base . '/update/(?P<ID>\d+)/(?P<user_id>\d+)',
+			'/' . $post_base . '/update/(?P<ID>\d+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -83,20 +83,19 @@ class Calendario_Route extends WP_REST_Controller {
 
 		register_rest_route(
 			$namespace,
-			'/' . $post_base . '/new/(?P<user_id>\d+)',
+			'/' . $post_base . '/new',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'create_item' ),
 					'permission_callback' => array( $this, 'create_item_permissions_check' ),
-					'args'                => array( $this->get_create_post_endpoint_args() ),
 				),
 			)
 		);
 
 		register_rest_route(
 			$namespace,
-			'/' . $post_base . '/trash/(?P<ID>\d+)/(?P<user_id>\d+)',
+			'/' . $post_base . '/trash/(?P<ID>\d+)',
 			array(
 				array(
 					'methods'             => WP_REST_Server::EDITABLE,
@@ -229,28 +228,6 @@ class Calendario_Route extends WP_REST_Controller {
 		return array(
 			'post_id' => array(
 				'description'       => esc_html__( 'Post ID', 'calendario' ),
-				'type'              => 'int',
-				'validate_callback' => array( $this, 'validate_integer' ),
-				'sanitize_callback' => 'absint',
-				'required'          => true,
-			),
-			'user_id' => array(
-				'description'       => esc_html__( 'User ID', 'calendario' ),
-				'type'              => 'int',
-				'validate_callback' => array( $this, 'validate_integer' ),
-				'sanitize_callback' => 'absint',
-				'required'          => true,
-			),
-		);
-	}
-
-	/**
-	 * Get argument schema for new post data.
-	 */
-	public function get_create_post_endpoint_args() {
-		return array(
-			'user_id' => array(
-				'description'       => esc_html__( 'User ID', 'calendario' ),
 				'type'              => 'int',
 				'validate_callback' => array( $this, 'validate_integer' ),
 				'sanitize_callback' => 'absint',
@@ -782,6 +759,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	protected function prepare_existing_item_for_database( $request ) {
 		$params = $request->get_params();
+		$user   = wp_get_current_user();
 		$item   = array();
 
 		if ( ! isset( $params['ID'] ) ) {
@@ -791,7 +769,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$item = array(
 			'ID'         => $params['ID'],
 			'meta_input' => array(
-				'_edit_last' => $params['user_id'],
+				'_edit_last' => $user->ID,
 			),
 		);
 
@@ -814,9 +792,10 @@ class Calendario_Route extends WP_REST_Controller {
 	 */
 	protected function prepare_new_item_for_database( $request ) {
 		$params = $request->get_params();
+		$user   = wp_get_current_user();
 		$item   = array(
 			'ID'      => 0,
-			'user_id' => $params['user_id'],
+			'user_id' => $user->ID,
 		);
 
 		$this->prepare_scheduled_unscheduled( $item, $params );

@@ -230,7 +230,6 @@ export const useFetchTaxonomyTerms = (name, posts, postsDispatch) => {
  * @param {Function} postsDispatch PostsContext reducer
  * @param {Object} draggedPost DragContext store
  * @param {Function} draggedPostDispatch DragContext reducer
- * @param {number} user User ID
  * @returns {void}
  */
 export const useUpdate = (
@@ -238,7 +237,6 @@ export const useUpdate = (
 	postsDispatch,
 	draggedPost,
 	draggedPostDispatch,
-	user
 ) => {
 	useEffect(() => {
 		const {
@@ -261,13 +259,13 @@ export const useUpdate = (
 			 */
 			let url = `${routeBase}/posts/`;
 			if (trash === true) {
-				url += `trash/${id}/${user}`;
+				url += `trash/${id}`;
 				postsDispatch({ type: 'REMOVE_POST', droppableId });
 			} else if (id === 0) {
-				url += `new/${user}`;
+				url += `new`;
 				postsDispatch({ type: 'ADD_POST', droppableId });
 			} else {
-				url += `update/${id}/${user}`;
+				url += `update/${id}`;
 				postsDispatch({
 					type: 'UPDATE_POST',
 					droppableId,
@@ -318,7 +316,7 @@ export const useUpdate = (
 
 			sendUpdate();
 		}
-	}, [user, posts, draggedPost, draggedPostDispatch, postsDispatch]);
+	}, [posts, draggedPost, draggedPostDispatch, postsDispatch]);
 };
 
 /**
