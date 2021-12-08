@@ -69,10 +69,6 @@ export function postsReducer(state, action) {
 		case 'SET_UNSCHEDULED': {
 			let { posts: unscheduledPosts } = action;
 
-			if (!unscheduledPosts) {
-				return { state };
-			}
-
 			// cast the date as a Date object
 			unscheduledPosts.forEach((post, index) => {
 				unscheduledPosts[index].post_date = new Date(post.post_date);

@@ -974,6 +974,7 @@ wp-content/*
 !wp-content/themes/
 wp-content/themes/twenty*/
 node_modules/
+freemius/
 
 # ROS
 devel/
@@ -1599,5 +1600,5 @@ application/logs/*
 output/
 tmp/nanoc/
 
-# WordPress
-freemius/*
+# RHD
+callboard/
