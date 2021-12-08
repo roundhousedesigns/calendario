@@ -16,7 +16,6 @@ import {
 	filterStatusList,
 	getPostList,
 	moveItem,
-	stripPermalinkSlug,
 } from '../lib/utils';
 import DatePicker from 'react-datepicker';
 import { isFuture, isPast, isToday } from 'date-fns';
@@ -152,21 +151,6 @@ export default function EditPost() {
 		taxonomies: post_taxonomies,
 		unscheduled: isUnscheduled,
 	} = post;
-
-	// Save the original slug
-	// useEffect(() => {
-	// 	if (!initial.current.post_status) {
-	// 		initial.current.post_status = post_status;
-	// 	}
-
-	// 	if (!initial.current.slug) {
-	// 		initial.current.slug = post_name;
-	// 	}
-
-	// 	return () => {
-	// 		initial.current = {};
-	// 	};
-	// }, [post_name, post_status]);
 
 	useEffect(() => {
 		if (post_date && post_date !== 'undefined') {
@@ -377,6 +361,24 @@ export default function EditPost() {
 							}`}
 							onSubmit={handleSubmit}
 						>
+							<div className="editPost__links">
+								<a
+									className="editLink"
+									href={decode(edit_link)}
+									target="_blank"
+									rel="noreferrer"
+								>
+									Edit Post
+								</a>
+								<a
+									className="viewLink"
+									href={decode(view_link)}
+									target="_blank"
+									rel="noreferrer"
+								>
+									View Post
+								</a>
+							</div>
 							<div className="editPost__title">
 								<FieldGroup name="post_title">
 									<input
@@ -393,7 +395,7 @@ export default function EditPost() {
 							<div className="header">
 								<div className="header__left">
 									<FieldGroup name="post_name">
-										<div className="permalink">
+										<div className="slug">
 											{id === 0 ? (
 												// Adding a new post
 												'Save this post to edit its permalink.'
@@ -401,12 +403,9 @@ export default function EditPost() {
 												// Editing a post
 												<>
 													<div className="permalink__label">
-														<span className="label">Permalink:</span>
+														<span className="label">Slug:</span>
 													</div>
 													<div className="permalink__field">
-														<span className="base">
-															{stripPermalinkSlug(view_link)}
-														</span>
 														<input
 															name="post_name"
 															id="post_name"
@@ -431,7 +430,7 @@ export default function EditPost() {
 												selected={date}
 												timeInputLabel="Time:"
 												showTimeInput
-												dateFormat={dateFormat.dateTime}
+												dateFormat={dateFormat.fullDateTime}
 												onChange={handleInputDateChange}
 												disabled={datePickerDisabled}
 											/>
@@ -451,7 +450,7 @@ export default function EditPost() {
 										<textarea
 											name="post_excerpt"
 											onChange={handleInputChange}
-											rows={4}
+											rows={14}
 											value={decode(post_excerpt, {
 												scope: 'strict',
 											})}
@@ -486,18 +485,39 @@ export default function EditPost() {
 											<>
 												<input
 													type="submit"
-													className="save"
+													className="save button"
 													value={id === 0 ? 'Save' : 'Update'}
 												/>
 												<input
 													type="button"
-													className="trash"
+													className="trash button"
 													onClick={() => setTrashPostClicked(true)}
 													value="Delete"
 												/>
 											</>
 										)}
 									</div>
+									<FieldGroup name="fieldGroup__status">
+										<label htmlFor="post_status">Post Status</label>
+										<select
+											name="post_status"
+											onChange={handleInputChange}
+											value={post_status}
+										>
+											{renderStatusOptions(allowedStatuses)}
+										</select>
+									</FieldGroup>
+									<FieldGroup name="post_thumb">
+										<a
+											href={decode(edit_link)}
+											target="_blank"
+											rel="noreferrer"
+										>
+											Featured Image{' '}
+											<Icon className="open_in_new">open_in_new</Icon>
+											{image ? <img src={image} alt={`${post_title}`} /> : ''}
+										</a>
+									</FieldGroup>
 									<div className="editPost__links">
 										<a
 											className="editLink"
@@ -516,27 +536,6 @@ export default function EditPost() {
 											View Post
 										</a>
 									</div>
-									<div className="fieldGroup__status">
-										<label htmlFor="post_status">Post Status</label>
-										<select
-											name="post_status"
-											onChange={handleInputChange}
-											value={post_status}
-										>
-											{renderStatusOptions(allowedStatuses)}
-										</select>
-									</div>
-									<FieldGroup name="post_thumb">
-										<a
-											href={decode(edit_link)}
-											target="_blank"
-											rel="noreferrer"
-										>
-											Featured Image{' '}
-											<Icon className="open_in_new">open_in_new</Icon>
-											{image ? <img src={image} alt={`${post_title}`} /> : ''}
-										</a>
-									</FieldGroup>
 								</div>
 							</div>
 							<FieldGroup name="taxonomies">

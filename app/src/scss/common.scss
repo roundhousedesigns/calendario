@@ -1,11 +1,10 @@
-button {
-	border-radius: var(--borderRadius);
-	font-size: 1em;
-	outline: none;
-	padding: 0.25em 0.5em;
-	font-weight: normal;
-	color: var(--textColor-dark);
+button,
+input[type='submit'],
+.button {
+	@include button;
+}
 
+button {
 	&.icon {
 		color: var(--textColor);
 	}
@@ -121,6 +120,10 @@ button {
 		margin-top: 0;
 	}
 
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+
 	&.inlineLabel {
 		label,
 		input,
@@ -142,7 +145,7 @@ button {
 	select,
 	fieldset {
 		display: block;
-		border: 1px solid var(--textColor);
+		border: 1px solid var(--textColor-light);
 	}
 
 	input,
@@ -153,7 +156,7 @@ button {
 
 	input,
 	textarea {
-		padding: 4px;
+		padding: 6px;
 	}
 
 	input {
@@ -166,7 +169,7 @@ button {
 
 	select {
 		cursor: pointer;
-		padding: 2px 26px 2px 4px;
+		padding: 6px 26px 6px 6px;
 	}
 }
 

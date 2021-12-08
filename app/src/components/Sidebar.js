@@ -4,16 +4,13 @@ import Widget from './common/Widget';
 import UnscheduledDrafts from './UnscheduledDrafts';
 import StatusFilters from './StatusFilters';
 import ViewOptions from './ViewOptions';
-import { wp } from '../lib/utils';
+import BetaInfo from './BetaInfo';
 
 import ViewContext from '../ViewContext';
 
 export default function Sidebar() {
-	const { pluginUrl } = wp;
-
 	const {
 		viewOptions: { sidebarOpen },
-		// viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
 
@@ -43,41 +40,7 @@ export default function Sidebar() {
 				</Widget>
 
 				<Widget widgetClass="support">
-					<div className="support-links">
-						<a
-							className="rhdLogo"
-							href="https://roundhouse-designs.com"
-							target="_blank"
-							rel="noreferrer"
-						>
-							<img
-								src={`${pluginUrl}rhd-logo.png`}
-								alt="Roundhouse Designs logo"
-							/>
-						</a>
-						<ul className="docs">
-							<li>
-								<a
-									href="https://github.com/roundhousedesigns/calendario/blob/main/CHANGELOG.md"
-									rel="noreferrer"
-									target="_blank"
-								>
-									Changelog
-								</a>
-							</li>
-							<li>Documentation coming soon</li>
-							<li>Thanks for testing!</li>
-							<li>
-								<a
-									href="mailto:help@roundhouse-designs.com?subject=Calendar.io Support Request?body=***Please type your editorial calendar.io support request here***"
-									rel="noreferrer"
-									target="_blank"
-								>
-									Support
-								</a>
-							</li>
-						</ul>
-					</div>
+					<BetaInfo />
 				</Widget>
 			</div>
 		</aside>
