@@ -13,7 +13,7 @@
 		"html-entities": "^2.1.0",
 		"husky": "^5.2.0",
 		"is-ci": "^3.0.0",
-		"node-sass": "^6.0.1",
+		"node-sass": "^7.0.0",
 		"prop-types": "^15.7.2",
 		"react": "^17.0.1",
 		"react-beautiful-dnd": "^13.1.0",
