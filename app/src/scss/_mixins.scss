@@ -1,5 +1,5 @@
 @mixin dropAreaProps {
-	content: "\0a00";
+	content: '\0a00';
 	font-size: 0.5em;
 	opacity: 0;
 	text-transform: uppercase;
@@ -15,4 +15,15 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+}
+
+@mixin button {
+	border: none;
+	border-radius: var(--borderRadius);
+	font-size: 1em;
+	outline: none;
+	padding: 8px 12px;
+	font-weight: normal;
+	color: var(--textColor-dark);
+	cursor: pointer;
 }

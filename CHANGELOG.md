@@ -2,6 +2,13 @@
 
 All notable changes to Calendar.io will be documented in this file.
 
+### [0.7.62] - Not yet released
+
+## Changed
+
+- CSS improvements
+- EditPost layout and style improvements
+
 ### [0.7.61] - 2021-12-07
 
 ### Fixed

@@ -50,12 +50,10 @@ export const wp =
 export const dateFormat = {
 	day: 'd',
 	date: 'yyyy-MM-dd',
-	dateTime: 'yyyy-MM-dd h:mm aa',
-	year: 'yyyy',
 	dayName: 'EEEE',
-	monthName: 'MMMM',
 	monthShort: 'MMM',
 	fullDate: 'EEEE,  MMMM dd, yyyy',
+	fullDateTime: 'EEEE,  MMMM dd, yyyy @ h:mm aa',
 	daylessDate: 'MMMM dd, yyyy',
 };
 
