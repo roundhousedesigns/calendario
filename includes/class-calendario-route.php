@@ -2,10 +2,10 @@
 /**
  * Calendario REST routes.
  *
- * @package rhd
- *
- * phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
+ * @package calendario
  */
+
+// phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
 
 /**
  * Class Calendario_Route.
@@ -493,10 +493,10 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_scheduled_items( $request ) {
-		$body = $request->get_params();
+		$params = $request->get_params();
 
-		$start = isset( $body['start'] ) && $body['start'] ? $body['start'] : null;
-		$end   = isset( $body['end'] ) && $body['end'] ? $body['end'] : rhd_get_futuremost_date();
+		$start = isset( $params['start'] ) && $params['start'] ? $params['start'] : null;
+		$end   = isset( $params['end'] ) && $params['end'] ? $params['end'] : rhd_get_futuremost_date();
 
 		// Force the date range to the beginning of the day 'start' and the end of day 'end'.
 		$start = rhd_start_of_day( $start );
@@ -645,7 +645,6 @@ class Calendario_Route extends WP_REST_Controller {
 			}
 		}
 
-		// TODO Improve this error message.
 		return new WP_Error( 'error-updating', __( 'Error updating post or post terms.', 'calendario' ), array( 'status' => 500 ) );
 	}
 
@@ -712,9 +711,9 @@ class Calendario_Route extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function update_post_statuses( $request ) {
-		$body = $request->get_params();
+		$params = $request->get_params();
 
-		$result = update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $body );
+		$result = update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $params );
 
 		if ( false !== $result ) {
 			return new WP_REST_Response( 'Post status colors updated.', 200 );
@@ -944,6 +943,7 @@ class Calendario_Route extends WP_REST_Controller {
 				'category' => rhd_get_term_ids( $item->ID, 'category' ),
 				'post_tag' => rhd_get_term_ids( $item->ID, 'post_tag' ),
 			),
+			'edit_lock'    => rhd_check_post_lock( $item->ID ),
 		);
 
 	}

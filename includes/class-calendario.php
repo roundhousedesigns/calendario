@@ -42,13 +42,17 @@ class Calendario {
 
 		// wp-admin interface.
 		add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
+
+		// TODO Create settings page (roadmap).
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar,Squiz.PHP.CommentedOutCode.Found
+		// add_action( 'admin_menu', array( $this, 'create_settings_page' ) );
 	}
 
 	/**
 	 * Load react app files in WordPress admin.
 	 *
-	 * @param string $hook TODO **Needs documentation.
-	 * @return bool|void TODO **Needs documentation.
+	 * @param string $hook The admin page hook.
+	 * @return void
 	 */
 	public function load_react_app__premium_only( $hook ) {
 		// Limit app load in admin by admin page hook.
@@ -117,7 +121,16 @@ class Calendario {
 	 * @return void
 	 */
 	public function create_plugin_page() {
-		add_submenu_page( 'edit.php', 'Calendario', 'Calendario', 'manage_options', 'calendario', array( $this, 'calendario_page' ) );
+		add_submenu_page( 'edit.php', 'Editorial Calendar.io', 'Calendar.io', 'manage_options', 'calendario', array( $this, 'calendario_page' ) );
+	}
+
+	/**
+	 * Creates the settings page!
+	 *
+	 * @return void
+	 */
+	public function create_settings_page() {
+		add_submenu_page( 'options-general.php', 'Editorial Calendar.io Settings', 'Calendario.io Settings', 'manage_options', 'calendario', array( $this, 'calendario_settings_page' ) );
 	}
 
 	/**
@@ -126,7 +139,14 @@ class Calendario {
 	 * @return void
 	 */
 	public function calendario_page() {
-		include_once RHD_CALENDARIO_PLUGIN_DIR_BASE . 'templates/main.php';
+		include_once RHD_CALENDARIO_PLUGIN_DIR_BASE . 'pages/main.php';
+	}
+
+	/**
+	 * The settings page.
+	 */
+	public function calendario_settings_page() {
+		include_once RHD_CALENDARIO_PLUGIN_DIR_BASE . 'pages/settings.php';
 	}
 
 	/**

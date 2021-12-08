@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PostLinks from './PostLinks';
+import Icon from './common/Icon';
 import { Draggable } from 'react-beautiful-dnd';
 import { isEmpty } from 'lodash';
 import { decode } from 'html-entities';
@@ -19,6 +20,9 @@ export default function Post({ post, index, unscheduled }) {
 	const {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
+
+	const { id, post_title, post_status, edit_lock } = post;
+
 	const [color, setColor] = useState('');
 	const [animationRequestId, setAnimationRequestId] = useState(null);
 	const [linksActive, setLinksActive] = useState(false);
@@ -28,8 +32,8 @@ export default function Post({ post, index, unscheduled }) {
 			return;
 		}
 
-		setColor(postStatuses[post.post_status].color);
-	}, [post.post_status, postStatuses]);
+		setColor(postStatuses[post_status].color);
+	}, [post_status, postStatuses]);
 
 	function animateLinks(element, { timing, draw, duration }) {
 		let start = performance.now();
@@ -53,17 +57,25 @@ export default function Post({ post, index, unscheduled }) {
 		setLinksActive(false);
 	}
 
+	const handleMouseDown = (e) => {
+		// TODO REST check for edit_lock?
+	};
+
 	const handleClick = (e) => {
 		// Skip if clicking a QuickLink button
 		if (e.target.classList.contains('icon')) {
 			return;
 		}
 
-		postsDispatch({
-			type: 'SET_CURRENTPOST',
-			post: post,
-			unscheduled,
-		});
+		// TODO REST check for edit_lock?
+
+		if (!edit_lock) {
+			postsDispatch({
+				type: 'SET_CURRENTPOST',
+				post: post,
+				unscheduled,
+			});
+		}
 	};
 
 	const handleMouseEnter = (e) => {
@@ -82,24 +94,11 @@ export default function Post({ post, index, unscheduled }) {
 		stopAnimateLinks(e);
 	};
 
-	// const handleMouseDown = (e) => {
-	// 	// Close the postLinks drawer if we're clicking or dragging, but not on the drawer itself
-	// 	if (
-	// 		!e.target.classList.contains('postLinks') &&
-	// 		!e.target.classList.contains('postLink')
-	// 	) {
-	// 		stopAnimateLinks(e);
-
-	// 		setLinksActive(false);
-	// 	}
-	// };
-
 	function getStyles(snapshot) {
-		let classes = ['post', `post-id-${post.id} status__${post.post_status}`];
+		let classes = ['post', `post-id-${id} status__${post_status}`];
 
 		if (
-			(unscheduled === false &&
-				postStatuses[post.post_status].visible === true) ||
+			(unscheduled === false && postStatuses[post_status].visible === true) ||
 			unscheduled === true
 		) {
 			classes.push('visible');
@@ -107,7 +106,7 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push('hidden');
 		}
 
-		if (!isEmpty(currentPost) && currentPost.id === post.id) {
+		if (!isEmpty(currentPost) && currentPost.id === id) {
 			classes.push('currentPost');
 		}
 
@@ -123,7 +122,7 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push('over__none');
 		}
 
-		if (isUpdating) {
+		if (isUpdating || edit_lock) {
 			classes.push('locked');
 		}
 
@@ -132,22 +131,22 @@ export default function Post({ post, index, unscheduled }) {
 
 	return !isEmpty(postStatuses) ? (
 		<Draggable
-			draggableId={`${post.id}`}
+			draggableId={`${id}`}
 			index={index}
-			isDragDisabled={isUpdating ? true : false}
+			isDragDisabled={isUpdating || edit_lock ? true : false}
 		>
 			{({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
 				<li
 					ref={innerRef}
 					{...draggableProps}
 					{...dragHandleProps}
-					key={post.id}
+					key={id}
 					className={getStyles(snapshot)}
 					data-index={index}
 					onClick={handleClick}
 					onMouseEnter={handleMouseEnter}
 					onMouseLeave={handleMouseLeave}
-					// onMouseDown={handleMouseDown}
+					onMouseDown={handleMouseDown}
 				>
 					<div
 						className="postData"
@@ -156,7 +155,14 @@ export default function Post({ post, index, unscheduled }) {
 						}}
 					>
 						<p className="postData__title">
-							{decode(post.post_title, { scope: 'strict' })}
+							{decode(post_title, { scope: 'strict' })}
+							{edit_lock ? (
+								<Icon className="lock" tooltip="Currently being edited.">
+									lock
+								</Icon>
+							) : (
+								''
+							)}
 						</p>
 					</div>
 					{!isDragging ? (

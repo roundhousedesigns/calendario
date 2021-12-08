@@ -217,3 +217,46 @@ function rhd_set_post_status_colors() {
 		update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $colors );
 	}
 }
+
+/**
+ * Checks if a post is edit-locked. Duplicates functionality found in `wp_check_post_lock()`
+ *   which is only available in the WP post editor.
+ *
+ * @param int $id The post ID.
+ * @return string|false A descriptive user string if locked, false otherwise.
+ */
+function rhd_check_post_lock( $id ) {
+	$lock = get_post_meta( $id, '_edit_lock', true );
+
+	if ( ! $lock ) {
+		return false;
+	}
+
+	$lock    = explode( ':', $lock );
+	$time    = $lock[0];
+	$user_id = isset( $lock[1] ) ? $lock[1] : get_post_meta( $post->ID, '_edit_last', true );
+
+	if ( ! get_userdata( $user_id ) ) {
+		return false;
+	}
+
+	/** This filter is documented in wp-admin/includes/ajax-actions.php */
+	$time_window = apply_filters( 'wp_check_post_lock_window', 150 );
+
+	// Omit the check if the current user is the locking user (differs from `wp_check_post_lock`).
+	if ( $time && $time > time() - $time_window ) {
+		$user = array(
+			'first_name' => get_user_meta( $user_id, 'first_name', true ),
+			'last_name'  => get_user_meta( $user_id, 'last_name', true ),
+		);
+
+		return sprintf(
+			'%1$s %2$s (ID: %3$d)',
+			wp_strip_all_tags( $user['first_name'], true ),
+			wp_strip_all_tags( $user['last_name'], true ),
+			$user_id
+		);
+	}
+
+	return false;
+}

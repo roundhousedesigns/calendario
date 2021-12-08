@@ -5,7 +5,7 @@
  * Author:         Roundhouse Designs
  * Author URI:     https://roundhouse-designs.com
  * Text Domain:    rhd
- * Version:        0.7.60
+ * Version:        0.7.61
  *
  * @package       calendario
  *
@@ -15,18 +15,16 @@
 /**
  * Paths
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.60' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.61' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
-// Enable for development mode.
-// TODO Freemius code to exclude from dist?
-
+// Load JS interface locally.
 // phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
 define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
 define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
 
-// Enable for production.
+// Load JS interface from CloudFlare Pages (CI/CD).
 // define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
 
 // phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
@@ -107,6 +105,7 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 				array(
 					'id'               => '8136',
 					'slug'             => 'calendario',
+					'premium_slug'     => 'calendario',
 					'type'             => 'plugin',
 					'public_key'       => 'pk_0ceb9fcfae9cbd708428cd6126d45',
 					'is_premium'       => true,

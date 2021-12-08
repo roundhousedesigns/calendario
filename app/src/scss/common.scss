@@ -97,7 +97,7 @@ button {
 
 .icon {
 	color: var(--textColor);
-	font-family: "Material Icons", serif;
+	font-family: 'Material Icons', serif;
 	font-style: normal;
 	display: inline-block;
 	vertical-align: middle;
@@ -110,7 +110,7 @@ button {
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
 	-moz-osx-font-smoothing: grayscale;
-	font-feature-settings: "liga";
+	font-feature-settings: 'liga';
 	text-align: center;
 }
 
@@ -250,7 +250,7 @@ button {
 			transform-origin: 40px 40px;
 
 			&::after {
-				content: " ";
+				content: ' ';
 				display: block;
 				position: absolute;
 				width: 7px;

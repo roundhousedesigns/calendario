@@ -10,11 +10,13 @@
 
 ### Bugs
 
+- Draggable nested scroll containers issue (Looks to be innocuous console bug... [https://github.com/atlassian/react-beautiful-dnd/issues/362](https://github.com/atlassian/react-beautiful-dnd/issues/362))
+- Refactor SCSS
+
 ### Todo
 
-- Figure out indexing on days w/ multiple posts; adding/removing w/ quicklinks will put them in an order and it's not guaranteed to be the same as server.
-- Draggable nested scroll containers issue
-- Refactor SCSS
+- Real-time changes to posts reflected in interface without refresh, including Lock status.
+- Push changes in real time to interface
 - iOS style bugs
   - Post Status buttons weird offset
 - Test iOS + Android functionality

@@ -23,7 +23,7 @@ export default function StatusFilters() {
 	}, [postStatuses]);
 
 	// Updates the server when the dispatch is updated (after debounce)
-	// TODO Move this to hooks.js
+	// TODO Move this to hooks.js?
 	useEffect(() => {
 		if (isEmpty(postStatuses)) {
 			return;

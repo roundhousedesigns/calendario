@@ -1,7 +1,12 @@
 import React from 'react';
 
-export default function Icon({ className, children }) {
+export default function Icon({ className, tooltip, children }) {
 	return (
-		<span className={className ? `icon ${className}` : 'icon'}>{children}</span>
+		<span
+			title={tooltip ? tooltip : ''}
+			className={className ? `icon ${className}` : 'icon'}
+		>
+			{children}
+		</span>
 	);
 }

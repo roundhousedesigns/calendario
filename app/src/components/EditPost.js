@@ -16,6 +16,7 @@ import {
 	filterStatusList,
 	getPostList,
 	moveItem,
+	stripPermalinkSlug,
 } from '../lib/utils';
 import DatePicker from 'react-datepicker';
 import { isFuture, isPast, isToday } from 'date-fns';
@@ -147,25 +148,25 @@ export default function EditPost() {
 		post_excerpt,
 		image,
 		edit_link,
-		// view_link,
+		view_link,
 		taxonomies: post_taxonomies,
 		unscheduled: isUnscheduled,
 	} = post;
 
 	// Save the original slug
-	useEffect(() => {
-		if (!initial.current.post_status) {
-			initial.current.post_status = post_status;
-		}
+	// useEffect(() => {
+	// 	if (!initial.current.post_status) {
+	// 		initial.current.post_status = post_status;
+	// 	}
 
-		if (!initial.current.slug) {
-			initial.current.slug = post_name;
-		}
+	// 	if (!initial.current.slug) {
+	// 		initial.current.slug = post_name;
+	// 	}
 
-		return () => {
-			initial.current = {};
-		};
-	}, [post_name, post_status]);
+	// 	return () => {
+	// 		initial.current = {};
+	// 	};
+	// }, [post_name, post_status]);
 
 	useEffect(() => {
 		if (post_date && post_date !== 'undefined') {
@@ -274,7 +275,7 @@ export default function EditPost() {
 
 		postsDispatch({
 			type: 'PREPARE_UPDATE',
-			id: id,
+			id,
 			params: {
 				post_title,
 				post_name,
@@ -388,37 +389,36 @@ export default function EditPost() {
 										onChange={handleInputChange}
 									/>
 								</FieldGroup>
-								<a
-									className="editLink"
-									href={decode(edit_link)}
-									target="_blank"
-									rel="noreferrer"
-								>
-									Edit <Icon className="open_in_new">open_in_new</Icon>
-								</a>
 							</div>
 							<div className="header">
 								<div className="header__left">
-									{/* {initial.current.post_status ===
-									"publish" ? (
-										<FieldGroup name="post_name">
-											<div className="permalink">
-												<span className="base">
-													{stripPermalinkSlug(
-														view_link
-													)}
-												</span>
-												<input
-													name="post_name"
-													id="post_name"
-													value={post_name}
-													onChange={handleInputChange}
-												/>
-											</div>
-										</FieldGroup>
-									) : (
-										""
-									)} */}
+									<FieldGroup name="post_name">
+										<div className="permalink">
+											{id === 0 ? (
+												// Adding a new post
+												'Save this post to edit its permalink.'
+											) : (
+												// Editing a post
+												<>
+													<div className="permalink__label">
+														<span className="label">Permalink:</span>
+													</div>
+													<div className="permalink__field">
+														<span className="base">
+															{stripPermalinkSlug(view_link)}
+														</span>
+														<input
+															name="post_name"
+															id="post_name"
+															value={post_name}
+															onChange={handleInputChange}
+															placeholder="post-slug"
+														/>
+													</div>
+												</>
+											)}
+										</div>
+									</FieldGroup>
 									<FieldGroup name="date">
 										<div
 											className={`post_date ${
@@ -497,6 +497,24 @@ export default function EditPost() {
 												/>
 											</>
 										)}
+									</div>
+									<div className="editPost__links">
+										<a
+											className="editLink"
+											href={decode(edit_link)}
+											target="_blank"
+											rel="noreferrer"
+										>
+											Edit Post
+										</a>
+										<a
+											className="viewLink"
+											href={decode(view_link)}
+											target="_blank"
+											rel="noreferrer"
+										>
+											View Post
+										</a>
 									</div>
 									<div className="fieldGroup__status">
 										<label htmlFor="post_status">Post Status</label>

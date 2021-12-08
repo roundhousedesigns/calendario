@@ -5,9 +5,18 @@
 	list-style: none;
 	margin-bottom: $postLinks__height;
 	transition: background-color 150ms ease;
+	overflow: unset;
 
 	&.draggingOver {
 		background-color: var(--mainColor-transparent);
+
+		&:not(.unscheduledDrafts) {
+			.post {
+				&:not(.dragging) {
+					transform: none !important;
+				}
+			}
+		}
 	}
 
 	.post {
@@ -17,7 +26,7 @@
 		color: var(--neutralColor);
 		cursor: pointer;
 		position: relative;
-		// transition: all 100ms ease-in-out;
+		transition: all 100ms ease-in-out;
 
 		&.hovered {
 			padding-bottom: $postLinks__height;
@@ -101,11 +110,18 @@
 			overflow: hidden;
 
 			&__title {
-				display: inline-block;
+				display: flex;
 				padding: 0 1px;
 				width: 100%;
 				margin: 0;
 				pointer-events: none;
+				justify-content: space-between;
+				align-items: center;
+
+				.icon {
+					color: inherit;
+					opacity: 0.75;
+				}
 			}
 		}
 
@@ -115,16 +131,6 @@
 			}
 		}
 	}
-
-	// &.dayPosts {
-	// 	.post {
-	// 		&:hover {
-	// 			.postLinks {
-	// 				width: 94px;
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	&.unscheduledDrafts {
 		.post {

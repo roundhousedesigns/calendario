@@ -8,6 +8,15 @@ All notable changes to Calendar.io will be documented in this file.
 
 - Unscheduled draft order saving
 
+### Added
+
+- Lock icon (and action prevention) on posts with `_edit_lock` (being edited by a user).
+
+### Changed
+
+- Calendar days no longer animate as though reorderable.
+- Embiggened the Post Title field on the editor.
+
 ## [0.7.6] - 2021-12-07
 
 ### Fixed

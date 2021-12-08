@@ -76,7 +76,7 @@ export default function App() {
 	useFetchPostStatuses(viewOptionsDispatch);
 
 	/**
-	 * Send the upaate
+	 * Send the update
 	 */
 	useUpdate(posts, postsDispatch, draggedPost, draggedPostDispatch, user);
 
@@ -219,7 +219,7 @@ export default function App() {
 		draggedPostDispatch({ type: 'END' });
 	};
 
-	function appClass() {
+	const appClass = () => {
 		const { sidebarOpen } = viewOptions;
 
 		let classes = ['calendarioMain'];
@@ -231,7 +231,7 @@ export default function App() {
 		}
 
 		return classes.join(' ');
-	}
+	};
 
 	return (
 		<>
@@ -245,7 +245,6 @@ export default function App() {
 				<ViewContext.Provider value={{ viewOptions, viewOptionsDispatch }}>
 					<PostsContext.Provider value={{ posts, postsDispatch }}>
 						<Header handleTodayClick={handleTodayClick} />
-
 						<DragContext.Provider value={{ draggedPost, draggedPostDispatch }}>
 							<DragDropContext
 								onDragEnd={onDragEnd}
