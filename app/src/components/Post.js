@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PostLinks from './PostLinks';
-import Icon from './common/Icon';
+// import Icon from './common/Icon';
 import { Draggable } from 'react-beautiful-dnd';
 import { isEmpty } from 'lodash';
 import { decode } from 'html-entities';
@@ -21,7 +21,7 @@ export default function Post({ post, index, unscheduled }) {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 
-	const { id, post_title, post_status, edit_lock } = post;
+	const { id, post_title, post_status, /*edit_lock*/ } = post;
 
 	const [color, setColor] = useState('');
 	const [animationRequestId, setAnimationRequestId] = useState(null);
@@ -67,15 +67,14 @@ export default function Post({ post, index, unscheduled }) {
 			return;
 		}
 
-		// TODO REST check for edit_lock?
-
-		if (!edit_lock) {
-			postsDispatch({
-				type: 'SET_CURRENTPOST',
-				post: post,
-				unscheduled,
-			});
-		}
+		// TODO fix/refine edit_lock
+		// if (!edit_lock) {
+		postsDispatch({
+			type: 'SET_CURRENTPOST',
+			post: post,
+			unscheduled,
+		});
+		// }
 	};
 
 	const handleMouseEnter = (e) => {
@@ -122,7 +121,8 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push('over__none');
 		}
 
-		if (isUpdating || edit_lock) {
+		// TODO fix/refine edit_lock
+		if (isUpdating /*|| edit_lock*/) {
 			classes.push('locked');
 		}
 
@@ -133,7 +133,8 @@ export default function Post({ post, index, unscheduled }) {
 		<Draggable
 			draggableId={`${id}`}
 			index={index}
-			isDragDisabled={isUpdating || edit_lock ? true : false}
+			// TODO fix/refine edit_lock
+			isDragDisabled={isUpdating /*|| edit_lock*/ ? true : false}
 		>
 			{({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
 				<li
@@ -156,13 +157,16 @@ export default function Post({ post, index, unscheduled }) {
 					>
 						<p className="postData__title">
 							{decode(post_title, { scope: 'strict' })}
-							{edit_lock ? (
+							{
+								// TODO fix/refine edit_lock
+								/*edit_lock ? (
 								<Icon className="lock" tooltip="Currently being edited.">
 									lock
 								</Icon>
 							) : (
 								''
-							)}
+							)*/
+							}
 						</p>
 					</div>
 					{!isDragging ? (
