@@ -13,21 +13,24 @@ import {
 
 import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
+import Loading from './common/Loading';
 
 export default function Calendar({ className, todayRef }) {
 	const { posts, postsDispatch } = useContext(PostsContext);
 	const {
-		viewOptions: { viewRange },
+		viewOptions: {
+			viewRange: { start, end },
+		},
 	} = useContext(ViewContext);
 
 	const { scheduled } = posts;
 
-	useFetchScheduledPosts(viewRange.start, viewRange.end, posts, postsDispatch);
+	var isLoading = useFetchScheduledPosts(start, end, posts, postsDispatch);
 
 	const renderDaysHeaderRow = useCallback(() => {
 		const days = [];
 
-		let startDate = startOfWeek(viewRange.start);
+		let startDate = startOfWeek(start);
 
 		for (let i = 0; i < 7; i++) {
 			days.push(
@@ -38,16 +41,16 @@ export default function Calendar({ className, todayRef }) {
 		}
 
 		return <div className="days row">{days}</div>;
-	}, [viewRange.start]);
+	}, [start]);
 
 	const renderDays = useCallback(() => {
 		const rows = [];
 
 		let days = [];
-		let day = viewRange.start;
+		let day = start;
 		let firstCalendarDay = true;
 
-		while (day < viewRange.end) {
+		while (day < end) {
 			for (let i = 0; i < 7; i++) {
 				const dayIsFirstDay = isFirstDayOfMonth(day) || firstCalendarDay;
 
@@ -79,7 +82,7 @@ export default function Calendar({ className, todayRef }) {
 			days = [];
 		}
 		return <div className="body">{rows}</div>;
-	}, [viewRange.end, viewRange.start, scheduled, todayRef]);
+	}, [end, start, scheduled, todayRef]);
 
 	const renderCalendar = () => {
 		return (
@@ -91,10 +94,14 @@ export default function Calendar({ className, todayRef }) {
 	};
 
 	return (
-		<div className={className}>
-			{viewRange.start !== null && viewRange.end !== null
-				? renderCalendar()
-				: null}
-		</div>
+		<>
+			{isLoading ? (
+				<Loading />
+			) : (
+				<div className={className}>
+					{start !== null && end !== null ? renderCalendar() : null}
+				</div>
+			)}
+		</>
 	);
 }

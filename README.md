@@ -15,7 +15,6 @@
 
 ### On deck
 
-- Initial loading ux
 - DOCS
 
 ### Todo

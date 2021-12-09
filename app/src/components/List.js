@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import DayPosts from './DayPosts';
+import Loading from './common/Loading';
 import { dateFormat, dayKey } from '../lib/utils';
 import { format, addDays, endOfDay, isToday, isPast } from 'date-fns';
 
@@ -18,7 +19,7 @@ export default function List({ className }) {
 
 	const { scheduled } = posts;
 
-	useFetchScheduledPosts(start, end, posts, postsDispatch);
+	var isLoading = useFetchScheduledPosts(start, end, posts, postsDispatch);
 
 	const renderDays = () => {
 		let days = [];
@@ -55,17 +56,21 @@ export default function List({ className }) {
 
 	const renderList = () => {
 		return (
-			<>
-				<div className="view__list__days">
-					<ul>{renderDays()}</ul>
-				</div>
-			</>
+			<div className="view__list__days">
+				<ul>{renderDays()}</ul>
+			</div>
 		);
 	};
 
 	return (
-		<div className={className}>
-			{start !== null && end !== null ? renderList() : null}
-		</div>
+		<>
+			{isLoading ? (
+				<Loading />
+			) : (
+				<div className={className}>
+					{start !== null && end !== null ? renderList() : null}
+				</div>
+			)}
+		</>
 	);
 }
