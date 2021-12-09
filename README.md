@@ -15,7 +15,7 @@
 
 ### On deck
 
-- Embiggen them quicklinks and let they overflow
+- Initial loading ux
 - DOCS
 
 ### Todo

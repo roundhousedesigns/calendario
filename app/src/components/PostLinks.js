@@ -5,7 +5,7 @@ import { decode } from 'html-entities';
 
 import PostsContext from '../PostsContext';
 
-export default function PostLinks({ post, unscheduled, active }) {
+export default function PostLinks({ post, unscheduled }) {
 	const { id, edit_link, view_link } = post;
 	const { posts, postsDispatch } = useContext(PostsContext);
 
@@ -99,7 +99,7 @@ export default function PostLinks({ post, unscheduled, active }) {
 	};
 
 	return (
-		<div className={`postLinks ${active ? 'active' : 'inactive'}`}>
+		<div className="postLinks">
 			<PostLink
 				icon="bolt"
 				title="Quick Edit"

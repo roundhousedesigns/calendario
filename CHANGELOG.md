@@ -6,6 +6,7 @@ All notable changes to Calendar.io will be documented in this file.
 
 ### Changed
 
+- postLink style/ui improvements
 - CSS improvements
 - QuickEdit: "Slug" -> "Permalink/URL Slug"
 - EditPost layout and style improvements

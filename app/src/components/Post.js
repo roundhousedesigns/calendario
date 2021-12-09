@@ -24,8 +24,6 @@ export default function Post({ post, index, unscheduled }) {
 	const { id, post_title, post_status /*edit_lock*/ } = post;
 
 	const [color, setColor] = useState('');
-	const [animationRequestId, setAnimationRequestId] = useState(null);
-	const [linksActive, setLinksActive] = useState(false);
 
 	useEffect(() => {
 		if (postStatuses === undefined || isEmpty(postStatuses)) {
@@ -34,28 +32,6 @@ export default function Post({ post, index, unscheduled }) {
 
 		setColor(postStatuses[post_status].color);
 	}, [post_status, postStatuses]);
-
-	function animateLinks(element, { timing, draw, duration }) {
-		let start = performance.now();
-
-		setAnimationRequestId(() =>
-			requestAnimationFrame(function animate(time) {
-				let timeFraction = (time - start) / duration;
-
-				let progress = timing(timeFraction);
-				draw(element, progress);
-			})
-		);
-
-		setLinksActive(true);
-	}
-
-	function stopAnimateLinks(element) {
-		element.currentTarget.style.paddingBottom = 0;
-		cancelAnimationFrame(animationRequestId);
-
-		setLinksActive(false);
-	}
 
 	const handleMouseDown = (e) => {
 		// TODO REST check for edit_lock?
@@ -75,22 +51,6 @@ export default function Post({ post, index, unscheduled }) {
 			unscheduled,
 		});
 		// }
-	};
-
-	const handleMouseEnter = (e) => {
-		animateLinks(e.currentTarget, {
-			timing: function (timeFraction) {
-				return timeFraction;
-			},
-			draw: function (element, progress) {
-				element.style.paddingBottom = progress + 30 + 'px';
-			},
-			duration: 50,
-		});
-	};
-
-	const handleMouseLeave = (e) => {
-		stopAnimateLinks(e);
 	};
 
 	function getStyles(snapshot) {
@@ -145,8 +105,6 @@ export default function Post({ post, index, unscheduled }) {
 					className={getStyles(snapshot)}
 					data-index={index}
 					onClick={handleClick}
-					onMouseEnter={handleMouseEnter}
-					onMouseLeave={handleMouseLeave}
 					onMouseDown={handleMouseDown}
 				>
 					<div
@@ -174,7 +132,6 @@ export default function Post({ post, index, unscheduled }) {
 							style={{
 								backgroundColor: color.replace(/,1\)/, ',0.75)'),
 							}}
-							active={linksActive}
 							post={post}
 							unscheduled={unscheduled}
 						/>
