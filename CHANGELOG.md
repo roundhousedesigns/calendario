@@ -2,6 +2,12 @@
 
 All notable changes to Calendar.io will be documented in this file.
 
+## [0.7.64] - Not yet released
+
+### Changed
+
+- Check for permalink structure and prompt to change if pretty permalinks not set
+
 ## [0.7.62-63] - 2021-12-08
 
 ### Changed

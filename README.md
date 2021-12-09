@@ -19,7 +19,6 @@
 
 ### Todo
 
-- CRITICAL: Check for permalink structure and prompt to change if pretty permalinks not set
 - Refactor SCSS
 - iOS style bugs
   - Post Status buttons weird offset

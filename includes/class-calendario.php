@@ -38,12 +38,28 @@ class Calendario {
 		$this->limit_load_hook = $limit_load_hook;
 		$this->limit_callback  = $limit_callback;
 
+		// Check for pretty permalinks, and alert if not set.
+		if ( ! get_option( 'permalink_structure' ) ) {
+			add_action( 'admin_notices', array( $this, 'notice_pretty_permalinks' ) );
+		}
+
 		add_action( $enqueue_hook, array( $this, 'load_react_app__premium_only' ) );
 
 		// wp-admin interface.
 		add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
 
 		// TODO Create settings page (roadmap).
+	}
+
+	/**
+	 * Prints a notice with a link to enable Pretty Permalinks.
+	 */
+	public function notice_pretty_permalinks() {
+		printf(
+			'<div class="notice error"><p>%s %s</p></div>',
+			esc_html__( 'Editorial Calendar.io requires pretty permalinks to be set. Please set any permalink structure other than "Plain" to avoid unexpected behavior.' ),
+			'<a href="' . esc_url( admin_url( '/options-permalink.php' ) ) . '">Settings->Permalinks</a>'
+		);
 	}
 
 	/**
