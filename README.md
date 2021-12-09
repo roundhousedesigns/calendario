@@ -16,11 +16,9 @@
 ### On deck
 
 - Embiggen them quicklinks and let they overflow
-- Embiggen sidebar toggle/change icon
 
 ### Todo
 
-- CRITICAL: Check for ANY posts before loading; breaks when no posts available
 - CRITICAL: Check for permalink structure and prompt to change if pretty permalinks not set
 - Refactor SCSS
 - iOS style bugs

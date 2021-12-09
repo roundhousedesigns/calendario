@@ -7,9 +7,9 @@
 // Mixins
 @import './_vars.scss';
 @import './_mixins.scss';
+@import './_common.scss';
 
 // Components
-@import './common.scss';
 @import './PostList.scss';
 @import './EditPost.scss';
 @import './ColorPickerPopover.scss';
@@ -429,17 +429,18 @@ body {
 	.viewRange {
 		&__input {
 			background-color: transparent;
-			border-bottom: 2px dotted var(--textColor-light);
+			border-bottom: 2px dotted var(--mainColor-transparent);
 			border-radius: 0;
 			color: var(--textColor);
 			font-size: 1.2em;
 			font-weight: normal;
+			transition: all 50ms ease-out;
 
 			&:hover,
 			&:active,
 			&:focus {
-				border-bottom-color: var(--textColor);
-				color: var(--textColor);
+				border-bottom-color: var(--mainColor-light);
+				color: var(--textColor-transparent);
 			}
 		}
 

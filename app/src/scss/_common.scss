@@ -33,7 +33,7 @@ button {
 		cursor: pointer;
 	}
 
-	&:not(.picker__swatch):not(.react-datepicker__navigation):not(.postLink):not(.control) {
+	&:not(.picker__swatch):not(.react-datepicker__navigation):not(.postLink):not(.control):not(.viewRange__input) {
 		border: none;
 	}
 }
