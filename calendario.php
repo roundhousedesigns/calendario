@@ -5,7 +5,7 @@
  * Author:         Roundhouse Designs
  * Author URI:     https://roundhouse-designs.com
  * Text Domain:    rhd
- * Version:        0.7.64
+ * Version:        0.7.641
  *
  * @package       calendario
  *
@@ -13,9 +13,9 @@
  */
 
 /**
- * Paths
+ * Paths.
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.64' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.7.641' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
@@ -31,7 +31,7 @@ define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs
 // phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
 
 /**
- * Base configuration
+ * Base configuration.
  */
 define( 'RHD_CALENDARIO_REST_VERSION', 'v1' );
 define( 'RHD_CALENDARIO_MANIFEST_URL', RHD_CALENDARIO_REACT_APP_BUILD . 'asset-manifest.json' );
@@ -87,7 +87,7 @@ function rhd_set_default_status_colors() {
 add_action( 'rhd_cal_loaded', 'rhd_set_default_status_colors' );
 
 /**
- * Freemius integration
+ * Freemius integration.
  */
 if ( ! function_exists( 'rhd_cal' ) ) {
 	/**
@@ -180,7 +180,7 @@ function rhd_load_calendario_plugin() {
 add_action( 'init', 'rhd_load_calendario_plugin' );
 
 /**
- * Activation hook
+ * Activation hook.
  */
 function rhd_calendario_plugin_activation() {
 	rhd_set_post_status_colors();
@@ -188,6 +188,14 @@ function rhd_calendario_plugin_activation() {
 register_activation_hook( __FILE__, 'rhd_calendario_plugin_activation' );
 
 /**
- * Calendario
+ * Registers the plugin icon.
+ */
+function rhd_calendario_plugin_icon() {
+	return dirname( __FILE__ ) . '/assets/icon-256x256.png';
+}
+rhd_cal()->add_filter( 'plugin_icon', 'rhd_calendario_plugin_icon' );
+
+/**
+ * Fire it up.
  */
 require_once plugin_dir_path( __FILE__ ) . '/includes/class-calendario.php';
