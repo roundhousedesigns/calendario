@@ -251,13 +251,14 @@ body {
 		width: 100%;
 		position: relative;
 
-		@media (min-width: $mobileBreak) {
-			padding-left: 1em;
+		&.open {
+			@media (min-width: $mobileBreak) {
+				padding-left: 1em;
+			}
 		}
 
 		&.closed {
 			overflow: hidden;
-			border-right: 1px solid var(--borderColor);
 
 			.drawerHandle {
 				background-color: var(--mainColor-transparent);
