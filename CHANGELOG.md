@@ -2,17 +2,17 @@
 
 All notable changes to Calendar.io will be documented in this file.
 
-## [0.7.64] - Not yet released
+## [0.7.64] - 2021-12-09
 
 ### Changed
 
 - Check for permalink structure and prompt to change if pretty permalinks not set
+- Initial loading animations
 
 ## [0.7.62-63] - 2021-12-08
 
 ### Changed
 
-- Initial loading animations
 - postLink style/ui improvements
 - CSS improvements
 - QuickEdit: "Slug" -> "Permalink/URL Slug"
