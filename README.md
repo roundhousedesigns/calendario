@@ -11,7 +11,6 @@
 ### Bugs
 
 - Draggable nested scroll containers issue (Looks to be innocuous console bug... [https://github.com/atlassian/react-beautiful-dnd/issues/362](https://github.com/atlassian/react-beautiful-dnd/issues/362))
-- Refactor SCSS
 
 ### On deck
 
