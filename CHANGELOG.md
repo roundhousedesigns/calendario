@@ -2,11 +2,12 @@
 
 All notable changes to Calendar.io will be documented in this file.
 
-## [0.7.62] - Not yet released
+## [0.7.62] - 2021-12-08
 
 ### Changed
 
 - CSS improvements
+- QuickEdit: "Slug" -> "Permalink/URL Slug"
 - EditPost layout and style improvements
 - Code refinements and formatting; minor refactoring
 - \<user\> in REST routes removed (development crutch), all checks now look for logged in user server-side

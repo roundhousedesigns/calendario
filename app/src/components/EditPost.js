@@ -403,7 +403,7 @@ export default function EditPost() {
 												// Editing a post
 												<>
 													<div className="permalink__label">
-														<span className="label">Slug:</span>
+														<span className="label">Permalink/URL Slug:</span>
 													</div>
 													<div className="permalink__field">
 														<input

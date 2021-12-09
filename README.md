@@ -16,7 +16,6 @@
 ### On deck
 
 - Embiggen them quicklinks and let they overflow
-- QE: "Slug:" -> Permalink/URL Slug'
 - Embiggen sidebar toggle/change icon
 
 ### Todo
