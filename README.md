@@ -21,13 +21,10 @@
 
 ### Roadmap
 
-- Author indicators and view filtering
+- Author indicators and view filtering (enable on Options page)
 - Real-time changes to posts reflected in interface without refresh, including Lock status.
   - Involves post locking?
 - Add new cat/tag
-- Options Page:
-  - CPT inclusion/exclusion - Display Filters
-  - Multiple author support/indicators
 - Custom Taxonomy support
 - Featured Image selector/uploader
 - Improve mobile interface
