@@ -8,10 +8,6 @@
 
 ---
 
-### Bugs
-
-- Draggable nested scroll containers issue (Looks to be innocuous console bug... [https://github.com/atlassian/react-beautiful-dnd/issues/362](https://github.com/atlassian/react-beautiful-dnd/issues/362))
-
 ### On deck
 
 - DOCS
@@ -25,6 +21,7 @@
 
 ### Roadmap
 
+- Author indicators and view filtering
 - Real-time changes to posts reflected in interface without refresh, including Lock status.
   - Involves post locking?
 - Add new cat/tag
@@ -34,3 +31,7 @@
 - Custom Taxonomy support
 - Featured Image selector/uploader
 - Improve mobile interface
+
+### Bugs
+
+- Draggable nested scroll containers issue (Looks to be innocuous console bug... [https://github.com/atlassian/react-beautiful-dnd/issues/362](https://github.com/atlassian/react-beautiful-dnd/issues/362))
