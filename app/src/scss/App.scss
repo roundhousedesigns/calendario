@@ -88,7 +88,7 @@ body {
 	display: grid;
 	grid-gap: var(--gridGap);
 	overflow: auto;
-	transition: all 500ms ease;
+	transition: all 500ms ease-out;
 
 	@media (max-width: $mobileBreak) and (orientation: portrait) {
 		overflow: hidden;
@@ -114,7 +114,8 @@ body {
 		}
 
 		&.sidebarClosed {
-			grid-template-columns: 3fr 16px;
+			grid-template-columns: 3fr 0;
+			grid-gap: var(--gridGap) 0;
 		}
 	}
 
@@ -123,7 +124,7 @@ body {
 		font-size: 1.75em;
 		padding: 6px;
 		background-color: var(--textColor);
-		transition: all 100ms ease;
+		transition: all 100ms ease-out;
 
 		&:hover,
 		&:active {
@@ -257,6 +258,22 @@ body {
 		&.closed {
 			overflow: hidden;
 			border-right: 1px solid var(--borderColor);
+
+			.drawerHandle {
+				background-color: var(--mainColor-transparent);
+				color: var(--textColor);
+				position: fixed;
+				top: 160px;
+				right: 0;
+				transform: rotate(180deg);
+				transform-origin: center;
+
+				&:hover,
+				&:active {
+					background-color: var(--mainColor-light);
+					color: var(--neutralColor);
+				}
+			}
 		}
 
 		.drawerHandle {
@@ -265,22 +282,22 @@ body {
 			}
 
 			@media (min-width: $mobileBreak) {
-				background-color: var(--textColor-light);
-				border-radius: 0;
-				position: absolute;
-				top: 28px;
-				font-size: 0.8em;
-				left: 4px;
 				z-index: 1;
-				line-height: 2;
-				padding: 0;
-				transition: all 100ms ease;
+				transition: all 300ms ease-out;
 
 				&:hover,
 				&:active {
 					background-color: var(--textColor-dark);
 					color: var(--textColor-light);
 				}
+			}
+
+			.icon {
+				transition: all 300ms ease-out;
+				background: none;
+				padding: 18px 3px;
+				margin: 0;
+				line-height: 1;
 			}
 		}
 
@@ -345,7 +362,7 @@ body {
 			&.dropArea {
 				color: var(--neutralColor);
 				position: relative;
-				transition: all 0.15s ease;
+				transition: all 0.15s ease-out;
 
 				&.fromBelow,
 				&.fromNowhere {

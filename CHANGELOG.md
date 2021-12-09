@@ -2,7 +2,7 @@
 
 All notable changes to Calendar.io will be documented in this file.
 
-## [0.7.62] - 2021-12-08
+## [0.7.62-63] - 2021-12-08
 
 ### Changed
 
@@ -10,7 +10,9 @@ All notable changes to Calendar.io will be documented in this file.
 - QuickEdit: "Slug" -> "Permalink/URL Slug"
 - EditPost layout and style improvements
 - Code refinements and formatting; minor refactoring
-- \<user\> in REST routes removed (development crutch), all checks now look for logged in user server-side
+- `<user>` in REST routes removed (development crutch), all checks now look for logged in user server-side
+- Improved sidebar toggle button location and and layout
+- Removed `DrawerHandle` component
 
 ### Fixed
 

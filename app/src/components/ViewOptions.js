@@ -14,29 +14,44 @@ export default function ViewOptions() {
 		});
 	};
 
+	const handleSidebarToggle = (e) => {
+		viewOptionsDispatch({ type: 'TOGGLE_SIDEBAR' });
+	};
+
 	return (
-		<div className="viewMode">
-			<button
-				onClick={handleViewModeChange}
-				className={`icon control viewMode__input ${
-					viewMode === 'calendar' ? 'active ' : 'inactive'
-				}`}
-				value="calendar"
-				title="Calendar"
-			>
-				calendar_view_month
-			</button>
-			<button
-				name="viewMode"
-				onClick={handleViewModeChange}
-				className={`icon control viewMode__input ${
-					viewMode === 'list' ? 'active ' : 'inactive'
-				}`}
-				value="list"
-				title="List"
-			>
-				view_list
-			</button>
-		</div>
+		<>
+			<div className="toggleSidebar">
+				<button
+					onClick={handleSidebarToggle}
+					className="icon drawerHandle"
+					title="Toggle Sidebar"
+				>
+					swipe_right_alt
+				</button>
+			</div>
+			<div className="viewMode">
+				<button
+					onClick={handleViewModeChange}
+					className={`icon control viewMode__input ${
+						viewMode === 'calendar' ? 'active ' : 'inactive'
+					}`}
+					value="calendar"
+					title="Calendar"
+				>
+					calendar_view_month
+				</button>
+				<button
+					name="viewMode"
+					onClick={handleViewModeChange}
+					className={`icon control viewMode__input ${
+						viewMode === 'list' ? 'active ' : 'inactive'
+					}`}
+					value="list"
+					title="List"
+				>
+					view_list
+				</button>
+			</div>
+		</>
 	);
 }

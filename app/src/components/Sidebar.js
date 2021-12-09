@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import DrawerHandle from './common/DrawerHandle';
 import Widget from './common/Widget';
 import UnscheduledDrafts from './UnscheduledDrafts';
 import StatusFilters from './StatusFilters';
@@ -11,20 +10,12 @@ import ViewContext from '../ViewContext';
 export default function Sidebar() {
 	const {
 		viewOptions: { sidebarOpen },
-		viewOptionsDispatch,
 	} = useContext(ViewContext);
 
 	return (
 		<aside
 			className={`calendarioMain__sidebar ${sidebarOpen ? 'open' : 'closed'}`}
 		>
-			<DrawerHandle
-				toggle={() =>
-					viewOptionsDispatch({
-						type: 'TOGGLE_SIDEBAR',
-					})
-				}
-			/>
 			<div className="calendarioMain__sidebar__inner">
 				<Widget widgetClass="options">
 					<div className="options">
