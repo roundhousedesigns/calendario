@@ -6,12 +6,12 @@
 }
 
 .picker {
-	background: var(--neutralColor-dark);
+	background: var(--color-neutral-dark);
 	border-radius: 50%;
 	position: relative;
 	margin-right: 12px;
 	padding: 2px;
-	border: 1px solid var(--textColor-light);
+	border: 1px solid var(--color-text-light);
 
 	&__swatches {
 		display: flex;
@@ -44,8 +44,8 @@
 		position: absolute;
 		top: calc(100% + 2px);
 		left: 0;
-		background-color: var(--neutralColor);
-		border: 1px solid var(--neutralColor-dark);
+		background-color: var(--color-neutral);
+		border: 1px solid var(--color-neutral-dark);
 		border-radius: 9px;
 		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 		z-index: 999;

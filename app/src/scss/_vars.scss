@@ -1,18 +1,18 @@
 :root {
-	--mainColor: #1a8fff;
-	--mainColor-light: #53cbf1;
-	--mainColor-transparent: #1a8fff24;
-	--textColor: #777;
-	--textColor-light: #ccc;
-	--textColor-dark: #333;
-	--textColor-transparent: rgba(51, 51, 51, 0.9);
-	--borderColor: #eee;
-	--bgColor: #f9f9f9;
-	--neutralColor: #fff;
-	--neutralColor-dark: rgb(247, 247, 247);
+	--color-main: #1a8fff;
+	--color-main-light: #53cbf1;
+	--color-main-transparent: #1a8fff24;
+	--color-text: #777;
+	--color-text-light: #ccc;
+	--color-text-dark: #333;
+	--color-text-transparent: rgba(51, 51, 51, 0.9);
+	--color-border: #eee;
+	--color-bg: #fff;
+	--color-neutral: #fff;
+	--color-neutral-dark: rgb(247, 247, 247);
+	--color-date-past: #654654a9;
 	--borderRadius: 8px;
 	--borderRadius-half: calc(var(--borderRadius) / 2);
-	--pastColor: #654654a9;
 	--gridGap: 1em;
 }
 

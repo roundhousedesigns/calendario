@@ -47,13 +47,13 @@
 			border-top: none;
 			border-right: none;
 			border-left: none;
-			border-bottom: 1px solid var(--textColor);
+			border-bottom: 1px solid var(--color-text);
 			font-size: 1.4em;
 			outline: none;
 			width: 100%;
 
 			&:focus {
-				border-bottom: 1px solid var(--textColor);
+				border-bottom: 1px solid var(--color-text);
 			}
 		}
 	}
@@ -67,8 +67,8 @@
 		.button {
 			flex: 0 0 48%;
 			display: block;
-			background-color: var(--textColor-light);
-			color: var(--textColor-dark);
+			background-color: var(--color-text-light);
+			color: var(--color-text-dark);
 
 			&:last-of-type {
 				margin-bottom: 0;
@@ -78,13 +78,13 @@
 		.trash {
 			input {
 				&:focus {
-					outline: 1px solid var(--mainColor-light);
+					outline: 1px solid var(--color-main-light);
 				}
 			}
 
 			&.confirm {
 				text-align: center;
-				background-color: var(--textColor-dark);
+				background-color: var(--color-text-dark);
 				padding: 24px 12px;
 				position: absolute;
 				width: 100%;
@@ -95,7 +95,7 @@
 
 				p {
 					margin: 0;
-					color: var(--textColor-light);
+					color: var(--color-text-light);
 				}
 
 				input {
@@ -144,7 +144,7 @@
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		background-color: var(--neutralColor);
+		background-color: var(--color-neutral);
 		display: block;
 		width: 50%;
 		min-width: 300px;
@@ -152,7 +152,7 @@
 		overflow: auto;
 		padding: 22px;
 		border-radius: var(--borderRadius);
-		border: 1px solid var(--borderColor);
+		border: 1px solid var(--color-border);
 
 		.close {
 			position: absolute;
@@ -161,7 +161,7 @@
 			margin: 0;
 			padding: 0;
 			font-size: 24px;
-			color: var(--textColor);
+			color: var(--color-text);
 		}
 
 		.icon {
@@ -194,7 +194,7 @@
 			}
 
 			&__right {
-				background-color: var(--mainColor-transparent);
+				background-color: var(--color-main-transparent);
 				border-radius: var(--borderRadius-half);
 				flex: 0 0 33.3334%;
 				height: auto;
@@ -336,7 +336,7 @@
 					}
 
 					.terms {
-						background: var(--neutralColor-dark);
+						background: var(--color-neutral-dark);
 						padding: 0 4px;
 						height: 200px;
 						overflow: auto;

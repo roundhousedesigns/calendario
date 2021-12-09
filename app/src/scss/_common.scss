@@ -6,11 +6,11 @@ input[type='submit'],
 
 button {
 	&.icon {
-		color: var(--textColor);
+		color: var(--color-text);
 	}
 
 	&.control {
-		background-color: var(--neutralColor-dark);
+		background-color: var(--color-neutral-dark);
 		border: none;
 		font-size: 1.3em;
 		font-weight: normal;
@@ -18,13 +18,13 @@ button {
 
 		&:hover {
 			&:not([disabled]) {
-				color: var(--textColor-dark);
+				color: var(--color-text-dark);
 			}
 		}
 
 		&.active {
-			background-color: var(--textColor);
-			color: var(--neutralColor);
+			background-color: var(--color-text);
+			color: var(--color-neutral);
 			pointer-events: none;
 		}
 	}
@@ -95,7 +95,7 @@ button {
 }
 
 .icon {
-	color: var(--textColor);
+	color: var(--color-text);
 	font-family: 'Material Icons', serif;
 	font-style: normal;
 	display: inline-block;
@@ -145,7 +145,7 @@ button {
 	select,
 	fieldset {
 		display: block;
-		border: 1px solid var(--textColor-light);
+		border: 1px solid var(--color-text-light);
 	}
 
 	input,
@@ -174,7 +174,7 @@ button {
 }
 
 .widget {
-	border: 1px solid var(--borderColor);
+	border: 1px solid var(--color-border);
 	position: relative;
 	padding: 12px;
 	width: 100%;
@@ -224,7 +224,7 @@ button {
 }
 
 .loadingOverlay {
-	background-color: var(--neutralColor-dark);
+	background-color: var(--color-neutral-dark);
 	position: absolute;
 	opacity: 0.4;
 	top: 0;
@@ -259,7 +259,7 @@ button {
 				width: 7px;
 				height: 7px;
 				border-radius: 50%;
-				background: var(--mainColor);
+				background: var(--color-main);
 				margin: -4px 0 0 -4px;
 			}
 

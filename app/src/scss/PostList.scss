@@ -8,7 +8,7 @@
 	overflow: unset;
 
 	&.draggingOver {
-		background-color: var(--mainColor-transparent);
+		background-color: var(--color-main-transparent);
 
 		&:not(.unscheduledDrafts) {
 			.post {
@@ -23,7 +23,7 @@
 		border: 2px solid transparent;
 		border-radius: var(--borderRadius);
 		padding-bottom: 0;
-		color: var(--neutralColor);
+		color: var(--color-neutral);
 		cursor: pointer;
 		position: relative;
 		transition: all 100ms ease-in-out;
@@ -64,7 +64,7 @@
 
 		.postLinks {
 			border-radius: var(--borderRadius);
-			background-color: var(--mainColor-transparent);
+			background-color: var(--color-main-transparent);
 			display: flex;
 			align-items: center;
 			flex-wrap: nowrap;
@@ -93,8 +93,8 @@
 					@include absoluteCenter;
 
 					&:hover {
-						color: var(--textColor-dark);
-						background-color: var(--mainColor-transparent);
+						color: var(--color-text-dark);
+						background-color: var(--color-main-transparent);
 					}
 
 					&__trash {
@@ -136,7 +136,7 @@
 
 		&.currentPost {
 			.postData {
-				border: 2px solid var(--mainColor-light);
+				border: 2px solid var(--color-main-light);
 			}
 		}
 	}
