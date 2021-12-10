@@ -8,23 +8,28 @@
 
 ---
 
-### On deck
+### Fix
 
-- DOCS
+- Don't trigger refetch on view change necessarily
 
 ### Todo
 
-- Refactor SCSS
-- iOS style bugs
+- Add new cat/tag
+- Load Material icons faster
+- Documentation
+- iOS style bugs:
   - Post Status buttons weird offset
 - Test iOS + Android functionality
 
 ### Roadmap
 
+- Settings modal
+  - Author options
+  - CPTs?
+  - Post types?
 - Author indicators and view filtering (enable on Options page)
 - Real-time changes to posts reflected in interface without refresh, including Lock status.
   - Involves post locking?
-- Add new cat/tag
 - Custom Taxonomy support
 - Featured Image selector/uploader
 - Improve mobile interface

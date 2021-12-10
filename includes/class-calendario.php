@@ -26,6 +26,11 @@ class Calendario {
 	private $limit_callback = '';
 
 	/**
+	 * Menu icon SVG encoded in base64.
+	 */
+	const MENU_ICON = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMjAwMHB4IiBoZWlnaHQ9IjIwMDBweCIgdmlld0JveD0iMCAwIDIwMDAgMjAwMCIgdmVyc2lvbj0iMS4xIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNDI4LjA5IDk1NC42ODFMMTMzNi41OCA4NjMuMTVMOTE1LjI3IDEyODQuNTRMNzMyLjI0MyAxMTAxLjQ4TDY0MC43MyAxMTkzLjAxTDkxNS4yNyAxNDY3LjZMMTQyOC4wOSA5NTQuNjgxTDE0MjguMDkgOTU0LjY4MVpNMTY0MS4zMyAyNTguN0wxNTU1IDI1OC43TDE1NTUgODZMMTM4Mi4zMyA4NkwxMzgyLjMzIDI1OC43TDY5MS42NjcgMjU4LjdMNjkxLjY2NyA4Nkw1MTkgODZMNTE5IDI1OC43TDQzMi42NjcgMjU4LjdDMzM2LjgzNyAyNTguNyAyNjAuODYzIDMzNi40MTUgMjYwLjg2MyA0MzEuNEwyNjAgMTY0MC4zQzI2MCAxNzM1LjI5IDMzNi44MzcgMTgxMyA0MzIuNjY3IDE4MTNMMTY0MS4zMyAxODEzQzE3MzYuMyAxODEzIDE4MTQgMTczNS4yOSAxODE0IDE2NDAuM0wxODE0IDQzMS40QzE4MTQgMzM2LjQxNSAxNzM2LjMgMjU4LjcgMTY0MS4zMyAyNTguN0wxNjQxLjMzIDI1OC43Wk0xNjQxLjMzIDE2NDAuM0w0MzIuNjY3IDE2NDAuM0w0MzIuNjY3IDY5MC40NUwxNjQxLjMzIDY5MC40NUwxNjQxLjMzIDE2NDAuM0wxNjQxLjMzIDE2NDAuM1oiIGlkPSJTaGFwZSIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9Im5vbmUiIC8+Cjwvc3ZnPg==';
+
+	/**
 	 * Calendario constructor.
 	 *
 	 * @param string      $enqueue_hook    Hook to enqueue scripts.
@@ -45,10 +50,8 @@ class Calendario {
 
 		add_action( $enqueue_hook, array( $this, 'load_react_app__premium_only' ) );
 
-		// wp-admin interface.
-		add_action( 'admin_menu', array( $this, 'create_plugin_page' ) );
-
-		// TODO Create settings page (roadmap).
+		// Menu items and admin pages.
+		add_action( 'admin_menu', array( $this, 'create_admin_pages' ) );
 	}
 
 	/**
@@ -116,9 +119,9 @@ class Calendario {
 			'rhdReactPlugin',
 			array(
 				'appSelector'         => $this->selector,
+				'version'             => RHD_CALENDARIO_PLUGIN_VERSION,
 				'adminUrl'            => admin_url(),
 				'pluginUrl'           => RHD_CALENDARIO_PLUGIN_DIR_BASE_URL,
-				'postsUrl'            => admin_url( 'edit.php?post_type=post' ),
 				'trashUrl'            => admin_url( 'edit.php?post_status=trash&post_type=post' ),
 				'user'                => get_current_user_id(),
 				'nonce'               => wp_create_nonce( 'wp_rest' ),
@@ -130,21 +133,15 @@ class Calendario {
 	}
 
 	/**
-	 * Creates the submenu!
+	 * Creates the pages and menu items.
 	 *
 	 * @return void
 	 */
-	public function create_plugin_page() {
-		add_submenu_page( 'edit.php', 'Editorial Calendar.io', 'Calendar.io', 'manage_options', 'calendario', array( $this, 'calendario_page' ) );
-	}
-
-	/**
-	 * Creates the settings page!
-	 *
-	 * @return void
-	 */
-	public function create_settings_page() {
-		add_submenu_page( 'options-general.php', 'Editorial Calendar.io Settings', 'Calendario.io Settings', 'manage_options', 'calendario', array( $this, 'calendario_settings_page' ) );
+	public function create_admin_pages() {
+		/**
+		 * Main page and top-level menu registration.
+		 */
+		add_menu_page( 'Editorial Calendar.io', 'Calendar.io', 'edit_others_posts', 'calendario', array( $this, 'calendario_page_main' ), self::MENU_ICON, 3 );
 	}
 
 	/**
@@ -152,14 +149,14 @@ class Calendario {
 	 *
 	 * @return void
 	 */
-	public function calendario_page() {
-		include_once RHD_CALENDARIO_PLUGIN_DIR_BASE . 'pages/main.php';
+	public function calendario_page_main() {
+		echo wp_kses_post( '<div id="calendario"></div>' );
 	}
 
 	/**
 	 * The settings page.
 	 */
-	public function calendario_settings_page() {
+	public function calendario_page_settings() {
 		include_once RHD_CALENDARIO_PLUGIN_DIR_BASE . 'pages/settings.php';
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Functions.php
+ * Utility functions.
  *
  * phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
  *

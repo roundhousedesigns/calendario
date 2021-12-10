@@ -22,11 +22,11 @@ define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 // phpcs:disable Squiz.Commenting.InlineComment.InvalidEndChar
 
 // Load JS interface locally (development).
-// define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
-// define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
+define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
+define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
 
 // Load JS interface from CloudFlare Pages (CI/CD).
-define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
+// define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
 
 // phpcs:enable Squiz.Commenting.InlineComment.InvalidEndChar
 
@@ -92,8 +92,6 @@ add_action( 'rhd_cal_loaded', 'rhd_set_default_status_colors' );
 if ( ! function_exists( 'rhd_cal' ) ) {
 	/**
 	 * Create a helper function for easy SDK access.
-	 *
-	 * @return Freemius The Freemius instance.
 	 */
 	function rhd_cal() {
 		global $rhd_cal;
@@ -106,7 +104,6 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 				array(
 					'id'               => '8136',
 					'slug'             => 'calendario',
-					'premium_slug'     => 'calendario',
 					'type'             => 'plugin',
 					'public_key'       => 'pk_0ceb9fcfae9cbd708428cd6126d45',
 					'is_premium'       => true,
@@ -121,9 +118,6 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 					'menu'             => array(
 						'slug'    => 'calendario',
 						'support' => false,
-						'parent'  => array(
-							'slug' => 'edit.php',
-						),
 					),
 				)
 			);
@@ -134,7 +128,6 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 
 	// Init Freemius.
 	rhd_cal();
-
 	// Signal that SDK was initiated.
 	do_action( 'rhd_cal_loaded' );
 }
@@ -161,7 +154,7 @@ rhd_cal()->add_filter( 'connect_message_on_update', 'rhd_cal_custom_connect_mess
 /**
  * Functions
  */
-require plugin_dir_path( __FILE__ ) . 'includes/functions.php';
+require plugin_dir_path( __FILE__ ) . 'includes/utils.php';
 
 /**
  * Endpoints
@@ -171,13 +164,12 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-calendario-route.php';
 /**
  * Calling the plugin class with parameters.
  */
-function rhd_load_calendario_plugin() {
+function rhd_load_calendario() {
 	// Loading the app in WordPress admin main screen.
-	new Calendario( 'admin_enqueue_scripts', 'posts_page_calendario', false, '#calendario' );
-
+	new Calendario( 'admin_enqueue_scripts', 'toplevel_page_calendario', false, '#calendario' );
 	new Calendario_Route();
 }
-add_action( 'init', 'rhd_load_calendario_plugin' );
+add_action( 'init', 'rhd_load_calendario' );
 
 /**
  * Activation hook.

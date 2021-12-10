@@ -1,6 +1,20 @@
 # Changelog
 
-All notable changes to Calendar.io will be documented in this file.
+All notable changes to Editorial Calendar.io's backend will be documented in this file.
+
+## [0.8] - Not yet released
+
+### Changed
+
+- includes/functions.php -> includes/utils.php
+- Moved plugin to a top level menu in the Dashboard
+- empty index.php for security
+- Cleaned unused code
+
+### Added
+
+- phpcs rules
+- SVG menu icon
 
 ## [0.7.64] - 2021-12-09
 

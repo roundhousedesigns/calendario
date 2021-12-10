@@ -265,7 +265,7 @@ body {
 		&.closed {
 			overflow: hidden;
 
-			.drawerHandle {
+			.sidebarToggle {
 				background-color: var(--color-main-transparent);
 				color: var(--color-text);
 				position: fixed;
@@ -282,7 +282,7 @@ body {
 			}
 		}
 
-		.drawerHandle {
+		.sidebarToggle {
 			@media (max-width: $mobileBreak) {
 				display: none;
 			}
@@ -290,12 +290,6 @@ body {
 			@media (min-width: $mobileBreak) {
 				z-index: 1;
 				transition: all 300ms ease-out;
-
-				&:hover,
-				&:active {
-					background-color: var(--color-text-dark);
-					color: var(--color-text-light);
-				}
 			}
 
 			.icon {

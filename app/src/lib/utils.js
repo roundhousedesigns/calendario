@@ -19,8 +19,8 @@ export const wp =
 				// routeBase: 'http://localhost/wp-json/calendario/v1',
 				routeBase: 'http://localhost/backend/wp-json/calendario/v1',
 				adminUrl: '',
+				version: '<version>',
 				pluginUrl: '//localhost/backend/wp-content/plugins/calendario/',
-				postsUrl: '',
 				trashUrl: '',
 				defaultStatusColors: {
 					publish: '#eb6e6f',

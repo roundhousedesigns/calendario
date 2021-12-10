@@ -133,7 +133,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function create_item_permissions_check( $request ) {
 		// DEBUG.
 		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
-		// return true;
+		return true;
 
 		return user_can( wp_get_current_user(), 'edit_others_posts' );
 	}
@@ -157,7 +157,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function options_permissions_check( $request ) {
 		// DEBUG.
 		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
-		// return true;
+		return true;
 
 		return user_can( wp_get_current_user(), 'manage_options' );
 	}

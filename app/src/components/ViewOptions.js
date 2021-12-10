@@ -18,12 +18,16 @@ export default function ViewOptions() {
 		viewOptionsDispatch({ type: 'TOGGLE_SIDEBAR' });
 	};
 
+	// const handleSettingsClick = (e) => {
+	// 	// TODO Create settings modal.
+	// };
+
 	return (
 		<>
 			<div className="toggleSidebar">
 				<button
 					onClick={handleSidebarToggle}
-					className="icon drawerHandle"
+					className="icon control sidebarToggle"
 					title="Toggle Sidebar"
 				>
 					swipe_right_alt
@@ -52,6 +56,16 @@ export default function ViewOptions() {
 					view_list
 				</button>
 			</div>
+			{/* TODO enable settings here */}
+			{/* <div class="settings">
+				<button
+					onClick={handleSettingsClick}
+					className="icon control settings"
+					title="Open Settings"
+				>
+					settings
+				</button>
+			</div> */}
 		</>
 	);
 }

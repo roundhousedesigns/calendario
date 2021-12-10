@@ -19,6 +19,7 @@ button {
 		&:hover {
 			&:not([disabled]) {
 				color: var(--color-text-dark);
+				background-color: var(--color-main-transparent);
 			}
 		}
 
