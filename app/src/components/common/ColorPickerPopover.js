@@ -54,7 +54,7 @@ export default function ColorPickerPopover({ color, name }) {
 
 	return (
 		<div className="picker">
-			<div
+			<button
 				className="swatch"
 				style={{ backgroundColor: colorValue }}
 				onClick={() => setIsOpen(true)}

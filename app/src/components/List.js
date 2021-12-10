@@ -4,13 +4,11 @@ import Loading from './common/Loading';
 import { dateFormat, dayKey } from '../lib/utils';
 import { format, addDays, endOfDay, isToday, isPast } from 'date-fns';
 
-import { useFetchScheduledPosts } from '../lib/hooks';
-
 import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
 
-export default function List({ className }) {
-	const { posts, postsDispatch } = useContext(PostsContext);
+export default function List({ className, isLoading }) {
+	const { posts } = useContext(PostsContext);
 	const {
 		viewOptions: {
 			viewRange: { start, end },
@@ -18,8 +16,6 @@ export default function List({ className }) {
 	} = useContext(ViewContext);
 
 	const { scheduled } = posts;
-
-	var isLoading = useFetchScheduledPosts(start, end, posts, postsDispatch);
 
 	const renderDays = () => {
 		let days = [];

@@ -42,11 +42,11 @@ export const useStickyState = (defaultValue, key) => {
  * @returns {boolean} The current loading state
  */
 export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
-	const { refetch } = posts;
+	const { fetchPosts } = posts;
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		if (start !== null && end !== null) {
+		if (start !== null && end !== null && fetchPosts) {
 			let startDate = format(start, dateFormat.date);
 			let endDate = format(end, dateFormat.date);
 			let url = `${routeBase}/posts/scheduled/${startDate}/${endDate}`;
@@ -80,7 +80,7 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 				setIsLoading(false);
 			};
 		}
-	}, [start, end, refetch, postsDispatch]);
+	}, [start, end, fetchPosts, postsDispatch]);
 
 	return isLoading;
 };
@@ -93,7 +93,7 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
  * @returns {boolean} The current loading state
  */
 export const useFetchUnscheduledPosts = (posts, postsDispatch) => {
-	const { refetch } = posts;
+	const { fetchPosts } = posts;
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
@@ -125,7 +125,7 @@ export const useFetchUnscheduledPosts = (posts, postsDispatch) => {
 		return () => {
 			setIsLoading(false);
 		};
-	}, [postsDispatch, refetch]);
+	}, [postsDispatch, fetchPosts]);
 
 	return isLoading;
 };
@@ -171,6 +171,62 @@ export const useFetchPostStatuses = (viewOptionsDispatch) => {
 	}, [viewOptionsDispatch]);
 
 	return isLoading;
+};
+
+/**
+ * Sends updated post status colors to the server.
+ *
+ * @param {Object} postStatuses The set of post statuses.
+ * @param {boolean} postStatusColorsChanged True if colors have been changed and an update is required, false otherwise
+ * @param {Function} viewOptionsDispatch ViewContext reducer
+ */
+export const useUpdateStatusColors = (
+	postStatuses,
+	postStatusColorsChanged,
+	viewOptionsDispatch
+) => {
+	useEffect(() => {
+		if (isEmpty(postStatuses) || !postStatusColorsChanged) {
+			return;
+		}
+
+		let url = `${routeBase}/statuses`;
+
+		const fetchData = async () => {
+			console.log('doing');
+			let colors = {};
+			let headers = {
+				'Content-Type': 'application/json',
+			};
+			if (DEBUG_MODE === false) {
+				headers['X-WP-Nonce'] = nonce;
+			}
+
+			for (let status in postStatuses) {
+				colors[status] = postStatuses[status].color;
+			}
+
+			try {
+				const response = await fetch(url, {
+					method: 'POST',
+					headers,
+					body: JSON.stringify(colors),
+				});
+
+				// const data = await response.json(); // If you need to catch the response...
+
+				await response.json();
+			} catch (error) {
+				console.log(error.message);
+			}
+
+			viewOptionsDispatch({
+				type: 'POST_STATUS_UPDATE_COMPLETE',
+			});
+		};
+
+		fetchData();
+	}, [postStatuses, postStatusColorsChanged, viewOptionsDispatch]);
 };
 
 /**
@@ -236,7 +292,7 @@ export const useUpdate = (
 	posts,
 	postsDispatch,
 	draggedPost,
-	draggedPostDispatch,
+	draggedPostDispatch
 ) => {
 	useEffect(() => {
 		const {
@@ -308,10 +364,6 @@ export const useUpdate = (
 				} catch (error) {
 					console.log(error.message);
 				}
-
-				postsDispatch({
-					type: 'REFETCH',
-				});
 			};
 
 			sendUpdate();

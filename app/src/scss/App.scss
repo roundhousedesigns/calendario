@@ -709,6 +709,15 @@ body {
 		padding: 0;
 		margin: 0;
 
+		&.updating {
+			cursor: wait;
+
+			.swatch,
+			.toggle {
+				pointer-events: none;
+			}
+		}
+
 		.filterItem {
 			display: inline-block;
 			display: flex;

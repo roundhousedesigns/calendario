@@ -8,10 +8,6 @@
 
 ---
 
-### Fix
-
-- Don't trigger refetch on view change necessarily
-
 ### Todo
 
 - Add new cat/tag

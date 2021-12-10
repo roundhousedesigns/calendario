@@ -68,6 +68,10 @@ export default function App() {
 		});
 	}, [setView, viewOptions.viewMode]);
 
+	useEffect(() => {
+		postsDispatch({ type: 'FETCH' });
+	}, []);
+
 	/**
 	 * Post Statuses
 	 */

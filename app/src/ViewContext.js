@@ -18,6 +18,7 @@ export const initialViewOptions = {
 		end: null,
 	},
 	postStatuses: {},
+	postStatusColorsChanged: false,
 	sidebarOpen: true,
 };
 
@@ -116,6 +117,14 @@ export function viewReducer(state, action) {
 						color: action.color,
 					},
 				},
+				postStatusColorsChanged: true,
+			};
+		}
+
+		case 'POST_STATUS_UPDATE_COMPLETE': {
+			return {
+				...state,
+				postStatusColorsChanged: false,
 			};
 		}
 
@@ -130,6 +139,7 @@ export function viewReducer(state, action) {
 			return {
 				...state,
 				postStatuses: { ...reset },
+				postStatusColorsChanged: true,
 			};
 		}
 

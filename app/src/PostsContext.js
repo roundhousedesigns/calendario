@@ -22,7 +22,7 @@ export const initialPosts = {
 		newIndex: null,
 		unscheduled: false,
 	},
-	refetch: false, // Toggle value to trigger refetch
+	fetchPosts: false, // Toggle value to trigger fetchPosts
 	dateRange: {
 		start: '',
 		end: '',
@@ -133,10 +133,10 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case 'REFETCH': {
+		case 'FETCH': {
 			return {
 				...state,
-				refetch: !state.refetch,
+				fetchPosts: !state.fetchPosts,
 			};
 		}
 
@@ -293,6 +293,7 @@ export function postsReducer(state, action) {
 			return {
 				...state,
 				isUpdating: initialPosts.isUpdating,
+				fetchPosts: true,
 				updatePost: initialPosts.updatePost,
 			};
 		}
@@ -301,7 +302,7 @@ export function postsReducer(state, action) {
 			return {
 				...state,
 				isUpdating: initialPosts.isUpdating,
-				refetch: !state.refetch,
+				fetchPosts: true,
 				updatePost: initialPosts.updatePost,
 			};
 		}

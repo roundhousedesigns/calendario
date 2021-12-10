@@ -1,18 +1,18 @@
 import React, { useContext } from 'react';
-import PostsContext from '../PostsContext';
+import PostsContext from '../../PostsContext';
 
 export default function RefetchButton() {
 	const { postsDispatch } = useContext(PostsContext);
 
 	const handleRefetchClick = () => {
 		postsDispatch({
-			type: 'REFETCH',
+			type: 'FETCH',
 		});
 	};
 
 	return (
 		<button
-			className="icon refetchButton control"
+			className="icon fetchPostsButton control"
 			onClick={handleRefetchClick}
 			title="Refresh Posts"
 		>
