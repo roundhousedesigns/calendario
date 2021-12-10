@@ -1,7 +1,6 @@
 import React, { useContext, useCallback } from 'react';
 import Day from './Day';
-import DayPosts from './DayPosts';
-import { useFetchScheduledPosts } from '../lib/hooks';
+import DayPosts from './DayPosts'
 import { dateFormat, dayKey } from '../lib/utils';
 import {
 	format,
@@ -15,8 +14,8 @@ import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
 import Loading from './common/Loading';
 
-export default function Calendar({ className, todayRef }) {
-	const { posts, postsDispatch } = useContext(PostsContext);
+export default function Calendar({ className, todayRef, isLoading }) {
+	const { posts } = useContext(PostsContext);
 	const {
 		viewOptions: {
 			viewRange: { start, end },
@@ -24,8 +23,6 @@ export default function Calendar({ className, todayRef }) {
 	} = useContext(ViewContext);
 
 	const { scheduled } = posts;
-
-	var isLoading = useFetchScheduledPosts(start, end, posts, postsDispatch);
 
 	const renderDaysHeaderRow = useCallback(() => {
 		const days = [];

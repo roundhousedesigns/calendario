@@ -6,6 +6,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 
 ### Changed
 
+- Elimiated rerenders and extraneous API calls on view switches and color changes
 - includes/functions.php -> includes/utils.php
 - Moved plugin to a top level menu in the Dashboard
 - empty index.php for security
