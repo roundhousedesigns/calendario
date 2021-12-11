@@ -4,12 +4,9 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 
 ## [0.8.0] - 2021-12-10
 
-- Add new categories + tags
-- Better initial loading
-- Refactoring
-
 ### Changed
 
+- Better initial loading
 - Elimiated rerenders and extraneous API calls on view switches and color changes
 - includes/functions.php -> includes/utils.php
 - Moved plugin to a top level menu in the Dashboard
@@ -18,6 +15,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 
 ### Added
 
+- Add new categories + tags
 - phpcs rules
 - SVG menu icon
 
