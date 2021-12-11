@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import FieldGroup from './common/FieldGroup';
 import Icon from './common/Icon';
-import { useClickOutside } from '../lib/hooks';
+import { useAddTaxonomyTerm, useClickOutside } from '../lib/hooks';
 import {
 	dateFormat,
 	dayKey,
@@ -24,6 +24,7 @@ import { decode } from 'html-entities';
 
 import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
+import Loading from './common/Loading';
 
 const initialEditPost = {
 	post: {},
@@ -34,6 +35,12 @@ const initialEditPost = {
 const initialTaxFilter = {
 	category: '',
 	post_tag: '',
+};
+
+const initialNewTerm = {
+	taxonomy: '',
+	term: '',
+	update: false,
 };
 
 function editPostReducer(state, action) {
@@ -114,6 +121,34 @@ function taxFilterReducer(state, action) {
 	}
 }
 
+function newTermReducer(state, action) {
+	switch (action.type) {
+		case 'EDIT':
+			const { taxonomy, term } = action;
+
+			return {
+				...state,
+				taxonomy,
+				term,
+			};
+
+		case 'UPDATE': {
+			return { ...state, update: true };
+		}
+
+		case 'UPDATING': {
+			return { ...state, update: false };
+		}
+
+		case 'CLEAR':
+			return initialNewTerm;
+
+		default: {
+			return state;
+		}
+	}
+}
+
 export default function EditPost() {
 	const {
 		viewOptions: { postStatuses },
@@ -130,6 +165,8 @@ export default function EditPost() {
 		taxFilterReducer,
 		initialTaxFilter
 	);
+	const [newTerm, newTermDispatch] = useReducer(newTermReducer, initialNewTerm);
+
 	const node = useRef(null);
 	const initial = useRef({});
 	const [date, setDate] = useState(new Date());
@@ -151,6 +188,22 @@ export default function EditPost() {
 		taxonomies: post_taxonomies,
 		unscheduled: isUnscheduled,
 	} = post;
+
+	var isLoading = useAddTaxonomyTerm(newTerm, postsDispatch, newTermDispatch);
+
+	const closeModal = useCallback(() => {
+		editPostDispatch({
+			type: 'CLEAR',
+		});
+
+		postsDispatch({
+			type: 'UNSET_CURRENTPOST',
+		});
+
+		newTermDispatch({ type: 'CLEAR' });
+	}, [editPostDispatch, postsDispatch]);
+
+	useClickOutside(node, closeModal);
 
 	useEffect(() => {
 		if (post_date && post_date !== 'undefined') {
@@ -214,95 +267,11 @@ export default function EditPost() {
 		};
 	}, [currentPost]);
 
-	const closeModal = useCallback(() => {
-		editPostDispatch({
-			type: 'CLEAR',
-		});
-
-		postsDispatch({
-			type: 'UNSET_CURRENTPOST',
-		});
-	}, [editPostDispatch, postsDispatch]);
-
-	const handleSubmit = (e) => {
-		e.preventDefault();
-
-		const { ogPost, post } = editPost;
-		const posts = { scheduled, unscheduled };
-
-		const index = isUnscheduled
-			? unscheduled.findIndex((item) => item.id === id)
-			: null;
-
-		// Move from one list to another
-		const postLists = {
-			source: ogPost.unscheduled ? 'unscheduled' : dayKey(ogPost.post_date),
-			destination: isUnscheduled ? 'unscheduled' : dayKey(post.post_date),
-		};
-
-		if (postLists.source !== postLists.destination) {
-			const result = moveItem(
-				getPostList(postLists.source, posts),
-				getPostList(postLists.destination, posts),
-				{ droppableId: postLists.source },
-				{ droppableId: postLists.destination }
-			);
-
-			postsDispatch({
-				type: 'MOVE_POST',
-				source: result[postLists.source],
-				destination: result[postLists.destination],
-				sourceId: result.sourceId,
-				destinationId: result.destinationId,
-			});
-		}
-
-		postsDispatch({
-			type: 'PREPARE_UPDATE',
-			id,
-			params: {
-				post_title,
-				post_name,
-				post_date: new Date(post.post_date),
-				post_status: filterPostStatus(post_status, isUnscheduled),
-				post_excerpt,
-				taxonomies: post_taxonomies,
-			},
-			unscheduled: isUnscheduled,
-			newIndex: index,
-		});
-
-		postsDispatch({
-			type: 'UNSET_CURRENTPOST',
-		});
-
-		editPostDispatch({
-			type: 'CLEAR',
-		});
-	};
-
-	const trashHandler = () => {
-		postsDispatch({
-			type: 'SEND_TO_TRASH',
-			id,
-			params: {
-				post_date,
-			},
-			unscheduled: isUnscheduled,
-		});
-
-		editPostDispatch({
-			type: 'CLEAR',
-		});
-
-		setTrashPostClicked(false);
-	};
-
-	const handleInputChange = (e) => {
-		editPostDispatch({
+	const handleNewTermInputChange = (e) => {
+		newTermDispatch({
 			type: 'EDIT',
-			field: e.target.name,
-			value: e.target.value,
+			taxonomy: e.target.dataset.taxonomy,
+			term: e.target.value,
 		});
 	};
 
@@ -334,6 +303,96 @@ export default function EditPost() {
 		});
 	};
 
+	const handleEditSubmit = (e) => {
+		e.preventDefault();
+
+		const { ogPost, post } = editPost;
+		const posts = { scheduled, unscheduled };
+
+		const index = isUnscheduled
+			? unscheduled.findIndex((item) => item.id === id)
+			: null;
+
+		// Move from one list to another
+		const postLists = {
+			source: ogPost.unscheduled ? 'unscheduled' : dayKey(ogPost.post_date),
+			destination: isUnscheduled ? 'unscheduled' : dayKey(post.post_date),
+		};
+
+		if (postLists.source !== postLists.destination) {
+			const result = moveItem(
+				getPostList(postLists.source, posts),
+				getPostList(postLists.destination, posts),
+				{ droppableId: postLists.source },
+				{ droppableId: postLists.destination }
+			);
+
+			postsDispatch({
+				type: 'MOVE_POST',
+				source: result[postLists.source],
+				destination: result[postLists.destination],
+				sourceId: result.sourceId,
+				destinationId: result.destinationId,
+			});
+
+			newTermDispatch({ type: 'CLEAR' });
+		}
+
+		postsDispatch({
+			type: 'PREPARE_UPDATE',
+			id,
+			params: {
+				post_title,
+				post_name,
+				post_date: new Date(post.post_date),
+				post_status: filterPostStatus(post_status, isUnscheduled),
+				post_excerpt,
+				taxonomies: post_taxonomies,
+			},
+			unscheduled: isUnscheduled,
+			newIndex: index,
+		});
+
+		postsDispatch({
+			type: 'UNSET_CURRENTPOST',
+		});
+
+		editPostDispatch({
+			type: 'CLEAR',
+		});
+	};
+
+	const handleNewTermSubmit = (e) => {
+		if (e.key === 'Enter') {
+			newTermDispatch({ type: 'UPDATE' });
+		}
+	};
+
+	const trashHandler = () => {
+		postsDispatch({
+			type: 'SEND_TO_TRASH',
+			id,
+			params: {
+				post_date,
+			},
+			unscheduled: isUnscheduled,
+		});
+
+		editPostDispatch({
+			type: 'CLEAR',
+		});
+
+		setTrashPostClicked(false);
+	};
+
+	const handleInputChange = (e) => {
+		editPostDispatch({
+			type: 'EDIT',
+			field: e.target.name,
+			value: e.target.value,
+		});
+	};
+
 	const renderStatusOptions = (statusList) => {
 		return Object.keys(statusList).map((status) => (
 			<option key={status} value={status}>
@@ -341,8 +400,6 @@ export default function EditPost() {
 			</option>
 		));
 	};
-
-	useClickOutside(node, closeModal);
 
 	return (
 		<div
@@ -359,7 +416,7 @@ export default function EditPost() {
 							className={`editPost__form ${
 								trashPostClicked ? 'trashConfirm' : ''
 							}`}
-							onSubmit={handleSubmit}
+							onSubmit={handleEditSubmit}
 						>
 							<div className="editPost__links">
 								<a
@@ -487,6 +544,7 @@ export default function EditPost() {
 													type="submit"
 													className="save button"
 													value={id === 0 ? 'Save' : 'Update'}
+													disabled={newTerm.term ? true : false}
 												/>
 												<input
 													type="button"
@@ -558,34 +616,63 @@ export default function EditPost() {
 											/>
 										</div>
 										<div className="terms">
-											{taxonomies.category.terms.map(
-												({ name, slug, term_id }, index) => {
-													return name
-														.toLowerCase()
-														.includes(taxFilter.category.toLowerCase()) ||
-														taxFilter.category === '' ? (
-														<label key={index} htmlFor={slug}>
-															<input
-																type="checkbox"
-																name={slug}
-																id={slug}
-																value={term_id}
-																onChange={handleTermCheckboxChange}
-																checked={
-																	!isEmpty(post_taxonomies) &&
-																	!isEmpty(post_taxonomies.category) &&
-																	post_taxonomies.category.includes(term_id)
-																}
-															/>
-															{decode(name, {
-																scope: 'strict',
-															})}
-														</label>
-													) : (
-														''
-													);
-												}
-											)}
+											<div className="newTerm">
+												<label
+													htmlFor="new_term__category"
+													className="newTerm__icon icon"
+												>
+													add_circle_outline
+												</label>
+												<input
+													id="new_term__category"
+													name="new_term__category"
+													data-taxonomy="category"
+													className="newTerm__input"
+													type="text"
+													placeholder="Add a new category"
+													value={
+														newTerm.taxonomy === 'category' ? newTerm.term : ''
+													}
+													onChange={handleNewTermInputChange}
+													onKeyPress={handleNewTermSubmit}
+												/>
+											</div>
+											{isLoading ? <Loading /> : ''}
+											{
+												// TODO combine logic
+												taxonomies.category.terms
+													? taxonomies.category.terms.map(
+															({ name, slug, term_id }, index) => {
+																return name
+																	.toLowerCase()
+																	.includes(taxFilter.category.toLowerCase()) ||
+																	taxFilter.category === '' ? (
+																	<label key={index} htmlFor={slug}>
+																		<input
+																			type="checkbox"
+																			name={slug}
+																			id={slug}
+																			value={term_id}
+																			onChange={handleTermCheckboxChange}
+																			checked={
+																				!isEmpty(post_taxonomies) &&
+																				!isEmpty(post_taxonomies.category) &&
+																				post_taxonomies.category.includes(
+																					term_id
+																				)
+																			}
+																		/>
+																		{decode(name, {
+																			scope: 'strict',
+																		})}
+																	</label>
+																) : (
+																	''
+																);
+															}
+													  )
+													: ''
+											}
 										</div>
 									</fieldset>
 								</div>
@@ -608,34 +695,63 @@ export default function EditPost() {
 											/>
 										</div>
 										<div className="terms">
-											{taxonomies.post_tag.terms.map(
-												({ name, slug, term_id }, index) => {
-													return name
-														.toLowerCase()
-														.includes(taxFilter.post_tag.toLowerCase()) ||
-														taxFilter.post_tag === '' ? (
-														<label key={index}>
-															<input
-																type="checkbox"
-																name={slug}
-																id={slug}
-																value={term_id}
-																onChange={handleTermCheckboxChange}
-																checked={
-																	!isEmpty(post_taxonomies) &&
-																	!isEmpty(post_taxonomies.post_tag) &&
-																	post_taxonomies.post_tag.includes(term_id)
-																}
-															/>
-															{decode(name, {
-																scope: 'strict',
-															})}
-														</label>
-													) : (
-														''
-													);
-												}
-											)}
+											<div className="newTerm">
+												<label
+													htmlFor="new_term__post_tag"
+													className="newTerm__icon icon"
+												>
+													add_circle_outline
+												</label>
+												<input
+													id="new_term__post_tag"
+													name="new_term__post_tag"
+													data-taxonomy="post_tag"
+													className="newTerm__input"
+													type="text"
+													placeholder="Add a new tag"
+													value={
+														newTerm.taxonomy === 'post_tag' ? newTerm.term : ''
+													}
+													onChange={handleNewTermInputChange}
+													onKeyPress={handleNewTermSubmit}
+												/>
+											</div>
+											{isLoading ? <Loading /> : ''}
+											{
+												// TODO combine logic
+												taxonomies.post_tag.terms
+													? taxonomies.post_tag.terms.map(
+															({ name, slug, term_id }, index) => {
+																return name
+																	.toLowerCase()
+																	.includes(taxFilter.post_tag.toLowerCase()) ||
+																	taxFilter.post_tag === '' ? (
+																	<label key={index}>
+																		<input
+																			type="checkbox"
+																			name={slug}
+																			id={slug}
+																			value={term_id}
+																			onChange={handleTermCheckboxChange}
+																			checked={
+																				!isEmpty(post_taxonomies) &&
+																				!isEmpty(post_taxonomies.post_tag) &&
+																				post_taxonomies.post_tag.includes(
+																					term_id
+																				)
+																			}
+																		/>
+																		{decode(name, {
+																			scope: 'strict',
+																		})}
+																	</label>
+																) : (
+																	''
+																);
+															}
+													  )
+													: ''
+											}
 										</div>
 									</fieldset>
 								</div>

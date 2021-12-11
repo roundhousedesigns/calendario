@@ -10,7 +10,6 @@
 
 ### Todo
 
-- Add new cat/tag
 - Load Material icons faster
 - Documentation
 - iOS style bugs:

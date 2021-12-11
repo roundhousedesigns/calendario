@@ -65,6 +65,12 @@ class Calendario_Route extends WP_REST_Controller {
 					'permission_callback' => array( $this, 'options_permissions_check' ),
 					'args'                => array( $this->get_taxonomy_endpoint_args() ),
 				),
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'add_taxonomy_term' ),
+					'permission_callback' => array( $this, 'options_permissions_check' ),
+					'args'                => array( $this->get_taxonomy_endpoint_args() ),
+				),
 			)
 		);
 
@@ -543,7 +549,7 @@ class Calendario_Route extends WP_REST_Controller {
 	 * Get a collection of taxonomy terms
 	 *
 	 * @param  WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|WP_REST_Response
+	 * @return WP_Error|WP_REST_Response The REST response, or error on failure.
 	 */
 	public function get_taxonomy_terms( $request ) {
 		$params = $request->get_params();
@@ -568,15 +574,59 @@ class Calendario_Route extends WP_REST_Controller {
 			);
 
 			foreach ( $terms as $term ) {
-				$data['terms'][] = array(
-					'term_id' => $term->term_id,
-					'name'    => $term->name,
-					'slug'    => $term->slug,
-				);
+				$data['terms'][] = $this->prepare_term_for_response( $term );
 			}
 		}
 
 		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Formats a term for a REST response.
+	 *
+	 * @param WP_Term $term The term to prepare.
+	 * @return false|array The prepared term data, or false on failure.
+	 */
+	protected function prepare_term_for_response( $term ) {
+		if ( ! $term || is_wp_error( $term ) ) {
+			return false;
+		}
+
+		return array(
+			'term_id' => $term->term_id,
+			'name'    => $term->name,
+			'slug'    => $term->slug,
+		);
+	}
+
+	/**
+	 * Add a taxonomy term to the database.
+	 *
+	 * @param WP_Request $request Full data about the request.
+	 * @return WP_Error|WP_REST_Response The REST response, or error on failure.
+	 */
+	public function add_taxonomy_term( $request ) {
+		$params = $request->get_params();
+
+		$term_name     = wp_strip_all_tags( $params['term'], true );
+		$taxonomy_name = wp_strip_all_tags( $params['taxonomy'], true );
+
+		$result = wp_insert_term( $term_name, $taxonomy_name );
+
+		if ( $result && ! is_wp_error( $result ) ) {
+			$term = get_term_by( 'term_taxonomy_id', $result['term_id'] );
+
+			if ( $term ) {
+				$term_data = array(
+					'taxonomy' => $taxonomy_name,
+					'term'     => $this->prepare_term_for_response( $term ),
+				);
+
+				return new WP_REST_Response( $term_data, 200 );
+			}
+		} else {
+			return new WP_Error( 'cant-update', __( 'There was an error adding the taxonomy term.', 'calendario' ), array( 'status' => 500 ) );
+		}
 	}
 
 	/**
@@ -601,7 +651,7 @@ class Calendario_Route extends WP_REST_Controller {
 			}
 		}
 
-		return new WP_Error( 'cant-update', __( 'message', 'calendario' ), array( 'status' => 500 ) );
+		return new WP_Error( 'cant-update', __( 'Error updating the post or post terms.', 'calendario' ), array( 'status' => 500 ) );
 	}
 
 	/**
@@ -626,7 +676,7 @@ class Calendario_Route extends WP_REST_Controller {
 			}
 		}
 
-		return new WP_Error( 'error-updating', __( 'Error updating post or post terms.', 'calendario' ), array( 'status' => 500 ) );
+		return new WP_Error( 'error-updating', __( 'Error creating the post or post terms.', 'calendario' ), array( 'status' => 500 ) );
 	}
 
 	/**

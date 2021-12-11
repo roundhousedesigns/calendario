@@ -141,7 +141,7 @@ class Calendario {
 		/**
 		 * Main page and top-level menu registration.
 		 */
-		add_menu_page( 'Editorial Calendar.io', 'Calendar.io', 'edit_others_posts', 'calendario', array( $this, 'calendario_page_main' ), self::MENU_ICON, 3 );
+		add_menu_page( 'Editorial Calendar.io', 'Calendar.io', 'edit_others_posts', 'calendario', array( $this, 'calendario_page_main' ), self::MENU_ICON, 8 );
 	}
 
 	/**

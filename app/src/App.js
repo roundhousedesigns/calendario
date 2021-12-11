@@ -3,7 +3,7 @@ import Header from './components/Header';
 import Main from './components/Main';
 import Sidebar from './components/Sidebar';
 import Icon from './components/common/Icon';
-import { useStickyState, useFetchPostStatuses, useUpdate } from './lib/hooks';
+import { useStickyState, useFetchPostStatuses, useUpdatePosts } from './lib/hooks';
 import {
 	dateIsBetween,
 	isDraggingUnscheduled,
@@ -80,7 +80,7 @@ export default function App() {
 	/**
 	 * Send the update
 	 */
-	useUpdate(posts, postsDispatch, draggedPost, draggedPostDispatch);
+	useUpdatePosts(posts, postsDispatch, draggedPost, draggedPostDispatch);
 
 	const isOverUnscheduled = (droppableId) =>
 		droppableId === 'unscheduled' ? true : false;

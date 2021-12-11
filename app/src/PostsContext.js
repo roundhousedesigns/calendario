@@ -22,6 +22,10 @@ export const initialPosts = {
 		newIndex: null,
 		unscheduled: false,
 	},
+	// addTerm: {
+	// 	taxonomy: '',
+	// 	term: '',
+	// },
 	fetchPosts: false, // Toggle value to trigger fetchPosts
 	dateRange: {
 		start: '',
@@ -111,6 +115,19 @@ export function postsReducer(state, action) {
 					[action.name]: {
 						taxonomy: action.taxonomy,
 						terms: action.terms,
+					},
+				},
+			};
+		}
+
+		case 'APPEND_TAXONOMY_TERM': {
+			return {
+				...state,
+				taxonomies: {
+					...state.taxonomies,
+					[action.name]: {
+						...state.taxonomies[action.name],
+						terms: [action.term, ...state.taxonomies[action.name].terms],
 					},
 				},
 			};

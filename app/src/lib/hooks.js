@@ -261,12 +261,11 @@ export const useFetchTaxonomyTerms = (name, posts, postsDispatch) => {
 						taxonomy: data.taxonomy,
 						terms: data.terms,
 					});
-
-					setIsLoading(false);
 				} catch (error) {
 					console.log('REST error', error.message);
-					setIsLoading(false);
 				}
+
+				setIsLoading(false);
 			};
 
 			fetchData();
@@ -281,6 +280,58 @@ export const useFetchTaxonomyTerms = (name, posts, postsDispatch) => {
 };
 
 /**
+ * // TODO document
+ *
+ * @param {*} newTerm
+ * @param {*} postsDispatch
+ * @param {*} newTermDispatch
+ */
+export const useAddTaxonomyTerm = (newTerm, postsDispatch, newTermDispatch) => {
+	const [isLoading, setIsLoading] = useState(false);
+
+	useEffect(() => {
+		if (newTerm.taxonomy && newTerm.term && newTerm.update) {
+			let url = `${routeBase}/tax/${newTerm.taxonomy}`;
+
+			newTermDispatch({ type: 'UPDATING' });
+
+			const sendUpdate = async () => {
+				setIsLoading(true);
+
+				try {
+					const response = await fetch(url, {
+						method: 'POST',
+						headers,
+						body: JSON.stringify(newTerm),
+					});
+					const data = await response.json();
+
+					if (data && !isEmpty(data)) {
+						newTermDispatch({ type: 'CLEAR' });
+						postsDispatch({
+							type: 'APPEND_TAXONOMY_TERM',
+							name: data.taxonomy,
+							term: data.term,
+						});
+					} else {
+						throw new Error('No taxonomy term data recieved.');
+					}
+				} catch (error) {
+					console.log(error.message);
+				}
+
+				setIsLoading(false);
+			};
+
+			sendUpdate();
+		}
+	});
+
+	return isLoading;
+};
+
+/**
+ * Updates existing or adds new posts to the database.
  *
  * @param {Object} posts PostsContext store
  * @param {Function} postsDispatch PostsContext reducer
@@ -288,7 +339,7 @@ export const useFetchTaxonomyTerms = (name, posts, postsDispatch) => {
  * @param {Function} draggedPostDispatch DragContext reducer
  * @returns {void}
  */
-export const useUpdate = (
+export const useUpdatePosts = (
 	posts,
 	postsDispatch,
 	draggedPost,

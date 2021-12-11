@@ -350,6 +350,32 @@
 							display: inline-block;
 							margin-right: 0.5rem;
 						}
+
+						.newTerm {
+							display: flex;
+							flex-wrap: nowrap;
+							margin: 8px 0 4px;
+							align-items: center;
+
+							&__icon {
+								display: inline;
+								line-height: 1;
+								font-size: 22px;
+								margin-right: 2px;
+								flex: 0;
+								cursor: default;
+							}
+
+							&__input {
+								flex: 1;
+								border-top: 0;
+								border-right: 0;
+								border-left: 0;
+								border-bottom-width: 2px;
+								margin: 0 4px 0 0;
+								cursor: text;
+							}
+						}
 					}
 				}
 			}
