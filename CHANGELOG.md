@@ -2,7 +2,11 @@
 
 All notable changes to Editorial Calendar.io's backend will be documented in this file.
 
-## [0.8] - Not yet released
+## [0.8.0] - 2021-12-10
+
+- Add new categories + tags
+- Better initial loading
+- Refactoring
 
 ### Changed
 
