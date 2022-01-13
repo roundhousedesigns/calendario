@@ -1,6 +1,6 @@
 {
 	"name": "calendar.io",
-	"version": "0.8.02",
+	"version": "0.8.03",
 	"private": true,
 	"dependencies": {
 		"@material-ui/core": "^4.11.2",
