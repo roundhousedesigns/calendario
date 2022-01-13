@@ -115,7 +115,7 @@ class Calendario {
 
 		// Variables for app use - These variables will be available in window.rhdReactPlugin variable.
 		wp_localize_script(
-			'react-plugin-1',
+			'react-plugin-0',
 			'rhdReactPlugin',
 			array(
 				'appSelector'         => $this->selector,
