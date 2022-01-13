@@ -11,6 +11,7 @@
 ### Todo
 
 - Comments on/off
+- User customizable title for "Unscheduled Drafts?"
 - Load Material icons faster
 - Documentation
 - iOS style bugs:
