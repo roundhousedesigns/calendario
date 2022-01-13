@@ -393,7 +393,7 @@ export default function EditPost() {
 		});
 	};
 
-	const renderStatusOptions = (statusList) => {
+	const renderOptionsList = (statusList) => {
 		return Object.keys(statusList).map((status) => (
 			<option key={status} value={status}>
 				{statusList[status].name}
@@ -562,19 +562,28 @@ export default function EditPost() {
 											onChange={handleInputChange}
 											value={post_status}
 										>
-											{renderStatusOptions(allowedStatuses)}
+											{renderOptionsList(allowedStatuses)}
 										</select>
 									</FieldGroup>
+									{/* <FieldGroup name="fieldGroup__comments">
+										<select
+											name="comments"
+											onChange={handleInputChange}
+											value={comments}
+										>
+											{renderOptionsList(commentsList)}
+										</select>
+									</FieldGroup> */}
 									<FieldGroup name="post_thumb">
-										<a
+										{/* <a
 											href={decode(edit_link)}
 											target="_blank"
 											rel="noreferrer"
 										>
-											Featured Image{' '}
+											{image ? '' : 'Set '}Featured Image{' '}
 											<Icon className="open_in_new">open_in_new</Icon>
-											{image ? <img src={image} alt={`${post_title}`} /> : ''}
-										</a>
+										</a> */}
+										{image ? <img src={image} alt={`${post_title}`} /> : ''}
 									</FieldGroup>
 									<div className="editPost__links">
 										<a
