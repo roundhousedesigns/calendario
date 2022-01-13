@@ -5,7 +5,7 @@
  * Author:         Roundhouse Designs
  * Author URI:     https://roundhouse-designs.com
  * Text Domain:    rhd
- * Version:        0.8.01
+ * Version:        0.8.02
  *
  * @package       calendario
  *
@@ -15,7 +15,7 @@
 /**
  * Paths.
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.8.01' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.8.02' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
