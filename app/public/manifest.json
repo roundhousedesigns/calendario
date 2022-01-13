@@ -1,0 +1,8 @@
+{
+  "short_name": "Calendar.io",
+  "name": "Editorial Calendar.io",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

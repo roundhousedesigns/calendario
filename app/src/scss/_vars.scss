@@ -1,0 +1,21 @@
+:root {
+	--color-main: #1a8fff;
+	--color-main-light: #53cbf1;
+	--color-main-transparent: #1a8fff24;
+	--color-text: #777;
+	--color-text-light: #ccc;
+	--color-text-dark: #333;
+	--color-text-transparent: rgba(51, 51, 51, 0.9);
+	--color-border: #eee;
+	--color-bg: #fff;
+	--color-neutral: #fff;
+	--color-neutral-dark: rgb(247, 247, 247);
+	--color-error: red;
+	--color-date-past: #654654a9;
+	--borderRadius: 8px;
+	--borderRadius-half: calc(var(--borderRadius) / 2);
+	--gridGap: 1em;
+}
+
+$mobileBreak: 800px;
+$postLinks__height: 30px;

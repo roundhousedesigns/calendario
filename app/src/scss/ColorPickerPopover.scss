@@ -1,0 +1,55 @@
+.swatch {
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	cursor: pointer;
+	display: block;
+}
+
+.picker {
+	background: var(--color-neutral-dark);
+	border-radius: 50%;
+	position: relative;
+	margin-right: 12px;
+	padding: 2px;
+	border: 1px solid var(--color-text-light);
+
+	&__swatches {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-evenly;
+		padding: 12px;
+	}
+
+	&__swatch {
+		width: 24px;
+		height: 24px;
+		margin: 4px;
+		border: 1px solid transparent;
+		padding: 1px;
+		border-radius: 4px;
+		cursor: pointer;
+		outline: none;
+
+		&:hover {
+			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1),
+				inset 0 0 0 1px rgba(0, 0, 0, 0.01);
+		}
+	}
+
+	.react-colorful {
+		display: none;
+	}
+
+	.popover {
+		position: absolute;
+		top: calc(100% + 2px);
+		left: 0;
+		background-color: var(--color-neutral);
+		border: 1px solid var(--color-neutral-dark);
+		border-radius: 9px;
+		box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+		z-index: 999;
+		width: 200px;
+	}
+}
