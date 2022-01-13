@@ -7,7 +7,6 @@ import React, {
 	useCallback,
 } from 'react';
 import FieldGroup from './common/FieldGroup';
-import Icon from './common/Icon';
 import { useAddTaxonomyTerm, useClickOutside } from '../lib/hooks';
 import {
 	dateFormat,
