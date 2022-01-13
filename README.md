@@ -10,6 +10,7 @@
 
 ### Todo
 
+- Comments on/off
 - Load Material icons faster
 - Documentation
 - iOS style bugs:
