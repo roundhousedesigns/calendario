@@ -16,7 +16,15 @@ export default function BetaInfo() {
 				<img src={`${pluginUrl}rhd-logo.png`} alt="Roundhouse Designs logo" />
 			</a>
 			<ul className="docs">
-				<li>Documentation coming soon</li>
+				<li>
+					<a
+						href="https://github.com/roundhousedesigns/calendario/wiki"
+						rel="noreferrer"
+						target="_blank"
+					>
+						Documentation
+					</a>
+				</li>
 				<li>
 					<a
 						href={`${adminUrl}/admin.php?page=calendario-contact`}
