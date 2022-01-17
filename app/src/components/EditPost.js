@@ -578,15 +578,15 @@ export default function EditPost() {
 											<option value="closed">Closed</option>
 										</select>
 									</FieldGroup>
-									<FieldGroup name="post_thumb">
-										{/* <a
+									{/* <FieldGroup name="post_thumb">
+										<a
 											href={decode(edit_link)}
 											target="_blank"
 											rel="noreferrer"
 										>
 											{image ? '' : 'Set '}Featured Image{' '}
 											<Icon className="open_in_new">open_in_new</Icon>
-										</a> */}
+										</a>
 										{image ? (
 											<figure>
 												<figcaption>Featured Image</figcaption>
@@ -595,7 +595,7 @@ export default function EditPost() {
 										) : (
 											''
 										)}
-									</FieldGroup>
+									</FieldGroup> */}
 									<div className="editPost__links">
 										<a
 											className="editLink"
