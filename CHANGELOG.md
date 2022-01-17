@@ -2,6 +2,16 @@
 
 All notable changes to Editorial Calendar.io's backend will be documented in this file.
 
+## [0.8.3] - 2021/12-17
+
+### Added
+
+- Comments on/off
+
+### Changed
+
+- Removed featured image edit link
+
 ## [0.8.0] - 2021-12-10
 
 ### Changed
