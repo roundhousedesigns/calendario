@@ -41,10 +41,42 @@ export const wp =
 					'#f6bc98',
 					'#eb6e6f',
 				],
+				postStatuses: {
+					publish: {
+						name: 'Published',
+						color: '#00A193',
+					},
+					future: {
+						name: 'Scheduled',
+						color: '#F7C900',
+					},
+					draft: {
+						name: 'Draft',
+						color: '#B8B8B8',
+					},
+					pending: {
+						name: 'Pending Review',
+						color: '#EB867B',
+					},
+					private: {
+						name: 'Private',
+						color: '#252B6F',
+					},
+				},
 		  }
 		: {
 				...window.rhdReactPlugin,
 		  };
+
+export const prepareInitialPostStatuses = (statuses) => {
+	// Don't overwrite visibility, if set
+	for (let status in statuses) {
+		statuses[status].visible =
+			'visible' in statuses[status] ? statuses[status].visible : true;
+	}
+
+	return statuses;
+};
 
 export const dateFormat = {
 	day: 'd',

@@ -115,7 +115,7 @@ class Calendario {
 
 		// Variables for app use - These variables will be available in window.rhdReactPlugin variable.
 		wp_localize_script(
-			'react-plugin-0',
+			'react-plugin-1',
 			'rhdReactPlugin',
 			array(
 				'appSelector'         => $this->selector,
@@ -126,6 +126,7 @@ class Calendario {
 				'user'                => get_current_user_id(),
 				'nonce'               => wp_create_nonce( 'wp_rest' ),
 				'routeBase'           => get_rest_url( null, sprintf( 'calendario/%s', RHD_CALENDARIO_REST_VERSION ) ),
+				'postStatuses'        => rhd_prepare_post_statuses(),
 				'defaultStatusColors' => rhd_post_status_default_color_pairs(),
 				'presetStatusColors'  => RHD_POST_STATUS_SWATCHES,
 			)

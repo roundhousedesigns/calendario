@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { wp } from './lib/utils';
+import { wp, prepareInitialPostStatuses } from './lib/utils';
 import {
 	addWeeks,
 	subWeeks,
@@ -11,18 +11,18 @@ import {
 const ViewContext = createContext({});
 export default ViewContext;
 
+const { defaultStatusColors, postStatuses } = wp;
+
 export const initialViewOptions = {
 	viewMode: '',
 	viewRange: {
 		start: null,
 		end: null,
 	},
-	postStatuses: {},
+	postStatuses: prepareInitialPostStatuses(postStatuses),
 	postStatusColorsChanged: false,
 	sidebarOpen: true,
 };
-
-const { defaultStatusColors } = wp;
 
 export function viewReducer(state, action) {
 	switch (action.type) {
@@ -79,20 +79,21 @@ export function viewReducer(state, action) {
 			};
 		}
 
-		case 'SET_POST_STATUSES': {
-			let statuses = action.postStatuses;
+		// TODO Deprecate.
+		// case 'SET_POST_STATUSES': {
+		// 	let statuses = action.postStatuses;
 
-			// Don't overwrite visibility, if set
-			for (let status in statuses) {
-				statuses[status].visible =
-					'visible' in statuses[status] ? statuses[status].visible : true;
-			}
+		// 	// Don't overwrite visibility, if set
+		// 	for (let status in statuses) {
+		// 		statuses[status].visible =
+		// 			'visible' in statuses[status] ? statuses[status].visible : true;
+		// 	}
 
-			return {
-				...state,
-				postStatuses: statuses,
-			};
-		}
+		// 	return {
+		// 		...state,
+		// 		postStatuses: statuses,
+		// 	};
+		// }
 
 		case 'TOGGLE_POST_STATUS': {
 			return {

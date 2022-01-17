@@ -7,7 +7,7 @@ import React, {
 	useCallback,
 } from 'react';
 import FieldGroup from './common/FieldGroup';
-import Icon from './common/Icon';
+// import Icon from './common/Icon';
 import { useAddTaxonomyTerm, useClickOutside } from '../lib/hooks';
 import {
 	dateFormat,
@@ -182,6 +182,7 @@ export default function EditPost() {
 		post_date,
 		post_status,
 		post_excerpt,
+		comment_status,
 		image,
 		edit_link,
 		view_link,
@@ -347,6 +348,7 @@ export default function EditPost() {
 				post_date: new Date(post.post_date),
 				post_status: filterPostStatus(post_status, isUnscheduled),
 				post_excerpt,
+				comment_status,
 				taxonomies: post_taxonomies,
 			},
 			unscheduled: isUnscheduled,
@@ -393,10 +395,10 @@ export default function EditPost() {
 		});
 	};
 
-	const renderOptionsList = (statusList) => {
-		return Object.keys(statusList).map((status) => (
-			<option key={status} value={status}>
-				{statusList[status].name}
+	const renderOptionsList = (list) => {
+		return Object.keys(list).map((item) => (
+			<option key={item} value={item}>
+				{list[item].name}
 			</option>
 		));
 	};
@@ -565,15 +567,17 @@ export default function EditPost() {
 											{renderOptionsList(allowedStatuses)}
 										</select>
 									</FieldGroup>
-									{/* <FieldGroup name="fieldGroup__comments">
+									<FieldGroup name="fieldGroup__status">
+										<label htmlFor="comment_status">Comments</label>
 										<select
-											name="comments"
+											name="comment_status"
 											onChange={handleInputChange}
-											value={comments}
+											value={comment_status}
 										>
-											{renderOptionsList(commentsList)}
+											<option value="open">Open</option>
+											<option value="closed">Closed</option>
 										</select>
-									</FieldGroup> */}
+									</FieldGroup>
 									<FieldGroup name="post_thumb">
 										{/* <a
 											href={decode(edit_link)}
@@ -583,7 +587,14 @@ export default function EditPost() {
 											{image ? '' : 'Set '}Featured Image{' '}
 											<Icon className="open_in_new">open_in_new</Icon>
 										</a> */}
-										{image ? <img src={image} alt={`${post_title}`} /> : ''}
+										{image ? (
+											<figure>
+												<figcaption>Featured Image</figcaption>
+												<img src={image} alt={`${post_title}`} />
+											</figure>
+										) : (
+											''
+										)}
 									</FieldGroup>
 									<div className="editPost__links">
 										<a

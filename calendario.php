@@ -5,7 +5,7 @@
  * Author:         Roundhouse Designs
  * Author URI:     https://roundhouse-designs.com
  * Text Domain:    rhd
- * Version:        0.8.2
+ * Version:        0.8.3
  *
  * @package       calendario
  *
@@ -15,7 +15,7 @@
 /**
  * Paths.
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.8.2' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '0.8.3' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
@@ -25,7 +25,6 @@ define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 // define( 'RHD_CALENDARIO_PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) . 'app/' );
 // define( 'RHD_CALENDARIO_REACT_APP_BUILD', RHD_CALENDARIO_PLUGIN_DIR_URL . 'build/' );
 
-//
 // Load JS interface from CloudFlare Pages (CI/CD).
 define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
 

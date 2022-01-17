@@ -131,49 +131,6 @@ export const useFetchUnscheduledPosts = (posts, postsDispatch) => {
 };
 
 /**
- * Retrieves the set of post statuses from the server
- *
- * @param {Function} viewOptionsDispatch ViewContext reducer
- * @returns {boolean} The current loading state
- */
-export const useFetchPostStatuses = (viewOptionsDispatch) => {
-	const [isLoading, setIsLoading] = useState(false);
-
-	useEffect(() => {
-		let url = `${routeBase}/statuses`;
-
-		const fetchData = async () => {
-			setIsLoading(true);
-
-			try {
-				const res = await fetch(url, {
-					headers,
-				});
-				const data = await res.json();
-
-				viewOptionsDispatch({
-					type: 'SET_POST_STATUSES',
-					postStatuses: data,
-				});
-
-				setIsLoading(false);
-			} catch (error) {
-				console.log('REST error', error.message);
-				setIsLoading(false);
-			}
-		};
-
-		fetchData();
-
-		return () => {
-			setIsLoading(false);
-		};
-	}, [viewOptionsDispatch]);
-
-	return isLoading;
-};
-
-/**
  * Sends updated post status colors to the server.
  *
  * @param {Object} postStatuses The set of post statuses.
@@ -190,10 +147,9 @@ export const useUpdateStatusColors = (
 			return;
 		}
 
-		let url = `${routeBase}/statuses`;
+		let url = `${routeBase}/status`;
 
 		const fetchData = async () => {
-			console.log('doing');
 			let colors = {};
 			let headers = {
 				'Content-Type': 'application/json',
@@ -339,7 +295,7 @@ export const useAddTaxonomyTerm = (newTerm, postsDispatch, newTermDispatch) => {
  * @param {Function} draggedPostDispatch DragContext reducer
  * @returns {void}
  */
-export const useUpdatePosts = (
+export const useUpdatePost = (
 	posts,
 	postsDispatch,
 	draggedPost,

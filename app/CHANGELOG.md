@@ -2,7 +2,14 @@
 
 All notable changes to Editorial Calendar.io's React interface will be documented in this file.
 
-## [0.8] - Not yet released
+## [0.8.3] - 1/16/2022
+
+### Added
+
+- Comments on/off
+- Removed featured image edit link
+
+## [0.7]
 
 ### Added
 

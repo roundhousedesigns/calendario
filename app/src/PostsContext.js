@@ -12,6 +12,7 @@ export const initialPosts = {
 		post_title: '',
 		post_status: '',
 		post_date: '',
+		comment_status: null,
 		unscheduled: null,
 	},
 	updatePost: {

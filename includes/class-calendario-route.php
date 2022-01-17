@@ -28,7 +28,7 @@ class Calendario_Route extends WP_REST_Controller {
 		$namespace   = 'calendario/v' . $version;
 		$post_base   = 'posts';
 		$tax_base    = 'tax';
-		$status_base = 'statuses';
+		$status_base = 'status';
 
 		register_rest_route(
 			$namespace,
@@ -117,11 +117,6 @@ class Calendario_Route extends WP_REST_Controller {
 			'/' . $status_base,
 			array(
 				array(
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_post_statuses' ),
-					'permission_callback' => array( $this, 'options_permissions_check' ),
-				),
-				array(
 					'methods'             => WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'update_post_statuses' ),
 					'permission_callback' => array( $this, 'options_permissions_check' ),
@@ -139,7 +134,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function create_item_permissions_check( $request ) {
 		// DEBUG.
 		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
-		return true;
+		// return true;
 
 		return user_can( wp_get_current_user(), 'edit_others_posts' );
 	}
@@ -163,7 +158,7 @@ class Calendario_Route extends WP_REST_Controller {
 	public function options_permissions_check( $request ) {
 		// DEBUG.
 		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
-		return true;
+		// return true;
 
 		return user_can( wp_get_current_user(), 'manage_options' );
 	}
@@ -722,6 +717,8 @@ class Calendario_Route extends WP_REST_Controller {
 	/**
 	 * Gets post status data.
 	 *
+	 * TODO Deprecate.
+	 *
 	 * @param  WP_REST_Request $request Full data about the request.
 	 * @return WP_Error|bool
 	 */
@@ -963,20 +960,21 @@ class Calendario_Route extends WP_REST_Controller {
 		$post_date = new DateTime( $item->post_date );
 
 		return array(
-			'id'           => $item->ID,
-			'post_title'   => $item->post_title,
-			'post_name'    => $item->post_name,
-			'post_date'    => $post_date->format( 'c' ),
-			'post_status'  => $item->post_status,
-			'post_excerpt' => $item->post_excerpt,
-			'image'        => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),
-			'edit_link'    => get_edit_post_link( $item->ID ),
-			'view_link'    => get_the_permalink( $item->ID ),
-			'taxonomies'   => array(
+			'id'             => $item->ID,
+			'post_title'     => $item->post_title,
+			'post_name'      => $item->post_name,
+			'post_date'      => $post_date->format( 'c' ),
+			'post_status'    => $item->post_status,
+			'post_excerpt'   => $item->post_excerpt,
+			'comment_status' => $item->comment_status,
+			'image'          => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),
+			'edit_link'      => get_edit_post_link( $item->ID ),
+			'view_link'      => get_the_permalink( $item->ID ),
+			'taxonomies'     => array(
 				'category' => rhd_get_term_ids( $item->ID, 'category' ),
 				'post_tag' => rhd_get_term_ids( $item->ID, 'post_tag' ),
 			),
-			'edit_lock'    => rhd_check_post_lock( $item->ID ),
+			'edit_lock'      => rhd_check_post_lock( $item->ID ),
 		);
 
 	}
