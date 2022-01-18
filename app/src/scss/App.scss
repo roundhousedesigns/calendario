@@ -248,19 +248,13 @@ body {
 
 	&__main,
 	&__sidebar {
-		padding-bottom: 40px;
+		padding-bottom: var(--gridGap);
 	}
 
 	&__sidebar {
 		grid-area: sidebar;
 		width: 100%;
 		position: relative;
-
-		&.open {
-			@media (min-width: $mobileBreak) {
-				padding-left: 1em;
-			}
-		}
 
 		&.closed {
 			overflow: hidden;
@@ -487,11 +481,15 @@ body {
 	}
 
 	&__calendar {
+		height: 100%;
 		padding: 12px;
 
 		&__inner {
 			background-color: var(--color-neutral);
 			border: 1px solid var(--color-border);
+			display: flex;
+			flex-direction: column;
+			height: 100%;
 		}
 
 		.days {
@@ -501,6 +499,7 @@ body {
 			font-size: 70%;
 			padding: 0.75em 0;
 			border-bottom: 1px solid var(--color-border);
+			flex: 0;
 		}
 
 		.day {
@@ -529,10 +528,44 @@ body {
 		}
 
 		.body {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-evenly;
+			height: 100%;
+
+			.selected {
+				border-left: 10px solid transparent;
+				border-image: linear-gradient(
+					45deg,
+					var(--color-main) 0%,
+					var(--color-main-light) 40%
+				);
+				border-image-slice: 1;
+			}
+
+			.today {
+				background: rgba(252, 152, 2, 0.068);
+			}
+
+			.past {
+				background: var(--color-neutral-dark);
+			}
+
+			.row {
+				border-bottom: 1px solid var(--color-border);
+				display: grid;
+				grid-template-columns: repeat(7, calc(100% / 7));
+				min-height: 8em;
+				height: 100%;
+
+				&:last-child {
+					border-bottom: none;
+				}
+			}
+
 			.cell {
 				position: relative;
 				height: auto;
-				min-height: 7em;
 				border-right: 1px solid var(--color-border);
 				transition: 0.25s ease-out;
 
@@ -572,37 +605,11 @@ body {
 				}
 			}
 
-			.selected {
-				border-left: 10px solid transparent;
-				border-image: linear-gradient(
-					45deg,
-					var(--color-main) 0%,
-					var(--color-main-light) 40%
-				);
-				border-image-slice: 1;
-			}
-
-			.today {
-				background: rgba(252, 152, 2, 0.068);
-			}
-
-			.past {
-				background: var(--color-neutral-dark);
-			}
-
-			.row {
-				border-bottom: 1px solid var(--color-border);
-
-				&:last-child {
-					border-bottom: none;
-				}
-			}
-
-			.col {
-				flex-grow: 0;
-				flex-basis: calc(100% / 7);
-				width: calc(100% / 7);
-			}
+			// .col {
+			// 	flex-grow: 0;
+			// 	flex-basis: calc(100% / 7);
+			// 	width: calc(100% / 7);
+			// }
 		}
 
 		.postList {
