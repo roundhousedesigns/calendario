@@ -127,7 +127,7 @@ class Calendario {
 				'nonce'               => wp_create_nonce( 'wp_rest' ),
 				'routeBase'           => get_rest_url( null, sprintf( 'calendario/%s', RHD_CALENDARIO_REST_VERSION ) ),
 				'postStatuses'        => rhd_prepare_post_statuses(),
-				'postAuthors'					=> rhd_prepare_post_authors(),
+				'postAuthors'         => rhd_prepare_post_authors(),
 				'defaultStatusColors' => rhd_post_status_default_color_pairs(),
 				'presetStatusColors'  => RHD_POST_STATUS_SWATCHES,
 			)
@@ -152,7 +152,7 @@ class Calendario {
 	 * @return void
 	 */
 	public function calendario_page_main() {
-		echo wp_kses_post( '<div id="calendario"></div>' );
+		printf( wp_kses_post( '%s' ), '<div id="calendario"></div>' );
 	}
 
 	/**

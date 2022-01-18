@@ -2,7 +2,7 @@
 
 All notable changes to Editorial Calendar.io's backend will be documented in this file.
 
-## [0.8.3] - 2021/12-17
+## 0.8.3 - 2021/12-17
 
 ### Added
 
@@ -13,7 +13,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 
 - Removed featured image edit link
 
-## [0.8.0] - 2021-12-10
+## 0.8.0 - 2021-12-10
 
 ### Changed
 
@@ -30,7 +30,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 - phpcs rules
 - SVG menu icon
 
-## [0.7.64] - 2021-12-09
+## 0.7.64 - 2021-12-09
 
 ### Changed
 
@@ -38,7 +38,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 - Initial loading animations
 - Plugin icon (freemius, plugin update screen)
 
-## [0.7.62-63] - 2021-12-08
+## 0.7.62-63 - 2021-12-08
 
 ### Changed
 
@@ -52,7 +52,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 - Removed `DrawerHandle` component
 - PHP code improvements (Codacy)
 
-## [0.7.61] - 2021-12-07
+## 0.7.61 - 2021-12-07
 
 ### Fixed
 
@@ -67,7 +67,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 - Calendar days no longer animate as though reorderable.
 - Embiggened the Post Title field on the editor.
 
-## [0.7.6] - 2021-12-07
+## 0.7.6 - 2021-12-07
 
 ### Fixed
 
@@ -81,7 +81,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 
 - Quick Edit explicit link in PostLinks component.
 
-## [0.7.58] - 2021-12-01
+## 0.7.58 - 2021-12-01
 
 ### Changed
 
@@ -92,13 +92,13 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 
 - Using ISO 8601 date format for date string REST returns to the frontend.
 
-## [0.7.57] - 2021-12-01
+## 0.7.57 - 2021-12-01
 
 ### Changed
 
 - Release script upgraded.
 
-## [0.7.56] - 2021-12-01
+## 0.7.56 - 2021-12-01
 
 ### Added
 
