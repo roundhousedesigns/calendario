@@ -407,6 +407,33 @@ export default function EditPost() {
 		));
 	};
 
+	const renderTermsList = (taxonomy, terms) => {
+		return terms.map(({ name, slug, term_id }, index) => {
+			return name.toLowerCase().includes(taxFilter[taxonomy].toLowerCase()) ||
+				taxFilter[taxonomy] === '' ? (
+				<label key={index} htmlFor={slug}>
+					<input
+						type="checkbox"
+						name={slug}
+						id={slug}
+						value={term_id}
+						onChange={handleTermCheckboxChange}
+						checked={
+							!isEmpty(post_taxonomies) &&
+							!isEmpty(post_taxonomies[taxonomy]) &&
+							post_taxonomies[taxonomy].includes(term_id)
+						}
+					/>
+					{decode(name, {
+						scope: 'strict',
+					})}
+				</label>
+			) : (
+				''
+			);
+		});
+	};
+
 	const editPostLink = () => {
 		return (
 			<div className="editPost__links">
@@ -667,41 +694,9 @@ export default function EditPost() {
 												/>
 											</div>
 											{isLoading ? <Loading /> : ''}
-											{
-												// TODO combine logic
-												taxonomies.category.terms
-													? taxonomies.category.terms.map(
-															({ name, slug, term_id }, index) => {
-																return name
-																	.toLowerCase()
-																	.includes(taxFilter.category.toLowerCase()) ||
-																	taxFilter.category === '' ? (
-																	<label key={index} htmlFor={slug}>
-																		<input
-																			type="checkbox"
-																			name={slug}
-																			id={slug}
-																			value={term_id}
-																			onChange={handleTermCheckboxChange}
-																			checked={
-																				!isEmpty(post_taxonomies) &&
-																				!isEmpty(post_taxonomies.category) &&
-																				post_taxonomies.category.includes(
-																					term_id
-																				)
-																			}
-																		/>
-																		{decode(name, {
-																			scope: 'strict',
-																		})}
-																	</label>
-																) : (
-																	''
-																);
-															}
-													  )
-													: ''
-											}
+											{taxonomies.category.terms
+												? renderTermsList('category', taxonomies.category.terms)
+												: ''}
 										</div>
 									</fieldset>
 								</div>
@@ -746,41 +741,9 @@ export default function EditPost() {
 												/>
 											</div>
 											{isLoading ? <Loading /> : ''}
-											{
-												// TODO combine logic
-												taxonomies.post_tag.terms
-													? taxonomies.post_tag.terms.map(
-															({ name, slug, term_id }, index) => {
-																return name
-																	.toLowerCase()
-																	.includes(taxFilter.post_tag.toLowerCase()) ||
-																	taxFilter.post_tag === '' ? (
-																	<label key={index}>
-																		<input
-																			type="checkbox"
-																			name={slug}
-																			id={slug}
-																			value={term_id}
-																			onChange={handleTermCheckboxChange}
-																			checked={
-																				!isEmpty(post_taxonomies) &&
-																				!isEmpty(post_taxonomies.post_tag) &&
-																				post_taxonomies.post_tag.includes(
-																					term_id
-																				)
-																			}
-																		/>
-																		{decode(name, {
-																			scope: 'strict',
-																		})}
-																	</label>
-																) : (
-																	''
-																);
-															}
-													  )
-													: ''
-											}
+											{taxonomies.post_tag.terms
+												? renderTermsList('post_tag', taxonomies.post_tag.terms)
+												: ''}
 										</div>
 									</fieldset>
 								</div>
