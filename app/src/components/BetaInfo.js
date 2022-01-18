@@ -27,7 +27,7 @@ export default function BetaInfo() {
 				</li>
 				<li>
 					<a
-						href={`${adminUrl}/admin.php?page=calendario-contact`}
+						href={`${adminUrl}admin.php?page=calendario-contact`}
 						rel="noreferrer"
 						target="_blank"
 					>
