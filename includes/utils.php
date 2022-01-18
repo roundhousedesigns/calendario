@@ -37,7 +37,7 @@ function rhd_get_futuremost_date() {
 /**
  * Returns a formatted date set to the start of the requested day usable in WP_Query.
  *
- * @param DateTime|string $date The date to manipulate.
+ * @param string $date The date to manipulate.
  * @return string The formatted date string
  */
 function rhd_start_of_day( $date ) {
@@ -45,11 +45,7 @@ function rhd_start_of_day( $date ) {
 		return false;
 	}
 
-	if ( ! is_a( $date, 'DateTime' ) ) {
-		$date_obj = $date;
-	} else {
-		$date_obj = new DateTime( $date );
-	}
+	$date_obj = new DateTime( $date );
 
 	$date_obj->setTime( 0, 0, 0 );
 
