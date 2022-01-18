@@ -407,6 +407,29 @@ export default function EditPost() {
 		));
 	};
 
+	const editPostLink = () => {
+		return (
+			<div className="editPost__links">
+				<a
+					className="editLink"
+					href={decode(edit_link)}
+					target="_blank"
+					rel="noreferrer"
+				>
+					Edit Post
+				</a>
+				<a
+					className="viewLink"
+					href={decode(view_link)}
+					target="_blank"
+					rel="noreferrer"
+				>
+					View Post
+				</a>
+			</div>
+		);
+	};
+
 	return (
 		<div
 			className={`editPost ${editMode ? 'active' : 'inactive'}`}
@@ -424,24 +447,7 @@ export default function EditPost() {
 							}`}
 							onSubmit={handleEditSubmit}
 						>
-							<div className="editPost__links">
-								<a
-									className="editLink"
-									href={decode(edit_link)}
-									target="_blank"
-									rel="noreferrer"
-								>
-									Edit Post
-								</a>
-								<a
-									className="viewLink"
-									href={decode(view_link)}
-									target="_blank"
-									rel="noreferrer"
-								>
-									View Post
-								</a>
-							</div>
+							{editPostLink()}
 							<div className="editPost__title">
 								<FieldGroup name="post_title">
 									<input
@@ -616,24 +622,7 @@ export default function EditPost() {
 											''
 										)}
 									</FieldGroup> */}
-									<div className="editPost__links">
-										<a
-											className="editLink"
-											href={decode(edit_link)}
-											target="_blank"
-											rel="noreferrer"
-										>
-											Edit Post
-										</a>
-										<a
-											className="viewLink"
-											href={decode(view_link)}
-											target="_blank"
-											rel="noreferrer"
-										>
-											View Post
-										</a>
-									</div>
+									{editPostLink()}
 								</div>
 							</div>
 							<FieldGroup name="taxonomies">
