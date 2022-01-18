@@ -7,6 +7,7 @@ All notable changes to Editorial Calendar.io's backend will be documented in thi
 ### Added
 
 - Comments on/off
+- Author selection
 
 ### Changed
 
