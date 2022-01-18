@@ -41,12 +41,14 @@ function rhd_get_futuremost_date() {
  * @return string The formatted date string
  */
 function rhd_start_of_day( $date ) {
-	if ( gettype( $date ) === 'string' ) {
-		$date_obj = new DateTime( $date );
-	} elseif ( ! is_a( $date, 'DateTime' ) ) {
+	if ( ! $date ) {
+		return false;
+	}
+
+	if ( ! is_a( $date, 'DateTime' ) ) {
 		$date_obj = $date;
 	} else {
-		return false;
+		$date_obj = new DateTime( $date );
 	}
 
 	$date_obj->setTime( 0, 0, 0 );
