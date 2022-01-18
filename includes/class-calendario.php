@@ -152,14 +152,7 @@ class Calendario {
 	 * @return void
 	 */
 	public function calendario_page_main() {
-		printf( wp_kses_post( '%s' ), '<div id="calendario"></div>' );
-	}
-
-	/**
-	 * The settings page.
-	 */
-	public function calendario_page_settings() {
-		include_once RHD_CALENDARIO_PLUGIN_DIR_BASE . 'pages/settings.php';
+		include_once RHD_CALENDARIO_PLUGIN_DIR_BASE . 'includes/template.php';
 	}
 
 	/**
