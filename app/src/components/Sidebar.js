@@ -22,7 +22,7 @@ export default function Sidebar() {
 						<ViewOptions />
 					</div>
 				</Widget>
-				<Widget title="Unscheduled Drafts" widgetClass="unscheduledDrafts">
+				<Widget title="Draft Sandbox" widgetClass="unscheduledDrafts">
 					<UnscheduledDrafts />
 				</Widget>
 
