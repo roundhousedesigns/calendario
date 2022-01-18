@@ -715,24 +715,6 @@ class Calendario_Route extends WP_REST_Controller {
 	}
 
 	/**
-	 * Gets post status data.
-	 *
-	 * TODO Deprecate.
-	 *
-	 * @param  WP_REST_Request $request Full data about the request.
-	 * @return WP_Error|bool
-	 */
-	public function get_post_statuses( $request ) {
-		$statuses = rhd_prepare_post_statuses();
-
-		if ( $statuses ) {
-			return new WP_REST_Response( $statuses, 200 );
-		}
-
-		return new WP_REST_Response( false, 200 );
-	}
-
-	/**
 	 * Updates an option in the database using update_option().
 	 *
 	 * @param  WP_REST_Request $request Full data about the request.
@@ -965,6 +947,7 @@ class Calendario_Route extends WP_REST_Controller {
 			'post_name'      => $item->post_name,
 			'post_date'      => $post_date->format( 'c' ),
 			'post_status'    => $item->post_status,
+			'post_author'    => $item->post_author,
 			'post_excerpt'   => $item->post_excerpt,
 			'comment_status' => $item->comment_status,
 			'image'          => get_the_post_thumbnail_url( $item->ID, 'post-thumbnail' ),

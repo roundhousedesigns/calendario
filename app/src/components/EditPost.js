@@ -7,7 +7,6 @@ import React, {
 	useCallback,
 } from 'react';
 import FieldGroup from './common/FieldGroup';
-// import Icon from './common/Icon';
 import { useAddTaxonomyTerm, useClickOutside } from '../lib/hooks';
 import {
 	dateFormat,
@@ -16,6 +15,7 @@ import {
 	filterStatusList,
 	getPostList,
 	moveItem,
+	wp,
 } from '../lib/utils';
 import DatePicker from 'react-datepicker';
 import { isFuture, isPast, isToday } from 'date-fns';
@@ -183,12 +183,15 @@ export default function EditPost() {
 		post_status,
 		post_excerpt,
 		comment_status,
-		image,
+		post_author,
+		// image,
 		edit_link,
 		view_link,
 		taxonomies: post_taxonomies,
 		unscheduled: isUnscheduled,
 	} = post;
+
+	const { postAuthors } = wp;
 
 	var isLoading = useAddTaxonomyTerm(newTerm, postsDispatch, newTermDispatch);
 
@@ -346,6 +349,7 @@ export default function EditPost() {
 				post_title,
 				post_name,
 				post_date: new Date(post.post_date),
+				post_author,
 				post_status: filterPostStatus(post_status, isUnscheduled),
 				post_excerpt,
 				comment_status,
@@ -565,6 +569,22 @@ export default function EditPost() {
 											value={post_status}
 										>
 											{renderOptionsList(allowedStatuses)}
+										</select>
+									</FieldGroup>
+									<FieldGroup name="fieldGroup__status">
+										<label htmlFor="post_author">Author</label>
+										<select
+											name="post_author"
+											onChange={handleInputChange}
+											value={post_author}
+										>
+											{Object.keys(postAuthors).map((item) => {
+												return (
+													<option value={item} key={item}>
+														{postAuthors[item]}
+													</option>
+												);
+											})}
 										</select>
 									</FieldGroup>
 									<FieldGroup name="fieldGroup__status">

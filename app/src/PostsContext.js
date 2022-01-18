@@ -12,7 +12,8 @@ export const initialPosts = {
 		post_title: '',
 		post_status: '',
 		post_date: '',
-		comment_status: null,
+		post_author: '',
+		comment_status: '',
 		unscheduled: null,
 	},
 	updatePost: {
@@ -23,10 +24,6 @@ export const initialPosts = {
 		newIndex: null,
 		unscheduled: false,
 	},
-	// addTerm: {
-	// 	taxonomy: '',
-	// 	term: '',
-	// },
 	fetchPosts: false, // Toggle value to trigger fetchPosts
 	dateRange: {
 		start: '',

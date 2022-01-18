@@ -79,22 +79,6 @@ export function viewReducer(state, action) {
 			};
 		}
 
-		// TODO Deprecate.
-		// case 'SET_POST_STATUSES': {
-		// 	let statuses = action.postStatuses;
-
-		// 	// Don't overwrite visibility, if set
-		// 	for (let status in statuses) {
-		// 		statuses[status].visible =
-		// 			'visible' in statuses[status] ? statuses[status].visible : true;
-		// 	}
-
-		// 	return {
-		// 		...state,
-		// 		postStatuses: statuses,
-		// 	};
-		// }
-
 		case 'TOGGLE_POST_STATUS': {
 			return {
 				...state,

@@ -63,6 +63,10 @@ export const wp =
 						color: '#252B6F',
 					},
 				},
+				postAuthors: {
+					1: 'Author 1',
+					5: 'Author 2',
+				},
 		  }
 		: {
 				...window.rhdReactPlugin,

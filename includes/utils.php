@@ -188,6 +188,27 @@ function rhd_prepare_post_statuses() {
 }
 
 /**
+ * Retrieves a list of users that can edit others' posts.
+ *
+ * @return array The authors, keyed by user ID.
+ */
+function rhd_prepare_post_authors() {
+	$users = get_users( array(
+		'role__in' => array( 'author', 'editor', 'administrator' ),
+	) );
+
+	$authors = array();
+	foreach ( $users as $user ) {
+		$first = get_user_meta( $user->ID, 'first_name', true );
+		$last  = get_user_meta( $user->ID, 'last_name', true );
+
+		$authors[$user->ID] = $first || $last ? "$first $last" : $user->display_name;
+	}
+
+	return $authors;
+}
+
+/**
  * Extracts the taxonomy terms from a prepared item.
  *
  * @param array $item Post data being prepared for database storage.
