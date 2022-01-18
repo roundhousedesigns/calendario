@@ -31,43 +31,25 @@ function rhd_get_futuremost_date() {
 		)
 	);
 
-	return $posts ? rhd_end_of_day( $posts[0]->post_date ) : false;
+	return $posts ? rhd_set_datetime_time( $posts[0]->post_date, 23, 59, 59 ) : false;
 }
 
 /**
  * Returns a formatted date set to the start of the requested day usable in WP_Query.
  *
  * @param string $date The date to manipulate.
+ * @param string $h Hours (1-24)
+ * @param string $m Minutes (1-59)
+ * @param string $s Seconds (1-59)
  * @return string The formatted date string
  */
-function rhd_start_of_day( $date ) {
+function rhd_set_datetime_time( $date, $h, $m, $s ) {
 	if ( ! $date ) {
 		return false;
 	}
 
 	$date_obj = new DateTime( $date );
-
-	$date_obj->setTime( 0, 0, 0 );
-
-	return $date_obj->format( RHD_WP_DATE_FORMAT );
-}
-
-/**
- * Returns a formatted date set to the end of the requested day usable in WP_Query.
- *
- * @param DateTime|string $date The date to manipulate.
- * @return string The formatted date string.
- */
-function rhd_end_of_day( $date ) {
-	if ( gettype( $date ) === 'string' ) {
-		$date_obj = new DateTime( $date );
-	} elseif ( ! is_a( $date, 'DateTime' ) ) {
-		$date_obj = $date;
-	} else {
-		return false;
-	}
-
-	$date_obj->setTime( 23, 59, 59 );
+	$date_obj->setTime( $h, $m, $s );
 
 	return $date_obj->format( RHD_WP_DATE_FORMAT );
 }

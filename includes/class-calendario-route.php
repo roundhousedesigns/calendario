@@ -481,8 +481,8 @@ class Calendario_Route extends WP_REST_Controller {
 		$end   = isset( $params['end'] ) && $params['end'] ? $params['end'] : rhd_get_futuremost_date();
 
 		// Force the date range to the beginning of the day 'start' and the end of day 'end'.
-		$start = rhd_start_of_day( $start );
-		$end   = rhd_end_of_day( $end );
+		$start = rhd_set_datetime_time( $start, 0, 0, 0 );
+		$end   = rhd_set_datetime_time( $end, 23, 59, 59 );
 
 		$items = get_posts(
 			array(
