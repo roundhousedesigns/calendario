@@ -10,22 +10,21 @@
 
 ### Todo
 
-- Replace React Beautiful DND (now defunt) with [React DND](https://react-dnd.github.io/react-dnd/about)
-- User customizable title for "Unscheduled Drafts?"
-- Load Material icons faster
 - iOS style bugs:
   - Post Status buttons weird offset
-- Test iOS + Android functionality
 
 ### Roadmap
 
+- Featured Image selector/uploader
+- Replace React Beautiful DND with [React DND](https://react-dnd.github.io/react-dnd/about)
 - Settings modal
   - Author options
-  - CPTs?
-  - Post types?
-- Author indicators and view filtering (enable on Options page)
+  - CPTs
+  - Post types
+- New filters
+  - Authors
+  - Post types
 - Custom Taxonomy support
-- Featured Image selector/uploader
 - Improve mobile interface
 
 ### Bugs
