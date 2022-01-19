@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 
 import PostsContext from '../PostsContext';
 
-export default function PostList({ posts, className, date }) {
+export default function PostList({ posts, className, date, showDropOutline }) {
 	const {
 		posts: { isUpdating },
 	} = useContext(PostsContext);
@@ -32,16 +32,22 @@ export default function PostList({ posts, className, date }) {
 						onMouseLeave={() => setHovered(false)}
 						style={hovered ? { marginBottom: 0 } : null}
 					>
-						{!isEmpty(posts)
-							? posts.map((post, index) => (
-									<Post
-										post={post}
-										key={post.id}
-										index={index}
-										unscheduled={droppableId === 'unscheduled' ? true : false}
-									/>
-							  ))
-							: null}
+						{!isEmpty(posts) ? (
+							posts.map((post, index) => (
+								<Post
+									post={post}
+									key={post.id}
+									index={index}
+									unscheduled={droppableId === 'unscheduled' ? true : false}
+								/>
+							))
+						) : (
+							<li
+								className={
+									isEmpty(posts) && showDropOutline ? 'placeholder' : ''
+								}
+							></li>
+						)}
 						{placeholder}
 					</ul>
 				</>

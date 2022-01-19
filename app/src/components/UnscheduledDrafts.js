@@ -25,6 +25,7 @@ export default function UnscheduledDrafts() {
 						className="unscheduledDrafts"
 						date={false}
 						posts={unscheduled}
+						showDropOutline={true}
 					/>
 					<NewPostButton unscheduled={true} />
 				</>
