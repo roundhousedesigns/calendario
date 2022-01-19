@@ -18,7 +18,7 @@ export default function AdminLinks() {
 
 	return (
 		<ul className="adminLinks">
-			{renderLink([trashUrl, 'Manage Trashed Posts', '_blank'])}
+			{renderLink([trashUrl, 'View Trashed Posts', '_blank'])}
 		</ul>
 	);
 }

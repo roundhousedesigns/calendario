@@ -1,15 +1,16 @@
 import React, { useContext } from 'react';
 import PostList from './PostList';
-import AdminLinks from './AdminLinks';
 import Loading from './common/Loading';
 import NewPostButton from './common/NewPostButton';
+import Icon from './common/Icon';
+import { wp } from '../lib/utils';
 
 import { useFetchUnscheduledPosts } from '../lib/hooks';
-
 import PostsContext from '../PostsContext';
 
 export default function UnscheduledDrafts() {
 	const { posts, postsDispatch } = useContext(PostsContext);
+	const { trashUrl } = wp;
 
 	const { unscheduled } = posts;
 
@@ -30,7 +31,11 @@ export default function UnscheduledDrafts() {
 					<NewPostButton unscheduled={true} />
 				</>
 			)}
-			<AdminLinks />
+			<div className="adminLinks">
+				<a rel="noreferrer" href={trashUrl} target="_blank">
+					Trashed Posts <Icon tooltip="Open in new window">open_in_new</Icon>
+				</a>
+			</div>
 		</>
 	);
 }
