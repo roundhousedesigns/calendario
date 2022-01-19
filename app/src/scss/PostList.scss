@@ -17,6 +17,11 @@
 				}
 			}
 		}
+
+		.placeholder {
+			opacity: 0;
+			transition: all 100ms ease;
+		}
 	}
 
 	.post {
@@ -137,6 +142,19 @@
 			.postData {
 				border: 2px solid var(--color-main-light);
 			}
+		}
+	}
+
+	.placeholder {
+		height: 100%;
+		border: 2px var(--color-text) dashed;
+		border-radius: var(--borderRadius);
+		height: 50px;
+
+		ul & {
+			display: block;
+			position: relative;
+			height: 60px;
 		}
 	}
 
