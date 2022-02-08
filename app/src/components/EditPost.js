@@ -56,10 +56,6 @@ function editPostReducer(state, action) {
 			const { field } = action;
 			var { value } = action;
 
-			if (field === 'post_date') {
-				value = new Date(value);
-			}
-
 			return {
 				...state,
 				post: {
@@ -211,7 +207,7 @@ export default function EditPost() {
 
 	useEffect(() => {
 		if (post_date && post_date !== 'undefined') {
-			setDate(new Date(post_date));
+			setDate(post_date);
 		}
 
 		return () => {
@@ -348,7 +344,7 @@ export default function EditPost() {
 			params: {
 				post_title,
 				post_name,
-				post_date: new Date(post.post_date),
+				post_date,
 				post_author,
 				post_status: filterPostStatus(post_status, isUnscheduled),
 				post_excerpt,

@@ -1,4 +1,3 @@
-// import Widget from "../components/common/Widget";
 import { omit, find, isEmpty, isEqual } from 'lodash';
 import {
 	format,
