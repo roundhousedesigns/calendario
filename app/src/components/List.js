@@ -7,7 +7,7 @@ import { format, addDays, endOfDay, isToday, isPast } from 'date-fns';
 import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
 
-export default function List({ className, isLoading }) {
+export default function List({ className }) {
 	const { posts } = useContext(PostsContext);
 	const {
 		viewOptions: {
@@ -59,14 +59,8 @@ export default function List({ className, isLoading }) {
 	};
 
 	return (
-		<>
-			{isLoading ? (
-				<Loading />
-			) : (
-				<div className={className}>
-					{start !== null && end !== null ? renderList() : null}
-				</div>
-			)}
-		</>
+		<div className={className}>
+			{start !== null && end !== null ? renderList() : null}
+		</div>
 	);
 }

@@ -2,6 +2,20 @@
 
 All notable changes to Editorial Calendar.io's backend will be documented in this file.
 
+## 0.8.4 - 2022/2-9
+
+### Fixed
+
+- Timezone offset issues causing incorrect saves when using the QuickEditor.
+
+### Added
+
+- Timezone label to sidebar.
+
+### Improved
+
+- Loading animations
+
 ## 0.8.3 - 2021/12-17
 
 ### Added

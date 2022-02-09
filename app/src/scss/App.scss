@@ -4,16 +4,17 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
-// Mixins
-@import './_vars.scss';
-@import './_mixins.scss';
-@import './_common.scss';
+// Common
+@import './vars';
+@import './mixins';
+@import './common';
+@import './animations';
 
 // Components
-@import './PostList.scss';
-@import './EditPost.scss';
-@import './ColorPickerPopover.scss';
-@import './ToggleButton.scss';
+@import './PostList';
+@import './EditPost';
+@import './ColorPickerPopover';
+@import './ToggleButton';
 
 * {
 	box-sizing: border-box;
@@ -761,6 +762,25 @@ body {
 	&__options {
 		button {
 			border-radius: var(--borderRadius);
+		}
+
+		.tz {
+			flex: 0 0 100%;
+			text-align: center;
+			font-size: 80%;
+			margin: 1.5em 0 0;
+			padding: 0;
+
+			a {
+				color: var(--color-text);
+				text-decoration: none;
+				transition: color 100ms ease-out;
+
+				&:hover,
+				&:active {
+					text-decoration: underline;
+				}
+			}
 		}
 	}
 
