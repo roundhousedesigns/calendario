@@ -3,7 +3,7 @@
 optionaldir="$1"
 dir="${optionaldir:-$HOME}"
 dir="${dir%/}"
-file="${dir}/calendario.zip"
+file="${dir}/calendario-premium.zip"
 
 if [ ! -d "$dir" ]; then
 	echo "Invalid directory specified."
