@@ -15,6 +15,7 @@ exclude=(
 	app/node_modules\*
 	app/src\*
 	app/build\*
+	CHANGELOG.md
 	README.md
 	release.sh
 )
