@@ -2,7 +2,7 @@
 
 All notable changes to Editorial Calendar.io's backend will be documented in this file.
 
-## 0.8.4 - 2022/2-9
+## 0.8.4/0.8.4.1 - 2022/2-9
 
 ### Fixed
 
