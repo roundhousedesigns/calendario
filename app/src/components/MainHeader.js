@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import { addDays, startOfToday, startOfMonth, endOfMonth } from 'date-fns';
 
 import ViewContext from '../ViewContext';
+import PostsContext from '../PostsContext';
 import { dateFormat, dateIsBetween } from '../lib/utils';
 
 export default function MainHeader({ handleTodayClick }) {
@@ -11,6 +12,7 @@ export default function MainHeader({ handleTodayClick }) {
 		viewMode,
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
+	const { postsDispatch } = useContext(PostsContext);
 	const [todayInRange, setTodayInRange] = useState(true);
 
 	const today = startOfToday();
@@ -42,11 +44,13 @@ export default function MainHeader({ handleTodayClick }) {
 	const nextMonth = (e) => {
 		e.preventDefault();
 		viewOptionsDispatch({ type: 'CHANGE_MONTH', direction: 'next' });
+		postsDispatch({ type: 'FETCH' });
 	};
 
 	const prevMonth = (e) => {
 		e.preventDefault();
 		viewOptionsDispatch({ type: 'CHANGE_MONTH', direction: 'previous' });
+		postsDispatch({ type: 'FETCH' });
 	};
 
 	return (
