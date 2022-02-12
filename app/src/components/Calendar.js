@@ -12,7 +12,6 @@ import {
 
 import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
-import Loading from './common/Loading';
 
 export default function Calendar({ className, todayRef }) {
 	const { posts } = useContext(PostsContext);

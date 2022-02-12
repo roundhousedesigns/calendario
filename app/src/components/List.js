@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import DayPosts from './DayPosts';
-import Loading from './common/Loading';
 import { dateFormat, dayKey } from '../lib/utils';
 import { format, addDays, endOfDay, isToday, isPast } from 'date-fns';
 
