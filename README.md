@@ -6,8 +6,6 @@
 
 ## The professional blogger's editorial calendar plugin for WordPress
 
----
-
 ### Todo
 
 - iOS style bugs
