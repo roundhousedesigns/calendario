@@ -10,7 +10,7 @@
 
 ### Todo
 
-- iOS style bugs:
+- iOS style bugs
   - Post Status buttons weird offset
 
 ### Roadmap

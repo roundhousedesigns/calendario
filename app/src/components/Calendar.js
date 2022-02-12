@@ -1,6 +1,6 @@
 import React, { useContext, useCallback } from 'react';
 import Day from './Day';
-import DayPosts from './DayPosts'
+import DayPosts from './DayPosts';
 import { dateFormat, dayKey } from '../lib/utils';
 import {
 	format,
@@ -14,7 +14,7 @@ import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
 import Loading from './common/Loading';
 
-export default function Calendar({ className, todayRef, isLoading }) {
+export default function Calendar({ className, todayRef }) {
 	const { posts } = useContext(PostsContext);
 	const {
 		viewOptions: {
@@ -91,14 +91,8 @@ export default function Calendar({ className, todayRef, isLoading }) {
 	};
 
 	return (
-		<>
-			{isLoading ? (
-				<Loading />
-			) : (
-				<div className={className}>
-					{start !== null && end !== null ? renderCalendar() : null}
-				</div>
-			)}
-		</>
+		<div className={className}>
+			{start !== null && end !== null ? renderCalendar() : null}
+		</div>
 	);
 }

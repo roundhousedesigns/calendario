@@ -3,10 +3,7 @@ import Header from './components/Header';
 import Main from './components/Main';
 import Sidebar from './components/Sidebar';
 import Icon from './components/common/Icon';
-import {
-	useStickyState,
-	useUpdatePost,
-} from './lib/hooks';
+import { useStickyState, useUpdatePost } from './lib/hooks';
 import {
 	dateIsBetween,
 	isDraggingUnscheduled,
@@ -100,6 +97,8 @@ export default function App() {
 				end: addWeeks(today, weekDiff),
 			});
 		}
+
+		postsDispatch({ type: 'FETCH' });
 	};
 
 	const onDragStart = (item) => {

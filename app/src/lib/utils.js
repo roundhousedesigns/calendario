@@ -1,4 +1,3 @@
-// import Widget from "../components/common/Widget";
 import { omit, find, isEmpty, isEqual } from 'lodash';
 import {
 	format,
@@ -7,6 +6,7 @@ import {
 	getMinutes,
 	setHours,
 	setMinutes,
+	isValid,
 } from 'date-fns';
 
 export const DEBUG_MODE =
@@ -17,6 +17,7 @@ export const wp =
 		? {
 				nonce: 0,
 				// routeBase: 'http://localhost/wp-json/calendario/v1',
+				tz: 'America/New_York',
 				routeBase: 'http://localhost/backend/wp-json/calendario/v1',
 				adminUrl: '',
 				version: '<version>',
@@ -90,6 +91,19 @@ export const dateFormat = {
 	fullDate: 'EEEE,  MMMM dd, yyyy',
 	fullDateTime: 'EEEE,  MMMM dd, yyyy @ h:mm aa',
 	daylessDate: 'MMMM dd, yyyy',
+};
+
+export const localTZShift = (date, unshift = false) => {
+	let stamp = date.getTime();
+	let offset = date.getTimezoneOffset() * 60000;
+
+	if (unshift === false) {
+		// Compensate for local timezone to mimic UTC
+		return new Date(stamp + offset);
+	} else {
+		// Return to native/local timezone
+		return new Date(stamp - offset);
+	}
 };
 
 /**
@@ -172,6 +186,54 @@ export const getPostList = (id, posts) => {
 	}
 
 	return list;
+};
+
+/**
+ * Loops through scheduled posts and groups them by their `post_date_day` property.
+ *
+ * @param {Array} posts Scheduled posts currently in view range.
+ * @returns {Array} The filtered posts list.
+ */
+export const setScheduledPosts = (posts) => {
+	var scheduledPosts = posts;
+
+	posts.forEach((post, index) => {
+		// cast the date as a Date object
+		const { post_date, tzshift } = post;
+		let date = new Date(post_date);
+
+		if (isValid(date) && !tzshift) {
+			let offsetDate = localTZShift(date);
+			scheduledPosts[index].post_date = offsetDate;
+			scheduledPosts[index].post_date_day = dayKey(offsetDate);
+			scheduledPosts[index].tzshift = true;
+		}
+	});
+
+	let grouped = [];
+	scheduledPosts.forEach((post) => {
+		(grouped[post.post_date_day] ||= []).push(post);
+	});
+
+	return grouped;
+};
+
+/**
+ * Extracts posts from a dayKey-keyed list of posts and sorts them by id.
+ *
+ * @param {Object} scheduled The in-range scheduled posts keyed by dayKey.
+ * @returns {Object} The filtered scheduled posts keyed by dayKey.
+ */
+export const flattenScheduledPosts = (scheduled) => {
+	var posts = [];
+
+	for (const key in scheduled) {
+		scheduled[key].forEach((item) => {
+			posts.push(item);
+		});
+	}
+
+	return posts;
 };
 
 /**
@@ -272,26 +334,7 @@ export function filterPostStatus(post_status, unscheduled) {
 }
 
 /**
- * Strips a slug from a permalink
- *
- * @param {string} url The permalink
- * @param {string} slug The post slug
- * @returns {string} The filtered URL
- */
-export const stripPermalinkSlug = (url) => {
-	// Remove trailing slash, if necessary
-	if (url.substr(-1) === '/') {
-		url = url.slice(0, -1);
-	}
-
-	let parts = url.split('/');
-	parts.pop();
-
-	return `${parts.join('/')}/`;
-};
-
-/**
- * Sanitizes post parameters for sending to the server
+ * Sanitizes post parameters for sending to the server. Add to this to sanitize more fields.
  *
  * @param {Object} params The post parameters
  * @returns {Object} The sanitized post parameters

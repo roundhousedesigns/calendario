@@ -21,7 +21,7 @@ export default function Post({ post, index, unscheduled }) {
 		viewOptions: { postStatuses },
 	} = useContext(ViewContext);
 
-	const { id, post_title, post_status /*edit_lock*/ } = post;
+	const { id, post_title, post_status, post_date_day } = post;
 
 	const [color, setColor] = useState('');
 
@@ -33,18 +33,12 @@ export default function Post({ post, index, unscheduled }) {
 		setColor(postStatuses[post_status].color);
 	}, [post_status, postStatuses]);
 
-	const handleMouseDown = (e) => {
-		// TODO REST check for edit_lock?
-	};
-
 	const handleClick = (e) => {
 		// Skip if clicking a QuickLink button
 		if (e.target.classList.contains('icon')) {
 			return;
 		}
 
-		// TODO fix/refine edit_lock
-		// if (!edit_lock) {
 		postsDispatch({
 			type: 'SET_CURRENTPOST',
 			post: post,
@@ -81,9 +75,8 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push('over__none');
 		}
 
-		// TODO fix/refine edit_lock
-		if (isUpdating /*|| edit_lock*/) {
-			classes.push('locked');
+		if (isUpdating === post_date_day) {
+			classes.push('loading');
 		}
 
 		return classes.join(' ');
@@ -93,8 +86,7 @@ export default function Post({ post, index, unscheduled }) {
 		<Draggable
 			draggableId={`${id}`}
 			index={index}
-			// TODO fix/refine edit_lock
-			isDragDisabled={isUpdating /*|| edit_lock*/ ? true : false}
+			isDragDisabled={isUpdating ? true : false}
 		>
 			{({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
 				<li
@@ -105,7 +97,6 @@ export default function Post({ post, index, unscheduled }) {
 					className={getStyles(snapshot)}
 					data-index={index}
 					onClick={handleClick}
-					onMouseDown={handleMouseDown}
 				>
 					<div
 						className="postData"
@@ -115,19 +106,9 @@ export default function Post({ post, index, unscheduled }) {
 					>
 						<p className="postData__title">
 							{decode(post_title, { scope: 'strict' })}
-							{
-								// TODO fix/refine edit_lock
-								/*edit_lock ? (
-								<Icon className="lock" tooltip="Currently being edited.">
-									lock
-								</Icon>
-							) : (
-								''
-							)*/
-							}
 						</p>
 					</div>
-					{!isDragging ? (
+					{!isDragging && !isUpdating ? (
 						<PostLinks
 							style={{
 								backgroundColor: color.replace(/,1\)/, ',0.75)'),

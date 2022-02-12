@@ -1,7 +1,11 @@
 import { createContext } from 'react';
-import { dateFormat, dayKey } from './lib/utils';
-import { groupBy } from 'lodash';
-import { format, isValid } from 'date-fns';
+import {
+	dayKey,
+	localTZShift,
+	setScheduledPosts,
+	flattenScheduledPosts,
+} from './lib/utils';
+import { isEqual, uniqBy, isEmpty } from 'lodash';
 
 const PostsContext = createContext({});
 export default PostsContext;
@@ -17,14 +21,14 @@ export const initialPosts = {
 		unscheduled: null,
 	},
 	updatePost: {
-		updateNow: false,
+		updateNow: false, // Toggle value to trigger post update.
 		trash: false,
 		id: null,
 		params: {},
 		newIndex: null,
 		unscheduled: false,
 	},
-	fetchPosts: false, // Toggle value to trigger fetchPosts
+	fetchPosts: false, // Toggle value to trigger fetching scheduled and unscheduled.
 	dateRange: {
 		start: '',
 		end: '',
@@ -34,29 +38,21 @@ export const initialPosts = {
 	scheduled: [],
 	trashed: [],
 	taxonomies: {},
-	locale: '',
 };
 
 export function postsReducer(state, action) {
 	switch (action.type) {
 		case 'SET_SCHEDULED': {
-			let { posts: scheduledPosts } = action;
+			let oldRaw = flattenScheduledPosts(state.scheduled);
+			let newRaw = action.posts;
 
-			// cast the date as a Date object
-			scheduledPosts.forEach((post, index) => {
-				let postDate = new Date(post.post_date);
-				if (isValid(postDate)) {
-					scheduledPosts[index].post_date = new Date(post.post_date);
-					scheduledPosts[index].post_date_day = format(
-						scheduledPosts[index].post_date,
-						dateFormat.date
-					);
-				} else {
-					console.debug('Invalid post date.');
-				}
-			});
+			let scheduledPosts;
 
-			let scheduledByDate = groupBy(scheduledPosts, 'post_date_day');
+			if (isEqual(oldRaw, newRaw) || isEmpty(newRaw)) {
+				return state;
+			} else {
+				scheduledPosts = uniqBy([...newRaw, ...oldRaw], 'id');
+			}
 
 			return {
 				...state,
@@ -64,12 +60,12 @@ export function postsReducer(state, action) {
 					start: action.start ? action.start : state.dateRange.start,
 					end: action.end ? action.end : state.dateRange.end,
 				},
-				scheduled: scheduledByDate,
+				scheduled: setScheduledPosts(scheduledPosts),
 			};
 		}
 
 		case 'SET_UNSCHEDULED': {
-			let { posts: unscheduledPosts } = action;
+			var { posts: unscheduledPosts } = action;
 
 			// cast the date as a Date object
 			unscheduledPosts.forEach((post, index) => {
@@ -83,7 +79,7 @@ export function postsReducer(state, action) {
 		}
 
 		case 'MOVE_POST': {
-			let { scheduled, unscheduled } = state;
+			var { scheduled, unscheduled } = state;
 			const { source, sourceId, destination, destinationId } = action;
 
 			if (action.sourceId === 'unscheduled') {
@@ -180,17 +176,27 @@ export function postsReducer(state, action) {
 
 		case 'PREPARE_UPDATE': {
 			const { id, params, newIndex, unscheduled } = action;
-
 			const index =
 				unscheduled && newIndex === -1 ? unscheduled.length : newIndex;
+
+			let postData;
+			if (!unscheduled) {
+				let dateUnoffset = localTZShift(params.post_date, true);
+				postData = {
+					...params,
+					post_date: dateUnoffset,
+				};
+			} else {
+				postData = params;
+			}
 
 			return {
 				...state,
 				updatePost: {
 					updateNow: true,
 					id,
-					params,
 					unscheduled,
+					params: postData,
 					newIndex: index,
 				},
 			};
@@ -248,9 +254,7 @@ export function postsReducer(state, action) {
 			} = state;
 
 			// Cast the date as a Date
-			if (typeof params.post_date === 'string') {
-				params.post_date = new Date(params.post_date);
-			}
+			params.post_date = new Date(params.post_date);
 
 			if (isUnscheduled) {
 				unscheduled.forEach((item, index) => {
@@ -263,14 +267,16 @@ export function postsReducer(state, action) {
 				});
 			} else {
 				const key = dayKey(params.post_date);
-				scheduled[key].forEach((item, index) => {
-					if (item.id === id) {
-						scheduled[key][index] = {
-							...scheduled[key][index],
-							...params,
-						};
-					}
-				});
+				if (key in scheduled) {
+					scheduled[key].forEach((item, index) => {
+						if (item.id === id) {
+							scheduled[key][index] = {
+								...scheduled[key][index],
+								...params,
+							};
+						}
+					});
+				}
 			}
 
 			return {
@@ -333,6 +339,13 @@ export function postsReducer(state, action) {
 					params,
 					unscheduled,
 				},
+			};
+		}
+
+		case 'FETCH_COMPLETE': {
+			return {
+				...state,
+				fetchPosts: false,
 			};
 		}
 

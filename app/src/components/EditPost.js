@@ -46,10 +46,12 @@ const initialNewTerm = {
 function editPostReducer(state, action) {
 	switch (action.type) {
 		case 'SET':
+			const { post } = action;
+
 			return {
-				post: action.post,
+				post: post,
 				editMode: true,
-				ogPost: action.post,
+				ogPost: post,
 			};
 
 		case 'EDIT':
@@ -169,7 +171,7 @@ export default function EditPost() {
 
 	const node = useRef(null);
 	const initial = useRef({});
-	const [date, setDate] = useState(new Date());
+	const [date, setDate] = useState(null);
 	const [allowedStatuses, setAllowedStatuses] = useState({});
 	const [datePickerDisabled, setDatePickerDisabled] = useState(false);
 	const [trashPostClicked, setTrashPostClicked] = useState(false);
@@ -211,11 +213,11 @@ export default function EditPost() {
 
 	useEffect(() => {
 		if (post_date && post_date !== 'undefined') {
-			setDate(new Date(post_date));
+			setDate(post_date);
 		}
 
 		return () => {
-			setDate(new Date());
+			setDate(null);
 		};
 	}, [post_date]);
 
@@ -348,7 +350,7 @@ export default function EditPost() {
 			params: {
 				post_title,
 				post_name,
-				post_date: new Date(post.post_date),
+				post_date,
 				post_author,
 				post_status: filterPostStatus(post_status, isUnscheduled),
 				post_excerpt,

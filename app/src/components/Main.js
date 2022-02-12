@@ -6,7 +6,6 @@ import { useFetchScheduledPosts, useFetchTaxonomyTerms } from '../lib/hooks';
 
 import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
-import Loading from './common/Loading';
 
 const Main = forwardRef(({ todayRef }, ref) => {
 	const { posts, postsDispatch } = useContext(PostsContext);
@@ -23,14 +22,12 @@ const Main = forwardRef(({ todayRef }, ref) => {
 	/**
 	 * Dated posts
 	 */
-	var isLoading = useFetchScheduledPosts(start, end, posts, postsDispatch);
+	useFetchScheduledPosts(start, end, posts, postsDispatch);
 
 	return (
 		<main className="calendarioMain__main">
 			<div className="view" ref={ref}>
-				{isLoading ? (
-					<Loading />
-				) : viewMode === 'calendar' ? (
+				{viewMode === 'calendar' ? (
 					<Calendar className="view__calendar" todayRef={todayRef} />
 				) : (
 					<List className="view__list" todayRef={todayRef} />

@@ -72,6 +72,8 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 					console.log('REST error', error.message);
 					setIsLoading(false);
 				}
+
+				postsDispatch({ type: 'FETCH_COMPLETE' });
 			};
 
 			fetchData();
@@ -87,6 +89,8 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 
 /**
  * Retrieves 'unscheduled' posts from the server
+ *
+ * // TODO This gets double-run, and I'm not sure why...
  *
  * @param {Object} posts PostsContext store
  * @param {Function} postsDispatch PostsContext reducer
@@ -118,6 +122,8 @@ export const useFetchUnscheduledPosts = (posts, postsDispatch) => {
 				console.log('REST error', error.message);
 				setIsLoading(false);
 			}
+
+			postsDispatch({ type: 'FETCH_COMPLETE' });
 		};
 
 		fetchData();
@@ -236,11 +242,11 @@ export const useFetchTaxonomyTerms = (name, posts, postsDispatch) => {
 };
 
 /**
- * // TODO document
+ * Creates a new taxonomy term on the server.
  *
- * @param {*} newTerm
- * @param {*} postsDispatch
- * @param {*} newTermDispatch
+ * @param {Object} newTerm The new term's parameters.
+ * @param {Function} postsDispatch PostsContext reducer.
+ * @param {Function} newTermDispatch NewTermDispatch reducer.
  */
 export const useAddTaxonomyTerm = (newTerm, postsDispatch, newTermDispatch) => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -310,7 +316,7 @@ export const useUpdatePost = (
 			const droppableId =
 				unscheduled === true
 					? 'unscheduled'
-					: format(new Date(params.post_date), dateFormat.date);
+					: format(params.post_date, dateFormat.date);
 
 			postsDispatch({
 				type: 'UPDATE_INIT',
