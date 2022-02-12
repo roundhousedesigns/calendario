@@ -1,4 +1,4 @@
-import { omit, find, isEmpty, isEqual, groupBy } from 'lodash';
+import { omit, find, isEmpty, isEqual } from 'lodash';
 import {
 	format,
 	parseISO,
@@ -189,7 +189,7 @@ export const getPostList = (id, posts) => {
 };
 
 /**
- * Loops through scheduled posts and sets their post_date and post_date_day params.
+ * Loops through scheduled posts and groups them by their `post_date_day` property.
  *
  * @param {Array} posts Scheduled posts currently in view range.
  * @returns {Array} The filtered posts list.
@@ -199,28 +199,32 @@ export const setScheduledPosts = (posts) => {
 
 	posts.forEach((post, index) => {
 		// cast the date as a Date object
-		let date = new Date(post.post_date);
+		const { post_date, tzshift } = post;
+		let date = new Date(post_date);
 
-		if (isValid(date)) {
+		if (isValid(date) && !tzshift) {
 			let offsetDate = localTZShift(date);
 			scheduledPosts[index].post_date = offsetDate;
 			scheduledPosts[index].post_date_day = dayKey(offsetDate);
-		} else {
-			console.debug('Invalid post date.');
+			scheduledPosts[index].tzshift = true;
 		}
 	});
 
-	return groupBy(scheduledPosts, 'post_date_day');
+	let grouped = [];
+	scheduledPosts.forEach((post) => {
+		(grouped[post.post_date_day] ||= []).push(post);
+	});
+
+	return grouped;
 };
 
 /**
- * Extracts posts from a dayKey-keyed list of posts and rekeys the object.
- *   Useful if a post's dayKey changes in QuickEdit or to mitigate issues with tz offsets.
+ * Extracts posts from a dayKey-keyed list of posts and sorts them by id.
  *
  * @param {Object} scheduled The in-range scheduled posts keyed by dayKey.
  * @returns {Object} The filtered scheduled posts keyed by dayKey.
  */
-export const resetScheduledPosts = (scheduled) => {
+export const flattenScheduledPosts = (scheduled) => {
 	var posts = [];
 
 	for (const key in scheduled) {
@@ -229,7 +233,7 @@ export const resetScheduledPosts = (scheduled) => {
 		});
 	}
 
-	return setScheduledPosts(posts);
+	return posts;
 };
 
 /**

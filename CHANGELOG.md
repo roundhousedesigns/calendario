@@ -2,6 +2,16 @@
 
 All notable changes to Editorial Calendar.io will be documented in this file.
 
+## 0.9- 2022/2-11
+
+### Fixed
+
+- Prevent tz offset jumps on month change by merging saved posts instead of replacing on fetch
+
+### Improved
+
+- Minimized redraws based on refetched posts
+
 ## 0.8.4/0.8.4.1 - 2022/2-9
 
 ### Fixed
