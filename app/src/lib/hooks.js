@@ -361,14 +361,7 @@ export const useUpdatePost = (
 					const data = await response.json();
 
 					if (data && data > 0) {
-						postsDispatch({ type: 'UPDATE_SUCCESS', id, params });
-					} else {
-						postsDispatch({
-							type: 'UPDATE_ERROR',
-							id,
-							params,
-							data,
-						});
+						postsDispatch({ type: 'UPDATE_COMPLETE', id, params });
 					}
 
 					draggedPostDispatch({
