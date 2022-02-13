@@ -77,11 +77,11 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 			};
 
 			fetchData();
-
-			return () => {
-				setIsLoading(false);
-			};
 		}
+
+		return () => {
+			setIsLoading(false);
+		};
 	}, [start, end, fetchPosts, postsDispatch]);
 
 	return isLoading;
@@ -89,8 +89,6 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 
 /**
  * Retrieves 'unscheduled' posts from the server
- *
- * // TODO This gets double-run, and I'm not sure why...
  *
  * @param {Object} posts PostsContext store
  * @param {Function} postsDispatch PostsContext reducer
@@ -101,32 +99,34 @@ export const useFetchUnscheduledPosts = (posts, postsDispatch) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		let url = `${routeBase}/posts/unscheduled`;
+		if (fetchPosts) {
+			let url = `${routeBase}/posts/unscheduled`;
 
-		const fetchData = async () => {
-			setIsLoading(true);
+			const fetchData = async () => {
+				setIsLoading(true);
 
-			try {
-				const res = await fetch(url, {
-					headers,
-				});
-				const data = await res.json();
+				try {
+					const res = await fetch(url, {
+						headers,
+					});
+					const data = await res.json();
 
-				postsDispatch({
-					type: 'SET_UNSCHEDULED',
-					posts: data.posts,
-				});
+					postsDispatch({
+						type: 'SET_UNSCHEDULED',
+						posts: data.posts,
+					});
 
-				setIsLoading(false);
-			} catch (error) {
-				console.log('REST error', error.message);
-				setIsLoading(false);
-			}
+					setIsLoading(false);
+				} catch (error) {
+					console.log('REST error', error.message);
+					setIsLoading(false);
+				}
 
-			postsDispatch({ type: 'FETCH_COMPLETE' });
-		};
+				postsDispatch({ type: 'FETCH_COMPLETE' });
+			};
 
-		fetchData();
+			fetchData();
+		}
 
 		return () => {
 			setIsLoading(false);
