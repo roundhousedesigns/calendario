@@ -28,7 +28,7 @@ class Calendario {
 	/**
 	 * Post status default colors.
 	 */
-	private $post_status_default_swatches = array();
+	private $status_colors = array();
 
 	/**
 	 * Default/fallback post status colors.
@@ -154,8 +154,8 @@ class Calendario {
 				'routeBase'           => get_rest_url( null, sprintf( 'calendario/%s', RHD_CALENDARIO_REST_VERSION ) ),
 				'postAuthors'         => rhd_prepare_post_authors(),
 				'defaultStatusColors' => $this->post_status_default_color_pairs(),
-				'presetStatusColors'  => self::POST_STATUS_DEFAULT_COLORS,
 				'postStatuses'        => $this->prepare_post_statuses(),
+				'presetStatusColors'  => self::POST_STATUS_DEFAULT_COLORS,
 			)
 		);
 	}
@@ -206,8 +206,7 @@ class Calendario {
 			$i++;
 		}
 
-		// define( 'RHD_POST_STATUS_DEFAULTS', $statuses );
-		$this->post_status_default_swatches = $statuses;
+		$this->status_colors = $statuses;
 	}
 
 	/**
@@ -217,7 +216,7 @@ class Calendario {
 	 */
 	private function prepare_post_statuses() {
 		$colors   = get_option( RHD_POST_STATUS_COLOR_OPTION_KEY );
-		$statuses = $this->post_status_default_swatches;
+		$statuses = $this->status_colors;
 
 		foreach ( $statuses as $status => $props ) {
 			$statuses[$status]['color'] = $colors[$status];
@@ -234,7 +233,7 @@ class Calendario {
 	private function post_status_default_color_pairs() {
 		$pairs = array();
 
-		foreach ( $this->post_status_default_swatches as $status => $props ) {
+		foreach ( $this->status_colors as $status => $props ) {
 			$pairs[$status] = $props['color'];
 		}
 

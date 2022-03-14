@@ -5,7 +5,7 @@
  * Author:         Roundhouse Designs
  * Author URI:     https://roundhouse-designs.com
  * Text Domain:    rhd
- * Version:        1.0
+ * Version:        1.0.1
  *
  * @package       calendario
  *
@@ -15,7 +15,7 @@
 /**
  * Paths.
  */
-define( 'RHD_CALENDARIO_PLUGIN_VERSION', '1.0' );
+define( 'RHD_CALENDARIO_PLUGIN_VERSION', '1.0.1' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
@@ -53,7 +53,7 @@ define(
 /**
  * Freemius integration.
  */
-require_once dirname( __FILE__ ) . '/integration.php';
+require_once plugin_dir_path( __FILE__ ) . '/integration.php';
 
 /**
  * Functions
@@ -87,7 +87,7 @@ register_activation_hook( __FILE__, 'rhd_calendario_plugin_activation' );
  * Registers the plugin icon.
  */
 function rhd_calendario_plugin_icon() {
-	return dirname( __FILE__ ) . '/assets/icon-256x256.png';
+	return plugin_dir_path( __FILE__ ) . '/assets/icon-256x256.png';
 }
 rhd_cal()->add_filter( 'plugin_icon', 'rhd_calendario_plugin_icon' );
 
