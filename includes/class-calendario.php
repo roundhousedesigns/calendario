@@ -26,6 +26,27 @@ class Calendario {
 	private $limit_callback = '';
 
 	/**
+	 * Post status default colors.
+	 */
+	private $post_status_default_swatches = array();
+
+	/**
+	 * Default/fallback post status colors.
+	 */
+	const POST_STATUS_DEFAULT_COLORS = array(
+		'#00A193',
+		'#F7C900',
+		'#B8B8B8',
+		'#EB867B',
+		'#252B6F',
+		'#00A2ED',
+		'#6C6C6C',
+		'#F85A00',
+		'#B90062',
+		'#AA70BB',
+	);
+
+	/**
 	 * Menu icon SVG encoded in base64.
 	 */
 	const MENU_ICON = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPHN2ZyB3aWR0aD0iMjAwMHB4IiBoZWlnaHQ9IjIwMDBweCIgdmlld0JveD0iMCAwIDIwMDAgMjAwMCIgdmVyc2lvbj0iMS4xIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0xNDI4LjA5IDk1NC42ODFMMTMzNi41OCA4NjMuMTVMOTE1LjI3IDEyODQuNTRMNzMyLjI0MyAxMTAxLjQ4TDY0MC43MyAxMTkzLjAxTDkxNS4yNyAxNDY3LjZMMTQyOC4wOSA5NTQuNjgxTDE0MjguMDkgOTU0LjY4MVpNMTY0MS4zMyAyNTguN0wxNTU1IDI1OC43TDE1NTUgODZMMTM4Mi4zMyA4NkwxMzgyLjMzIDI1OC43TDY5MS42NjcgMjU4LjdMNjkxLjY2NyA4Nkw1MTkgODZMNTE5IDI1OC43TDQzMi42NjcgMjU4LjdDMzM2LjgzNyAyNTguNyAyNjAuODYzIDMzNi40MTUgMjYwLjg2MyA0MzEuNEwyNjAgMTY0MC4zQzI2MCAxNzM1LjI5IDMzNi44MzcgMTgxMyA0MzIuNjY3IDE4MTNMMTY0MS4zMyAxODEzQzE3MzYuMyAxODEzIDE4MTQgMTczNS4yOSAxODE0IDE2NDAuM0wxODE0IDQzMS40QzE4MTQgMzM2LjQxNSAxNzM2LjMgMjU4LjcgMTY0MS4zMyAyNTguN0wxNjQxLjMzIDI1OC43Wk0xNjQxLjMzIDE2NDAuM0w0MzIuNjY3IDE2NDAuM0w0MzIuNjY3IDY5MC40NUwxNjQxLjMzIDY5MC40NUwxNjQxLjMzIDE2NDAuM0wxNjQxLjMzIDE2NDAuM1oiIGlkPSJTaGFwZSIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2U9Im5vbmUiIC8+Cjwvc3ZnPg==';
@@ -48,10 +69,14 @@ class Calendario {
 			add_action( 'admin_notices', array( $this, 'notice_pretty_permalinks' ) );
 		}
 
+		// React interface.
 		add_action( $enqueue_hook, array( $this, 'load_react_app__premium_only' ) );
 
 		// Menu items and admin pages.
 		add_action( 'admin_menu', array( $this, 'create_admin_pages' ) );
+
+		// Prepare default colors.
+		add_action( 'rhd_cal_loaded', array( $this->set_post_status_default_swatches() ) );
 	}
 
 	/**
@@ -104,18 +129,18 @@ class Calendario {
 
 		// Load css files.
 		foreach ( $css_files as $index => $css_file ) {
-			wp_enqueue_style( 'react-plugin-' . $index, RHD_CALENDARIO_REACT_APP_BUILD . $css_file, array(), RHD_CALENDARIO_PLUGIN_VERSION );
+			wp_enqueue_style( 'calendario-' . $index, RHD_CALENDARIO_REACT_APP_BUILD . $css_file, array(), RHD_CALENDARIO_PLUGIN_VERSION );
 		}
 
 		// Load js files.
 		foreach ( $js_files as $index => $js_file ) {
-			$handle = 'react-plugin-' . $index;
+			$handle = 'calendario-' . $index;
 			wp_enqueue_script( $handle, RHD_CALENDARIO_REACT_APP_BUILD . $js_file, array(), RHD_CALENDARIO_PLUGIN_VERSION, true );
 		}
 
 		// Variables for app use - These variables will be available in window.rhdReactPlugin variable.
 		wp_localize_script(
-			'react-plugin-1',
+			'calendario-1',
 			'rhdReactPlugin',
 			array(
 				'appSelector'         => $this->selector,
@@ -127,10 +152,10 @@ class Calendario {
 				'user'                => get_current_user_id(),
 				'nonce'               => wp_create_nonce( 'wp_rest' ),
 				'routeBase'           => get_rest_url( null, sprintf( 'calendario/%s', RHD_CALENDARIO_REST_VERSION ) ),
-				'postStatuses'        => rhd_prepare_post_statuses(),
 				'postAuthors'         => rhd_prepare_post_authors(),
-				'defaultStatusColors' => rhd_post_status_default_color_pairs(),
-				'presetStatusColors'  => RHD_POST_STATUS_SWATCHES,
+				'defaultStatusColors' => $this->post_status_default_color_pairs(),
+				'presetStatusColors'  => self::POST_STATUS_DEFAULT_COLORS,
+				'postStatuses'        => $this->prepare_post_statuses(),
 			)
 		);
 	}
@@ -145,6 +170,75 @@ class Calendario {
 		 * Main page and top-level menu registration.
 		 */
 		add_menu_page( 'Editorial Calendar.io', 'Calendar.io', 'edit_others_posts', 'calendario', array( $this, 'calendario_page_main' ), self::MENU_ICON, 8 );
+	}
+
+	/**
+	 * Sets the default post status colors.
+	 *
+	 * @return void
+	 */
+	private function set_post_status_default_swatches() {
+		/**
+		 * Sets the default post status color key.
+		 */
+
+		$statuses = array(
+			'publish' => array(
+				'name' => 'Published',
+			),
+			'future'  => array(
+				'name' => 'Scheduled',
+			),
+			'draft'   => array(
+				'name' => 'Draft',
+			),
+			'pending' => array(
+				'name' => 'Pending Review',
+			),
+			'private' => array(
+				'name' => 'Private',
+			),
+		);
+
+		$i = 0;
+		foreach ( array_keys( $statuses ) as $status ) {
+			$statuses[$status]['color'] = self::POST_STATUS_DEFAULT_COLORS[$i];
+			$i++;
+		}
+
+		// define( 'RHD_POST_STATUS_DEFAULTS', $statuses );
+		$this->post_status_default_swatches = $statuses;
+	}
+
+	/**
+	 * Retrieves saved post status color values
+	 *
+	 * @return array $statuses The colors associated with each status ('status' => 'color')
+	 */
+	private function prepare_post_statuses() {
+		$colors   = get_option( RHD_POST_STATUS_COLOR_OPTION_KEY );
+		$statuses = $this->post_status_default_swatches;
+
+		foreach ( $statuses as $status => $props ) {
+			$statuses[$status]['color'] = $colors[$status];
+		}
+
+		return $statuses;
+	}
+
+	/**
+	 * Gets post status => color pairs
+	 *
+	 * @return array $pairs The array of status/color pairs
+	 */
+	private function post_status_default_color_pairs() {
+		$pairs = array();
+
+		foreach ( $this->post_status_default_swatches as $status => $props ) {
+			$pairs[$status] = $props['color'];
+		}
+
+		return $pairs;
 	}
 
 	/**

@@ -96,21 +96,6 @@ function rhd_unscheduled_draft_count() {
 }
 
 /**
- * Gets post status => color pairs
- *
- * @return array $pairs The array of status/color pairs
- */
-function rhd_post_status_default_color_pairs() {
-	$pairs = array();
-
-	foreach ( RHD_POST_STATUS_DEFAULTS as $status => $props ) {
-		$pairs[$status] = $props['color'];
-	}
-
-	return $pairs;
-}
-
-/**
  * Runs the query for all unscheduled posts
  *
  * @return array The queried posts.
@@ -149,22 +134,6 @@ function rhd_get_unscheduled_item_ids() {
 	}
 
 	return $ids;
-}
-
-/**
- * Retrieves saved post status color values
- *
- * @return array $statuses The colors associated with each status ('status' => 'color')
- */
-function rhd_prepare_post_statuses() {
-	$colors   = get_option( RHD_POST_STATUS_COLOR_OPTION_KEY );
-	$statuses = RHD_POST_STATUS_DEFAULTS;
-
-	foreach ( $statuses as $status => $props ) {
-		$statuses[$status]['color'] = $colors[$status];
-	}
-
-	return $statuses;
 }
 
 /**
