@@ -1,7 +1,12 @@
 button,
 input[type='submit'],
+input[type='button'],
 .button {
 	@include button;
+
+	.wp-core-ui & {
+		@include button;
+	}
 }
 
 button {
@@ -10,11 +15,13 @@ button {
 	}
 
 	&.control {
-		background-color: var(--color-neutral-dark);
-		border: none;
+		background-color: var(--color-main-transparent);
+		border-radius: var(--borderRadius);
 		font-size: 1.3em;
 		font-weight: normal;
 		transition: all 100ms ease-out;
+		line-height: initial;
+		z-index: 10;
 
 		&:hover {
 			&:not([disabled]) {
@@ -188,6 +195,7 @@ button {
 	.widgetTitle {
 		margin: 0 0 1em;
 		font-size: 1.2em;
+		color: var(--color-text-dark);
 	}
 
 	.help {

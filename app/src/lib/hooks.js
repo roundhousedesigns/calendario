@@ -332,7 +332,6 @@ export const useUpdatePost = (
 				postsDispatch({ type: 'REMOVE_POST', droppableId });
 			} else if (id === 0) {
 				url += `new`;
-				postsDispatch({ type: 'ADD_POST', droppableId });
 			} else {
 				url += `update/${id}`;
 				postsDispatch({

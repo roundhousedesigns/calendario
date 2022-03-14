@@ -1,9 +1,9 @@
 import { createContext } from 'react';
 import {
-	dayKey,
 	localTZShift,
 	setScheduledPosts,
 	flattenScheduledPosts,
+	dayKey,
 } from './lib/utils';
 import { isEqual, uniqBy, isEmpty } from 'lodash';
 
@@ -212,38 +212,38 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case 'ADD_POST': {
-			const { droppableId } = action;
-			const {
-				updatePost: { id, params },
-			} = state;
-			let { scheduled, unscheduled } = state;
+		// case 'ADD_POST': {
+		// 	const { droppableId } = action;
+		// 	const {
+		// 		updatePost: { id, params },
+		// 	} = state;
+		// 	let { scheduled, unscheduled } = state;
 
-			const post = {
-				id,
-				...params,
-			};
+		// 	const post = {
+		// 		id,
+		// 		...params,
+		// 	};
 
-			if (droppableId === 'unscheduled') {
-				unscheduled.push(post);
-			} else {
-				if (scheduled.hasOwnProperty(droppableId)) {
-					scheduled[droppableId].push(post);
-				} else {
-					scheduled = {
-						...scheduled,
-						[droppableId]: [post],
-					};
-				}
-			}
+		// 	if (droppableId === 'unscheduled') {
+		// 		unscheduled.push(post);
+		// 	} else {
+		// 		if (scheduled.hasOwnProperty(droppableId)) {
+		// 			scheduled[droppableId].push(post);
+		// 		} else {
+		// 			scheduled = {
+		// 				...scheduled,
+		// 				[droppableId]: [post],
+		// 			};
+		// 		}
+		// 	}
 
-			return {
-				...state,
-				scheduled,
-				unscheduled,
-				isUpdating: droppableId,
-			};
-		}
+		// 	return {
+		// 		...state,
+		// 		scheduled,
+		// 		unscheduled,
+		// 		isUpdating: droppableId,
+		// 	};
+		// }
 
 		case 'UPDATE_POST': {
 			const { droppableId, unscheduled: isUnscheduled } = action;

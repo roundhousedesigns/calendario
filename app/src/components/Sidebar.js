@@ -3,7 +3,7 @@ import Widget from './common/Widget';
 import UnscheduledDrafts from './UnscheduledDrafts';
 import StatusFilters from './StatusFilters';
 import ViewOptions from './ViewOptions';
-import BetaInfo from './BetaInfo';
+import Support from './Support';
 import Icon from './common/Icon';
 import { wp } from '../lib/utils';
 
@@ -24,7 +24,10 @@ export default function Sidebar() {
 					<div className="options">
 						<ViewOptions />
 						<p className="tz">
-							<a href={`${adminUrl}options-general.php`} title="Change your WordPress timezone">
+							<a
+								href={`${adminUrl}options-general.php`}
+								title="Change your WordPress timezone"
+							>
 								Timezone: {tz} <Icon className="open_in_new">open_in_new</Icon>
 							</a>
 						</p>
@@ -38,8 +41,8 @@ export default function Sidebar() {
 					<StatusFilters />
 				</Widget>
 
-				<Widget widgetClass="support">
-					<BetaInfo />
+				<Widget title="Support" widgetClass="support">
+					<Support />
 				</Widget>
 			</div>
 		</aside>

@@ -467,7 +467,7 @@ export default function EditPost() {
 			<div className="editPost__container">
 				{editMode ? (
 					<div ref={node} className="editPost__editor">
-						<button className="close icon" onClick={closeModal}>
+						<button className="close icon control" onClick={closeModal}>
 							highlight_off
 						</button>
 						<form

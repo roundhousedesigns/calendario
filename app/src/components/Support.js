@@ -2,7 +2,7 @@ import React from 'react';
 
 import { wp } from '../lib/utils';
 
-export default function BetaInfo() {
+export default function Support() {
 	const { version, adminUrl, pluginUrl } = wp;
 
 	return (
@@ -18,7 +18,7 @@ export default function BetaInfo() {
 			<ul className="docs">
 				<li>
 					<a
-						href="https://github.com/roundhousedesigns/calendario/wiki"
+						href="https://editorialcalendar.io"
 						rel="noreferrer"
 						target="_blank"
 					>
@@ -31,7 +31,7 @@ export default function BetaInfo() {
 						rel="noreferrer"
 						target="_blank"
 					>
-						Support
+						Contact Us
 					</a>
 				</li>
 				<li>
