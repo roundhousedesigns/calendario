@@ -19,6 +19,13 @@ exclude=(
 	release.sh
 )
 
+(
+	echo "Building..."
+	cd ./app
+	yarn build > /dev/null 2>&1
+	echo
+)
+
 # IFS=' '
 zip -qq -FSr "$file" . -x "${exclude[@]}"
 
