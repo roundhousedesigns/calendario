@@ -57,5 +57,8 @@
 		"glob-parent": "^5.1.2",
 		"browserslist": "^4.19.3",
 		"ansi-regex": "^5.0.1"
+	},
+	"devDependencies": {
+		"postcss-normalize": "^10.0.1"
 	}
 }
