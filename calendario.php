@@ -50,6 +50,38 @@ define(
 );
 
 /**
+ * Sets the default post status color key.
+ */
+function rhd_set_default_status_colors() {
+	$statuses = array(
+		'publish' => array(
+			'name' => 'Published',
+		),
+		'future'  => array(
+			'name' => 'Scheduled',
+		),
+		'draft'   => array(
+			'name' => 'Draft',
+		),
+		'pending' => array(
+			'name' => 'Pending Review',
+		),
+		'private' => array(
+			'name' => 'Private',
+		),
+	);
+
+	$i = 0;
+	foreach ( array_keys( $statuses ) as $status ) {
+		$statuses[$status]['color'] = RHD_POST_STATUS_SWATCHES[$i];
+		$i++;
+	}
+
+	define( 'RHD_POST_STATUS_DEFAULTS', $statuses );
+}
+add_action( 'rhd_cal_loaded', 'rhd_set_default_status_colors' );
+
+/**
  * Freemius integration.
  */
 require_once plugin_dir_path( __FILE__ ) . '/integration.php';
