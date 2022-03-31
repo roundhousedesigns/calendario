@@ -216,43 +216,10 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		// case 'ADD_POST': {
-		// 	const { droppableId } = action;
-		// 	const {
-		// 		updatePost: { id, params },
-		// 	} = state;
-		// 	let { scheduled, unscheduled } = state;
-
-		// 	const post = {
-		// 		id,
-		// 		...params,
-		// 	};
-
-		// 	if (droppableId === 'unscheduled') {
-		// 		unscheduled.push(post);
-		// 	} else {
-		// 		if (scheduled.hasOwnProperty(droppableId)) {
-		// 			scheduled[droppableId].push(post);
-		// 		} else {
-		// 			scheduled = {
-		// 				...scheduled,
-		// 				[droppableId]: [post],
-		// 			};
-		// 		}
-		// 	}
-
-		// 	return {
-		// 		...state,
-		// 		scheduled,
-		// 		unscheduled,
-		// 		isUpdating: droppableId,
-		// 	};
-		// }
-
 		case 'UPDATE_POST': {
 			const { droppableId } = action;
 			let {
-				updatePost: { id, params, updateNow },
+				updatePost: { id, params },
 				scheduled,
 				unscheduled,
 			} = state;
@@ -325,7 +292,7 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case 'SEND_TO_TRASH': {
+		case 'PREPARE_REMOVE_POST': {
 			const { id, params, unscheduled } = action;
 			return {
 				...state,

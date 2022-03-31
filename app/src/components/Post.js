@@ -108,7 +108,7 @@ export default function Post({ post, index, unscheduled }) {
 							{decode(post_title, { scope: 'strict' })}
 						</p>
 					</div>
-					{!isDragging && !isUpdating ? (
+					{!isDragging && isUpdating !== post_date_day ? (
 						<PostLinks
 							style={{
 								backgroundColor: color.replace(/,1\)/, ',0.75)'),

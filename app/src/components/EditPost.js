@@ -378,7 +378,7 @@ export default function EditPost() {
 
 	const trashHandler = () => {
 		postsDispatch({
-			type: 'SEND_TO_TRASH',
+			type: 'PREPARE_REMOVE_POST',
 			id,
 			params: {
 				post_date,

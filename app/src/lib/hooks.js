@@ -313,10 +313,12 @@ export const useUpdatePost = (
 		} = posts;
 
 		if (updateNow === true && id !== undefined) {
+			const date = params.post_date_unshifted
+				? params.post_date_unshifted
+				: params.post_date;
+
 			const droppableId =
-				unscheduled === true
-					? 'unscheduled'
-					: format(params.post_date_unshifted, dateFormat.date);
+				unscheduled === true ? 'unscheduled' : format(date, dateFormat.date);
 
 			postsDispatch({
 				type: 'PRE_UPDATE_POST',
