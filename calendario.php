@@ -34,7 +34,7 @@ define( 'RHD_WP_DATE_FORMAT', 'Y-m-d H:i:s' );
 define( 'RHD_UNSCHEDULED_INDEX_META_KEY', 'rhd_unscheduled' );
 define( 'RHD_POST_STATUS_COLOR_OPTION_KEY', 'rhd_calendario_post_statuses' );
 define(
-	'RHD_POST_STATUS_DEFAULT_COLORS',
+	'RHD_POST_STATUS_SWATCHES',
 	array(
 		'#00A193',
 		'#F7C900',
@@ -73,14 +73,6 @@ function rhd_load_calendario() {
 	new Calendario_Route();
 }
 add_action( 'init', 'rhd_load_calendario' );
-
-/**
- * Activation hook.
- */
-function rhd_calendario_plugin_activation() {
-	rhd_set_post_status_colors();
-}
-register_activation_hook( __FILE__, 'rhd_calendario_plugin_activation' );
 
 /**
  * Registers the plugin icon.

@@ -4,7 +4,8 @@
  *
  * phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
  *
- * @package callboard
+ * @package calendario
+ * 
  */
 
 /**
@@ -167,25 +168,6 @@ function rhd_extract_item_taxonomy_terms( &$item ) {
 	$tax_index = array_search( 'tax_input', array_keys( $item ), true );
 
 	return false !== $tax_index ? array_splice( $item, $tax_index, 1 ) : array();
-}
-
-/**
- * Check for saved post status colors, and set defaults if not present.
- *
- * @return void
- */
-function rhd_set_post_status_colors() {
-	$colors = get_option( 'rhd_calendario_post_status_colors' );
-	if ( false === $colors ) {
-		$statuses = RHD_POST_STATUS_DEFAULT_COLORS;
-		$colors   = array();
-
-		foreach ( $statuses as $status => $props ) {
-			$colors[$status] = $props['color'];
-		}
-
-		update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $colors );
-	}
 }
 
 /**
