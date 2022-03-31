@@ -4,7 +4,8 @@
  *
  * phpcs:disable WordPress.Arrays.ArrayKeySpacingRestrictions.NoSpacesAroundArrayKeys
  *
- * @package callboard
+ * @package calendario
+ *
  */
 
 /**
@@ -170,25 +171,6 @@ function rhd_extract_item_taxonomy_terms( &$item ) {
 }
 
 /**
- * Check for saved post status colors, and set defaults if not present.
- *
- * @return void
- */
-function rhd_set_post_status_colors() {
-	$colors = get_option( 'rhd_calendario_post_status_colors' );
-	if ( false === $colors ) {
-		$statuses = RHD_POST_STATUS_DEFAULTS;
-		$colors   = array();
-
-		foreach ( $statuses as $status => $props ) {
-			$colors[$status] = $props['color'];
-		}
-
-		update_option( RHD_POST_STATUS_COLOR_OPTION_KEY, $colors );
-	}
-}
-
-/**
  * Checks if a post is edit-locked. Duplicates functionality found in `wp_check_post_lock()`
  *   which is only available in the WP post editor.
  *
@@ -229,4 +211,35 @@ function rhd_check_post_lock( $id ) {
 	}
 
 	return false;
+}
+
+/**
+ * Retrieves saved post status color values
+ *
+ * @return array $statuses The colors associated with each status ('status' => 'color')
+ */
+function rhd_prepare_post_statuses() {
+	$colors   = get_option( RHD_POST_STATUS_COLOR_OPTION_KEY );
+	$statuses = RHD_POST_STATUS_DEFAULTS;
+
+	foreach ( $statuses as $status => $props ) {
+		$statuses[$status]['color'] = $colors[$status];
+	}
+
+	return $statuses;
+}
+
+/**
+ * Gets post status => color pairs
+ *
+ * @return array $pairs The array of status/color pairs
+ */
+function rhd_post_status_default_color_pairs() {
+	$pairs = array();
+
+	foreach ( RHD_POST_STATUS_DEFAULTS as $status => $props ) {
+		$pairs[$status] = $props['color'];
+	}
+
+	return $pairs;
 }

@@ -20,10 +20,10 @@ define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
 // CloudFlare Pages (CI/CD).
-define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
+// define( 'RHD_CALENDARIO_REACT_APP_BUILD', 'https://calendario.roundhouse-designs.com/' );
 
 // Load JS interface locally.
-// define( 'RHD_CALENDARIO_REACT_APP_BUILD_LOCAL', plugin_dir_url( __FILE__ ) . 'app/build/' );
+define( 'RHD_CALENDARIO_REACT_APP_BUILD', plugin_dir_url( __FILE__ ) . 'app/build/' );
 
 /**
  * Base configuration.
@@ -34,7 +34,7 @@ define( 'RHD_WP_DATE_FORMAT', 'Y-m-d H:i:s' );
 define( 'RHD_UNSCHEDULED_INDEX_META_KEY', 'rhd_unscheduled' );
 define( 'RHD_POST_STATUS_COLOR_OPTION_KEY', 'rhd_calendario_post_statuses' );
 define(
-	'RHD_POST_STATUS_DEFAULT_COLORS',
+	'RHD_POST_STATUS_SWATCHES',
 	array(
 		'#00A193',
 		'#F7C900',
@@ -48,6 +48,38 @@ define(
 		'#AA70BB',
 	)
 );
+
+/**
+ * Sets the default post status color key.
+ */
+function rhd_set_default_status_colors() {
+	$statuses = array(
+		'publish' => array(
+			'name' => 'Published',
+		),
+		'future'  => array(
+			'name' => 'Scheduled',
+		),
+		'draft'   => array(
+			'name' => 'Draft',
+		),
+		'pending' => array(
+			'name' => 'Pending Review',
+		),
+		'private' => array(
+			'name' => 'Private',
+		),
+	);
+
+	$i = 0;
+	foreach ( array_keys( $statuses ) as $status ) {
+		$statuses[$status]['color'] = RHD_POST_STATUS_SWATCHES[$i];
+		$i++;
+	}
+
+	define( 'RHD_POST_STATUS_DEFAULTS', $statuses );
+}
+add_action( 'rhd_cal_loaded', 'rhd_set_default_status_colors' );
 
 /**
  * Freemius integration.
@@ -73,14 +105,6 @@ function rhd_load_calendario() {
 	new Calendario_Route();
 }
 add_action( 'init', 'rhd_load_calendario' );
-
-/**
- * Activation hook.
- */
-function rhd_calendario_plugin_activation() {
-	rhd_set_post_status_colors();
-}
-register_activation_hook( __FILE__, 'rhd_calendario_plugin_activation' );
 
 /**
  * Registers the plugin icon.
