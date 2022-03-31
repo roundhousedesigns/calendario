@@ -177,7 +177,7 @@ function rhd_extract_item_taxonomy_terms( &$item ) {
 function rhd_set_post_status_colors() {
 	$colors = get_option( 'rhd_calendario_post_status_colors' );
 	if ( false === $colors ) {
-		$statuses = RHD_POST_STATUS_DEFAULTS;
+		$statuses = RHD_POST_STATUS_DEFAULT_COLORS;
 		$colors   = array();
 
 		foreach ( $statuses as $status => $props ) {
