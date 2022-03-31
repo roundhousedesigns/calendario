@@ -181,8 +181,6 @@ export function postsReducer(state, action) {
 
 			const post_date_unshifted = params.post_date;
 
-			// THE DATE GETS FUCKED IN HERE SOMEWHERE
-
 			let postData;
 			if (unscheduled) {
 				postData = params;
