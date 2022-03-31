@@ -219,6 +219,14 @@ class Calendario {
 		$statuses = $this->status_colors;
 
 		foreach ( $statuses as $status => $props ) {
+			// TODO Fix status colors problems. Cases: nothing stored/saved (first timers),
+			// old shit (why would it be different?), and saving (Doesn't work)
+			
+			// this lets the page load if the status stored is bogus, but also seems to stops saving.
+			if ( ! is_array( $status ) ) {
+				break;
+			}
+
 			$statuses[$status]['color'] = $colors[$status];
 		}
 
