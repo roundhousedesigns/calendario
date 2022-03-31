@@ -20,7 +20,11 @@ export default function PostList({ posts, className, date, showDropOutline }) {
 	} = useContext(PostsContext);
 
 	useEffect(() => {
-		if (post_date_unshifted && date && dayKey(post_date_unshifted) === dayKey(date)) {
+		if (
+			post_date_unshifted &&
+			date &&
+			dayKey(post_date_unshifted) === dayKey(date)
+		) {
 			setIsLoading(true);
 		}
 
@@ -32,12 +36,11 @@ export default function PostList({ posts, className, date, showDropOutline }) {
 	const droppableId =
 		date === false ? 'unscheduled' : format(date, dateFormat.date);
 
-	return isLoading ? (
-		<Loading />
-	) : (
+	return (
 		<Droppable droppableId={droppableId}>
 			{({ innerRef, droppableProps, placeholder }, snapshot) => (
 				<>
+					{isLoading ? <Loading /> : null}
 					<ul
 						ref={innerRef}
 						{...droppableProps}
