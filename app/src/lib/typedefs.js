@@ -3,6 +3,7 @@
  * @property {number} id The post id
  * @property {string} post_title The post_title attribute
  * @property {Date} post_date The post_date attribute
+ * @property {Date} post_date_unshifted The post_date attribute without timezone shift
  * @property {string} post_status The post_status attribute
  * @property {string} post_excerpt The post_excerpt content
  * @property {string} edit_link The post edit link
