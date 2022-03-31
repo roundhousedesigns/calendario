@@ -307,6 +307,8 @@ export const useUpdatePost = (
 	draggedPost,
 	draggedPostDispatch
 ) => {
+	const [isLoading, setIsLoading] = useState(false);
+
 	useEffect(() => {
 		const {
 			updatePost: { updateNow, id, params, unscheduled, newIndex, trash },
@@ -352,6 +354,8 @@ export const useUpdatePost = (
 			}
 
 			const sendUpdate = async () => {
+				setIsLoading(true);
+
 				try {
 					const response = await fetch(url, {
 						method: 'POST',
@@ -370,11 +374,19 @@ export const useUpdatePost = (
 				} catch (error) {
 					console.log(error.message);
 				}
+
+				setIsLoading(false);
 			};
 
 			sendUpdate();
+
+			return () => {
+				setIsLoading(false);
+			};
 		}
 	}, [posts, draggedPost, draggedPostDispatch, postsDispatch]);
+
+	return isLoading;
 };
 
 /**

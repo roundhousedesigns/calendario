@@ -286,8 +286,8 @@ export function postsReducer(state, action) {
 		case 'UPDATE_COMPLETE': {
 			return {
 				...state,
-				isUpdating: initialPosts.isUpdating,
 				fetchPosts: true,
+				isUpdating: initialPosts.isUpdating,
 				updatePost: initialPosts.updatePost,
 			};
 		}

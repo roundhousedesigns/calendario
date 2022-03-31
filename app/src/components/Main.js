@@ -6,8 +6,9 @@ import { useFetchScheduledPosts, useFetchTaxonomyTerms } from '../lib/hooks';
 
 import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
+import Loading from './common/Loading';
 
-const Main = forwardRef(({ todayRef }, ref) => {
+const Main = forwardRef(({ todayRef, isUpdating }, ref) => {
 	const { posts, postsDispatch } = useContext(PostsContext);
 	const {
 		viewOptions: {
@@ -27,6 +28,7 @@ const Main = forwardRef(({ todayRef }, ref) => {
 	return (
 		<main className="calendarioMain__main">
 			<div className="view" ref={ref}>
+				{isUpdating ? <Loading /> : null}
 				{viewMode === 'calendar' ? (
 					<Calendar className="view__calendar" todayRef={todayRef} />
 				) : (

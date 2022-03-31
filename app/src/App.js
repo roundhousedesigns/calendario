@@ -75,7 +75,12 @@ export default function App() {
 	/**
 	 * Send the update
 	 */
-	useUpdatePost(posts, postsDispatch, draggedPost, draggedPostDispatch);
+	const isUpdating = useUpdatePost(
+		posts,
+		postsDispatch,
+		draggedPost,
+		draggedPostDispatch
+	);
 
 	const isOverUnscheduled = (droppableId) =>
 		droppableId === 'unscheduled' ? true : false;
@@ -257,7 +262,11 @@ export default function App() {
 								onDragUpdate={onDragUpdate}
 							>
 								<Sidebar />
-								<Main ref={mainRef} todayRef={todayRef} />
+								<Main
+									ref={mainRef}
+									todayRef={todayRef}
+									isUpdating={isUpdating}
+								/>
 							</DragDropContext>
 						</DragContext.Provider>
 					</PostsContext.Provider>
