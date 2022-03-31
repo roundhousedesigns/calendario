@@ -33,7 +33,7 @@ export const initialPosts = {
 		start: '',
 		end: '',
 	},
-	isUpdating: null,
+	isUpdating: '',
 	unscheduled: [],
 	scheduled: [],
 	trashed: [],
@@ -179,15 +179,20 @@ export function postsReducer(state, action) {
 			const index =
 				unscheduled && newIndex === -1 ? unscheduled.length : newIndex;
 
+			const post_date_unshifted = params.post_date;
+
+			// THE DATE GETS FUCKED IN HERE SOMEWHERE
+
 			let postData;
-			if (!unscheduled) {
+			if (unscheduled) {
+				postData = params;
+			} else {
 				let dateUnoffset = localTZShift(params.post_date, true);
 				postData = {
 					...params,
 					post_date: dateUnoffset,
+					post_date_unshifted,
 				};
-			} else {
-				postData = params;
 			}
 
 			return {
@@ -202,7 +207,8 @@ export function postsReducer(state, action) {
 			};
 		}
 
-		case 'UPDATE_INIT': {
+		case 'PRE_UPDATE_POST': {
+			// Disable the 'updateNow' flag
 			return {
 				...state,
 				updatePost: {
@@ -246,15 +252,17 @@ export function postsReducer(state, action) {
 		// }
 
 		case 'UPDATE_POST': {
-			const { droppableId, unscheduled: isUnscheduled } = action;
+			const { droppableId } = action;
 			let {
-				updatePost: { id, params },
+				updatePost: { id, params, updateNow },
 				scheduled,
 				unscheduled,
 			} = state;
+			const isUnscheduled = droppableId === 'unscheduled' ? true : false;
 
 			// Cast the date as a Date
-			params.post_date = new Date(params.post_date);
+			// TODO fix to non mutation
+			params.post_date = localTZShift(new Date(params.post_date), true);
 
 			if (isUnscheduled) {
 				unscheduled.forEach((item, index) => {

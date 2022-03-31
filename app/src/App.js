@@ -102,21 +102,22 @@ export default function App() {
 	};
 
 	const onDragStart = (item) => {
+		const {
+			source: { draggableId, droppableId },
+		} = item;
 		let draggingUnscheduled = isDraggingUnscheduled(item);
 
 		let postList;
 		if (draggingUnscheduled === true) {
 			postList = unscheduledPosts;
 		} else {
-			postList = scheduledPosts[item.source.droppableId];
+			postList = scheduledPosts[droppableId];
 		}
 
 		const post = postList.find((p) => {
 			return Number(item.draggableId) === Number(p.id);
 		});
-		let currentIndex = isDraggingUnscheduled(item)
-			? item.source.draggableId
-			: false;
+		let currentIndex = isDraggingUnscheduled(item) ? draggableId : false;
 
 		draggedPostDispatch({
 			type: 'START',
@@ -131,13 +132,18 @@ export default function App() {
 			return;
 		}
 
-		let overUnscheduled = isOverUnscheduled(item.source.droppableId);
+		const {
+			source: { droppableId },
+			destination: { index },
+		} = item;
+
+		let overUnscheduled = isOverUnscheduled(droppableId);
 
 		// only dispatch if an update is necessary
 		if (overUnscheduled === true) {
 			draggedPostDispatch({
 				type: 'DRAGGING_OVER_UNSCHEDULED',
-				draggedOver: item.destination.index,
+				draggedOver: index,
 			});
 		} else if (draggedPost.overUnscheduled === true) {
 			draggedPostDispatch({

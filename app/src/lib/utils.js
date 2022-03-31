@@ -1,4 +1,4 @@
-import { omit, find, isEmpty, isEqual } from 'lodash';
+import { omit, isEmpty, isEqual } from 'lodash';
 import {
 	format,
 	parseISO,
@@ -93,6 +93,13 @@ export const dateFormat = {
 	daylessDate: 'MMMM dd, yyyy',
 };
 
+/**
+ * Shifts a `post_date` from the database to or from local timezone.
+ *
+ * @param {Date} date
+ * @param {boolean} unshift TRUE to shift back to original timezone.
+ * @returns Date The shfited (or unshifted) Date.
+ */
 export const localTZShift = (date, unshift = false) => {
 	let stamp = date.getTime();
 	let offset = date.getTimezoneOffset() * 60000;
@@ -101,7 +108,7 @@ export const localTZShift = (date, unshift = false) => {
 		// Compensate for local timezone to mimic UTC
 		return new Date(stamp + offset);
 	} else {
-		// Return to native/local timezone
+		// Return to backend timezone
 		return new Date(stamp - offset);
 	}
 };
@@ -199,14 +206,14 @@ export const setScheduledPosts = (posts) => {
 
 	posts.forEach((post, index) => {
 		// cast the date as a Date object
-		const { post_date, tzshift } = post;
+		const { post_date, tzShifted } = post;
 		let date = new Date(post_date);
 
-		if (isValid(date) && !tzshift) {
+		if (isValid(date) && !tzShifted) {
 			let offsetDate = localTZShift(date);
 			scheduledPosts[index].post_date = offsetDate;
 			scheduledPosts[index].post_date_day = dayKey(offsetDate);
-			scheduledPosts[index].tzshift = true;
+			scheduledPosts[index].tzShifted = true;
 		}
 	});
 
@@ -356,28 +363,28 @@ export function sanitizeParamsForUpdate(params) {
 	return params;
 }
 
-/**
- *
- * @param {int} id
- * @param {Array} scheduled Scheduled posts, keyed by day
- * @param {Array} unscheduled Unscheduled posts
- * @returns {string|null} The post's droppableId, or null if not found
- */
-export function getPostSourceDroppableId(id, scheduled, unscheduled) {
-	let droppableId = null;
-	let found = find(unscheduled, { id: id });
+// /**
+//  *
+//  * @param {int} id
+//  * @param {Array} scheduled Scheduled posts, keyed by day
+//  * @param {Array} unscheduled Unscheduled posts
+//  * @returns {string|null} The post's droppableId, or null if not found
+//  */
+// export function getPostSourceDroppableId(id, scheduled, unscheduled) {
+// 	let droppableId = null;
+// 	let found = find(unscheduled, { id: id });
 
-	if (found) {
-		droppableId = 'unscheduled';
-	} else {
-		for (let key in scheduled) {
-			found = find(scheduled[key], { id: id });
-			if (found) {
-				droppableId = dayKey(found.post_date);
-				break;
-			}
-		}
-	}
+// 	if (found) {
+// 		droppableId = 'unscheduled';
+// 	} else {
+// 		for (let key in scheduled) {
+// 			found = find(scheduled[key], { id: id });
+// 			if (found) {
+// 				droppableId = dayKey(found.post_date);
+// 				break;
+// 			}
+// 		}
+// 	}
 
-	return droppableId;
-}
+// 	return droppableId;
+// }

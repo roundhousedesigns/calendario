@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { wp, dateFormat } from '../lib/utils';
+import { wp, dateFormat, localTZShift } from '../lib/utils';
 import { format } from 'date-fns';
 import { isEmpty } from 'lodash';
 import { sanitizeParamsForUpdate, DEBUG_MODE } from '../lib/utils';
@@ -316,10 +316,10 @@ export const useUpdatePost = (
 			const droppableId =
 				unscheduled === true
 					? 'unscheduled'
-					: format(params.post_date, dateFormat.date);
+					: format(params.post_date_unshifted, dateFormat.date);
 
 			postsDispatch({
-				type: 'UPDATE_INIT',
+				type: 'PRE_UPDATE_POST',
 			});
 
 			/**
@@ -337,7 +337,6 @@ export const useUpdatePost = (
 				postsDispatch({
 					type: 'UPDATE_POST',
 					droppableId,
-					unscheduled,
 				});
 			}
 

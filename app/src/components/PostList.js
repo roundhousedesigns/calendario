@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Post from './Post';
 import { dateFormat } from '../lib/utils';
 import { Droppable } from 'react-beautiful-dnd';
 import { format } from 'date-fns';
 import { isEmpty } from 'lodash';
 
+import PostsContext from '../PostsContext';
+
 export default function PostList({ posts, className, date, showDropOutline }) {
 	const [hovered, setHovered] = useState(false);
+	const {
+		posts: { isUpdating },
+	} = useContext(PostsContext);
 
 	const droppableId =
 		date === false ? 'unscheduled' : format(date, dateFormat.date);
