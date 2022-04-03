@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext, useEffect } from 'react';
+import React, { forwardRef, useContext } from 'react';
 import Calendar from './Calendar';
 import List from './List';
 import EditPost from './EditPost';
