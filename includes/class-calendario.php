@@ -167,8 +167,7 @@ class Calendario {
 	 */
 	private function get_assets_files() {
 		// Request manifest file.
-		$request  = wp_remote_get( RHD_CALENDARIO_MANIFEST_URL );
-		$response = wp_remote_retrieve_body( $request );
+		$request = file_get_contents( RHD_CALENDARIO_MANIFEST_URL );
 
 		// If the remote request fails.
 		if ( ! $request || ! $request ) {
@@ -176,7 +175,7 @@ class Calendario {
 		}
 
 		// Convert json to php array.
-		$files_data = json_decode( $response );
+		$files_data = json_decode( $request );
 		if ( null === $files_data ) {
 			return;
 		}

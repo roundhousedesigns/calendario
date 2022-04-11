@@ -366,7 +366,6 @@ export const useUpdatePost = (
 
 					if (data && data > 0) {
 						postsDispatch({ type: 'UPDATE_COMPLETE' });
-						postsDispatch({ type: 'FETCH' });
 					}
 
 					draggedPostDispatch({
@@ -391,7 +390,8 @@ export const useUpdatePost = (
 };
 
 /**
- * Retrieves 'scheduled' posts from the server
+ * Detects a click outside the EditPost modal.
+ *
  * @param {Object} ref The element's ref
  * @param {Function} end The handler function
  * @returns {void}
