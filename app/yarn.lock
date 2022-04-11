@@ -2828,6 +2828,17 @@ browserslist@^4.0.0, browserslist@^4.14.5, browserslist@^4.16.6, browserslist@^4
     node-releases "^2.0.2"
     picocolors "^1.0.0"
 
+browserslist@^4.20.2:
+  version "4.20.2"
+  resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.20.2.tgz#567b41508757ecd904dab4d1c646c612cd3d4f88"
+  integrity sha512-CQOBCqp/9pDvDbx3xfMi+86pr4KXIf2FDkTTdeuYw8OxS9t898LA1Khq57gtufFILXpfgsSx5woNgsBgvGjpsA==
+  dependencies:
+    caniuse-lite "^1.0.30001317"
+    electron-to-chromium "^1.4.84"
+    escalade "^3.1.1"
+    node-releases "^2.0.2"
+    picocolors "^1.0.0"
+
 bser@2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/bser/-/bser-2.1.1.tgz#e6787da20ece9d07998533cfd9de6f5c38f4bc05"
@@ -2915,6 +2926,11 @@ caniuse-lite@^1.0.30001313:
   version "1.0.30001316"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001316.tgz#b44a1f419f82d2e119aa0bbdab5ec15471796358"
   integrity sha512-JgUdNoZKxPZFzbzJwy4hDSyGuH/gXz2rN51QmoR8cBQsVo58llD3A0vlRKKRt8FGf5u69P9eQyIH8/z9vN/S0Q==
+
+caniuse-lite@^1.0.30001317:
+  version "1.0.30001325"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001325.tgz#2b4ad19b77aa36f61f2eaf72e636d7481d55e606"
+  integrity sha512-sB1bZHjseSjDtijV1Hb7PB2Zd58Kyx+n/9EotvZ4Qcz2K3d0lWB8dB4nb8wN/TsOGFq3UuAm0zQZNQ4SoR7TrQ==
 
 case-sensitive-paths-webpack-plugin@^2.4.0:
   version "2.4.0"
@@ -3803,6 +3819,11 @@ electron-to-chromium@^1.4.76:
   version "1.4.83"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.83.tgz#24a2a7687786896c758e7dd22f218fd3f0ad1e67"
   integrity sha512-Wm15TA5pLMOHtsik6uQTVyzXG8IpkVxnXAoAqV4+6zbJH3n5qnVz3iNAW+65r6WSrrYo0w6B8JJ0lcv2NhSmXQ==
+
+electron-to-chromium@^1.4.84:
+  version "1.4.103"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.103.tgz#abfe376a4d70fa1e1b4b353b95df5d6dfd05da3a"
+  integrity sha512-c/uKWR1Z/W30Wy/sx3dkZoj4BijbXX85QKWu9jJfjho3LBAXNEGAEW3oWiGb+dotA6C6BzCTxL2/aLes7jlUeg==
 
 emittery@^0.8.1:
   version "0.8.1"
