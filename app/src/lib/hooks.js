@@ -365,7 +365,8 @@ export const useUpdatePost = (
 					const data = await response.json();
 
 					if (data && data > 0) {
-						postsDispatch({ type: 'UPDATE_COMPLETE', id, params });
+						postsDispatch({ type: 'UPDATE_COMPLETE' });
+						postsDispatch({ type: 'FETCH' });
 					}
 
 					draggedPostDispatch({
