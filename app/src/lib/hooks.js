@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { wp, dateFormat } from '../lib/utils';
-import { format } from 'date-fns';
+import { format, addDays, subDays } from 'date-fns';
 import { isEmpty } from 'lodash';
 import { sanitizeParamsForUpdate, DEBUG_MODE } from '../lib/utils';
 
@@ -47,8 +47,10 @@ export const useFetchScheduledPosts = (start, end, posts, postsDispatch) => {
 
 	useEffect(() => {
 		if (start !== null && end !== null && fetchPosts) {
-			let startDate = format(start, dateFormat.date);
-			let endDate = format(end, dateFormat.date);
+			// expand the range by 1 in either direction to allow timezone wiggle room
+			let startDate = format(subDays(start, 1), dateFormat.date);
+			let endDate = format(addDays(end, 1), dateFormat.date);
+
 			let url = `${routeBase}/posts/scheduled/${startDate}/${endDate}`;
 
 			const fetchData = async () => {

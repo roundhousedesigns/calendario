@@ -231,17 +231,17 @@ export const setScheduledPosts = (posts) => {
  * @param {Object} scheduled The in-range scheduled posts keyed by dayKey.
  * @returns {Object} The filtered scheduled posts keyed by dayKey.
  */
-export const flattenScheduledPosts = (scheduled) => {
-	var posts = [];
+// export const flattenScheduledPosts = (scheduled) => {
+// 	var posts = [];
 
-	for (const key in scheduled) {
-		scheduled[key].forEach((item) => {
-			posts.push(item);
-		});
-	}
+// 	for (const key in scheduled) {
+// 		scheduled[key].forEach((item) => {
+// 			posts.push(item);
+// 		});
+// 	}
 
-	return posts;
-};
+// 	return posts;
+// };
 
 /**
  *

@@ -2,10 +2,8 @@ import { createContext } from 'react';
 import {
 	localTZShift,
 	setScheduledPosts,
-	flattenScheduledPosts,
 	dayKey,
 } from './lib/utils';
-import { isEqual, uniqBy, isEmpty } from 'lodash';
 
 const PostsContext = createContext({});
 export default PostsContext;
@@ -43,24 +41,13 @@ export const initialPosts = {
 export function postsReducer(state, action) {
 	switch (action.type) {
 		case 'SET_SCHEDULED': {
-			let oldRaw = flattenScheduledPosts(state.scheduled);
-			let newRaw = action.posts;
-
-			let scheduledPosts;
-
-			if (isEqual(oldRaw, newRaw) || isEmpty(newRaw)) {
-				return state;
-			} else {
-				scheduledPosts = uniqBy([...newRaw, ...oldRaw], 'id');
-			}
-
 			return {
 				...state,
 				dateRange: {
 					start: action.start ? action.start : state.dateRange.start,
 					end: action.end ? action.end : state.dateRange.end,
 				},
-				scheduled: setScheduledPosts(scheduledPosts),
+				scheduled: setScheduledPosts(action.posts),
 			};
 		}
 
