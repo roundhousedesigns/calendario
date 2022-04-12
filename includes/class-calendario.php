@@ -166,8 +166,14 @@ class Calendario {
 	 * @return array|void
 	 */
 	private function get_assets_files() {
+		error_log( home_url );
 		// Request manifest file.
-		$request  = wp_remote_get( RHD_CALENDARIO_MANIFEST_URL );
+		$request = wp_remote_get( esc_url_raw( RHD_CALENDARIO_MANIFEST_URL ), array(
+			'headers' => array(
+				'origin' => home_url(),
+			),
+		) );
+
 		$response = wp_remote_retrieve_body( $request );
 
 		// If the remote request fails.
