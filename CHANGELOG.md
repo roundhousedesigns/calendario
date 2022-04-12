@@ -2,6 +2,12 @@
 
 All notable changes to Editorial Calendar.io will be documented in this file.
 
+## 1.0.5 - 4/11/2022
+
+### Fixed
+
+- Posts not updating after adding/trashing
+
 ## 1.0.3-1.0.4 - 3/31/2022
 
 ### Fixed
