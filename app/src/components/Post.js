@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PostLinks from './PostLinks';
-// import Icon from './common/Icon';
 import { Draggable } from 'react-beautiful-dnd';
 import { isEmpty } from 'lodash';
 import { decode } from 'html-entities';
@@ -75,9 +74,10 @@ export default function Post({ post, index, unscheduled }) {
 			classes.push('over__none');
 		}
 
-		if (isUpdating === post_date_day) {
-			classes.push('loading');
-		}
+		// Cute effect...not useful.
+		// if (isUpdating === post_date_day) {
+		// 	classes.push('loading');
+		// }
 
 		return classes.join(' ');
 	}

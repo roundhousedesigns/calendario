@@ -23,15 +23,15 @@
 	border-radius: var(--borderRadius);
 	outline: none;
 	padding: 8px 12px;
+	font-size: 1rem;
 	font-weight: normal;
 	line-height: 1.8;
 	color: var(--color-text-dark);
 	cursor: pointer;
 	text-decoration: none;
-	transition: all 250ms ease;
+	transition: all 150ms;
 
-	&:hover,
-	&:active {
-		background: var(--color-bg);
+	&:not(.icon) {
+		font-family: 'Open Sans', sans-serif;
 	}
 }

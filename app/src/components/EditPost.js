@@ -25,6 +25,7 @@ import { decode } from 'html-entities';
 import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
 import Loading from './common/Loading';
+import Icon from './common/Icon';
 
 const initialEditPost = {
 	post: {},
@@ -186,7 +187,7 @@ export default function EditPost() {
 		post_excerpt,
 		comment_status,
 		post_author,
-		// image,
+		image,
 		edit_link,
 		view_link,
 		taxonomies: post_taxonomies,
@@ -467,9 +468,6 @@ export default function EditPost() {
 			<div className="editPost__container">
 				{editMode ? (
 					<div ref={node} className="editPost__editor">
-						<button className="close icon control" onClick={closeModal}>
-							highlight_off
-						</button>
 						<form
 							className={`editPost__form ${
 								trashPostClicked ? 'trashConfirm' : ''
@@ -556,7 +554,11 @@ export default function EditPost() {
 									</FieldGroup>
 								</div>
 								<div className="header__right">
-									<div className="editPost__buttons">
+									<div
+										className={`editPost__buttons ${
+											trashPostClicked === true ? 'trash-open' : 'trash-closed'
+										}`}
+									>
 										{trashPostClicked === true ? (
 											<div className="trash confirm">
 												<p
@@ -566,18 +568,22 @@ export default function EditPost() {
 												>
 													Are you sure you want to Trash this post?
 												</p>
-												<input
-													type="button"
-													onClick={trashHandler}
-													value="Yes"
-													autoFocus={true}
-												/>
+												<div class="confirmButtons">
+													<input
+														type="button"
+														onClick={trashHandler}
+														value="Yes"
+														autoFocus={true}
+														className="yes"
+													/>
+													<input
+														type="button"
+														onClick={() => setTrashPostClicked(false)}
+														value="No"
+														className="no"
+													/>
+												</div>
 												{/* TODO bind ESC to cancel */}
-												<input
-													type="button"
-													onClick={() => setTrashPostClicked(false)}
-													value="No"
-												/>
 											</div>
 										) : (
 											<>
@@ -586,6 +592,12 @@ export default function EditPost() {
 													className="save button"
 													value={id === 0 ? 'Save' : 'Update'}
 													disabled={newTerm.term ? true : false}
+												/>
+												<input
+													type="button"
+													className="cancel button"
+													onClick={closeModal}
+													value="Cancel"
 												/>
 												<input
 													type="button"
@@ -633,24 +645,29 @@ export default function EditPost() {
 											<option value="closed">Closed</option>
 										</select>
 									</FieldGroup>
-									{/* <FieldGroup name="post_thumb">
+									<FieldGroup name="post_thumb">
 										<a
+											className={`featured-image-link ${
+												image ? 'has-image' : 'no-image'
+											}`}
 											href={decode(edit_link)}
-											target="_blank"
 											rel="noreferrer"
 										>
-											{image ? '' : 'Set '}Featured Image{' '}
-											<Icon className="open_in_new">open_in_new</Icon>
+											{image ? (
+												<figure>
+													<figcaption>Featured Image</figcaption>
+													<img src={image} alt={`${post_title}`} />
+												</figure>
+											) : (
+												<Icon
+													className="image add_photo_alternate"
+													tooltip="Set featured image"
+												>
+													add_photo_alternate
+												</Icon>
+											)}
 										</a>
-										{image ? (
-											<figure>
-												<figcaption>Featured Image</figcaption>
-												<img src={image} alt={`${post_title}`} />
-											</figure>
-										) : (
-											''
-										)}
-									</FieldGroup> */}
+									</FieldGroup>
 									{editPostLink()}
 								</div>
 							</div>

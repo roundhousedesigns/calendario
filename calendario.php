@@ -5,7 +5,7 @@
  * Author:         Roundhouse Designs
  * Author URI:     https://roundhouse-designs.com
  * Text Domain:    rhd
- * Version:        1.0.5
+ * Version:        1.0.6-freemium
  *
  * @package       calendario
  *

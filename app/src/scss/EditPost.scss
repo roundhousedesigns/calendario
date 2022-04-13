@@ -62,44 +62,90 @@
 		margin-bottom: 1em;
 		display: flex;
 		justify-content: space-between;
+		flex-wrap: wrap;
+
+		&.trash-open {
+			~ .fieldGroup {
+				opacity: 0;
+			}
+		}
 
 		input,
 		.button {
 			flex: 0 0 48%;
+			margin: 6px 0;
 			display: block;
 			background-color: var(--color-text-light);
 			color: var(--color-text-dark);
 
 			&:last-of-type {
 				margin-bottom: 0;
+				flex-grow: 1;
+			}
+
+			&:hover,
+			:active {
+				background-color: var(--color-main-transparent);
+			}
+
+			&.trash {
+				font-size: 78%;
+				padding-top: 6px;
+				padding-bottom: 6px;
+
+				&:hover,
+				&:active {
+					background-color: var(--color-error);
+					color: var(--color-neutral);
+					font-weight: 400;
+				}
 			}
 		}
 
 		.trash {
-			input {
-				&:focus {
-					outline: 1px solid var(--color-main-light);
-				}
+			height: 100%;
+
+			p {
+				margin: 0;
+				color: var(--color-text-dark);
 			}
 
-			&.confirm {
-				text-align: center;
-				background-color: var(--color-text-dark);
-				padding: 24px 12px;
-				position: absolute;
-				width: 100%;
-				left: 0;
-				top: 0;
-				z-index: 10;
-				border-radius: var(--borderRadius-half);
+			input {
+				margin: 0 4px;
+			}
 
-				p {
-					margin: 0;
-					color: var(--color-text-light);
-				}
+			.confirmButtons {
+				display: flex;
+				margin: 12px 0 0;
+				justify-content: space-between;
 
 				input {
-					margin: 0 4px;
+					flex: 0 1 48%;
+					margin: 0;
+
+					&:focus {
+						outline: 1px solid var(--color-main-light);
+					}
+
+					&.yes {
+						&:hover,
+						&:active {
+							background-color: var(--color-error);
+							color: var(--color-neutral);
+						}
+					}
+				}
+
+				&.confirm {
+					text-align: center;
+					background-color: var(--color-text-dark);
+					padding: 24px 12px;
+					position: absolute;
+					width: 100%;
+					left: 0;
+					top: 0;
+					z-index: 10;
+					border-radius: var(--borderRadius-half);
 				}
 			}
 		}
@@ -107,14 +153,14 @@
 
 	&__links {
 		position: absolute;
-		right: 10px;
-		top: -20px;
+		right: 0px;
+		top: -18px;
 		display: flex;
 		justify-content: flex-start;
 		font-size: 80%;
 
 		a {
-			margin: 0 12px 0 0;
+			margin: 0 8px 0 0;
 			color: inherit;
 			text-decoration: underline dotted;
 
@@ -130,13 +176,6 @@
 		display: flex;
 		flex-direction: column;
 		flex-wrap: nowrap;
-
-		&.trashConfirm {
-			.fieldGroup {
-				opacity: 0.4;
-				pointer-events: none;
-			}
-		}
 	}
 
 	&__editor {
@@ -154,19 +193,6 @@
 		border-radius: var(--borderRadius);
 		border: 1px solid var(--color-border);
 
-		.close {
-			background-color: var(--color-text-light);
-			position: absolute;
-			top: 0;
-			right: 0;
-			margin: 0;
-			padding: 2px 3px;
-			border-radius: 50%;
-			font-size: 24px;
-			color: var(--color-text);
-			z-index: 10;
-		}
-
 		.icon {
 			&.open_in_new {
 				font-size: 0.9em;
@@ -177,11 +203,6 @@
 			a {
 				text-decoration: none;
 				color: inherit;
-
-				&:hover,
-				&:active {
-					text-decoration: underline;
-				}
 			}
 		}
 
@@ -195,12 +216,12 @@
 			}
 
 			&__right {
-				background-color: var(--color-main-transparent);
+				background-color: var(--color-neutral-dark);
 				border-radius: var(--borderRadius-half);
 				flex: 0 0 33.3334%;
 				height: auto;
 				float: right;
-				padding: 8px;
+				padding: 12px;
 
 				& > div {
 					margin-bottom: 8px;
@@ -224,16 +245,13 @@
 				a {
 					text-decoration: none;
 					color: inherit;
-
-					&:hover,
-					&:active {
-						text-decoration: underline;
-					}
 				}
 			}
 		}
 
 		.fieldGroup {
+			transition: opacity 100ms ease;
+
 			&__post_name {
 				a {
 					color: inherit;
@@ -301,6 +319,34 @@
 			&__status {
 				select {
 					width: 100%;
+				}
+			}
+
+			&__post_thumb {
+				text-align: center;
+
+				.featured-image-link {
+					display: inline-block;
+					margin-top: 10px;
+					transition: all 100ms ease;
+
+					&.no-image {
+						opacity: 0.8;
+
+						&:hover,
+						&:active {
+							opacity: 1;
+						}
+					}
+
+					.icon {
+						font-size: 2.8em;
+						display: block;
+					}
+				}
+
+				figcaption {
+					text-align: left;
 				}
 			}
 

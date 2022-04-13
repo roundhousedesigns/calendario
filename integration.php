@@ -7,9 +7,7 @@
  * Freemius integration.
  */
 if ( ! function_exists( 'rhd_cal' ) ) {
-	/**
-	 * Create a helper function for easy SDK access.
-	 */
+	// Create a helper function for easy SDK access.
 	function rhd_cal() {
 		global $rhd_cal;
 
@@ -17,27 +15,30 @@ if ( ! function_exists( 'rhd_cal' ) ) {
 			// Include Freemius SDK.
 			require_once dirname( __FILE__ ) . '/freemius/start.php';
 
-			$rhd_cal = fs_dynamic_init(
-				array(
-					'id'               => '8136',
-					'slug'             => 'calendario',
-					'type'             => 'plugin',
-					'public_key'       => 'pk_0ceb9fcfae9cbd708428cd6126d45',
-					'is_premium'       => true,
-					'is_premium_only'  => true,
-					'has_addons'       => false,
-					'has_paid_plans'   => true,
-					'is_org_compliant' => false,
-					'trial'            => array(
-						'days'               => 30,
-						'is_require_payment' => false,
-					),
-					'menu'             => array(
-						'slug'    => 'calendario',
-						'support' => false,
-					),
-				)
-			);
+			$rhd_cal = fs_dynamic_init( array(
+				'id'                  => '8136',
+				'slug'                => 'calendario',
+				'type'                => 'plugin',
+				'public_key'          => 'pk_0ceb9fcfae9cbd708428cd6126d45',
+				'is_premium'          => true,
+				'premium_suffix'      => 'Pro',
+				// If your plugin is a serviceware, set this option to false.
+				'has_premium_version' => true,
+				'has_addons'          => false,
+				'has_paid_plans'      => true,
+				'is_org_compliant'    => false,
+				'trial'               => array(
+					'days'               => 30,
+					'is_require_payment' => false,
+				),
+				'menu'                => array(
+					'slug'    => 'calendario',
+					'support' => false,
+				),
+				// Set the SDK to work in a sandbox mode (for development & testing).
+				// IMPORTANT: MAKE SURE TO REMOVE SECRET KEY BEFORE DEPLOYMENT.
+				'secret_key'          => 'sk_cR%[KEAzQyGU.RFj7P#CGgJ^t#GHT',
+			) );
 		}
 
 		return $rhd_cal;

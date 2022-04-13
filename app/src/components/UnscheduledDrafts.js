@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import PostList from './PostList';
 import NewPostButton from './common/NewPostButton';
 import Icon from './common/Icon';
+import Upsell from './common/Upsell';
 import { wp } from '../lib/utils';
 
 import { useFetchUnscheduledPosts } from '../lib/hooks';
@@ -9,13 +10,13 @@ import PostsContext from '../PostsContext';
 
 export default function UnscheduledDrafts() {
 	const { posts, postsDispatch } = useContext(PostsContext);
-	const { trashUrl } = wp;
+	const { trashUrl, premium } = wp;
 
 	const { unscheduled } = posts;
 
 	useFetchUnscheduledPosts(posts, postsDispatch);
 
-	return (
+	return premium ? (
 		<>
 			<div className="draftsArea">
 				<PostList
@@ -32,5 +33,9 @@ export default function UnscheduledDrafts() {
 				</a>
 			</div>
 		</>
+	) : (
+		<div className="draftsArea not-premium">
+			<Upsell />
+		</div>
 	);
 }

@@ -124,6 +124,7 @@ class Calendario {
 			array(
 				'appSelector'         => $this->selector,
 				'version'             => RHD_CALENDARIO_PLUGIN_VERSION,
+				'premium'             => rhd_cal()->can_use_premium_code(),
 				'adminUrl'            => admin_url(),
 				'pluginUrl'           => RHD_CALENDARIO_PLUGIN_DIR_BASE_URL,
 				'trashUrl'            => admin_url( 'edit.php?post_status=trash&post_type=post' ),
