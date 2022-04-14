@@ -54,8 +54,8 @@ class Calendario {
 		// Menu items and admin pages.
 		add_action( 'admin_menu', array( $this, 'create_admin_pages' ) );
 
-		// Default status colors.
-		add_action( 'init', array( $this, 'set_default_status_colors' ) );
+		// Upsell script.
+		add_action( 'wp_head', array( $this, 'enqueue_upsell_scripts' ) );
 	}
 
 	/**
@@ -124,10 +124,13 @@ class Calendario {
 			array(
 				'appSelector'         => $this->selector,
 				'version'             => RHD_CALENDARIO_PLUGIN_VERSION,
-				'premium'             => rhd_cal()->can_use_premium_code(),
 				'adminUrl'            => admin_url(),
 				'pluginUrl'           => RHD_CALENDARIO_PLUGIN_DIR_BASE_URL,
 				'trashUrl'            => admin_url( 'edit.php?post_status=trash&post_type=post' ),
+				'freemius'            => array(
+					'pro'       => rhd_cal()->can_use_premium_code(),
+					'trialLink' => RHD_FREEMIUS_TRIAL_LINK,
+				),
 				'tz'                  => wp_timezone_string(),
 				'user'                => get_current_user_id(),
 				'nonce'               => wp_create_nonce( 'wp_rest' ),

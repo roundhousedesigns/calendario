@@ -31,15 +31,33 @@
 		color: var(--color-neutral);
 		cursor: pointer;
 		position: relative;
-		transition: all 100ms ease-in-out;
+		@include hoverDelayTransition;
 
-		&:hover {
-			margin-bottom: 30px !important;
+		&:not(.post-id-0) {
+			&:hover {
+				margin-bottom: 30px !important;
 
-			.postLinks {
-				bottom: -30px;
-				position: absolute;
-				z-index: 1;
+				.postLinks {
+					bottom: -30px;
+					position: absolute;
+					z-index: 1;
+				}
+			}
+		}
+
+		&.post-id-0 {
+			opacity: 0.6;
+
+			&:hover {
+				opacity: 1;
+			}
+
+			.postData {
+				&__title {
+					font-weight: 600;
+					text-align: center;
+					align-items: center;
+				}
 			}
 		}
 
@@ -95,13 +113,11 @@
 			transition: all 100ms;
 
 			&__title {
-				display: flex;
-				padding: 0 1px;
 				width: 100%;
+				padding: 0 1px;
 				margin: 0;
 				pointer-events: none;
-				justify-content: space-between;
-				align-items: center;
+				text-align: center;
 
 				.icon {
 					color: inherit;
@@ -127,6 +143,7 @@
 			transform: translateX(50%);
 			width: 100%;
 			z-index: -1;
+			@include hoverDelayTransition;
 
 			.postLink {
 				flex: 1;

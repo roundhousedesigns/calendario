@@ -3,12 +3,13 @@ import PostLinks from './PostLinks';
 import { Draggable } from 'react-beautiful-dnd';
 import { isEmpty } from 'lodash';
 import { decode } from 'html-entities';
+import { wp } from '../lib/utils';
 
 import PostsContext from '../PostsContext';
 import DragContext from '../DragContext';
 import ViewContext from '../ViewContext';
 
-export default function Post({ post, index, unscheduled }) {
+export default function Post({ post, index, unscheduled, dragDisabled }) {
 	const {
 		posts: { currentPost, isUpdating },
 		postsDispatch,
@@ -21,6 +22,10 @@ export default function Post({ post, index, unscheduled }) {
 	} = useContext(ViewContext);
 
 	const { id, post_title, post_status, post_date_day } = post;
+
+	const {
+		freemius: { trialLink },
+	} = wp;
 
 	const [color, setColor] = useState('');
 
@@ -38,12 +43,15 @@ export default function Post({ post, index, unscheduled }) {
 			return;
 		}
 
-		postsDispatch({
-			type: 'SET_CURRENTPOST',
-			post: post,
-			unscheduled,
-		});
-		// }
+		if (e.target.classList.contains('post-id-0')) {
+			window.open(trialLink, '_blank');
+		} else {
+			postsDispatch({
+				type: 'SET_CURRENTPOST',
+				post: post,
+				unscheduled,
+			});
+		}
 	};
 
 	function getStyles(snapshot) {
@@ -86,7 +94,7 @@ export default function Post({ post, index, unscheduled }) {
 		<Draggable
 			draggableId={`${id}`}
 			index={index}
-			isDragDisabled={isUpdating ? true : false}
+			isDragDisabled={isUpdating || dragDisabled ? true : false}
 		>
 			{({ innerRef, draggableProps, dragHandleProps }, snapshot) => (
 				<li
@@ -108,7 +116,7 @@ export default function Post({ post, index, unscheduled }) {
 							{decode(post_title, { scope: 'strict' })}
 						</p>
 					</div>
-					{!isDragging && isUpdating !== post_date_day ? (
+					{!isDragging && isUpdating !== post_date_day && id !== 0 ? (
 						<PostLinks
 							style={{
 								backgroundColor: color.replace(/,1\)/, ',0.75)'),

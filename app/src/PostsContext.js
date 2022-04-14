@@ -1,9 +1,5 @@
 import { createContext } from 'react';
-import {
-	localTZShift,
-	setScheduledPosts,
-	dayKey,
-} from './lib/utils';
+import { localTZShift, setScheduledPosts, dayKey } from './lib/utils';
 
 const PostsContext = createContext({});
 export default PostsContext;

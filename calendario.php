@@ -19,6 +19,11 @@ define( 'RHD_CALENDARIO_PLUGIN_VERSION', '1.0.5' );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE', plugin_dir_path( __FILE__ ) );
 define( 'RHD_CALENDARIO_PLUGIN_DIR_BASE_URL', plugin_dir_url( __FILE__ ) );
 
+/**
+ * Freemius.
+ */
+define( 'RHD_FREEMIUS_TRIAL_LINK', 'https://checkout.freemius.com/mode/dialog/plugin/8136/plan/13973/?trial=free' );
+
 // Load JS interface locally.
 define( 'RHD_CALENDARIO_REACT_APP_BUILD', plugin_dir_url( __FILE__ ) . 'app/build/' );
 

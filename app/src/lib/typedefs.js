@@ -6,6 +6,7 @@
  * @property {Date} post_date_unshifted The post_date attribute without timezone shift
  * @property {string} post_status The post_status attribute
  * @property {string} post_excerpt The post_excerpt content
+ * @property {string} view_link The permalink attribute
  * @property {string} edit_link The post edit link
  * @property {string} image The featured image URL
  * @property {Object} taxonomies

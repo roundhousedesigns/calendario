@@ -26,6 +26,7 @@ import PostsContext from '../PostsContext';
 import ViewContext from '../ViewContext';
 import Loading from './common/Loading';
 import Icon from './common/Icon';
+import ProWrapper from './common/ProWrapper';
 
 const initialEditPost = {
 	post: {},
@@ -193,10 +194,13 @@ export default function EditPost() {
 		taxonomies: post_taxonomies,
 		unscheduled: isUnscheduled,
 	} = post;
-
 	const { postAuthors } = wp;
 
-	var isLoading = useAddTaxonomyTerm(newTerm, postsDispatch, newTermDispatch);
+	var termsLoading = useAddTaxonomyTerm(
+		newTerm,
+		postsDispatch,
+		newTermDispatch
+	);
 
 	const closeModal = useCallback(() => {
 		editPostDispatch({
@@ -310,7 +314,7 @@ export default function EditPost() {
 		});
 	};
 
-	const handleEditSubmit = (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		const { ogPost, post } = editPost;
@@ -320,7 +324,9 @@ export default function EditPost() {
 			? unscheduled.findIndex((item) => item.id === id)
 			: null;
 
-		// Move from one list to another
+		/**
+		 * Move from one list to another.
+		 */
 		const postLists = {
 			source: ogPost.unscheduled ? 'unscheduled' : dayKey(ogPost.post_date),
 			destination: isUnscheduled ? 'unscheduled' : dayKey(post.post_date),
@@ -345,6 +351,9 @@ export default function EditPost() {
 			newTermDispatch({ type: 'CLEAR' });
 		}
 
+		/**
+		 * Prepare the update.
+		 */
 		postsDispatch({
 			type: 'PREPARE_UPDATE',
 			id,
@@ -472,7 +481,7 @@ export default function EditPost() {
 							className={`editPost__form ${
 								trashPostClicked ? 'trashConfirm' : ''
 							}`}
-							onSubmit={handleEditSubmit}
+							onSubmit={handleSubmit}
 						>
 							{editPostLink()}
 							<div className="editPost__title">
@@ -568,7 +577,7 @@ export default function EditPost() {
 												>
 													Are you sure you want to Trash this post?
 												</p>
-												<div class="confirmButtons">
+												<div className="confirmButtons">
 													<input
 														type="button"
 														onClick={trashHandler}
@@ -671,102 +680,118 @@ export default function EditPost() {
 									{editPostLink()}
 								</div>
 							</div>
-							<FieldGroup name="taxonomies">
-								<div className="taxonomy">
-									<fieldset name="category">
-										<legend>Categories</legend>
-										<div className="filter">
-											<label htmlFor="category_filter">Search Categories</label>
-											<input
-												id="category_filter"
-												name="category_filter"
-												type="text"
-												value={taxFilter.category}
-												onChange={(e) =>
-													taxFilterDispatch({
-														type: 'category',
-														filter: e.target.value,
-													})
-												}
-											/>
-										</div>
-										<div className="terms">
-											<div className="newTerm">
-												<label
-													htmlFor="new_term__category"
-													className="newTerm__icon icon"
-												>
-													add_circle_outline
+							<ProWrapper showMessage="Unlock Categories and Tags by going PRO!">
+								<FieldGroup name="taxonomies">
+									<div className="taxonomy">
+										<fieldset name="category">
+											<legend>Categories</legend>
+											<div className="filter">
+												<label htmlFor="category_filter">
+													Search Categories
 												</label>
 												<input
-													id="new_term__category"
-													name="new_term__category"
-													data-taxonomy="category"
-													className="newTerm__input"
+													id="category_filter"
+													name="category_filter"
 													type="text"
-													placeholder="Add a new category"
-													value={
-														newTerm.taxonomy === 'category' ? newTerm.term : ''
+													value={taxFilter.category}
+													onChange={(e) =>
+														taxFilterDispatch({
+															type: 'category',
+															filter: e.target.value,
+														})
 													}
-													onChange={handleNewTermInputChange}
-													onKeyPress={handleNewTermSubmit}
 												/>
 											</div>
-											{isLoading ? <Loading /> : ''}
-											{taxonomies.category.terms
-												? renderTermsList('category', taxonomies.category.terms)
-												: ''}
-										</div>
-									</fieldset>
-								</div>
-								<div className="taxonomy">
-									<fieldset name="post_tag">
-										<legend>Tags</legend>
-										<div className="filter">
-											<label htmlFor="category_filter">Search Post Tags</label>
-											<input
-												id="post_tag_filter"
-												name="post_tag_filter"
-												type="text"
-												value={taxFilter.post_tag}
-												onChange={(e) =>
-													taxFilterDispatch({
-														type: 'post_tag',
-														filter: e.target.value,
-													})
-												}
-											/>
-										</div>
-										<div className="terms">
-											<div className="newTerm">
-												<label
-													htmlFor="new_term__post_tag"
-													className="newTerm__icon icon"
-												>
-													add_circle_outline
+											<div className="terms">
+												<div className="newTerm">
+													<label
+														htmlFor="new_term__category"
+														className="newTerm__icon icon"
+													>
+														add_circle_outline
+													</label>
+													<input
+														id="new_term__category"
+														name="new_term__category"
+														data-taxonomy="category"
+														className="newTerm__input"
+														type="text"
+														placeholder="Add a new category"
+														value={
+															newTerm.taxonomy === 'category'
+																? newTerm.term
+																: ''
+														}
+														onChange={handleNewTermInputChange}
+														onKeyPress={handleNewTermSubmit}
+													/>
+												</div>
+												{termsLoading ? <Loading /> : ''}
+												{taxonomies.category.terms
+													? renderTermsList(
+															'category',
+															taxonomies.category.terms
+													  )
+													: ''}
+											</div>
+										</fieldset>
+									</div>
+									<div className="taxonomy">
+										<fieldset name="post_tag">
+											<legend>Tags</legend>
+											<div className="filter">
+												<label htmlFor="category_filter">
+													Search Post Tags
 												</label>
 												<input
-													id="new_term__post_tag"
-													name="new_term__post_tag"
-													data-taxonomy="post_tag"
-													className="newTerm__input"
+													id="post_tag_filter"
+													name="post_tag_filter"
 													type="text"
-													placeholder="Add a new tag"
-													value={
-														newTerm.taxonomy === 'post_tag' ? newTerm.term : ''
+													value={taxFilter.post_tag}
+													onChange={(e) =>
+														taxFilterDispatch({
+															type: 'post_tag',
+															filter: e.target.value,
+														})
 													}
-													onChange={handleNewTermInputChange}
-													onKeyPress={handleNewTermSubmit}
 												/>
 											</div>
-											{isLoading ? <Loading /> : ''}
-											{taxonomies.post_tag.terms
-												? renderTermsList('post_tag', taxonomies.post_tag.terms)
-												: ''}
-										</div>
-									</fieldset>
-								</div>
-							</FieldGroup>
+											<div className="terms">
+												<div className="newTerm">
+													<label
+														htmlFor="new_term__post_tag"
+														className="newTerm__icon icon"
+													>
+														add_circle_outline
+													</label>
+													<input
+														id="new_term__post_tag"
+														name="new_term__post_tag"
+														data-taxonomy="post_tag"
+														className="newTerm__input"
+														type="text"
+														placeholder="Add a new tag"
+														value={
+															newTerm.taxonomy === 'post_tag'
+																? newTerm.term
+																: ''
+														}
+														onChange={handleNewTermInputChange}
+														onKeyPress={handleNewTermSubmit}
+													/>
+												</div>
+												{termsLoading ? <Loading /> : ''}
+												{taxonomies.post_tag.terms
+													? renderTermsList(
+															'post_tag',
+															taxonomies.post_tag.terms
+													  )
+													: ''}
+											</div>
+										</fieldset>
+									</div>
+								</FieldGroup>
+							</ProWrapper>
 						</form>
 					</div>
 				) : null}

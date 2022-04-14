@@ -1,14 +1,24 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Post from './Post';
 import Loading from './common/Loading';
-import { dateFormat, dayKey } from '../lib/utils';
+import { dateFormat, dayKey, wp } from '../lib/utils';
 import { Droppable } from 'react-beautiful-dnd';
 import { format } from 'date-fns';
 import { isEmpty } from 'lodash';
 
 import PostsContext from '../PostsContext';
 
-export default function PostList({ posts, className, date, showDropOutline }) {
+export default function PostList({
+	posts,
+	className,
+	date,
+	showDropOutline,
+	freePostLimit,
+}) {
+	const {
+		freemius: { pro, trialLink },
+	} = wp;
+
 	const [hovered, setHovered] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const {
@@ -36,6 +46,43 @@ export default function PostList({ posts, className, date, showDropOutline }) {
 	const droppableId =
 		date === false ? 'unscheduled' : format(date, dateFormat.date);
 
+	function postComponent(post, index, dragDisabled) {
+		return (
+			<Post
+				post={post}
+				key={post.id}
+				index={index}
+				unscheduled={droppableId === 'unscheduled' ? true : false}
+				dragDisabled={dragDisabled || false}
+			/>
+		);
+	}
+
+	function renderPosts() {
+		if (!pro && freePostLimit && freePostLimit > 0) {
+			let filteredPosts = posts
+				.slice(0, freePostLimit)
+				.map((post, index) => postComponent(post, index));
+
+			filteredPosts.push(
+				postComponent(
+					{
+						id: 0,
+						post_title: 'Upgrade to PRO for unlimited Sandbox drafts!',
+						post_status: 'publish',
+						viewLink: trialLink,
+					},
+					filteredPosts.length,
+					true
+				)
+			);
+
+			return filteredPosts;
+		} else {
+			return posts.map((post, index) => postComponent(post, index));
+		}
+	}
+
 	return (
 		<Droppable droppableId={droppableId}>
 			{({ innerRef, droppableProps, placeholder }, snapshot) => (
@@ -52,14 +99,7 @@ export default function PostList({ posts, className, date, showDropOutline }) {
 						style={hovered ? { marginBottom: 0 } : null}
 					>
 						{!isEmpty(posts) ? (
-							posts.map((post, index) => (
-								<Post
-									post={post}
-									key={post.id}
-									index={index}
-									unscheduled={droppableId === 'unscheduled' ? true : false}
-								/>
-							))
+							renderPosts()
 						) : (
 							<li
 								className={

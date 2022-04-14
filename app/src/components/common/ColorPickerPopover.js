@@ -13,13 +13,19 @@ import ViewContext from '../../ViewContext';
 import { HexColorPicker } from 'react-colorful';
 
 export default function ColorPickerPopover({ color, name }) {
-	const { presetStatusColors } = wp;
+	const {
+		presetStatusColors,
+		freemius: { pro },
+	} = wp;
+
 	const popover = useRef();
 	const previous = useRef(color);
+
 	const {
 		viewOptions: { postStatuses },
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
+
 	const [colorValue, setColorValue] = useState('');
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -50,14 +56,15 @@ export default function ColorPickerPopover({ color, name }) {
 	}, [colorValue, name, postStatuses, viewOptionsDispatch]);
 
 	const close = useCallback(() => setIsOpen(false), []);
+
 	useClickOutside(popover, close);
 
 	return (
-		<div className="picker">
+		<div className={`picker ${pro ? 'is-pro' : 'not-pro'}`}>
 			<button
 				className="swatch"
 				style={{ backgroundColor: colorValue }}
-				onClick={() => setIsOpen(true)}
+				onClick={() => (pro ? setIsOpen(true) : setIsOpen(false))}
 			/>
 
 			{isOpen && (

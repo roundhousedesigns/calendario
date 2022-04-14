@@ -21,6 +21,11 @@ export const wp =
 				routeBase: 'http://localhost/backend/wp-json/calendario/v1',
 				adminUrl: '',
 				version: '<version>',
+				freemius: {
+					pro: false,
+					trialLink:
+						'https://checkout.freemius.com/mode/dialog/plugin/8136/plan/13973/?trial=free',
+				},
 				pluginUrl: '//localhost/backend/wp-content/plugins/calendario/',
 				trashUrl: '',
 				defaultStatusColors: {
@@ -344,29 +349,3 @@ export function sanitizeParamsForUpdate(params) {
 
 	return params;
 }
-
-// /**
-//  *
-//  * @param {int} id
-//  * @param {Array} scheduled Scheduled posts, keyed by day
-//  * @param {Array} unscheduled Unscheduled posts
-//  * @returns {string|null} The post's droppableId, or null if not found
-//  */
-// export function getPostSourceDroppableId(id, scheduled, unscheduled) {
-// 	let droppableId = null;
-// 	let found = find(unscheduled, { id: id });
-
-// 	if (found) {
-// 		droppableId = 'unscheduled';
-// 	} else {
-// 		for (let key in scheduled) {
-// 			found = find(scheduled[key], { id: id });
-// 			if (found) {
-// 				droppableId = dayKey(found.post_date);
-// 				break;
-// 			}
-// 		}
-// 	}
-
-// 	return droppableId;
-// }
