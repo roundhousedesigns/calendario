@@ -11,7 +11,7 @@
 		"@wojtekmaj/react-daterange-picker": "^3.4.0",
 		"browserslist": "^4.20.2",
 		"cross-env": "^7.0.3",
-		"html-entities": "^2.1.0",
+		"html-entities": "^2.3.3",
 		"husky": "^5.2.0",
 		"immer": "^9.0.6",
 		"is-ci": "^3.0.0",
