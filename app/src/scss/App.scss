@@ -15,7 +15,7 @@
 @import './EditPost';
 @import './ColorPickerPopover';
 @import './ToggleButton';
-@import './pro';
+@import './upsell';
 
 * {
 	box-sizing: border-box;
@@ -121,8 +121,12 @@ body {
 		}
 
 		&.sidebarClosed {
-			grid-template-columns: 3fr 0;
-			grid-gap: var(--gridGap) 0;
+			// grid-template-columns: 3fr 0;
+			// grid-gap: var(--gridGap) 0;
+			.calendarioMain__main {
+				width: 99vw;
+				z-index: 100;
+			}
 		}
 	}
 
@@ -262,6 +266,7 @@ body {
 			overflow: hidden;
 
 			.sidebarToggle {
+				z-index: 200;
 				background-color: var(--color-main-transparent);
 				color: var(--color-text);
 				position: fixed;
@@ -315,6 +320,7 @@ body {
 	&__main {
 		grid-area: main;
 		width: 100%;
+		transition: all 300ms ease;
 	}
 
 	.react-datepicker-popper {
@@ -764,7 +770,7 @@ body {
 }
 
 .widget {
-	&__options {
+	&.options {
 		button {
 			border-radius: var(--borderRadius);
 		}
@@ -789,7 +795,7 @@ body {
 		}
 	}
 
-	&__support {
+	&.support {
 		.support-links {
 			display: flex;
 			justify-content: space-evenly;
@@ -806,6 +812,16 @@ body {
 					height: auto;
 				}
 			}
+		}
+	}
+
+	&.upsell {
+		border: none;
+		margin-top: 0;
+		margin-bottom: 2em;
+
+		.pro {
+			margin-top: 0;
 		}
 	}
 }

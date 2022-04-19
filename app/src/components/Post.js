@@ -3,7 +3,7 @@ import PostLinks from './PostLinks';
 import { Draggable } from 'react-beautiful-dnd';
 import { isEmpty } from 'lodash';
 import { decode } from 'html-entities';
-import { wp } from '../lib/utils';
+import { wp } from '../lib/globals';
 
 import PostsContext from '../PostsContext';
 import DragContext from '../DragContext';

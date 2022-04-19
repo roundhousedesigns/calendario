@@ -1,5 +1,5 @@
 import React from 'react';
-import { wp } from '../lib/utils';
+import { wp } from '../lib/globals';
 
 export default function AdminLinks() {
 	const { trashUrl } = wp;

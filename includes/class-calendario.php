@@ -128,8 +128,9 @@ class Calendario {
 				'pluginUrl'           => RHD_CALENDARIO_PLUGIN_DIR_BASE_URL,
 				'trashUrl'            => admin_url( 'edit.php?post_status=trash&post_type=post' ),
 				'freemius'            => array(
-					'pro'       => rhd_cal()->can_use_premium_code(),
-					'trialLink' => RHD_FREEMIUS_TRIAL_LINK,
+					'pro'                => rhd_cal()->can_use_premium_code(),
+					'trialLink'          => RHD_FREEMIUS_TRIAL_LINK,
+					'dateRangeWeekLimit' => 6,
 				),
 				'tz'                  => wp_timezone_string(),
 				'user'                => get_current_user_id(),

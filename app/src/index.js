@@ -1,11 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./scss/index.scss";
-import "./lib/typedefs";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-
-import { DEBUG_MODE } from "./lib/utils";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { DEBUG_MODE } from './lib/globals';
+import './scss/index.scss';
+import './lib/typedefs';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
 var reactAppData, appAnchorElement;
 if (DEBUG_MODE === false) {
@@ -15,7 +14,7 @@ if (DEBUG_MODE === false) {
 	appAnchorElement = document.querySelector(appSelector);
 } else {
 	// Dev
-	appAnchorElement = document.getElementById("root");
+	appAnchorElement = document.getElementById('root');
 }
 
 if (appAnchorElement) {

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { wp } from '../lib/globals';
+import { haveColorsChanged } from '../lib/utils';
 import ColorPickerPopover from './common/ColorPickerPopover';
 import ToggleButton from './common/ToggleButton';
-import { haveColorsChanged } from '../lib/utils';
 
 import ViewContext from '../ViewContext';
 import { useUpdateStatusColors } from '../lib/hooks';
@@ -12,6 +13,9 @@ export default function StatusFilters() {
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
 	const keys = Object.keys(postStatuses);
+	const {
+		freemius: { pro },
+	} = wp;
 	const [colorsChanged, setColorsChanged] = useState(false);
 
 	// Maintain state for color defaults
@@ -46,12 +50,17 @@ export default function StatusFilters() {
 					const { color, name } = postStatuses[status];
 					return (
 						<li className={`filterItem status__${status}`} key={index}>
-							<ColorPickerPopover color={color} name={status} />
+							<ColorPickerPopover
+								color={color}
+								name={status}
+								disableClick={!pro}
+							/>
 							<span className="name">{name}</span>
 							<ToggleButton
-								selected={postStatuses[status].visible ? true : false}
-								toggleSelected={toggleStatus}
+								toggledOn={postStatuses[status].visible ? true : false}
+								handleToggle={toggleStatus}
 								name={status}
+								allowLock={true}
 							/>
 						</li>
 					);

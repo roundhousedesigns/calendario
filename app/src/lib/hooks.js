@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { wp, dateFormat } from '../lib/utils';
+import { wp } from '../lib/globals';
+import { dateFormat } from '../lib/globals';
 import { format, addDays, subDays } from 'date-fns';
 import { isEmpty } from 'lodash';
-import { sanitizeParamsForUpdate, DEBUG_MODE } from '../lib/utils';
+import { DEBUG_MODE } from '../lib/globals';
+import { sanitizeParamsForUpdate } from '../lib/utils';
 
 const { routeBase, nonce } = wp;
 var headers = {

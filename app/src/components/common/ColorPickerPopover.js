@@ -5,18 +5,15 @@ import React, {
 	useRef,
 	useState,
 } from 'react';
-import { wp } from '../../lib/utils';
+import { wp } from '../../lib/globals';
 import { useClickOutside } from '../../lib/hooks';
 
 import ViewContext from '../../ViewContext';
 
 import { HexColorPicker } from 'react-colorful';
 
-export default function ColorPickerPopover({ color, name }) {
-	const {
-		presetStatusColors,
-		freemius: { pro },
-	} = wp;
+export default function ColorPickerPopover({ color, name, disableClick }) {
+	const { presetStatusColors } = wp;
 
 	const popover = useRef();
 	const previous = useRef(color);
@@ -60,11 +57,13 @@ export default function ColorPickerPopover({ color, name }) {
 	useClickOutside(popover, close);
 
 	return (
-		<div className={`picker ${pro ? 'is-pro' : 'not-pro'}`}>
+		<div
+			className={`picker ${disableClick ? 'click-disabled' : 'click-enabled'}`}
+		>
 			<button
 				className="swatch"
 				style={{ backgroundColor: colorValue }}
-				onClick={() => (pro ? setIsOpen(true) : setIsOpen(false))}
+				onClick={!disableClick ? () => setIsOpen(!isOpen) : null}
 			/>
 
 			{isOpen && (

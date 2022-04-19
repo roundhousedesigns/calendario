@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Post from './Post';
 import Loading from './common/Loading';
-import { dateFormat, dayKey, wp } from '../lib/utils';
+import { wp, dateFormat } from '../lib/globals';
+import { dayKey } from '../lib/utils';
 import { Droppable } from 'react-beautiful-dnd';
 import { format } from 'date-fns';
 import { isEmpty } from 'lodash';

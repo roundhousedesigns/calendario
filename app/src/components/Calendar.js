@@ -1,7 +1,8 @@
 import React, { useContext, useCallback } from 'react';
 import Day from './Day';
 import DayPosts from './DayPosts';
-import { dateFormat, dayKey } from '../lib/utils';
+import { dateFormat } from '../lib/globals';
+import { dayKey } from '../lib/utils';
 import {
 	format,
 	addDays,

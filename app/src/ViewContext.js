@@ -1,5 +1,6 @@
 import { createContext } from 'react';
-import { wp, prepareInitialPostStatuses } from './lib/utils';
+import { wp } from './lib/globals';
+import { prepareInitialPostStatuses } from './lib/utils';
 import {
 	addWeeks,
 	subWeeks,

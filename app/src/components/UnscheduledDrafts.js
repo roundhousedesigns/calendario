@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import PostList from './PostList';
 import NewPostButton from './common/NewPostButton';
 import Icon from './common/Icon';
-import { wp } from '../lib/utils';
+import { wp } from '../lib/globals';
 
 import { useFetchUnscheduledPosts } from '../lib/hooks';
 import PostsContext from '../PostsContext';

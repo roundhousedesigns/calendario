@@ -1,5 +1,5 @@
 import React, { forwardRef, useContext, useState } from 'react';
-import { dateFormat } from '../lib/utils';
+import { dateFormat } from '../lib/globals';
 import { format, isToday, isPast, isSameDay } from 'date-fns';
 
 import DragContext from '../DragContext';

@@ -1,10 +1,22 @@
 import { forwardRef, useContext, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { addDays, startOfToday, startOfMonth, endOfMonth } from 'date-fns';
+import {
+	isBefore,
+	isAfter,
+	addWeeks,
+	subWeeks,
+	addDays,
+	startOfToday,
+	startOfMonth,
+	endOfMonth,
+	startOfWeek,
+	endOfWeek,
+} from 'date-fns';
 
 import ViewContext from '../ViewContext';
 import PostsContext from '../PostsContext';
-import { dateFormat, dateIsBetween } from '../lib/utils';
+import { wp, dateFormat } from '../lib/globals';
+import { dateIsBetween } from '../lib/utils';
 
 export default function MainHeader({ handleTodayClick }) {
 	const {
@@ -13,7 +25,13 @@ export default function MainHeader({ handleTodayClick }) {
 		viewOptionsDispatch,
 	} = useContext(ViewContext);
 	const { postsDispatch } = useContext(PostsContext);
+
 	const [todayInRange, setTodayInRange] = useState(true);
+
+	const { daylessDate } = dateFormat;
+	const {
+		freemius: { pro, dateRangeWeekLimit },
+	} = wp;
 
 	const today = startOfToday();
 
@@ -50,19 +68,38 @@ export default function MainHeader({ handleTodayClick }) {
 	const prevMonth = (e) => {
 		e.preventDefault();
 		viewOptionsDispatch({ type: 'CHANGE_MONTH', direction: 'previous' });
+
 		postsDispatch({ type: 'FETCH' });
+	};
+
+	const isInPlanRange = (date) => {
+		// Pro plans skip this limit!
+		if (pro) return true;
+
+		const startRange = subWeeks(
+			startOfWeek(today, { weekStartsOn: 6 }),
+			dateRangeWeekLimit
+		);
+		const endRange = addWeeks(
+			endOfWeek(today, { weekStartsOn: 6 }),
+			dateRangeWeekLimit
+		);
+
+		return isAfter(date, startRange) && isBefore(date, endRange) ? true : false;
 	};
 
 	return (
 		<div className="calendarHeaderControls">
 			<div className="col col__start">
-				<button
-					className="icon control dateChevron"
-					onClick={prevMonth}
-					title="Previous Month"
-				>
-					chevron_left
-				</button>
+				{pro ? (
+					<button
+						className="icon control dateChevron"
+						onClick={prevMonth}
+						title="Previous Month"
+					>
+						chevron_left
+					</button>
+				) : null}
 			</div>
 			<div className="viewControl">
 				<button
@@ -74,7 +111,7 @@ export default function MainHeader({ handleTodayClick }) {
 				</button>
 				<div className="viewRange">
 					<DatePicker
-						dateFormat={dateFormat.daylessDate}
+						dateFormat={daylessDate}
 						selected={viewRange.start}
 						onChange={(date) =>
 							viewOptionsDispatch({
@@ -87,10 +124,11 @@ export default function MainHeader({ handleTodayClick }) {
 						startDate={viewRange.start}
 						endDate={viewRange.end}
 						closeOnScroll={(e) => e.target === document}
+						filterDate={isInPlanRange}
 					/>
 					{' to '}
 					<DatePicker
-						dateFormat={dateFormat.daylessDate}
+						dateFormat={daylessDate}
 						selected={viewRange.end}
 						onChange={(date) =>
 							viewOptionsDispatch({
@@ -105,17 +143,20 @@ export default function MainHeader({ handleTodayClick }) {
 						minDate={viewRange.start}
 						monthsShown={2}
 						closeOnScroll={(e) => e.target === document}
+						filterDate={isInPlanRange}
 					/>
 				</div>
 			</div>
 			<div className="col col__end">
-				<button
-					className="icon control dateChevron"
-					onClick={nextMonth}
-					title="Next Month"
-				>
-					chevron_right
-				</button>
+				{pro ? (
+					<button
+						className="icon control dateChevron"
+						onClick={nextMonth}
+						title="Next Month"
+					>
+						chevron_right
+					</button>
+				) : null}
 			</div>
 		</div>
 	);

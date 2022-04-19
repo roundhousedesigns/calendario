@@ -1,11 +1,15 @@
 import React from 'react';
 
-export default function Widget({ title, widgetClass, children }) {
+export default function Widget({ title, className, children }) {
 	const widgetTitle = title ? <h3 className="widgetTitle">{title}</h3> : '';
-	const widgetClassLabel = widgetClass ? widgetClass : 'default';
+
+	const classes = () => {
+		const base = 'widget';
+		return className ? `${base} ${className}` : base;
+	};
 
 	return (
-		<div className={`widget widget__${widgetClassLabel}`}>
+		<div className={classes()}>
 			{widgetTitle}
 			{children}
 		</div>

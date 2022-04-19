@@ -14,7 +14,7 @@
 	padding: 2px;
 	border: 1px solid var(--color-text-light);
 
-	&.not-pro {
+	&.click-disabled {
 		.swatch {
 			cursor: not-allowed;
 		}

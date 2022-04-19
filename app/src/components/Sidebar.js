@@ -5,7 +5,8 @@ import StatusFilters from './StatusFilters';
 import ViewOptions from './ViewOptions';
 import Support from './Support';
 import Icon from './common/Icon';
-import { wp } from '../lib/utils';
+import ProWrapper from './common/ProWrapper';
+import { wp } from '../lib/globals';
 
 import ViewContext from '../ViewContext';
 
@@ -13,14 +14,18 @@ export default function Sidebar() {
 	const {
 		viewOptions: { sidebarOpen },
 	} = useContext(ViewContext);
-	const { tz, adminUrl } = wp;
+	const {
+		tz,
+		adminUrl,
+		freemius: { pro },
+	} = wp;
 
 	return (
 		<aside
 			className={`calendarioMain__sidebar ${sidebarOpen ? 'open' : 'closed'}`}
 		>
 			<div className="calendarioMain__sidebar__inner">
-				<Widget widgetClass="options">
+				<Widget className="options">
 					<div className="options">
 						<ViewOptions />
 						<p className="tz">
@@ -33,15 +38,21 @@ export default function Sidebar() {
 						</p>
 					</div>
 				</Widget>
-				<Widget title="Draft Sandbox" widgetClass="unscheduledDrafts">
+				<Widget title="Draft Sandbox" className="unscheduledDrafts">
 					<UnscheduledDrafts />
 				</Widget>
 
-				<Widget title="Post Status" widgetClass="statusFilters">
+				<Widget title="Post Status" className="statusFilters">
 					<StatusFilters />
 				</Widget>
 
-				<Widget title="Support" widgetClass="support">
+				{!pro ? (
+					<Widget className="upsell">
+						<ProWrapper upsell={true} />
+					</Widget>
+				) : null}
+
+				<Widget title="Support" className="support">
 					<Support />
 				</Widget>
 			</div>

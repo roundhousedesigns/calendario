@@ -6,17 +6,17 @@ import React, {
 	useReducer,
 	useCallback,
 } from 'react';
+import { wp } from '../lib/globals';
 import FieldGroup from './common/FieldGroup';
-import { useAddTaxonomyTerm, useClickOutside } from '../lib/hooks';
+import { dateFormat } from '../lib/globals';
 import {
-	dateFormat,
 	dayKey,
 	filterPostStatus,
 	filterStatusList,
 	getPostList,
 	moveItem,
-	wp,
 } from '../lib/utils';
+import { useAddTaxonomyTerm, useClickOutside } from '../lib/hooks';
 import DatePicker from 'react-datepicker';
 import { isFuture, isPast, isToday } from 'date-fns';
 import { isEmpty } from 'lodash';
