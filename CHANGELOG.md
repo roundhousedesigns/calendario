@@ -2,7 +2,7 @@
 
 All notable changes to Editorial Calendar.io will be documented in this file.
 
-## 1.0.6 - 4/15/2023
+## 1.0.7 - 4/15/2023
 
 - Update the Freemius SDK to 2.5.6.
 - Update frontend dependencies to fix security vulnerabilities.
