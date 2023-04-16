@@ -51,7 +51,7 @@ export default function Post({ post, index, unscheduled }) {
 		let classes = ['post', `post-id-${id} status__${post_status}`];
 
 		if (
-			(unscheduled === false && postStatuses[post_status].visible === true) ||
+			(unscheduled === false && postStatuses && postStatuses[post_status].visible === true) ||
 			unscheduled === true
 		) {
 			classes.push('visible');

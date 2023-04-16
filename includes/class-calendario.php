@@ -19,6 +19,13 @@ class Calendario {
 	private $limit_load_hook = '';
 
 	/**
+	 * Css selector to render app.
+	 *
+	 * @var string
+	 */
+	private $selector = '';
+
+	/**
 	 * Limit load by callback result.- If back end send false.
 	 *
 	 * @var bool|string
@@ -45,17 +52,17 @@ class Calendario {
 
 		// Check for pretty permalinks, and alert if not set.
 		if ( ! get_option( 'permalink_structure' ) ) {
-			add_action( 'admin_notices', array( $this, 'notice_pretty_permalinks' ) );
+			add_action( 'admin_notices', [ $this, 'notice_pretty_permalinks' ] );
 		}
 
 		// React interface.
-		add_action( $enqueue_hook, array( $this, 'load_react_app__premium_only' ) );
+		add_action( $enqueue_hook, [ $this, 'load_react_app__premium_only' ] );
 
 		// Menu items and admin pages.
-		add_action( 'admin_menu', array( $this, 'create_admin_pages' ) );
+		add_action( 'admin_menu', [ $this, 'create_admin_pages' ] );
 
 		// Default status colors.
-		add_action( 'init', array( $this, 'set_default_status_colors' ) );
+		add_action( 'init', [ $this, 'set_default_status_colors' ] );
 	}
 
 	/**
@@ -72,7 +79,7 @@ class Calendario {
 	/**
 	 * Load react app files in WordPress admin.
 	 *
-	 * @param string $hook The admin page hook.
+	 * @param  string $hook The admin page hook.
 	 * @return void
 	 */
 	public function load_react_app__premium_only( $hook ) {
@@ -108,20 +115,20 @@ class Calendario {
 
 		// Load css files.
 		foreach ( $css_files as $index => $css_file ) {
-			wp_enqueue_style( 'calendario-' . $index, RHD_CALENDARIO_REACT_APP_BUILD . $css_file, array(), RHD_CALENDARIO_PLUGIN_VERSION );
+			wp_enqueue_style( 'calendario-' . $index, RHD_CALENDARIO_REACT_APP_BUILD . $css_file, [], RHD_CALENDARIO_PLUGIN_VERSION );
 		}
 
 		// Load js files.
 		foreach ( $js_files as $index => $js_file ) {
 			$handle = 'calendario-' . $index;
-			wp_enqueue_script( $handle, RHD_CALENDARIO_REACT_APP_BUILD . $js_file, array(), RHD_CALENDARIO_PLUGIN_VERSION, true );
+			wp_enqueue_script( $handle, RHD_CALENDARIO_REACT_APP_BUILD . $js_file, [], RHD_CALENDARIO_PLUGIN_VERSION, true );
 		}
 
 		// Variables for app use - These variables will be available in window.rhdReactPlugin variable.
 		wp_localize_script(
 			'calendario-1',
 			'rhdReactPlugin',
-			array(
+			[
 				'appSelector'         => $this->selector,
 				'version'             => RHD_CALENDARIO_PLUGIN_VERSION,
 				'adminUrl'            => admin_url(),
@@ -135,7 +142,7 @@ class Calendario {
 				'postStatuses'        => rhd_prepare_post_statuses(),
 				'defaultStatusColors' => rhd_post_status_default_color_pairs(),
 				'presetStatusColors'  => RHD_POST_STATUS_SWATCHES,
-			)
+			]
 		);
 	}
 
@@ -148,7 +155,7 @@ class Calendario {
 		/**
 		 * Main page and top-level menu registration.
 		 */
-		add_menu_page( 'Editorial Calendar.io', 'Calendar.io', 'edit_others_posts', 'calendario', array( $this, 'calendario_page_main' ), self::MENU_ICON, 8 );
+		add_menu_page( 'Editorial Calendar.io', 'Calendar.io', 'edit_others_posts', 'calendario', [ $this, 'calendario_page_main' ], self::MENU_ICON, 8 );
 	}
 
 	/**
@@ -167,11 +174,11 @@ class Calendario {
 	 */
 	private function get_assets_files() {
 		// Request manifest file.
-		$request = wp_remote_get( esc_url_raw( RHD_CALENDARIO_MANIFEST_URL ), array(
-			'headers' => array(
+		$request = wp_remote_get( esc_url_raw( RHD_CALENDARIO_MANIFEST_URL ), [
+			'headers' => [
 				'origin' => home_url(),
-			),
-		) );
+			],
+		] );
 
 		$response = wp_remote_retrieve_body( $request );
 
